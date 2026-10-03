@@ -1,0 +1,63 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[animation]
+
+compatibility/default_parent_skeleton_in_mesh_instance_3d=true
+
+[application]
+
+config/name="Kuih Empire"
+config/description="A cozy Malaysian food puzzle adventure where a small family stall grows into a beloved kuih business."
+config/version="0.1.0"
+run/main_scene="res://scenes/boot/boot.tscn"
+config/features=PackedStringArray("4.7", "GL Compatibility")
+boot_splash/bg_color=Color(0.98, 0.9, 0.78, 1)
+boot_splash/show_image=false
+config/icon="res://icon.svg"
+
+[autoload]
+
+SceneManager="*res://scripts/core/scene_manager.gd"
+SaveManager="*res://scripts/core/save_manager.gd"
+ProgressionManager="*res://scripts/core/progression_manager.gd"
+EconomyManager="*res://scripts/core/economy_manager.gd"
+AudioManager="*res://scripts/core/audio_manager.gd"
+GameManager="*res://scripts/core/game_manager.gd"
+
+[display]
+
+window/size/viewport_width=1080
+window/size/viewport_height=1920
+window/size/window_width_override=540
+window/size/window_height_override=960
+window/stretch/mode="canvas_items"
+window/handheld/orientation=1
+
+[file_customization]
+
+folder_colors={
+"res://assets/": "orange",
+"res://audio/": "red",
+"res://resources/": "green",
+"res://scenes/": "blue",
+"res://scripts/": "purple"
+}
+
+[input_devices]
+
+pointing/emulate_touch_from_mouse=true
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+textures/vram_compression/import_etc2_astc=true
+environment/defaults/default_clear_color=Color(0.98, 0.91, 0.8, 1)

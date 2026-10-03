@@ -1,0 +1,26 @@
+# Godot 4
+.godot/
+.import/
+export.cfg
+export_presets.cfg
+*.translation
+
+# Build output
+build/
+bin/
+*.apk
+*.aab
+
+# Screenshot tool output
+.shots/
+
+# Local verification logs
+.*-test.log
+.smoke-fixed.log
+
+# Editor / OS noise
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
