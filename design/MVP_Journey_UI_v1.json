@@ -1,0 +1,31 @@
+{
+  "mode": "built-in imagegen",
+  "reference": "design/Kuih Empire Tropical Map.png",
+  "assets": [
+    {
+      "id": "background",
+      "transparent": false,
+      "prompt": "Edit this Malaysian cozy cartoon mobile game tropical journey reference into a clean background painting asset, portrait. Preserve lush tropical Malaysian riverside kampung, wooden kuih stalls, palms, hibiscus, mountain, sunny sky, warm charming polished painted game style. REMOVE ALL UI, all letters, logo, hearts, coins, buttons, stage medallions, winding beige path, Aina character, signs with text. Inpaint natural scenery. Keep central corridor spacious soft distant river scenery for native stage path overlay, more detail on edges. Full bleed opaque background."
+    },
+    {
+      "id": "stage_green",
+      "transparent": true,
+      "prompt": "Create one isolated oval round green completed stage medallion for this exact cozy painted Malaysian game UI style. Thick cream and dark gold wood rim, glossy emerald center, subtle lower shadow, front view slightly oval. NO text, numbers, stars, checkmarks or icons. Only medallion. Transparent background."
+    },
+    {
+      "id": "stage_gold",
+      "transparent": true,
+      "prompt": "Create one isolated oval round golden yellow current stage medallion for this exact cozy painted Malaysian game UI style. Thick cream and gold wood rim, glossy orange gold center, subtle lower shadow, front view slightly oval. NO text, numbers, stars, checkmarks or icons. Only medallion. Transparent background."
+    },
+    {
+      "id": "stage_locked",
+      "transparent": true,
+      "prompt": "Create one isolated oval round grey locked stage medallion for this exact cozy painted Malaysian game UI style. Thick silver grey rim, glossy warm grey center, subtle lower shadow, front view slightly oval. NO text, numbers, stars or lock icons. Only medallion. Transparent background."
+    },
+    {
+      "id": "heart_pill",
+      "transparent": true,
+      "prompt": "Create a single compact wide resource HUD pill matching this exact cozy Malaysian game style. Left a large glossy ruby pink heart with warm brown outline, right a blank cream inset horizontal rounded capsule bordered golden wood, small green round plus icon at far right. No numbers or text. Straight front view, no other assets. Transparent background."
+    }
+  ]
+}

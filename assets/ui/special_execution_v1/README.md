@@ -1,0 +1,15 @@
+# Special execution typography
+
+Generated using the built-in imagegen tool. `titles.png` preserves the original gold sheet; `titles_colored.png` is the final game asset. No generated pixels were edited manually. Both sheets use transparent alpha.
+
+Colors: Tapau gold/orange; Dulang pandan green; Hantar pink/magenta; Special Order cyan/blue. Runtime crops exclude nearly transparent generation padding, using verified atlas rectangles. Horizontal and vertical Tapau share one title per activation wave. Captions pop, hold, rise and fade over 0.72 seconds. Reset/rebuild cancels them; they inherit pause and ignore input.
+
+Consumer: `scripts/ui/special_execution_text.gd`, triggered by `MatchBoard._play_step`.
+
+Original generation prompt:
+
+> Use case: stylized-concept. Asset type: one transparent game typography sprite sheet for KUIH EMPIRE cozy colorful Malaysian match-3 game. Exactly FOUR standalone word graphics in uniform 2 by 2 grid, each in separate equal quadrant with generous transparent separation. Top-left exact text "Tapau!"; top-right exact text "Dulang!"; bottom-left exact text "Hantar!"; bottom-right exact text "Special Order!" on ONE line. Cheerful bold chunky rounded inflated lettering with warm pale cream top, glossy golden yellow body and orange lower shading, thick dark warm brown outline and small tight shadow. Slight lively tilt to letters, extremely readable at small mobile size. Match polished cartoon gold ORDER SERVED! title aesthetic. ONLY typography with very few tiny gold glints near ends of words. No boxes, no boards, no banners, no food, no characters, no icons, no background, no watermark, no divider/grid lines. Each graphic centered within its quadrant, occupies middle 75 percent quadrant width, middle 35 percent height, never touches quadrant edges. Consistent font style and outlines. Real transparent RGBA across surrounding space. One square sprite sheet.
+
+Final color edit prompt (edit target: `titles.png`):
+
+> Use case: precise-object-edit. Edit this exact transparent 2x2 game typography sprite sheet. Change ONLY the glossy letter fill colors and tiny corresponding sparkle accent colors. Preserve ALL four texts verbatim, letter shapes, layout in their exact quadrants, spacing, thick warm dark brown outlines, tight shadows, transparent alpha background. Top-left "Tapau!": warm golden yellow upper fill to orange lower gradient, cream highlights. Top-right "Dulang!": pandan lime green upper fill to rich emerald green lower gradient, pale mint highlights. Bottom-left "Hantar!": cheerful candy pink upper fill to raspberry magenta lower gradient, pale rosy cream highlights. Bottom-right "Special Order!": electric cyan upper fill to sapphire blue lower gradient, icy white highlights. Strong readable saturated gradients, polished casual puzzle game lettering, equally bright and attractive but distinct color for each. Do not change wording or add any shapes, boxes, banners, icons, background, gridlines or watermark. Keep four independent typography sprites centered in the same four quadrants, with generous completely transparent separation.

@@ -1,0 +1,75 @@
+{
+  "generator": "built-in imagegen",
+  "reference": "design/Kuih Empire_ Sweet Match Adventure.png",
+  "assets": [
+    {
+      "id": "order_board",
+      "prompt": "Use case: background-extraction. Reference is Kuih Empire gameplay UI. ONE blank customer order board matching reference: rounded warm cream parchment face inset within thick polished brown wooden frame, golden inner beveled edge, green folded banana leaf decorations only at upper corners, raised cream rounded title tab at top center. Wide horizontal panel, aspect ratio 2:1. Completely EMPTY face and title tab, NO food icons NO lettering NO counts. Match bold clean brown cartoon outlines, warm painted highlights and cozy Malaysian game style. Entire asset tightly framed with small transparent margin, genuinely transparent background, no scenery no glow outside outline.",
+      "output": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a10275-2ab7-7de1-a71b-ad9e6d28243b\\exec-d2fb1c19-d072-4886-ab31-3d2e059d7298.png",
+      "path": "assets/ui/gameplay_v2/order_board.png"
+    },
+    {
+      "id": "settings",
+      "prompt": "Use case: background-extraction. Reference is Kuih Empire gameplay UI. ONE Settings button exactly styled as reference top-right: rounded square chunky warm brown wood frame with golden inner rim, brown face, centered ivory white gear with thick dark brown outline. No text, no other objects. Match bold clean brown cartoon outlines, warm painted highlights and cozy Malaysian game style. Entire asset tightly framed with small transparent margin, genuinely transparent background, no scenery no glow outside outline.",
+      "output": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a10275-2ab7-7de1-a71b-ad9e6d28243b\\exec-cc91a8df-d8cf-49e7-9bb4-ea7efc612989.png",
+      "path": "assets/ui/gameplay_v2/settings.png"
+    },
+    {
+      "id": "star",
+      "prompt": "Use case: background-extraction. Reference is Kuih Empire gameplay UI. ONE large five-point golden yellow progress star matching reference: bright cream highlights, golden beveled edge, thick dark brown outline and thinner cream outer rim. Polished cozy cartoon game HUD icon, no panel no text. Match bold clean brown cartoon outlines, warm painted highlights and cozy Malaysian game style. Entire asset tightly framed with small transparent margin, genuinely transparent background, no scenery no glow outside outline.",
+      "output": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a10275-2ab7-7de1-a71b-ad9e6d28243b\\exec-85bdabc7-9957-4ddc-bf91-eeb3e914b3a8.png",
+      "path": "assets/ui/gameplay_v2/star.png"
+    },
+    {
+      "id": "coin_pill",
+      "prompt": "Use case: background-extraction. Reference is Kuih Empire gameplay UI. ONE horizontal coin counter pill matching reference top header: warm dark brown recessed interior, rounded brown wooden frame golden rim, large shiny golden coin at left bearing embossed crown, green glossy circular plus button at right with white plus. Wide horizontal aspect 3.2:1. Blank center for live coin number. No numerals no letters. Match bold clean brown cartoon outlines, warm painted highlights and cozy Malaysian game style. Entire asset tightly framed with small transparent margin, genuinely transparent background, no scenery no glow outside outline.",
+      "output": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a10275-2ab7-7de1-a71b-ad9e6d28243b\\exec-8353d621-652d-4a00-94e6-3c1a5cd3c93d.png",
+      "path": "assets/ui/gameplay_v2/coin_pill.png"
+    },
+    {
+      "id": "moves_board",
+      "prompt": "Use case: background-extraction. Reference is Kuih Empire gameplay UI. ONE blank hanging moves sign matching reference: small chunky rounded rectangular wooden plaque brown woodgrain with golden border, two green rope loops at top corners. Portraitish aspect 1.1:1. Blank face for live move count and label, no numerals no text. Match bold clean brown cartoon outlines, warm painted highlights and cozy Malaysian game style. Entire asset tightly framed with small transparent margin, genuinely transparent background, no scenery no glow outside outline.",
+      "output": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a10275-2ab7-7de1-a71b-ad9e6d28243b\\exec-632dc3bd-d1d4-4fe3-b7ab-a1f3d3c31f41.png",
+      "path": "assets/ui/gameplay_v2/moves_board.png"
+    },
+    {
+      "id": "booster_tray",
+      "prompt": "Use case: background-extraction. Reference is Kuih Empire gameplay UI. ONE empty horizontal rounded wooden booster tray base matching bottom reference, polished brown timber planks, thick rounded golden brown frame and subtle grain, generous flat inset center. Aspect ratio 4:1. NO icons NO buttons NO lettering NO numbers. Match bold clean brown cartoon outlines, warm painted highlights and cozy Malaysian game style. Entire asset tightly framed with small transparent margin, genuinely transparent background, no scenery no glow outside outline.",
+      "output": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a10275-2ab7-7de1-a71b-ad9e6d28243b\\exec-37fe4195-4741-4aa4-9cc0-a591d6758251.png",
+      "path": "assets/ui/gameplay_v2/booster_tray.png"
+    },
+    {
+      "id": "booster_blue",
+      "prompt": "Use case: background-extraction. Reference is Kuih Empire gameplay UI. ONE blue booster button surface matching reference Sudip button, rounded square glossy bright cyan to blue inset, chunky warm golden brown outer frame and brown shadow, cream blank caption plaque overlapping lower rim. NO icon NO text NO numbers. Transparent surroundings. Match bold clean brown cartoon outlines, warm painted highlights and cozy Malaysian game style. Entire asset tightly framed with small transparent margin, genuinely transparent background, no scenery no glow outside outline.",
+      "output": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a10275-2ab7-7de1-a71b-ad9e6d28243b\\exec-3618ba0d-7fbb-46a0-8e78-0567ca706c91.png",
+      "path": "assets/ui/gameplay_v2/booster_blue.png"
+    },
+    {
+      "id": "booster_gold",
+      "prompt": "Use case: background-extraction. Reference is Kuih Empire gameplay UI. ONE gold booster button surface matching reference Dulang button, rounded square glossy bright golden yellow inset, chunky warm golden brown outer frame and brown shadow, cream blank caption plaque overlapping lower rim. NO icon NO text NO numbers. Transparent surroundings. Match bold clean brown cartoon outlines, warm painted highlights and cozy Malaysian game style. Entire asset tightly framed with small transparent margin, genuinely transparent background, no scenery no glow outside outline.",
+      "output": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a10275-2ab7-7de1-a71b-ad9e6d28243b\\exec-ccfb8a96-569e-4454-8b62-aa9be7c91ade.png",
+      "path": "assets/ui/gameplay_v2/booster_gold.png"
+    },
+    {
+      "id": "booster_green",
+      "prompt": "Use case: background-extraction. Reference is Kuih Empire gameplay UI. ONE green booster button surface matching reference Shuffle button, rounded square glossy lime green inset, chunky warm golden brown outer frame and brown shadow, cream blank caption plaque overlapping lower rim. NO icon NO text NO numbers. Transparent surroundings. Match bold clean brown cartoon outlines, warm painted highlights and cozy Malaysian game style. Entire asset tightly framed with small transparent margin, genuinely transparent background, no scenery no glow outside outline.",
+      "output": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a10275-2ab7-7de1-a71b-ad9e6d28243b\\exec-f69cd316-eb29-4279-8695-b6ee5963e35f.png",
+      "path": "assets/ui/gameplay_v2/booster_green.png"
+    },
+    {
+      "id": "booster_purple",
+      "prompt": "Use case: background-extraction. Reference is Kuih Empire gameplay UI. ONE purple booster button surface matching reference Tapau button, rounded square glossy violet purple inset, chunky warm golden brown outer frame and brown shadow, cream blank caption plaque overlapping lower rim. NO icon NO text NO numbers. Transparent surroundings. Match bold clean brown cartoon outlines, warm painted highlights and cozy Malaysian game style. Entire asset tightly framed with small transparent margin, genuinely transparent background, no scenery no glow outside outline.",
+      "output": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a10275-2ab7-7de1-a71b-ad9e6d28243b\\exec-42ba663e-ce2f-4c8e-95d2-27ba1e92be82.png",
+      "path": "assets/ui/gameplay_v2/booster_purple.png"
+    },
+    {
+      "id": "progress_track",
+      "prompt": "Use case: background-extraction. Recreate the progress bar wooden frame from Kuih Empire gameplay reference as ONE isolated wide horizontal asset: chunky rounded golden brown wooden frame, gold bevel and dark chocolate recessed empty center. No star no fill no text no numbers no icons. Wide aspect 4:1, polished painted cartoon brown outlines, entire asset tightly framed with minimal transparent margin. Genuinely transparent outside outline.",
+      "output": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a10275-2ab7-7de1-a71b-ad9e6d28243b\\exec-3e84378d-d759-4e24-a884-097e23306037.png",
+      "path": "assets/ui/gameplay_v2/progress_track.png"
+    }
+  ],
+  "layout": "Tutorial coaching shares upper OrderPanel speech bubble. Four boosters always occupy bottom tray; tutorials 1–7 disabled, tutorial 8 and campaign available subject to inventory.",
+  "text": "All labels, coin counts, order counts and progress remain native dynamic UI.",
+  "cropping": "GameplaySkin applies AtlasTexture export-margin bounds; PNG sources are unchanged."
+}

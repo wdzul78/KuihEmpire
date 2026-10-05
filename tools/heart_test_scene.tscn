@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://bntgx1vawl8pj"]
+
+[ext_resource type="Script" uid="uid://dfd3y61aftrqo" path="res://tools/heart_test.gd" id="1"]
+
+[node name="HeartTests" type="Node" unique_id=1187787096]
+script = ExtResource("1")

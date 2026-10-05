@@ -16,6 +16,14 @@ const MORNING_RUSH := 10
 const WEEKEND_CHALLENGE := 20
 const CHAPTER_FINALE := 30
 
+const SCORE_TARGETS := [
+	[800, 1400], [1000, 1700], [1200, 2000], [1300, 2200], [1600, 2500],
+	[1900, 3200], [1900, 2700], [1700, 2500], [2800, 4000], [3000, 4400],
+	[1500, 2300], [2000, 3100], [2300, 3200], [2100, 3400], [2200, 3300],
+	[1700, 3000], [1700, 3000], [1900, 3000], [2400, 3500], [2200, 2900],
+	[1600, 2300], [2600, 3600], [2000, 3000], [2300, 3400], [2200, 3200],
+	[1900, 3300], [2300, 3500], [3000, 4400], [2000, 3200], [3000, 4300],
+]
 static var _cache: Dictionary = {}
 
 
@@ -27,6 +35,10 @@ static func get_level(level_id: int) -> LevelDefinition:
 	if _cache.has(level_id):
 		return _cache[level_id]
 	var level := _build(level_id)
+	if level_id <= 10:
+		_apply_starter_board(level)
+	if level.base_coin_reward < 0:
+		level.base_coin_reward = level.coins
 	_cache[level_id] = level
 	return level
 
@@ -57,11 +69,14 @@ static func _make(
 ) -> LevelDefinition:
 	var level := LevelDefinition.new()
 	level.id = level_id
-	level.chapter_id = CHAPTER_PROLOGUE if level_id <= MORNING_RUSH else CHAPTER_KUCHING
+	level.chapter_id = JourneyLibrary.STORY
 	level.title = title
 	level.tag = tag
 	level.difficulty = difficulty
 	level.moves = moves
+	var targets: Array = SCORE_TARGETS[clampi(level_id - 1, 0, 29)]
+	level.score_two_star = targets[0]
+	level.score_three_star = targets[1]
 	level.background_id = &"stall_dawn" if level_id <= MORNING_RUSH else &"kuching_market"
 	if level_id >= WEEKEND_CHALLENGE:
 		level.background_id = &"weekend_market"
@@ -131,7 +146,7 @@ static func _build(level_id: int) -> LevelDefinition:
 
 		1:
 			var l := _make(1, "First Order", "Teach swap", 1,
-				[&"onde_onde", &"kuih_lapis", &"seri_muka", &"kuih_ketayap"],
+				[&"onde_onde", &"kuih_koci", &"ang_ku_kueh", &"kuih_ketayap"],
 				[[&"pakyai", [[&"onde_onde", 6]]]], 24,
 				[], _tut([&"swap"]))
 			l.story_before = &"beat_01_open"
@@ -139,43 +154,43 @@ static func _build(level_id: int) -> LevelDefinition:
 
 		2:
 			return _make(2, "Sweet Start", "Practice collect", 1,
-				[&"onde_onde", &"kuih_lapis", &"seri_muka", &"kuih_ketayap"],
-				[[&"pakyai", [[&"onde_onde", 10], [&"kuih_lapis", 6]]]], 22)
+				[&"onde_onde", &"kuih_koci", &"ang_ku_kueh", &"kuih_ketayap"],
+				[[&"pakyai", [[&"onde_onde", 10], [&"kuih_koci", 6]]]], 22)
 
 		3:
 			return _make(3, "Two at Once", "Teach queue", 2,
-				[&"onde_onde", &"kuih_lapis", &"seri_muka", &"kuih_ketayap"],
+				[&"onde_onde", &"kuih_koci", &"ang_ku_kueh", &"kuih_ketayap"],
 				[
 					[&"abang", [[&"onde_onde", 8]]],
-					[&"tourist", [[&"kuih_lapis", 8]]],
+					[&"tourist", [[&"kuih_koci", 8]]],
 				], 24)
 
 		4:
 			var l := _make(4, "Four in a Row", "Teach Tapau", 2,
-				[&"onde_onde", &"kuih_lapis", &"seri_muka", &"kuih_ketayap"],
-				[[&"abang", [[&"kuih_lapis", 12], [&"seri_muka", 8]]]], 22,
+				[&"onde_onde", &"kuih_koci", &"ang_ku_kueh", &"kuih_ketayap"],
+				[[&"abang", [[&"kuih_koci", 12], [&"ang_ku_kueh", 8]]]], 22,
 				[], _tut([&"match4"]))
 			l.story_before = &"beat_04_tapau"
 			return l
 
 		5:
 			var l := _make(5, "Full Order", "Practice", 2,
-				[&"onde_onde", &"kuih_lapis", &"seri_muka", &"kuih_ketayap"],
-				[[&"kakak", [[&"onde_onde", 10], [&"kuih_lapis", 8], [&"seri_muka", 8]]]], 24,
+				[&"onde_onde", &"kuih_koci", &"ang_ku_kueh", &"kuih_ketayap"],
+				[[&"kakak", [[&"onde_onde", 10], [&"kuih_koci", 8], [&"ang_ku_kueh", 8]]]], 24,
 				[], _tut([&"serve"]))
-			l.kuih_unlock = &"ang_ku_kueh"
+			l.kuih_unlock = &"kuih_lapis"
 			return l
 
 		6:
 			var l := _make(6, "New Flavour", "Combine", 3,
-				[&"onde_onde", &"kuih_lapis", &"seri_muka", &"kuih_ketayap", &"ang_ku_kueh"],
-				[[&"makcik", [[&"ang_ku_kueh", 10], [&"onde_onde", 8]]]], 22)
-			l.recipe_unlock = &"ang_ku_kueh"
+				[&"onde_onde", &"kuih_koci", &"ang_ku_kueh", &"kuih_ketayap", &"kuih_lapis"],
+				[[&"makcik", [[&"kuih_lapis", 10], [&"onde_onde", 8]]]], 22)
+			l.recipe_unlock = &"kuih_lapis"
 			return l
 
 		7:
 			var l := _make(7, "Under the Leaf", "Teach banana leaf", 3,
-				[&"onde_onde", &"kuih_lapis", &"seri_muka", &"kuih_ketayap", &"ang_ku_kueh"],
+				[&"onde_onde", &"kuih_koci", &"ang_ku_kueh", &"kuih_ketayap", &"kuih_lapis"],
 				[[&"runner", [[&"onde_onde", 12], [&"kuih_ketayap", 10]]]], 24,
 				[_leaf([Vector2i(2, 2), Vector2i(5, 2), Vector2i(2, 5), Vector2i(5, 5)])],
 				_tut([&"blocker_leaf"]))
@@ -184,28 +199,28 @@ static func _build(level_id: int) -> LevelDefinition:
 
 		8:
 			return _make(8, "Round Dulang", "Teach Dulang", 3,
-				[&"onde_onde", &"kuih_lapis", &"seri_muka", &"kuih_ketayap", &"ang_ku_kueh"],
-				[[&"abang", [[&"seri_muka", 12], [&"kuih_lapis", 12]]]], 22,
+				[&"onde_onde", &"kuih_koci", &"ang_ku_kueh", &"kuih_ketayap", &"kuih_lapis"],
+				[[&"abang", [[&"ang_ku_kueh", 12], [&"kuih_koci", 12]]]], 22,
 				[_leaf([Vector2i(3, 3), Vector2i(4, 4)])],
 				_tut([&"special_dulang"]))
 
 		9:
 			var l := _make(9, "Morning Prep", "Multi objective", 3,
-				[&"onde_onde", &"kuih_lapis", &"seri_muka", &"kuih_ketayap", &"ang_ku_kueh"],
+				[&"onde_onde", &"kuih_koci", &"ang_ku_kueh", &"kuih_ketayap", &"kuih_lapis"],
 				[
 					[&"nenek", [[&"onde_onde", 10]]],
-					[&"kakak", [[&"seri_muka", 10], [&"kuih_ketayap", 8]]],
+					[&"kakak", [[&"ang_ku_kueh", 10], [&"kuih_ketayap", 8]]],
 				], 26)
 			l.require_blockers_cleared = true
 			return l
 
 		10:
 			var l := _make(10, "Morning Rush", "Chapter mini boss", 4,
-				[&"onde_onde", &"kuih_lapis", &"seri_muka", &"kuih_ketayap", &"ang_ku_kueh"],
+				[&"onde_onde", &"kuih_koci", &"ang_ku_kueh", &"kuih_ketayap", &"kuih_lapis"],
 				[
 					[&"makcik", [[&"onde_onde", 12]]],
-					[&"runner", [[&"kuih_lapis", 12]]],
-					[&"tourist", [[&"seri_muka", 10]]],
+					[&"runner", [[&"kuih_koci", 12]]],
+					[&"tourist", [[&"ang_ku_kueh", 10]]],
 				], 28,
 				[_leaf([Vector2i(1, 3), Vector2i(6, 3), Vector2i(3, 6)])])
 			l.story_after = &"beat_10_rush"
@@ -214,71 +229,72 @@ static func _build(level_id: int) -> LevelDefinition:
 
 		11:
 			return _make(11, "New Regular", "More variety", 2,
-				[&"onde_onde", &"kuih_lapis", &"seri_muka", &"kuih_ketayap", &"ang_ku_kueh", &"vadai"],
-				[[&"makcik", [[&"vadai", 12], [&"onde_onde", 8]]]], 22,
+				[&"onde_onde", &"kuih_koci", &"ang_ku_kueh", &"kuih_ketayap", &"kuih_lapis", &"keria"],
+				[[&"makcik", [[&"keria", 12], [&"onde_onde", 8]]]], 22,
 				[_leaf([Vector2i(2, 4), Vector2i(5, 4)])])
 
 		12:
-			return _make(12, "Two Regulars", "Two customers", 3,
-				[&"onde_onde", &"kuih_lapis", &"seri_muka", &"kuih_ketayap", &"ang_ku_kueh", &"vadai"],
+			var l := _make(12, "Two Regulars", "Two customers", 3,
+				[&"onde_onde", &"kuih_koci", &"ang_ku_kueh", &"kuih_ketayap", &"kuih_lapis", &"keria"],
 				[
-					[&"makcik", [[&"vadai", 12]]],
-					[&"nenek", [[&"kuih_lapis", 10], [&"seri_muka", 8]]],
+					[&"makcik", [[&"keria", 12]]],
+					[&"nenek", [[&"kuih_koci", 10], [&"ang_ku_kueh", 8]]],
 				], 26)
+			l.story_before = &"beat_12_special_order"
+			return l
 
 		13:
 			return _make(13, "Crisp Corner", "Blockers", 3,
-				[&"onde_onde", &"kuih_lapis", &"seri_muka", &"kuih_ketayap", &"ang_ku_kueh", &"vadai"],
-				[[&"abang", [[&"kuih_ketayap", 14], [&"ang_ku_kueh", 10]]]], 22,
+				[&"onde_onde", &"kuih_koci", &"ang_ku_kueh", &"kuih_ketayap", &"kuih_lapis", &"keria"],
+				[[&"abang", [[&"kuih_ketayap", 14], [&"kuih_lapis", 10]]]], 22,
 				[_cover([Vector2i(1, 1), Vector2i(6, 1), Vector2i(1, 6), Vector2i(6, 6)], 2)])
 
 		14:
 			return _make(14, "Kitchen Rhythm", "Flow", 3,
-				[&"onde_onde", &"kuih_lapis", &"seri_muka", &"kuih_ketayap", &"ang_ku_kueh", &"vadai"],
-				[[&"kakak", [[&"vadai", 14], [&"kuih_lapis", 12], [&"onde_onde", 10]]]], 26)
+				[&"onde_onde", &"kuih_koci", &"ang_ku_kueh", &"kuih_ketayap", &"kuih_lapis", &"keria"],
+				[[&"kakak", [[&"keria", 14], [&"kuih_koci", 12], [&"onde_onde", 10]]]], 26)
 
 		15:
 			var l := _make(15, "Recipe Book", "Relax + reward", 2,
-				[&"onde_onde", &"kuih_lapis", &"seri_muka", &"kuih_ketayap", &"ang_ku_kueh", &"vadai"],
-				[[&"makcik", [[&"onde_onde", 14], [&"seri_muka", 12]]]], 28)
+				[&"onde_onde", &"kuih_koci", &"ang_ku_kueh", &"kuih_ketayap", &"kuih_lapis", &"keria"],
+				[[&"makcik", [[&"onde_onde", 14], [&"ang_ku_kueh", 12]]]], 28)
 			l.story_before = &"beat_15_book"
-			l.recipe_unlock = &"vadai"
 			return l
 
 		16:
 			return _make(16, "Sticky Situation", "Teach syrup", 3,
-				[&"onde_onde", &"kuih_lapis", &"seri_muka", &"kuih_ketayap", &"ang_ku_kueh", &"vadai"],
-				[[&"runner", [[&"kuih_lapis", 14], [&"vadai", 12]]]], 22,
+				[&"onde_onde", &"kuih_koci", &"ang_ku_kueh", &"kuih_ketayap", &"kuih_lapis", &"keria"],
+				[[&"runner", [[&"kuih_koci", 14], [&"keria", 12]]]], 22,
 				[BlockerSpec.make(BlockerSpec.Kind.STICKY_SYRUP, [Vector2i(3, 3), Vector2i(4, 4), Vector2i(3, 4)], 1)])
 
 		17:
 			return _make(17, "Combo Night", "Combos", 4,
-				[&"onde_onde", &"kuih_lapis", &"seri_muka", &"kuih_ketayap", &"ang_ku_kueh", &"vadai"],
-				[[&"encik", [[&"onde_onde", 12], [&"kuih_lapis", 12]]]], 24,
+				[&"onde_onde", &"kuih_koci", &"ang_ku_kueh", &"kuih_ketayap", &"kuih_lapis", &"keria"],
+				[[&"encik", [[&"onde_onde", 12], [&"kuih_koci", 12]]]], 24,
 				[_leaf([Vector2i(0, 4), Vector2i(7, 4)])])
 
 		18:
 			var l := _make(18, "Long Order", "Denser board", 3,
-				[&"onde_onde", &"kuih_lapis", &"seri_muka", &"kuih_ketayap", &"ang_ku_kueh", &"vadai"],
+				[&"onde_onde", &"kuih_koci", &"ang_ku_kueh", &"kuih_ketayap", &"kuih_lapis", &"keria"],
 				[
-					[&"encik", [[&"ang_ku_kueh", 10]]],
-					[&"kakak", [[&"onde_onde", 10], [&"seri_muka", 10]]],
-					[&"tourist", [[&"kuih_ketayap", 10]]],
+					[&"encik", [[&"kuih_lapis", 10]]],
+					[&"meiling", [[&"onde_onde", 10], [&"ang_ku_kueh", 10]]],
+					[&"meena", [[&"kuih_ketayap", 10]]],
 				], 28)
 			l.require_blockers_cleared = true
 			return l
 
 		19:
 			return _make(19, "Sweet Corner", "Relax", 2,
-				[&"onde_onde", &"kuih_lapis", &"seri_muka", &"kuih_ketayap", &"ang_ku_kueh", &"vadai"],
-				[[&"nenek", [[&"seri_muka", 12], [&"kuih_lapis", 12]]]], 30)
+				[&"onde_onde", &"kuih_koci", &"ang_ku_kueh", &"kuih_ketayap", &"kuih_lapis", &"keria"],
+				[[&"nenek", [[&"ang_ku_kueh", 12], [&"kuih_koci", 12]]]], 30)
 
 		20:
 			var l := _make(20, "Weekend Market", "Chapter challenge", 4,
-				[&"onde_onde", &"kuih_lapis", &"seri_muka", &"kuih_ketayap", &"ang_ku_kueh", &"vadai"],
+				[&"onde_onde", &"kuih_koci", &"ang_ku_kueh", &"kuih_ketayap", &"kuih_lapis", &"keria"],
 				[
 					[&"kakak", [[&"onde_onde", 12]]],
-					[&"encik", [[&"vadai", 12], [&"ang_ku_kueh", 10]]],
+					[&"encik", [[&"keria", 12], [&"kuih_lapis", 10]]],
 				], 28,
 				[_cover([Vector2i(2, 2), Vector2i(5, 5)], 2)])
 			l.story_before = &"beat_20_weekend"
@@ -287,91 +303,90 @@ static func _build(level_id: int) -> LevelDefinition:
 
 		21:
 			var l := _make(21, "Steamed Fresh", "Teach steamer", 3,
-				[&"onde_onde", &"kuih_lapis", &"seri_muka", &"kuih_ketayap", &"ang_ku_kueh", &"vadai"],
-				[[&"pakyai", [[&"onde_onde", 16], [&"seri_muka", 12]]]], 22,
+				[&"onde_onde", &"kuih_koci", &"ang_ku_kueh", &"kuih_ketayap", &"kuih_lapis", &"keria"],
+				[[&"pakyai", [[&"onde_onde", 16], [&"ang_ku_kueh", 12]]]], 22,
 				[_steamer([Vector2i(1, 5), Vector2i(3, 6), Vector2i(5, 5), Vector2i(6, 2)])],
 				_tut([&"blocker_steamer"]))
-			l.recipe_unlock = &"penyaram"
+			l.story_before = &"beat_21_steamer"
 			return l
 
 		22:
 			return _make(22, "Order Sequence", "Queue", 3,
-				[&"onde_onde", &"kuih_lapis", &"seri_muka", &"kuih_ketayap", &"ang_ku_kueh", &"vadai"],
+				[&"onde_onde", &"kuih_koci", &"ang_ku_kueh", &"kuih_ketayap", &"kuih_lapis", &"keria"],
 				[
-					[&"tourist", [[&"kuih_lapis", 12]]],
-					[&"abang", [[&"seri_muka", 12]]],
-					[&"nenek", [[&"vadai", 12]]],
+					[&"tourist", [[&"kuih_koci", 12]]],
+					[&"abang", [[&"ang_ku_kueh", 12]]],
+					[&"nenek", [[&"keria", 12]]],
 				], 28)
 
 		23:
 			var l := _make(23, "Office Order", "Packaging", 4,
-				[&"onde_onde", &"kuih_lapis", &"seri_muka", &"kuih_ketayap", &"ang_ku_kueh", &"vadai"],
-				[[&"encik", [[&"kuih_lapis", 14], [&"onde_onde", 14]]]], 24,
-				[_box([Vector2i(3, 7)], &"kuih_lapis", 8)])
+				[&"onde_onde", &"kuih_koci", &"ang_ku_kueh", &"kuih_ketayap", &"kuih_lapis", &"keria"],
+				[[&"encik", [[&"kuih_koci", 14], [&"onde_onde", 14]]]], 24,
+				[_box([Vector2i(3, 7)], &"kuih_koci", 8)])
 			l.require_blockers_cleared = true
 			return l
 
 		24:
 			return _make(24, "Big Basket", "Bigger orders", 4,
-				[&"onde_onde", &"kuih_lapis", &"seri_muka", &"kuih_ketayap", &"ang_ku_kueh", &"vadai"],
-				[[&"kakak", [[&"ang_ku_kueh", 12], [&"vadai", 12], [&"seri_muka", 10]]]], 28)
+				[&"onde_onde", &"kuih_koci", &"ang_ku_kueh", &"kuih_ketayap", &"kuih_lapis", &"keria"],
+				[[&"kakak", [[&"kuih_lapis", 12], [&"keria", 12], [&"ang_ku_kueh", 10]]]], 28)
 
 		25:
 			return _make(25, "Calm Corner", "Relax", 2,
-				[&"onde_onde", &"kuih_lapis", &"seri_muka", &"kuih_ketayap", &"ang_ku_kueh", &"vadai"],
+				[&"onde_onde", &"kuih_koci", &"ang_ku_kueh", &"kuih_ketayap", &"kuih_lapis", &"keria"],
 				[[&"nenek", [[&"kuih_ketayap", 14], [&"onde_onde", 12]]]], 30)
 
 		26:
 			var l := _make(26, "Tray Packing", "Packaging + queue", 4,
-				[&"onde_onde", &"kuih_lapis", &"seri_muka", &"kuih_ketayap", &"ang_ku_kueh", &"vadai"],
+				[&"onde_onde", &"kuih_koci", &"ang_ku_kueh", &"kuih_ketayap", &"kuih_lapis", &"keria"],
 				[
-					[&"encik", [[&"vadai", 12]]],
-					[&"pakyai", [[&"kuih_lapis", 12]]],
+					[&"encik", [[&"keria", 12]]],
+					[&"pakyai", [[&"kuih_koci", 12]]],
 				], 26,
-				[_tray([Vector2i(2, 7), Vector2i(5, 7)], &"vadai", 6),
-				 _box([Vector2i(4, 0)], &"kuih_lapis", 8)])
+				[_tray([Vector2i(2, 7), Vector2i(5, 7)], &"keria", 6),
+				 _box([Vector2i(4, 0)], &"kuih_koci", 8)])
 			l.require_blockers_cleared = true
 			return l
 
 		27:
 			return _make(27, "Market Crush", "Challenge", 5,
-				[&"onde_onde", &"kuih_lapis", &"seri_muka", &"kuih_ketayap", &"ang_ku_kueh", &"vadai"],
+				[&"onde_onde", &"kuih_koci", &"ang_ku_kueh", &"kuih_ketayap", &"kuih_lapis", &"keria"],
 				[
-					[&"runner", [[&"onde_onde", 10], [&"kuih_lapis", 9]]],
-					[&"kakak", [[&"ang_ku_kueh", 9], [&"seri_muka", 8]]],
-					[&"encik", [[&"vadai", 10]]],
+					[&"runner", [[&"onde_onde", 10], [&"kuih_koci", 9]]],
+					[&"kakak", [[&"kuih_lapis", 9], [&"ang_ku_kueh", 8]]],
+					[&"encik", [[&"keria", 10]]],
 				], 28,
 				[_cover([Vector2i(1, 2), Vector2i(6, 2), Vector2i(3, 4)], 2)])
 
 		28:
 			var l := _make(28, "Old Friends", "Warm finale build", 3,
-				[&"onde_onde", &"kuih_lapis", &"seri_muka", &"kuih_ketayap", &"ang_ku_kueh", &"vadai"],
+				[&"onde_onde", &"kuih_koci", &"ang_ku_kueh", &"kuih_ketayap", &"kuih_lapis", &"keria"],
 				[
-					[&"makcik", [[&"onde_onde", 12], [&"kuih_lapis", 12], [&"seri_muka", 10]]],
-					[&"nenek", [[&"ang_ku_kueh", 12]]],
+					[&"makcik", [[&"onde_onde", 12], [&"kuih_koci", 12], [&"ang_ku_kueh", 10]]],
+					[&"nenek", [[&"kuih_lapis", 12]]],
 				], 28)
 			l.story_before = &"beat_28_rival"
-			l.recipe_unlock = &"penyaram"
 			return l
 
 		29:
 			return _make(29, "Last Prep", "Challenge", 4,
-				[&"onde_onde", &"kuih_lapis", &"seri_muka", &"kuih_ketayap", &"ang_ku_kueh", &"vadai"],
-				[[&"encik", [[&"vadai", 14], [&"kuih_lapis", 12], [&"onde_onde", 10]]]], 26,
+				[&"onde_onde", &"kuih_koci", &"ang_ku_kueh", &"kuih_ketayap", &"kuih_lapis", &"keria"],
+				[[&"encik", [[&"keria", 14], [&"kuih_koci", 12], [&"onde_onde", 10]]]], 26,
 				[_steamer([Vector2i(0, 0), Vector2i(7, 0), Vector2i(0, 7), Vector2i(7, 7)], 2),
 				 _leaf([Vector2i(3, 1), Vector2i(4, 6)])])
 
 		30:
-			var l := _make(30, "Weekend Market Rush", "Chapter finale", 5,
-				[&"onde_onde", &"kuih_lapis", &"seri_muka", &"kuih_ketayap", &"ang_ku_kueh", &"vadai"],
+			var l := _make(30, "Big Community Order", "Family Stall finale", 5,
+				[&"onde_onde", &"kuih_koci", &"ang_ku_kueh", &"kuih_ketayap", &"kuih_lapis", &"keria"],
 				[
-					[&"kakak", [[&"onde_onde", 10], [&"seri_muka", 9]]],
-					[&"encik", [[&"ang_ku_kueh", 10], [&"vadai", 12]]],
-					[&"runner", [[&"kuih_lapis", 11], [&"kuih_ketayap", 9]]],
+					[&"kakak", [[&"onde_onde", 10], [&"ang_ku_kueh", 9]]],
+					[&"encik", [[&"kuih_lapis", 10], [&"keria", 12]]],
+					[&"runner", [[&"kuih_koci", 11], [&"kuih_ketayap", 9]]],
 				], 32,
 				[_cover([Vector2i(1, 1), Vector2i(6, 1), Vector2i(1, 6), Vector2i(6, 6)], 2),
 				 _leaf([Vector2i(3, 3), Vector2i(4, 4)]),
-				 _box([Vector2i(2, 7)], &"kuih_lapis", 10)])
+				 _box([Vector2i(2, 7)], &"kuih_koci", 10)])
 			l.require_blockers_cleared = true
 			l.story_before = &"beat_30_finale"
 			l.story_after = &"beat_30_done"
@@ -379,7 +394,7 @@ static func _build(level_id: int) -> LevelDefinition:
 			return l
 
 	return _make(maxi(1, level_id), "Stage %d" % level_id, "", 1,
-		[&"onde_onde", &"kuih_lapis", &"seri_muka", &"kuih_ketayap"],
+		[&"onde_onde", &"kuih_koci", &"ang_ku_kueh", &"kuih_ketayap"],
 		[[&"pakyai", [[&"onde_onde", 8]]]], 24)
 
 
@@ -397,3 +412,16 @@ static func export_all() -> int:
 		else:
 			push_error("LevelLibrary: could not save %s (%d)" % [path, err])
 	return written
+
+
+static func _apply_starter_board(level: LevelDefinition) -> void:
+	var side: int = [3,3,4,4,5,5,6,6,7,7][level.id-1]
+	level.width = side
+	level.height = side
+	if level.id <= 2:
+		level.kuih.assign([KuihLibrary.get_kuih(&"onde_onde"),KuihLibrary.get_kuih(&"kuih_koci"),KuihLibrary.get_kuih(&"ang_ku_kueh")])
+	for order in level.customer_orders:
+		for item in order.items:
+			item.count = mini(item.count, 3 if level.id == 1 else 5 if level.id <= 4 else 8)
+	level.score_two_star = 100 if side == 3 else 300 if side == 4 else 600 if side == 5 else 1000
+	level.score_three_star = level.score_two_star * 2

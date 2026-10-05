@@ -1,0 +1,78 @@
+{
+  "generator": "built-in imagegen",
+  "assets": [
+    {
+      "id": "background",
+      "transparent": false,
+      "refs": [
+        "F:/WDzul78/Documents/Godot/Projects/kuih-empire/design/Kuih Empire Main Menu.png"
+      ],
+      "prompt": "Use case: precise-object-edit. Create clean background layer from this main menu reference, portrait 1080x1920. Preserve warm Malaysian wooden kuih stall framing, distant kampung houses hills palms blue sky, rear counter at right at 48% height, foreground wooden tabletop bottom 35%, soft greenery bottom corners. REMOVE Aina, cat, logo, all UI panels buttons currencies profile, all text lettering signs, basket food tray and chalkboard. Reconstruct coherent scenery behind removed objects. No characters, no food, no logos, no writing anywhere. Cozy polished 2D cartoon painted environment matching reference colors.",
+      "output": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a10275-2ab7-7de1-a71b-ad9e6d28243b\\exec-5aa46b99-2449-4f76-b73e-06ec8ddd92db.png"
+    },
+    {
+      "id": "aina",
+      "transparent": true,
+      "refs": [
+        "F:/WDzul78/Documents/Godot/Projects/kuih-empire/assets/characters/fullbody_v2/aina.png",
+        "F:/WDzul78/Documents/Godot/Projects/kuih-empire/design/Kuih Empire Main Menu.png"
+      ],
+      "prompt": "Use case: identity-preserve. Image 1 is Aina identity and outfit reference, image 2 main menu pose/style reference. Generate ONE isolated full-body Aina main menu sprite, modestly slimmer torso arms waist (about 15 percent slimmer), retain friendly large eyes rounded face pink floral hijab cream apron long modest pink dress closed shoes. Pose like main menu: facing viewer slightly toward RIGHT, raised open presenting hand extends to RIGHT, other hand rests near waist. Full figure from head to shoes uncropped, generous small transparent margin, character fills canvas. Clean brown outlines, warm polished cartoon shading like menu. Genuinely transparent background with no dark glow, no scenery no text no other objects.",
+      "output": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a10275-2ab7-7de1-a71b-ad9e6d28243b\\exec-0f18180a-19d1-4c1e-89f6-735a80e683df.png"
+    },
+    {
+      "id": "cat",
+      "transparent": true,
+      "refs": [
+        "F:/WDzul78/Documents/Godot/Projects/kuih-empire/design/Kuih Empire Main Menu.png"
+      ],
+      "prompt": "Use case: background-extraction. Generate ONLY the sleeping ginger-and-white cat on the right rear counter in reference, as separate game sprite. Whole curled cat horizontal pose head on left front paws, eyes closed happy peaceful, fluffy orange back white face chest paws. Match warm clean brown outline polished cartoon style. Isolated tightly framed centered cat, genuinely transparent background, no table no scenery no text no halo. Keep all paws tail ears within frame.",
+      "output": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a10275-2ab7-7de1-a71b-ad9e6d28243b\\exec-6423db46-1ff5-4fd4-b836-d7882c6133d3.png"
+    },
+    {
+      "id": "foreground",
+      "transparent": true,
+      "refs": [
+        "F:/WDzul78/Documents/Godot/Projects/kuih-empire/design/Kuih Empire Main Menu.png"
+      ],
+      "prompt": "Use case: background-extraction. Separate foreground decoration game layer matching reference: wide shallow wicker tray filled with banana leaves, red cream green square kuih lapis, green coconut coated onde onde and WHITE kuih koci in green banana leaf wrapping. At far left a small brown framed dark chalkboard completely BLANK with no lettering. ONE cohesive horizontal composition, tray front fully visible; chalkboard behind tray left, no characters no hands no table no UI. Polished warm cartoon matching reference, genuinely transparent background, tight frame with margins.",
+      "output": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a10275-2ab7-7de1-a71b-ad9e6d28243b\\exec-29fca50f-cb64-4fd1-ae77-7a51c83f7e22.png"
+    },
+    {
+      "id": "story",
+      "prompt": "Use case: stylized-concept. One isolated mobile game menu icon: open cream recipe storybook with brown leather cover, blank pages delicate decorative lines no lettering. Warm polished cartoon, thick brown outlines, golden highlights, match Kuih Empire cozy wooden menu style. Centered tightly framed on genuinely transparent background. No words no letters no panel no additional objects.",
+      "transparent": true,
+      "output": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a10275-2ab7-7de1-a71b-ad9e6d28243b\\exec-30af6a04-8f56-48a7-bfab-1e52d81106e1.png"
+    },
+    {
+      "id": "records",
+      "prompt": "Use case: stylized-concept. One isolated mobile game menu icon: gold trophy cup with handles. Warm polished cartoon, thick brown outlines, golden highlights, match Kuih Empire cozy wooden menu style. Centered tightly framed on genuinely transparent background. No words no letters no panel no additional objects.",
+      "transparent": true,
+      "output": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a10275-2ab7-7de1-a71b-ad9e6d28243b\\exec-a997d384-0832-40a7-8897-b5004dc72722.png"
+    },
+    {
+      "id": "shop",
+      "prompt": "Use case: stylized-concept. One isolated mobile game menu icon: tiny wooden Malaysian kuih stall red cream striped awning. Warm polished cartoon, thick brown outlines, golden highlights, match Kuih Empire cozy wooden menu style. Centered tightly framed on genuinely transparent background. No words no letters no panel no additional objects.",
+      "transparent": true,
+      "output": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a10275-2ab7-7de1-a71b-ad9e6d28243b\\exec-5b37b471-1171-46f6-8e74-a8c24f0126bb.png"
+    },
+    {
+      "id": "achievements",
+      "prompt": "Use case: stylized-concept. One isolated mobile game menu icon: three ascending golden columns on green wooden plinth. Warm polished cartoon, thick brown outlines, golden highlights, match Kuih Empire cozy wooden menu style. Centered tightly framed on genuinely transparent background. No words no letters no panel no additional objects.",
+      "transparent": true,
+      "output": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a10275-2ab7-7de1-a71b-ad9e6d28243b\\exec-a7ca0cc2-e03b-419e-8e87-2781badb6824.png"
+    }
+  ],
+  "layers": [
+    "background",
+    "cat (idle breathing)",
+    "aina (idle sway, clipped below waist)",
+    "logo_dessert (idle pulse)",
+    "foreground",
+    "native editable UI"
+  ],
+  "localization": "Menu and settings: ms/en. Other screens retain existing text.",
+  "profile": "Name saved in profile.name; level = 1 + floor(total earned stars / 10); progress = stars modulo 10.",
+  "records": "Local player stage records, no online leaderboard.",
+  "animation": "Separate scene layers, not skeletal arm/head rig. PNG originals retained."
+}

@@ -1,5 +1,14 @@
 class_name GeraiBackdrop
 extends Control
+const MVP_BACKGROUND_PATH := "res://assets/backgrounds/gerai_mvp.png"
+
+var location_id: StringName = &"family_stall"
+var structural_state := 0
+var texture_path := ""
+var _background: Texture2D
+var _decor: Dictionary = {}
+var _state_override := -1
+var _decor_override: Variant = null
 
 ## Painted market backdrop for the stall and gameplay screens.
 ##
@@ -8,6 +17,9 @@ extends Control
 ## sections 51 and 52).
 
 const PRESETS := {
+	&"ramadan": {"sky_top": Color("694e94"), "sky_bottom": Color("ffbd79"), "canopy": Color("427534"), "canopy_alt": Color("fff0ca"), "skyline": Color("94637f"), "ground": Color("cc965d"), "accent": Color("e5af38")},
+	&"school": {"sky_top": Color("c8e8f1"), "sky_bottom": Color("fff6db"), "canopy": Color("527ba4"), "canopy_alt": Color("fff0ca"), "skyline": Color("96b3c1"), "ground": Color("cbb695"), "accent": Color("6cad46")},
+	&"city": {"sky_top": Color("a1c9f3"), "sky_bottom": Color("fff6db"), "canopy": Color("423a58"), "canopy_alt": Color("ffd571"), "skyline": Color("8b91ad"), "ground": Color("bba391"), "accent": Color("efb935")},
 	&"stall_dawn": {
 		"sky_top": Color("ffd9a8"), "sky_bottom": Color("fff3dd"),
 		"canopy": Color("e4576c"), "canopy_alt": Color("fff0e0"),
@@ -57,6 +69,8 @@ const PRESETS := {
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	resized.connect(queue_redraw)
+	LocationManager.location_state_changed.connect(_location_changed)
+	_sync_environment()
 
 
 func _col(key: String) -> Color:
@@ -65,6 +79,16 @@ func _col(key: String) -> Color:
 
 
 func _draw() -> void:
+	if size.x <= 0 or size.y <= 0:
+		return
+	if not simple and _background != null:
+		var source_size := _background.get_size()
+		var scale_factor := maxf(size.x / source_size.x, size.y / source_size.y)
+		var drawn_size := source_size * scale_factor
+		draw_texture_rect(_background, Rect2((size - drawn_size) * 0.5, drawn_size), false)
+		_draw_structure()
+		_draw_decor()
+		return
 	var w := size.x
 	var h := size.y
 	_draw_sky(Rect2(Vector2.ZERO, size))
@@ -77,6 +101,8 @@ func _draw() -> void:
 	if show_counter:
 		_draw_counter(Rect2(0, h * 0.86, w, h * 0.14))
 		_draw_props()
+	_draw_structure()
+	_draw_decor()
 
 
 ## Soft ground band for the simple (story) variant, so the lower half is not a
@@ -196,3 +222,82 @@ func _draw_props() -> void:
 		text_size,
 		Palette.PAPER
 	)
+
+
+func apply_environment(id: StringName, decor_preview: Variant = null, state_preview: int = -1) -> void:
+	location_id = id
+	_state_override = mini(state_preview, LocationManager.structural_level(id)) if state_preview >= 0 else -1
+	_decor_override = decor_preview
+	_sync_environment()
+
+func debug_preview(id: StringName, level: int, decor_preview: Variant = null) -> void:
+	if not OS.has_feature("debug"):
+		return
+	location_id = id
+	_state_override = clampi(level, 0, 3)
+	_decor_override = decor_preview
+	_sync_environment()
+
+func _location_changed(id: StringName) -> void:
+	if id == location_id and _state_override < 0:
+		_sync_environment()
+
+func _sync_environment() -> void:
+	var location := LocationDefinition.find(location_id)
+	structural_state = _state_override if _state_override >= 0 else LocationManager.structural_level(location.id)
+	background_id = location.preset
+	var path := LocationManager.effective_background(location, structural_state)
+	if path != texture_path or (_background == null and not path.is_empty()):
+		texture_path = path
+		_background = load(path) if not path.is_empty() else null
+	_decor = _decor_override if _decor_override is Dictionary else LocationManager.equipped(location_id)
+	queue_redraw()
+
+func _draw_structure() -> void:
+	if simple:
+		return
+	if location_id == &"family_stall" and structural_state == 0:
+		if OnboardingProgress.restored():
+			StallComponentArt.draw_component(self,"trim",Rect2(0,0,size.x,size.y*.07))
+			StallComponentArt.draw_component(self,"cloth",Rect2(size.x*.14,size.y*.87,size.x*.72,size.y*.09))
+		else:
+			draw_rect(Rect2(Vector2.ZERO,size),Color(.27,.19,.10,.16))
+			for side in [0.04,0.96]:
+				var at := Vector2(size.x*side,size.y*.18)
+				draw_polyline(PackedVector2Array([at,at+Vector2(-size.x*.012,size.y*.04),at+Vector2(size.x*.01,size.y*.07),at+Vector2(0,size.y*.11)]),Color(.17,.09,.04,.65),maxf(2,size.x*.004),true)
+	var location := LocationDefinition.find(location_id)
+	if location.background_mode == "full_texture":
+		return
+	for layer in location.layers:
+		if structural_state < int(layer.get("level", 0)):
+			continue
+		var relative: Rect2 = layer.rect
+		var rect := Rect2(relative.position*size, relative.size*size)
+		StallComponentArt.draw_component(self, layer.kind, rect)
+		if layer.kind == "sign":
+			var label := "KUIH EMPIRE" if structural_state == 3 else "KUIH"
+			draw_string(UIKit.bold_font(), rect.position+Vector2(rect.size.x*.1,rect.size.y*.69),label,HORIZONTAL_ALIGNMENT_CENTER,rect.size.x*.8,int(size.x*.030),Palette.PAPER)
+
+func _draw_decor() -> void:
+	if simple:
+		return
+	for slot in _decor:
+		var item := DecorDefinition.find(str(_decor[slot]))
+		if item == null or not item.gameplay_safe:
+			continue
+		match item.kind:
+			"flower":
+				var at := Vector2(size.x*.065, size.y*.72)
+				draw_style_box(UIKit.wood_box(Palette.WOOD_LIGHT), Rect2(at + Vector2(-size.x*.035, 0), Vector2(size.x*.07, size.y*.045)))
+				draw_line(at, at-Vector2(0,size.y*.05), Palette.LEAF, size.x*.008, true)
+				_draw_flower(at-Vector2(0,size.y*.05), size.x*.035)
+			"lamp":
+				StallComponentArt.draw_component(self,"lamp",Rect2(size.x*.89,size.y*.19,size.x*.10,size.y*.12))
+			"cloth":
+				StallComponentArt.draw_component(self,"cloth",Rect2(size.x*.16,size.y*.88,size.x*.68,size.y*.075))
+
+func _draw_flower(at: Vector2, radius: float) -> void:
+	for petal in 5:
+		var angle := petal * TAU / 5
+		draw_circle(at + Vector2.from_angle(angle)*radius*.6, radius*.6, Palette.PINK)
+	draw_circle(at, radius*.3, Palette.GOLD_PALE)

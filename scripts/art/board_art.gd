@@ -3,11 +3,39 @@ extends RefCounted
 
 ## Procedural art for obstacles and special tiles.
 ##
-## Special tiles reuse the vocabulary from the master plan: Tapau = gift box,
+## Classic Tapau, Dulang and Special Order use PNG artwork.
+## Legacy placeholder art:
 ## Dulang = round golden tray, Special Order = crowned kuih.
 
 const OUTLINE := Color("4a2c17")
+const TAPAU_ART = preload("res://assets/specials/directional_v3/tapau_horizontal.png")
+const TAPAU_VERTICAL_ART = preload("res://assets/specials/directional_v3/tapau_vertical_blue.png")
+const DULANG_ART = preload("res://assets/specials/gold_v2/dulang.png")
+const HANTAR_ART = preload("res://assets/specials/delivery_v1/pesanan_hantar.png")
+static var _delivery_region := Rect2()
+const ORDER_ART = preload("res://assets/specials/cartoon_v2/order.png")
 
+
+static func special_texture(special: int) -> Texture2D:
+	if special == BoardCell.Special.HANTAR:
+		return HANTAR_ART
+	if special == BoardCell.Special.TAPAU:
+		return TAPAU_ART
+	if special == BoardCell.Special.TAPAU_VERTICAL:
+		return TAPAU_VERTICAL_ART
+	if special == BoardCell.Special.DULANG:
+		return DULANG_ART
+	if special == BoardCell.Special.ORDER:
+		return ORDER_ART
+	return null
+
+
+static func draw_delivery(canvas: CanvasItem, rect: Rect2) -> void:
+	if _delivery_region.size == Vector2.ZERO:
+		_delivery_region = Rect2(HANTAR_ART.get_image().get_used_rect())
+	var fit := minf(rect.size.x / _delivery_region.size.x, rect.size.y / _delivery_region.size.y)
+	var fitted := _delivery_region.size * fit
+	canvas.draw_texture_rect_region(HANTAR_ART, Rect2(rect.position + (rect.size-fitted)*.5, fitted), _delivery_region)
 
 static func draw_blocker(canvas: CanvasItem, rect: Rect2, kind: int, hp: int, max_hp: int) -> void:
 	match kind:
@@ -26,9 +54,13 @@ static func draw_blocker(canvas: CanvasItem, rect: Rect2, kind: int, hp: int, ma
 
 
 static func draw_special(canvas: CanvasItem, rect: Rect2, special: int) -> void:
+	if special_texture(special) != null:
+		return
 	match special:
 		BoardCell.Special.TAPAU:
-			_draw_gift_box(canvas, rect)
+			pass # The tile's icon draws the illustrated special.
+		BoardCell.Special.TAPAU_VERTICAL:
+			pass
 		BoardCell.Special.DULANG:
 			_draw_dulang(canvas, rect)
 		BoardCell.Special.ORDER:

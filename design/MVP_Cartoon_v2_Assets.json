@@ -1,0 +1,78 @@
+{
+  "generation_tool": "Built-in image_gen.imagegen",
+  "references": [
+    "design/Kuih Empire_ Sweet Match Adventure.png",
+    "design/Kuih Empire_ Malaysian Game Master Plan.png"
+  ],
+  "revision": "cartoon_v2",
+  "approved_correction": "Koci dough is WHITE, not pink; the discarded pink generation is not installed.",
+  "normal_tiles": [
+    {
+      "id": "onde_onde",
+      "prompt": "Generate ONE isolated transparent food tile sprite for Kuih Empire mobile match-3. Match the FOOD TILES in the supplied Sweet Match Adventure concept, not the previous realistic food assets. Pure polished 2D casual-game cartoon: chunky dark brown outline, simple plump geometry, bold flat saturated colors, broad cel-shaded highlight shapes, very little surface detail. Cute food with no faces or limbs. NO photorealism, microtexture, crumbs, realistic wet highlights, glitter, sparkles, glow, plate, UI, typography, letters or numbers. Three-quarter slightly overhead view, centered square canvas, entire silhouette fills 82% of canvas, recognizable at 48px. TRUE TRANSPARENT background. The reference is the exact visual style and silhouette guide, not an edit target. Subject: one pandan-green sphere of Onde-onde covered with large simplified white coconut flecks; bright green remains clearly visible, no realistic fibers.",
+      "file": "assets/kuih/cartoon_v2/onde_onde.png",
+      "transparent": true
+    },
+    {
+      "id": "lapis_pandan",
+      "prompt": "Generate ONE isolated transparent food tile sprite for Kuih Empire mobile match-3. Match the FOOD TILES in the supplied Sweet Match Adventure concept, not the previous realistic food assets. Pure polished 2D casual-game cartoon: chunky dark brown outline, simple plump geometry, bold flat saturated colors, broad cel-shaded highlight shapes, very little surface detail. Cute food with no faces or limbs. NO photorealism, microtexture, crumbs, realistic wet highlights, glitter, sparkles, glow, plate, UI, typography, letters or numbers. Three-quarter slightly overhead view, centered square canvas, entire silhouette fills 82% of canvas, recognizable at 48px. TRUE TRANSPARENT background. The reference is the exact visual style and silhouette guide, not an edit target. Subject: one small square cube of pandan Kuih Lapis, alternating THREE green layers and TWO thick cream layers, bright green top; perfectly clear horizontal stripes.",
+      "file": "assets/kuih/cartoon_v2/lapis_pandan.png",
+      "transparent": true
+    },
+    {
+      "id": "kuih_koci",
+      "prompt": "Generate ONE isolated transparent food tile sprite for Kuih Empire mobile match-3. Match the FOOD TILES in the supplied Sweet Match Adventure concept, not the previous realistic food assets. Pure polished 2D casual-game cartoon: chunky dark brown outline, simple plump geometry, bold flat saturated colors, broad cel-shaded highlight shapes, very little surface detail. Cute food with no faces or limbs. NO photorealism, microtexture, crumbs, realistic wet highlights, glitter, sparkles, glow, plate, UI, typography, letters or numbers. Three-quarter slightly overhead view, centered square canvas, entire silhouette fills 82% of canvas, recognizable at 48px. TRUE TRANSPARENT background. The reference is the exact visual style and silhouette guide, not an edit target. Subject: one ivory-white rounded triangular Kuih Koci mound of glutinous rice dough, with soft cream-white broad highlights and slightly warm cream shadows, sitting on one tiny folded dark green banana leaf base. The food is WHITE, absolutely no pink or red food coloring. Mostly white food visible; leaf does not wrap or conceal the white pyramid.",
+      "file": "assets/kuih/cartoon_v2/kuih_koci.png",
+      "transparent": true
+    },
+    {
+      "id": "kuih_ketayap",
+      "prompt": "Generate ONE isolated transparent food tile sprite for Kuih Empire mobile match-3. Match the FOOD TILES in the supplied Sweet Match Adventure concept, not the previous realistic food assets. Pure polished 2D casual-game cartoon: chunky dark brown outline, simple plump geometry, bold flat saturated colors, broad cel-shaded highlight shapes, very little surface detail. Cute food with no faces or limbs. NO photorealism, microtexture, crumbs, realistic wet highlights, glitter, sparkles, glow, plate, UI, typography, letters or numbers. Three-quarter slightly overhead view, centered square canvas, entire silhouette fills 82% of canvas, recognizable at 48px. TRUE TRANSPARENT background. The reference is the exact visual style and silhouette guide, not an edit target. Subject: one short lime-green rolled Ketayap crepe, horizontal diagonal with a LARGE obvious dark green spiral at its near round end; simple smooth roll, no grain texture.",
+      "file": "assets/kuih/cartoon_v2/kuih_ketayap.png",
+      "transparent": true
+    },
+    {
+      "id": "keria",
+      "prompt": "Generate ONE isolated transparent food tile sprite for Kuih Empire mobile match-3. Match the FOOD TILES in the supplied Sweet Match Adventure concept, not the previous realistic food assets. Pure polished 2D casual-game cartoon: chunky dark brown outline, simple plump geometry, bold flat saturated colors, broad cel-shaded highlight shapes, very little surface detail. Cute food with no faces or limbs. NO photorealism, microtexture, crumbs, realistic wet highlights, glitter, sparkles, glow, plate, UI, typography, letters or numbers. Three-quarter slightly overhead view, centered square canvas, entire silhouette fills 82% of canvas, recognizable at 48px. TRUE TRANSPARENT background. The reference is the exact visual style and silhouette guide, not an edit target. Subject: one warm golden-orange Keria ring with a large clearly open central hole, simple scalloped round outline and a few broad pale sugar highlights; no fine sugar grain texture.",
+      "file": "assets/kuih/cartoon_v2/keria.png",
+      "transparent": true
+    },
+    {
+      "id": "kuih_lapis",
+      "prompt": "Generate ONE isolated transparent food tile sprite for Kuih Empire mobile match-3. Match the FOOD TILES in the supplied Sweet Match Adventure concept, not the previous realistic food assets. Pure polished 2D casual-game cartoon: chunky dark brown outline, simple plump geometry, bold flat saturated colors, broad cel-shaded highlight shapes, very little surface detail. Cute food with no faces or limbs. NO photorealism, microtexture, crumbs, realistic wet highlights, glitter, sparkles, glow, plate, UI, typography, letters or numbers. Three-quarter slightly overhead view, centered square canvas, entire silhouette fills 82% of canvas, recognizable at 48px. TRUE TRANSPARENT background. The reference is the exact visual style and silhouette guide, not an edit target. Subject: one small square pink Kuih Lapis cube, alternating THREE bright pink layers and TWO thick cream layers, magenta-pink top; clearly readable horizontal stripes.",
+      "file": "assets/kuih/cartoon_v2/kuih_lapis.png",
+      "transparent": true
+    }
+  ],
+  "special_tiles": [
+    {
+      "id": "dulang",
+      "prompt": "Generate ONE isolated Dulang special-tile sprite for Kuih Empire mobile match-3. Follow the Special Tiles Dulang drawing in the supplied Malaysian Game Master Plan reference. One round shallow golden-brown wooden serving tray seen slightly from above, containing ONLY three miniature cartoon kuih: one WHITE triangular Koci on a dark green leaf, one PINK/CREAM layered kuih cube, one GREEN Onde-onde ball with simplified white coconut flecks. Composition must read as a single round loaded serving tray at 48px; tray rim clearly visible, tiny food contents arranged compactly, no detached objects. Pure polished 2D cartoon, chunky dark brown outlines, broad flat colors and clean cel-shaded highlights; no realistic surface microtexture. Square centered, fills 82% canvas. TRUE transparent background. No text, numbers, logo, UI frame, crown, effects, sparkles or scenery. Reference is style and subject guide, not edit target.",
+      "file": "assets/specials/cartoon_v2/dulang.png",
+      "transparent": true
+    },
+    {
+      "id": "order",
+      "prompt": "Generate ONE isolated Special Order match-5 tile icon for Kuih Empire mobile match-3. Follow the Special Order clipboard in the supplied Malaysian Game Master Plan reference. A chunky small wooden clipboard tilted slightly clockwise, cream paper sheet, rounded silver top clip, one bold pink flower-shaped emblem at the center with TWO short simple brown horizontal list strokes underneath, tiny golden coin at lower-right edge. Pure polished 2D casual cartoon, thick dark brown outline, bright flat color, simple broad cel-shaded highlights. Single compact coherent silhouette, square centered fills 82% canvas, clearly recognizable at 48px. TRUE transparent background. No readable text, letters, numerals, logo, UI button or frame, scenery, sparkles, food or photorealistic texture. Reference is design/style reference, not edit target.",
+      "file": "assets/specials/cartoon_v2/order.png",
+      "transparent": true
+    }
+  ],
+  "tapau": {
+    "file": "assets/boosters/tapau.png",
+    "source_manifest": "design/MVP_Visual_Assets.json",
+    "effect": "Horizontal or vertical match 4 creates Tapau, clearing its row AND column."
+  },
+  "dulang_effect": "L/T match creates Dulang, clearing 3x3.",
+  "order_effect": "Straight match 5 creates Special Order, collecting one selected kuih type.",
+  "save_migration": {
+    "seri_muka": "lapis_pandan",
+    "ang_ku_kueh": "kuih_lapis",
+    "vadai": "keria"
+  },
+  "notes": [
+    "Old sprites remain in their original folders; active normal sprites load from cartoon_v2.",
+    "Booster Dulang/Tapau still use inventory, separately from specials created on the board.",
+    "A previous column special enum value is retained only for compatibility; it now clears as Tapau."
+  ]
+}

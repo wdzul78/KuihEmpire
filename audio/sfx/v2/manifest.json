@@ -1,0 +1,122 @@
+{
+  "generator": "tools/build_cozy_audio.py",
+  "seed": 5102026,
+  "origin": "Original deterministic synthesis; no external audio samples.",
+  "sample_rate": 22050,
+  "files": [
+    {
+      "file": "audio/sfx/v2/match_1.wav",
+      "duration": 0.28,
+      "peak": 0.4131,
+      "sha256": "a8a2c15fb5755609f4f83db1ae5c9ec69debd1b87600262f4ceebcc9ec8137a5"
+    },
+    {
+      "file": "audio/sfx/v2/match_2.wav",
+      "duration": 0.28,
+      "peak": 0.4224,
+      "sha256": "265983e81ce703ff1577d4585c957b2f6459fa328050880ec23d014dc55c3117"
+    },
+    {
+      "file": "audio/sfx/v2/match_3.wav",
+      "duration": 0.28,
+      "peak": 0.4244,
+      "sha256": "3b1110c01b02e77af259dc25b6ad2f4ad424c324a75a52e95e919eab1646be5c"
+    },
+    {
+      "file": "audio/sfx/v2/match_4.wav",
+      "duration": 0.28,
+      "peak": 0.4323,
+      "sha256": "dd43949155f1a6fced15441190677e176532e3201ac2411a5d436a8cb2e713bc"
+    },
+    {
+      "file": "audio/sfx/v2/line_clear.wav",
+      "duration": 0.27,
+      "peak": 0.52,
+      "sha256": "62074a0c5d807d831e9ad0a7bb8d94fed07593a0ff53ba3f6a2ee4e901b8e7e0"
+    },
+    {
+      "file": "audio/sfx/v2/special_create.wav",
+      "duration": 0.68,
+      "peak": 0.52,
+      "sha256": "df807a4253086732dfa599f6638502f0687095418b6170d7780df88be3b8767b"
+    },
+    {
+      "file": "audio/sfx/v2/directional_tapau.wav",
+      "duration": 0.68,
+      "peak": 0.52,
+      "sha256": "5251a538f7c56b08e3b2bc62171a8c994d72fbcffa957360e3206e932c23047d"
+    },
+    {
+      "file": "audio/sfx/v2/tray_burst.wav",
+      "duration": 0.76,
+      "peak": 0.52,
+      "sha256": "17728f4b45696792becd995b528934317a3a3b73875ee4a87cf2322bb21525d1"
+    },
+    {
+      "file": "audio/sfx/v2/cross_tapau.wav",
+      "duration": 0.94,
+      "peak": 0.52,
+      "sha256": "9a291fe31d1ed42aa5fe003674c67d6ed4ecedf9feadf759a077f802dde53047"
+    },
+    {
+      "file": "audio/sfx/v2/order_burst.wav",
+      "duration": 1.02,
+      "peak": 0.52,
+      "sha256": "eb60081be1313d836f0d80e5e5b78417fca9bde42e0c2dca61d91eee4b718d23"
+    },
+    {
+      "file": "audio/sfx/v2/hantar_create.wav",
+      "duration": 0.6,
+      "peak": 0.52,
+      "sha256": "5c442452312a846160bfbae646535d01ee7190bfbbed2af94c538163745124bb"
+    },
+    {
+      "file": "audio/sfx/v2/hantar_launch.wav",
+      "duration": 0.45,
+      "peak": 0.52,
+      "sha256": "066bbf1ad64638ce98c669a7e8d4e1aa5e101fcf755b2db75792a1dbc58dbad2"
+    },
+    {
+      "file": "audio/sfx/v2/hantar_hit.wav",
+      "duration": 0.43,
+      "peak": 0.52,
+      "sha256": "6e30683b108d8e4cf2ea0a1fbdb90a8c0d3e39857ac155d6e68c1aa67c9ea108"
+    },
+    {
+      "file": "audio/sfx/v2/spatula.wav",
+      "duration": 0.52,
+      "peak": 0.52,
+      "sha256": "88780aec76152816ad08e7d4a70664bda1618f8455e2e5cf27fdcaf18f49299b"
+    },
+    {
+      "file": "audio/sfx/v2/shuffle.wav",
+      "duration": 0.83,
+      "peak": 0.52,
+      "sha256": "6b702325e70195f17cce0e30ead480ba246ffe2538199838a68a7008981383c9"
+    },
+    {
+      "file": "audio/sfx/v2/serve.wav",
+      "duration": 0.88,
+      "peak": 0.52,
+      "sha256": "cdf4c1f9cc2a16eccd46a1301e178e51e554a12629c6b98839facb7bde3d774a"
+    },
+    {
+      "file": "audio/sfx/v2/reward.wav",
+      "duration": 0.79,
+      "peak": 0.52,
+      "sha256": "d88b3c3486e8694eadf86a8d5272fca5d5cab08fe84daf831024ed99b7c83770"
+    },
+    {
+      "file": "audio/sfx/v2/unlock.wav",
+      "duration": 0.88,
+      "peak": 0.52,
+      "sha256": "fd2646efdb54cbc51b38c4dbdee8e6fb31b925efb72c1c61cddbdab462d793fd"
+    },
+    {
+      "file": "audio/sfx/v2/success.wav",
+      "duration": 1.78,
+      "peak": 0.52,
+      "sha256": "92ee7c4e86a765eefe04446526441bcede4a6531df5ab7fafbca4dc81262249b"
+    }
+  ]
+}

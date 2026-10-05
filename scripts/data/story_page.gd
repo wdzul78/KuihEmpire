@@ -17,6 +17,20 @@ extends Resource
 @export var mood: StringName = &"stall_dawn"
 ## Optional chalkboard quote.
 @export var sign_text: String = ""
+@export var heading_ms: String = ""
+@export var lines_ms: PackedStringArray = PackedStringArray()
+@export var illustration: Texture2D
+@export var illustration_region: Rect2
+@export var quote: String = ""
+@export var quote_ms: String = ""
+@export var quote_rect: Rect2
+@export var greeting: bool = false
+
+func localized_heading() -> String:
+	return JourneyArt.localized(heading_ms if not heading_ms.is_empty() else heading, heading)
+
+func localized_body() -> String:
+	return "\n".join(lines if SaveManager.get_setting("language", "en") == "en" or lines_ms.is_empty() else lines_ms)
 
 
 static func make(

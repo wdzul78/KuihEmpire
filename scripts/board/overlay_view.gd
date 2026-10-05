@@ -31,6 +31,8 @@ var need: int = 0:
 
 
 func _ready() -> void:
+	# Covers must stay above opaque food sprites, including after a refill.
+	z_index = 2
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	pivot_offset = size * 0.5
 

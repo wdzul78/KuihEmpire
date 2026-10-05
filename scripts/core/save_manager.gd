@@ -7,7 +7,7 @@ extends Node
 ## progress is never lost after a level.
 
 const DEFAULT_SAVE_PATH := "user://kuih_empire_save.json"
-const SAVE_VERSION := 1
+const SAVE_VERSION := 5
 const AUTOSAVE_DELAY := 1.5
 
 ## Tests and tools redirect this so they never touch a real player's save.
@@ -26,6 +26,7 @@ const DEFAULT_SETTINGS := {
 	"music": true,
 	"haptics": true,
 	"show_hints": true,
+	"language": "en",
 }
 
 var data: Dictionary = {}
@@ -41,9 +42,17 @@ func _ready() -> void:
 func _default_data() -> Dictionary:
 	return {
 		"version": SAVE_VERSION,
+		"language_policy": 2,
+		"profile": {"name": "Player", "avatar": "aina", "player_id": Crypto.new().generate_random_bytes(16).hex_encode(), "title_id": "Kuih Maker"},
+		"achievements": {},
+		"owned_decor": [],
+		"structural_upgrades": {},
+		"location_decor": {},
 		"coins": 250,
+		"diamonds": 0,
+		"hearts": {"current_hearts": 5, "max_hearts": 5, "last_heart_refill_timestamp": 0, "free_play_end_timestamp": 0, "win_streak": 0, "rewarded_heart_ads_used_today": 0, "rewarded_heart_ads_reset_date": "", "milestones": [], "hearts_spent": 0, "coins_spent": 0},
 		"boosters": DEFAULT_BOOSTERS.duplicate(true),
-		"levels": {},            # String level id -> { stars, best_moves_left }
+		"levels": {},            # Stage records; legacy stars and moves preserved.
 		"chapters": ["prologue"], # unlocked chapter ids
 		"recipes": [],           # unlocked recipe ids
 		"mastery": {},           # recipe id -> collected count
@@ -52,8 +61,12 @@ func _default_data() -> Dictionary:
 		"story_read": [],
 		"tutorial_index": 0,
 		"tutorial_done": false,
+		"tutorial_rewarded": [],
+		"kuih_seen": [],
+		"onboarding": {"gift_claimed": false, "shop_intro_done": false, "restored": false},
+		"special_unlocks": {"hantar": false},
 		"settings": DEFAULT_SETTINGS.duplicate(true),
-		"stats": {"levels_played": 0, "levels_won": 0, "moves_played": 0},
+		"stats": {"levels_played": 0, "levels_won": 0, "moves_played": 0, "orders_served": 0, "specials_used": 0, "special_combos": 0, "unassisted_wins": 0, "achievement_win_streak": 0, "best_win_streak": 0},
 	}
 
 
@@ -68,6 +81,8 @@ func load_game() -> void:
 		elif FileAccess.file_exists(save_path):
 			push_warning("SaveManager: invalid save and no usable backup; using defaults.")
 	data = _normalize(loaded if loaded is Dictionary else {})
+	if is_instance_valid(get_node_or_null("/root/LocationManager")):
+		get_node("/root/LocationManager").reconcile()
 
 
 func save_game() -> bool:
@@ -143,10 +158,58 @@ func _strings(value: Variant, fallback: Array = []) -> Array:
 ## Missing fields retain defaults, so older/partial saves stay compatible.
 func _normalize(loaded: Dictionary) -> Dictionary:
 	var clean := _default_data()
+	clean["kuih_seen"] = _strings(loaded.get("kuih_seen"))
+	var onboarding: Variant = loaded.get("onboarding")
+	if onboarding is Dictionary:
+		for field in clean["onboarding"]:
+			clean["onboarding"][field] = onboarding.get(field) is bool and onboarding[field]
+	elif loaded.get("tutorial_done") is bool and loaded["tutorial_done"]:
+		clean["onboarding"]["gift_claimed"] = true
+		clean["onboarding"]["shop_intro_done"] = true
+	var profile: Variant = loaded.get("profile")
+	if profile is Dictionary and AvatarLibrary.valid(profile.get("avatar")):
+		clean["profile"]["avatar"] = profile["avatar"]
+	if profile is Dictionary and profile.get("name") is String:
+		var player_name: String = profile["name"].strip_edges().left(24)
+		if not player_name.is_empty():
+			clean["profile"]["name"] = player_name
+	if profile is Dictionary:
+		for field in ["player_id", "title_id"]:
+			if profile.get(field) is String and not profile[field].strip_edges().is_empty():
+				clean["profile"][field] = profile[field].strip_edges().left(64)
+	var achievements: Variant = loaded.get("achievements")
+	if achievements is Dictionary:
+		for definition in AchievementDefinition.all():
+			var record: Variant = achievements.get(definition.id)
+			if record is Dictionary:
+				clean["achievements"][definition.id] = {
+					"progress": _number(record.get("progress"), 0, definition.target),
+					"unlocked": record.get("unlocked", false) == true,
+					"reward_claimed": record.get("reward_claimed", false) == true,
+					"unlocked_at": _number(record.get("unlocked_at"), 0),
+				}
 	clean["coins"] = _number(loaded.get("coins"), clean["coins"])
+	clean["diamonds"] = _number(loaded.get("diamonds"), 0)
+	var hearts: Variant = loaded.get("hearts")
+	if hearts is Dictionary:
+		for field in ["current_hearts", "last_heart_refill_timestamp", "free_play_end_timestamp", "win_streak", "rewarded_heart_ads_used_today", "hearts_spent", "coins_spent"]:
+			clean["hearts"][field] = _number(hearts.get(field), clean["hearts"][field])
+		clean["hearts"]["current_hearts"] = mini(5, clean["hearts"]["current_hearts"])
+		clean["hearts"]["milestones"] = _strings(hearts.get("milestones"))
+		if hearts.get("rewarded_heart_ads_reset_date") is String:
+			clean["hearts"]["rewarded_heart_ads_reset_date"] = hearts["rewarded_heart_ads_reset_date"]
+	var special_unlocks: Variant = loaded.get("special_unlocks")
+	if special_unlocks is Dictionary:
+		clean["special_unlocks"]["hantar"] = special_unlocks.get("hantar", false) == true
 	clean["tutorial_index"] = _number(loaded.get("tutorial_index"), 0, TutorialLibrary.count())
 	if loaded.get("tutorial_done") is bool:
 		clean["tutorial_done"] = loaded["tutorial_done"]
+	clean["tutorial_rewarded"] = _strings(loaded.get("tutorial_rewarded"))
+	if not loaded.has("tutorial_rewarded"):
+		# Preserve rewards already earned in the historical lesson order.
+		for lesson in [1, 2, 3, 4, 5, 7, 8, 9]:
+			if clean["tutorial_done"] or lesson < int(clean["tutorial_index"]):
+				clean["tutorial_rewarded"].append(str(lesson))
 	for key in ["boosters", "stats", "settings"]:
 		var section: Variant = loaded.get(key)
 		if not section is Dictionary:
@@ -155,10 +218,16 @@ func _normalize(loaded: Dictionary) -> Dictionary:
 			if not name is String:
 				continue
 			if key == "settings":
-				if section[name] is bool:
+				if name == "language" and section[name] in ["ms", "en"]:
+					clean[key][name] = section[name]
+				elif name != "language" and section[name] is bool:
 					clean[key][name] = section[name]
 			elif clean[key].has(name):
 				clean[key][name] = _number(section[name], clean[key][name])
+	# Older MVP saves inherited Malay automatically. Adopt English once for
+	# this build, then preserve future explicit language selections.
+	if loaded.get("language_policy", 0) != 2:
+		clean["settings"]["language"] = "en"
 	for key in ["chapters", "recipes", "story_seen", "story_read"]:
 		clean[key] = _strings(loaded.get(key), clean[key])
 	if not clean["chapters"].has("prologue"):
@@ -179,12 +248,57 @@ func _normalize(loaded: Dictionary) -> Dictionary:
 			clean["levels"][str(id)] = {
 				"stars": _number(record.get("stars"), 0, 3),
 				"best_moves_left": _number(record.get("best_moves_left"), 0),
+				"best_score": _number(record.get("best_score"), 0),
+				"completed": _number(record.get("stars"), 0, 3) > 0 or record.get("completed", false) == true,
+				"first_clear_claimed": record.get("first_clear_claimed", _number(record.get("stars"), 0, 3) > 0 or record.get("completed", false) == true) == true,
 			}
+	var upgrades: Variant = loaded.get("structural_upgrades")
+	for location in LocationDefinition.all():
+		var bought := 0
+		if upgrades is Dictionary:
+			bought = _number(upgrades.get(String(location.id)), 0, 3)
+		elif _number(loaded.get("version"), 0) < 5:
+			# Preserve milestone visuals already earned before paid structural upgrades.
+			for state in range(1, 4):
+				var stage: int = location.requirement(state).stage
+				if clean["levels"].get(str(stage), {}).get("stars", 0) > 0:
+					bought = state
+		clean["structural_upgrades"][String(location.id)] = bought
+	var owned: Array = _strings(loaded.get("owned_decor"))
+	for item in DecorDefinition.all():
+		if owned.has(item.id):
+			clean["owned_decor"].append(item.id)
+	var equipped: Variant = loaded.get("location_decor")
+	if equipped is Dictionary:
+		for location in LocationDefinition.all():
+			var slots: Variant = equipped.get(String(location.id))
+			if not slots is Dictionary:
+				continue
+			var valid: Dictionary = {}
+			for slot in slots:
+				if slots[slot] is String:
+					var item := DecorDefinition.find(slots[slot])
+					if item != null and item.slot == slot and location.decor_slots.has(slot) and clean["owned_decor"].has(item.id):
+						valid[slot] = item.id
+			clean["location_decor"][String(location.id)] = valid
 	var mastery: Variant = loaded.get("mastery")
 	if mastery is Dictionary:
 		for key in mastery:
 			if key is String and not key.is_empty():
 				clean["mastery"][key] = _number(mastery[key], 0)
+	# Preserve progression when the approved normal-food set changes.
+	var recipes: Array = clean["recipes"]
+	var counts: Dictionary = clean["mastery"]
+	var replacements := {"seri_muka": "ang_ku_kueh", "lapis_pandan": "ang_ku_kueh", "vadai": "keria"}
+	for old_id in replacements:
+		var new_id: String = replacements[old_id]
+		if recipes.has(old_id):
+			recipes.erase(old_id)
+			if not recipes.has(new_id):
+				recipes.append(new_id)
+		if counts.has(old_id):
+			counts[new_id] = maxi(int(counts.get(new_id, 0)), int(counts[old_id]))
+			counts.erase(old_id)
 	return clean
 
 
@@ -222,6 +336,8 @@ func set_setting(key: String, value: Variant) -> void:
 ## Wipes the save back to a fresh game.
 func reset() -> void:
 	data = _default_data()
+	if is_instance_valid(get_node_or_null("/root/LocationManager")):
+		get_node("/root/LocationManager").reconcile()
 	if save_game():
 		# Reset is explicit: recovery must never resurrect the erased progress.
 		if not _write_atomic(data, save_path + ".bak"):

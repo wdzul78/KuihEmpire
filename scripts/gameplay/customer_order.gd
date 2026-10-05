@@ -3,8 +3,7 @@ extends RefCounted
 
 ## Runtime state of one customer's order.
 ##
-## Orders are the actual objective system - there is no score to chase
-## (Master Plan section 12).
+## Completing every order is mandatory. Score only rates successful stages.
 
 var customer: CustomerData = null
 ## kuih id -> how many are still missing.

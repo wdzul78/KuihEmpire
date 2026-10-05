@@ -10,8 +10,8 @@ extends SceneTree
 ##   godot --headless --script res://tools/find_layout.gd
 
 const IDS := [
-	&"onde_onde", &"kuih_lapis", &"seri_muka", &"kuih_ketayap",
-	&"ang_ku_kueh", &"vadai",
+	&"onde_onde", &"kuih_koci", &"ang_ku_kueh", &"kuih_ketayap",
+	&"kuih_lapis", &"keria",
 ]
 
 var pool: Array[KuihData] = []

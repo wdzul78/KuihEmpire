@@ -30,9 +30,15 @@ extends Resource
 @export var require_blockers_cleared: bool = false
 
 @export_group("Reward")
-@export var coins: int = 60
-## Fraction of moves that must remain for 2 and 3 stars. Generous on purpose -
-## the plan asks for a cozy game, not a punishing one.
+@export var coins: int = 60 # Legacy authored base reward.
+@export var base_coin_reward: int = -1 # -1 uses legacy coins.
+@export var score_two_star: int = 800
+@export var score_three_star: int = 1400
+@export var scoring: ScoreRules = ScoreRules.new()
+@export var score_per_coin: int = 200
+@export var star_coin_bonus := PackedInt32Array([0, 0, 10, 18])
+@export var first_clear_bonus: int = 20
+## Legacy authoring fields retained for old .tres compatibility; no longer used.
 @export_range(0.0, 0.95, 0.01) var star2_moves: float = 0.25
 @export_range(0.0, 0.95, 0.01) var star3_moves: float = 0.5
 
@@ -56,7 +62,7 @@ extends Resource
 @export var tutorial_index: int = 0
 ## Tutorial stages cannot be failed - the plan wants onboarding to be cozy.
 @export var allow_fail: bool = true
-## Tutorial stages always award three stars because there is no move pressure.
+## Legacy tutorial field retained for resource compatibility; score sets ratings.
 @export var always_three_stars: bool = false
 ## Coaching steps, one idea each.
 @export var tutorial_steps: Array[TutorialStepData] = []
@@ -81,20 +87,8 @@ func move_budget() -> int:
 	return budget
 
 
-func stars_for_moves_left(left: int) -> int:
-	var budget := move_budget()
-	if budget <= 0:
-		return 1
-	var ratio := float(left) / float(budget)
-	if ratio >= star3_moves:
-		return 3
-	if ratio >= star2_moves:
-		return 2
-	return 1
-
-
 func coin_reward() -> int:
-	var total := coins
+	var total := coins if base_coin_reward < 0 else base_coin_reward
 	for order in customer_orders:
 		if order.customer != null:
 			total = int(round(total * order.customer.reward_scale))
@@ -106,3 +100,11 @@ func uses_kuih(kuih_id: StringName) -> bool:
 		if k.id == kuih_id:
 			return true
 	return false
+
+
+func stars_for_score(score: int) -> int:
+	if score >= maxi(maxi(1, score_two_star) + 1, score_three_star):
+		return 3
+	if score >= maxi(1, score_two_star):
+		return 2
+	return 1

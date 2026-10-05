@@ -175,7 +175,7 @@ func _check_story_flow() -> void:
 
 func _walk_tutorial() -> void:
 	ProgressionManager.reset_tutorial()
-	for index in range(1, TutorialLibrary.count() + 1):
+	for index in TutorialLibrary.ACTIVE_LESSONS:
 		var screen := LevelController.new()
 		screen.tutorial_index = index
 		scene_root.add_child(screen)
@@ -288,7 +288,7 @@ func _pick_teaching_move(screen: LevelController) -> Dictionary:
 			TutorialStepData.Gate.SWAP_HORIZONTAL:
 				score = 4.0 if a.y == b.y else 0.0
 			TutorialStepData.Gate.CREATED_TAPAU:
-				if _has(result, BoardCell.Special.TAPAU):
+				if (_has(result, BoardCell.Special.TAPAU) or _has(result, BoardCell.Special.TAPAU_VERTICAL)):
 					score = 20.0
 			TutorialStepData.Gate.CREATED_DULANG:
 				if _has(result, BoardCell.Special.DULANG):
@@ -486,6 +486,9 @@ func _play_level(level_id: int) -> void:
 
 
 func _boost(screen: LevelController, booster: int, target: Vector2i) -> void:
+	# The preceding invalid swap can still be bouncing back at high frame rates.
+	if not await _wait_idle(screen, "before booster %d" % booster):
+		return
 	var start_moves := screen.moves_left
 	var start_count := EconomyManager.booster_count(booster)
 	screen._on_booster_requested(booster)
@@ -495,7 +498,7 @@ func _boost(screen: LevelController, booster: int, target: Vector2i) -> void:
 			await get_tree().process_frame
 		if screen.board.targeting >= 0:
 			screen._on_booster_targeted(booster, target)
-	await _wait_idle(screen, "booster %d" % booster)
+	await _wait_idle(screen, "booster %d" % booster, _settle_budget(screen.level_id) * 2)
 	if start_count > 0 and EconomyManager.booster_count(booster) >= start_count:
 		problems.append("booster %d was not consumed" % booster)
 	if booster == EconomyManager.Booster.EXTRA_MOVES and screen.moves_left <= start_moves:

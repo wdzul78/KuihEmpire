@@ -1,0 +1,20 @@
+{
+  "generator": "built-in imagegen",
+  "assets": [
+    {
+      "id": "profile",
+      "prompt": "Reference image is style and proportions guide. Generate ONLY the top-left player profile UI frame from the reference for a cozy Malaysian kuih mobile game. Wide honey cream rounded rectangular wooden gold-brown rim plaque with prominent circular portrait medallion overlapping on its LEFT. Medallion interior EMPTY cream for separate native avatar overlay. Right section entirely blank for editable player name, title and level. Lower right has a blank dark brown pill-shaped recess for native experience progress bar. No text, no numbers, no portrait, no filled progress. Ratio 2.7:1. Beautiful polished hand-painted cartoon matching reference. Isolated transparent background tightly framed.",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a10275-2ab7-7de1-a71b-ad9e6d28243b\\exec-9e713052-3180-40c5-a06f-9a110527f6c6.png"
+    },
+    {
+      "id": "diamond_pill",
+      "prompt": "Reference image is style guide. Generate ONLY the diamond currency pill at upper right: wide rounded dark chocolate wood recessed centre with amber wood rim, prominent glossy bright pink faceted diamond at LEFT, integrated small round glossy green plus button at RIGHT with a cream plus symbol. Empty centre for native numeric label. No text or numbers. Ratio 3.1:1. Match reference cozy polished cartoon game UI art. Isolated transparent background, minimal margin.",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a10275-2ab7-7de1-a71b-ad9e6d28243b\\exec-e22c3996-d181-4650-974a-fd9f4b6054a3.png"
+    },
+    {
+      "id": "settings",
+      "prompt": "Reference image is style guide. Generate ONLY the upper right settings button: small rounded square honey cream wood face, glossy golden caramel wooden rim and dark brown shadow outline, single centred dark chocolate brown eight-tooth gear with circular hole. Polished cozy cartoon Malaysian food game UI, match reference. No text, no numbers, no other objects. True transparent background, tight square framing.",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a10275-2ab7-7de1-a71b-ad9e6d28243b\\exec-8f043dad-91a0-4a34-9331-1fe115d7d67a.png"
+    }
+  ]
+}

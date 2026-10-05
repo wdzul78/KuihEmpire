@@ -12,7 +12,7 @@ const RADIUS_SMALL := 14
 static func brand_logo(minimum_size: Vector2) -> TextureRect:
 	var logo := TextureRect.new()
 	logo.name = "BrandLogo"
-	logo.texture = preload("res://assets/ui/logo_temp.png")
+	logo.texture = preload("res://assets/ui/logo_dessert.png")
 	logo.custom_minimum_size = minimum_size
 	logo.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	logo.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
@@ -23,6 +23,23 @@ static func brand_logo(minimum_size: Vector2) -> TextureRect:
 static var _theme: Theme = null
 static var _title_font: Font = null
 static var _bold_font: Font = null
+
+
+## Reusable outlined lettering for live numbers and short game text.
+## Font glyphs stay editable/localizable; color variants share one style.
+enum GraphicText { WHITE, GOLD, GREEN, PINK, RED }
+
+static func graphic_label(text: String, size_px: int = 36, variant: GraphicText = GraphicText.WHITE) -> Label:
+	var result := label(text, size_px)
+	result.add_theme_font_override("font", title_font())
+	var colors := [Color("fffdf4"), Color("ffdc64"), Color("a0ef58"), Color("ff9fc2"), Color("ff746b")]
+	result.add_theme_color_override("font_color", colors[variant])
+	result.add_theme_color_override("font_outline_color", Color("654022"))
+	result.add_theme_color_override("font_shadow_color", Color(0.20,0.10,0.04,0.45))
+	result.add_theme_constant_override("outline_size", maxi(2, roundi(size_px*.09)))
+	result.add_theme_constant_override("shadow_offset_x", 0)
+	result.add_theme_constant_override("shadow_offset_y", maxi(1, roundi(size_px*.05)))
+	return result
 
 
 static func title_font() -> Font:

@@ -1,191 +1,309 @@
 class_name HomeScreen
 extends Control
 
-## Home screen - intentionally simple (Master Plan section 49).
-
-var _stage_label: Label
+# Normalized layer rectangles keep the reference composition at every viewport size.
 var _coin_display: CoinDisplay
 var _play_button: Button
+var _play_label: Label
 var _story_button: Button
-
+var _profile_label: Label
+var _avatar: TextureRect
+var _star_label: Label
+var _level_label: Label
+var _total_score_label: Label
+var _progress: ProgressBar
+var _animated: Array[Control] = []
+var _clock := 0.0
 
 func _ready() -> void:
+	AudioManager.play_music(AudioManager.MENU_MUSIC)
+	AudioManager.set_music_ducked(false)
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	UIKit.apply_root_theme(self)
 	_build()
 	_refresh()
 	ProgressionManager.stars_changed.connect(func(_a: int, _b: int) -> void: _refresh())
 	EconomyManager.coins_changed.connect(func(_a: int) -> void: _refresh())
-	ProgressionManager.recipe_unlocked.connect(func(_a: StringName) -> void: _refresh())
 
+func _place(node: Control, rect: Rect2, parent: Control = self) -> Control:
+	parent.add_child(node)
+	node.anchor_left = rect.position.x
+	node.anchor_top = rect.position.y
+	node.anchor_right = rect.end.x
+	node.anchor_bottom = rect.end.y
+	node.offset_left = 0
+	node.offset_top = 0
+	node.offset_right = 0
+	node.offset_bottom = 0
+	return node
+
+func _art(id: String, rect: Rect2, animated: bool = false, version: String = "v1") -> TextureRect:
+	var node := TextureRect.new()
+	node.name = id.capitalize() + "Layer"
+	node.texture = load("res://assets/menu/%s/%s.png" % [version, id])
+	node.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	node.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	node.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_place(node, rect)
+	if animated:
+		_animated.append(node)
+	return node
+
+func _panel(rect: Rect2, cream: bool = true) -> Panel:
+	var node := Panel.new()
+	node.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	node.add_theme_stylebox_override("panel", UIKit.cream_box() if cream else UIKit.wood_box(Palette.WOOD, Palette.WOOD_DARK))
+	_place(node, rect)
+	return node
+
+func _label(value: String, rect: Rect2, font_size: int = 28, parent: Control = self) -> Label:
+	var node := UIKit.label(value, font_size)
+	node.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_place(node, rect, parent)
+	return node
+
+func _button(value: String, rect: Rect2, action: Callable, fill: Color = Palette.PAPER, font_size: int = 28) -> Button:
+	var node := UIKit.button(value, font_size, fill)
+	node.custom_minimum_size = Vector2.ZERO
+	for state in ["normal", "hover", "pressed", "disabled"]:
+		var style := node.get_theme_stylebox(state).duplicate() as StyleBox
+		style.content_margin_left = 0
+		style.content_margin_right = 0
+		style.content_margin_top = 0
+		style.content_margin_bottom = 0
+		node.add_theme_stylebox_override(state, style)
+	node.add_theme_color_override("font_color", Palette.INK)
+	_place(node, rect)
+	node.pressed.connect(action)
+	return node
+
+
+# Texture-backed buttons retain native keyboard/touch/focus behavior.
+func _art_button(id: String, rect: Rect2, action: Callable) -> Button:
+	var button := _button("", rect, action)
+	for state in ["normal", "hover", "pressed", "disabled"]:
+		var style := StyleBoxTexture.new()
+		style.texture = _framed_texture(id)
+		style.modulate_color = Color(.87, .87, .87) if state == "pressed" else Color(1.07, 1.07, 1.07) if state == "hover" else Color.WHITE
+		button.add_theme_stylebox_override(state, style)
+	var focus := UIKit.flat_box(Color.TRANSPARENT, Palette.GOLD, 0, 3, 24)
+	button.add_theme_stylebox_override("focus", focus)
+	return button
+
+func _framed_texture(id: String) -> Texture2D:
+	if id == "play":
+		var source: Texture2D = load("res://assets/menu/v3/play_button.png")
+		var cutout := AtlasTexture.new()
+		cutout.atlas = source
+		cutout.region = Rect2(124, 98, 1735, 572)
+		return cutout
+	var texture: Texture2D = load("res://assets/menu/v2/%s.png" % id)
+	# Trim transparent export margins in Godot; retain the untouched PNG sources.
+	var bounds := {
+		"nav_story": Rect2(40, 47, 1172, 1161),
+		"nav_records": Rect2(41, 48, 1172, 1167),
+		"nav_shop": Rect2(71, 88, 1112, 1077),
+		"nav_achievements": Rect2(45, 50, 1163, 1158),
+		"tagline": Rect2(40, 121, 2092, 449),
+	}
+	if not bounds.has(id):
+		return texture
+	var atlas := AtlasTexture.new()
+	atlas.atlas = texture
+	atlas.region = bounds[id]
+	return atlas
+
+class MenuPlayGlyph extends Control:
+	func _init() -> void:
+		mouse_filter = Control.MOUSE_FILTER_IGNORE
+		resized.connect(queue_redraw)
+	func _draw() -> void:
+		var points := PackedVector2Array([Vector2(size.x * .08, size.y * .04), Vector2(size.x * .95, size.y * .5), Vector2(size.x * .08, size.y * .96)])
+		draw_colored_polygon(points, Color("fffbea"))
+		points.append(points[0])
+		draw_polyline(points, Color("285922"), 5, true)
 
 func _build() -> void:
-	var backdrop := GeraiBackdrop.new()
-	backdrop.background_id = &"stall_dawn"
-	backdrop.show_counter = false
-	backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	add_child(backdrop)
+	var backdrop := _art("background", Rect2(0, 0, 1, 1))
+	backdrop.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	# Cat is behind the character, logo and all interactive UI.
+	_art("cat", Rect2(.76, .42, .22, .08), true)
+	var character_clip := Control.new()
+	character_clip.name = "AinaCrop"
+	character_clip.clip_contents = true
+	character_clip.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_place(character_clip, Rect2(-.19, .24, .96, .46))
+	var aina := _art("aina", Rect2(0, 0, 1, 1), true)
+	remove_child(aina)
+	_place(aina, Rect2(0, 0, 1, 1.70), character_clip)
+	aina.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT
+	var logo := UIKit.brand_logo(Vector2.ZERO)
+	_place(logo, Rect2(.30, .153, .68, .23))
+	_animated.append(logo)
+	var banner := _art("tagline", Rect2(.383, .358, .52, .045), false, "v2")
+	banner.texture = _framed_texture("tagline")
+	banner.stretch_mode = TextureRect.STRETCH_SCALE
+	var slogan := TitleArt.create("sweetness_smile", "Sweetness in Every Smile")
+	slogan.name = "SloganGraphic"
+	_place(slogan, Rect2(.410, .365, .467, .031))
+	_art("foreground", Rect2(-.10, .584, .80, .225))
+	_play_button = _art_button("play", Rect2(.36, .556, .60, .115), _on_play)
+	_play_label = _label(MenuText.text("play"), Rect2(.40, .23, .45, .47), 65, _play_button)
+	_play_label.hide()
+	_play_button.accessibility_name = "Play"
+	_play_button.tooltip_text = "Play"
+	_play_button.name = "PlayButton"
 
-	var margin := UIKit.margin(40)
-	margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	add_child(margin)
-
-	var column := UIKit.vbox(18)
-	margin.add_child(column)
-
-	var top_row := UIKit.hbox(14)
-	column.add_child(top_row)
+	# Header follows the user layout: coins/hearts stacked below the left profile.
+	var profile := _panel(Rect2(.025, .028, .43, .085))
+	profile.name = "PlayerProfilePanel"
+	profile.add_theme_stylebox_override("panel", _header_box("profile"))
+	_avatar = AvatarLibrary.icon(str(SaveManager.data.get("profile", {}).get("avatar", "aina")))
+	_place(_avatar, Rect2(.060, .155, .24, .67), profile)
+	_profile_label = _label("", Rect2(.35, .185, .44, .20), 34, profile)
+	_label(MenuText.text("maker"), Rect2(.35, .375, .59, .15), 22, profile)
+	_level_label = _label("", Rect2(.80, .195, .14, .18), 25, profile)
+	_level_label.add_theme_color_override("font_color", Palette.WOOD)
+	_progress = ProgressBar.new()
+	_progress.show_percentage = false
+	_progress.max_value = 10
+	_progress.add_theme_stylebox_override("background", StyleBoxEmpty.new())
+	_progress.add_theme_stylebox_override("fill", UIKit.flat_box(Color("71d12b"), Color("4b9b17"), 0, 2, 12))
+	_place(_progress, Rect2(.367, .69, .568, .13), profile)
+	_progress.hide()
+	# The illustration already contains the score track; align text inside it.
+	_total_score_label = _label("", Rect2(.367, .568, .566, .175), 28, profile)
+	_total_score_label.add_theme_color_override("font_color", Palette.PAPER)
+	_total_score_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	# Preserve the painted circular frame and use an actual square for its portrait.
+	var layout_profile := func() -> void:
+		var texture := profile.get_theme_stylebox("panel").texture as Texture2D
+		profile.offset_bottom = profile.offset_top + profile.size.x / texture.get_size().aspect() - size.y * (.085)
+		var diameter := profile.size.x * .24
+		_avatar.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT)
+		_avatar.size = Vector2(diameter, diameter)
+		_avatar.position = profile.size * Vector2(.18, .49) - _avatar.size * .5
+	profile.resized.connect(layout_profile)
+	layout_profile.call_deferred()
 	_coin_display = CoinDisplay.new()
-	_coin_display.icon_size = 76.0
-	top_row.add_child(_coin_display)
-	var grow := Control.new()
-	grow.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	grow.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	top_row.add_child(grow)
-	var settings := UIKit.button("Settings", 28, Palette.WOOD_LIGHT)
-	settings.custom_minimum_size = Vector2(220, 84)
-	settings.pressed.connect(func() -> void:
-		AudioManager.play(AudioManager.Sfx.TAP)
-		SceneManager.goto(SceneManager.SETTINGS)
-	)
-	top_row.add_child(settings)
+	_coin_display.icon_size = 76
+	_coin_display.dark_style = true
+	_coin_display.illustrated_style = true
+	_coin_display.uniform_bar_height = true
+	_coin_display.square_plus = false
+	_coin_display.pill_shape = true
+	_coin_display.name = "MainMenuCoinMeter"
+	_place(_coin_display, Rect2(.075, .132, .31, .038))
+	var heart := HeartDisplay.new()
+	heart.compact_count = true
+	heart.square_plus = false
+	heart.pill_shape = true
+	_place(heart, Rect2(.075, .174, .31, .038))
+	var star := StarMeterFrame.new()
+	star.name = "StarCounter"
+	star.hide()
+	star.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_place(star, Rect2(.675, .130, .29, .045))
+	_star_label = _label("", Rect2(.32, .16, .63, .68), ResourceBarArt.FONT_SIZE, star)
+	_star_label.add_theme_color_override("font_color", Palette.WOOD_DARK)
+	_star_label.add_theme_color_override("font_outline_color", Palette.WOOD_DARK)
+	_star_label.add_theme_constant_override("outline_size", 0)
+	var settings := _button("", Rect2(.850, .028, .10, .056), func() -> void: SceneManager.goto(SceneManager.SETTINGS))
+	for state in ["normal", "hover", "pressed"]:
+		settings.add_theme_stylebox_override(state, _header_box("settings"))
+	settings.name = "SettingsButton"
+	settings.accessibility_name = MenuText.text("settings")
+	settings.tooltip_text = MenuText.text("settings")
 
-	var brand := PanelContainer.new()
-	brand.add_theme_stylebox_override("panel", UIKit.wood_box(Palette.WOOD, Palette.WOOD_DARK, 14))
-	column.add_child(brand)
-	var brand_stack := UIKit.vbox(4)
-	brand.add_child(brand_stack)
-	brand_stack.add_child(UIKit.brand_logo(Vector2(0, 340)))
-	brand_stack.add_child(UIKit.label("Match. Serve. Grow.", 34, Palette.PINK_PALE))
+	var captions := ["recipes", "records", "shop", "achievements"]
+	var symbols := ["▤", "★", "⌂", "▥"]
+	var actions: Array[Callable] = [func() -> void: SceneManager.goto(SceneManager.RECIPE_BOOK), _show_records, func() -> void: SceneManager.goto(SceneManager.GERAI), _show_achievements]
+	for i in range(4):
+		var x := .075 + i * .225
+		var button := _art_button("nav_story" if i == 0 else "nav_" + captions[i], Rect2(x, .825, .195, .115), actions[i])
+		button.name = captions[i].capitalize() + "Button"
+		_label(MenuText.text(captions[i]), Rect2(.06, .70, .88, .18), 23, button)
+		if i == 0:
+			_story_button = button
+	var journey := _art_button("tagline", Rect2(.405, .703, .50, .075), func() -> void: SceneManager.goto(SceneManager.JOURNEY))
+	journey.name = "JourneyButton"
+	var journey_graphic := TitleArt.create("journey", "Journey")
+	_place(journey_graphic, Rect2(.105, -.04, .88, 1.10), journey)
+	_label(MenuText.text("motto"), Rect2(.13, .955, .74, .025), 26).add_theme_color_override("font_color", Palette.PAPER)
+	_label("v" + str(ProjectSettings.get_setting("application/config/version", "0.1.0")), Rect2(.025, .97, .19, .02), 19).add_theme_color_override("font_color", Palette.PAPER)
 
-	var aina_row := UIKit.hbox(18)
-	column.add_child(aina_row)
-	var portrait := CharacterIcon.new()
-	portrait.cast = CharacterIcon.Cast.AINA
-	portrait.expression = CharacterIcon.Mood.CHEEKY
-	portrait.custom_minimum_size = Vector2(190, 190)
-	portrait.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
-	aina_row.add_child(portrait)
-	var speech := PanelContainer.new()
-	speech.add_theme_stylebox_override("panel", UIKit.cream_box())
-	speech.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var speech_text := UIKit.wrap_label(
-		"Good kuih, brighter days! Ready to open the stall?",
-		28, Palette.INK, HORIZONTAL_ALIGNMENT_LEFT
-	)
-	speech_text.custom_minimum_size = Vector2(0, 120)
-	speech_text.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	speech.add_child(speech_text)
-	aina_row.add_child(speech)
+func _header_box(id: String) -> StyleBoxTexture:
+	var box := StyleBoxTexture.new()
+	var source: Texture2D = load("res://assets/menu/v3/%s.png" % id)
+	var atlas := AtlasTexture.new()
+	atlas.atlas = source
+	atlas.region = source.get_image().get_used_rect()
+	box.texture = atlas
+	return box
 
-	var teaser := PanelContainer.new()
-	teaser.add_theme_stylebox_override("panel", UIKit.cream_box())
-	column.add_child(teaser)
-	var teaser_stack := UIKit.vbox(8)
-	teaser.add_child(teaser_stack)
-	teaser_stack.add_child(UIKit.label("ON THE TRAY TODAY", 26, Palette.WOOD_DARK))
-	var tray := UIKit.hbox(8)
-	tray.alignment = BoxContainer.ALIGNMENT_CENTER
-	teaser_stack.add_child(tray)
-	for id in [&"onde_onde", &"kuih_lapis", &"seri_muka", &"kuih_ketayap", &"ang_ku_kueh", &"vadai"]:
-		var dish := KuihIcon.new()
-		dish.kuih = KuihLibrary.get_kuih(id)
-		dish.custom_minimum_size = Vector2(140, 150)
-		tray.add_child(dish)
-	teaser_stack.add_child(UIKit.label("Collect them all in the Recipe Book", 22, Palette.INK_SOFT))
+func _process(delta: float) -> void:
+	_clock += delta
+	for i in range(_animated.size()):
+		var node := _animated[i]
+		node.pivot_offset = node.size * Vector2(.5, .8)
+		var wave := sin(_clock * (1.4 if i == 0 else .9) + i)
+		node.scale = Vector2(1.0 + wave * .003, 1.0 + wave * .007)
+		node.rotation = wave * (.003 if i == 1 else .001)
 
-	var grow2 := Control.new()
-	grow2.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	grow2.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	column.add_child(grow2)
-
-	var play_card := PanelContainer.new()
-	play_card.add_theme_stylebox_override("panel", UIKit.cream_box())
-	column.add_child(play_card)
-	var play_stack := UIKit.vbox(10)
-	play_card.add_child(play_stack)
-	_stage_label = UIKit.label("", 30, Palette.WOOD_DARK)
-	play_stack.add_child(_stage_label)
-	_play_button = UIKit.primary_button("PLAY")
-	_play_button.pressed.connect(_on_play)
-	play_stack.add_child(_play_button)
-
-	var grid := GridContainer.new()
-	grid.columns = 2
-	grid.add_theme_constant_override("h_separation", 16)
-	grid.add_theme_constant_override("v_separation", 16)
-	column.add_child(grid)
-
-	var journey := UIKit.button("Journey Map", 30, Palette.LEAF)
-	journey.custom_minimum_size = Vector2(0, 104)
-	journey.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	journey.pressed.connect(func() -> void:
-		AudioManager.play(AudioManager.Sfx.TAP)
-		SceneManager.goto(SceneManager.JOURNEY)
-	)
-	grid.add_child(journey)
-
-	var recipes := UIKit.button("Recipe Book", 30, Palette.PINK)
-	recipes.custom_minimum_size = Vector2(0, 104)
-	recipes.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	recipes.pressed.connect(func() -> void:
-		AudioManager.play(AudioManager.Sfx.TAP)
-		SceneManager.goto(SceneManager.RECIPE_BOOK)
-	)
-	grid.add_child(recipes)
-
-	var gerai := UIKit.button("My Gerai", 30, Palette.GOLD)
-	gerai.custom_minimum_size = Vector2(0, 104)
-	gerai.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	gerai.pressed.connect(func() -> void:
-		AudioManager.play(AudioManager.Sfx.TAP)
-		SceneManager.goto(SceneManager.GERAI)
-	)
-	grid.add_child(gerai)
-
-	var play_again := UIKit.button("Play Stage", 30, Palette.WOOD_LIGHT)
-	play_again.custom_minimum_size = Vector2(0, 104)
-	play_again.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	play_again.pressed.connect(_on_play)
-	grid.add_child(play_again)
-
-	_story_button = UIKit.button("Story", 30, Palette.PINK_DARK)
-	_story_button.custom_minimum_size = Vector2(0, 104)
-	_story_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_story_button.pressed.connect(_on_story)
-	grid.add_child(_story_button)
-
-
-## The storyline stays readable forever - a cozy game should let you re-read it.
 func _on_story() -> void:
 	AudioManager.play(AudioManager.Sfx.TAP)
-	SceneManager.goto_story(StoryLibrary.PROLOGUE, true, SceneManager.HOME)
-
+	SceneManager.goto(SceneManager.RECIPE_BOOK)
 
 func _on_play() -> void:
 	AudioManager.play(AudioManager.Sfx.TAP)
 	GameManager.play_next()
 
-
 func _refresh() -> void:
-	if not is_instance_valid(_stage_label):
+	if not is_instance_valid(_play_label):
 		return
-	if ProgressionManager.needs_tutorial():
-		var next_tutorial := maxi(1, ProgressionManager.tutorial_index())
-		var stage := TutorialLibrary.get_stage(next_tutorial)
-		_stage_label.text = "Next: Tutorial  ·  %s" % stage.title
-		if is_instance_valid(_play_button):
-			_play_button.text = "START TUTORIAL"
-	else:
-		var next_level := ProgressionManager.current_level()
-		var stars := ProgressionManager.total_stars()
-		var recipes := ProgressionManager.unlocked_recipes().size()
-		_stage_label.text = "Next: Stage %d   ·   %d ★   ·   %d / %d recipes" % [
-			next_level, stars, recipes, KuihLibrary.count()
-		]
-		if is_instance_valid(_play_button):
-			_play_button.text = "PLAY"
-	if is_instance_valid(_story_button):
-		_story_button.visible = ProgressionManager.tutorial_done()
-	if is_instance_valid(_coin_display):
-		_coin_display.amount = EconomyManager.coins()
+	var stars := ProgressionManager.total_stars()
+	var player_name: String = str(SaveManager.data.get("profile", {}).get("name", "Player"))
+	_profile_label.text = player_name
+	_avatar.texture = AvatarLibrary.portrait(str(SaveManager.data.get("profile", {}).get("avatar", "aina")))
+	_level_label.text = "Lv %d" % (1 + stars / 10)
+	_profile_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	_progress.value = stars % 10
+	_total_score_label.text = "Score %s" % str(ProgressionManager.total_best_score())
+	_star_label.text = str(stars)
+	_coin_display.amount = EconomyManager.coins()
+	_play_label.text = MenuText.text("play")
+
+func _popup(title: String, body: String) -> void:
+	var overlay := Control.new()
+	overlay.name = "MenuPopup"
+	_place(overlay, Rect2(0, 0, 1, 1))
+	var dim := ColorRect.new()
+	dim.color = Color(0, 0, 0, .65)
+	_place(dim, Rect2(0, 0, 1, 1), overlay)
+	var card := Panel.new()
+	card.add_theme_stylebox_override("panel", UIKit.cream_box())
+	_place(card, Rect2(.12, .24, .76, .50), overlay)
+	_label(title, Rect2(.04, .03, .92, .12), 38, card)
+	var scroll := ScrollContainer.new()
+	_place(scroll, Rect2(.05, .18, .9, .62), card)
+	var content := UIKit.wrap_label(body, 27)
+	content.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.add_child(content)
+	var close := UIKit.button(MenuText.text("close"), 28)
+	_place(close, Rect2(.20, .84, .60, .12), card)
+	close.pressed.connect(overlay.queue_free)
+
+func _show_records() -> void:
+	var rows := MenuText.text("local") + "\n\n"
+	var count := 0
+	for id in range(1, LevelLibrary.count() + 1):
+		var record := ProgressionManager.level_record(id)
+		if int(record.get("stars", 0)) > 0:
+			rows += "%s %d    %s\n" % [MenuText.text("stage"), id, "★".repeat(int(record["stars"]))]
+			count += 1
+	if count == 0:
+		rows += MenuText.text("empty")
+	_popup(MenuText.text("records"), rows)
+
+func _show_achievements() -> void:
+	SceneManager.goto(SceneManager.ACHIEVEMENTS)

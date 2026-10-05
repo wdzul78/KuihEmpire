@@ -8,6 +8,8 @@ enum Speaker { AINA, IBU, FRIEND, RIVAL, CUSTOMER, NARRATOR }
 
 @export var id: StringName = &""
 @export var speaker: Speaker = Speaker.AINA
+## Optional speaker for each line, for customer/Aina conversations.
+@export var line_speakers: Array[int] = []
 @export_multiline var lines: PackedStringArray = PackedStringArray()
 ## Optional chalkboard style quote used on the shop sign.
 @export var sign_text: String = ""

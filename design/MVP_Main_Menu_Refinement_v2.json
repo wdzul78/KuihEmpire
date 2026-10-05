@@ -1,0 +1,43 @@
+{
+  "generator": "built-in imagegen",
+  "reference": "design/Kuih Empire Main Menu.png",
+  "assets": [
+    {
+      "id": "play",
+      "prompt": "Use case: background-extraction. Input is style and design reference. Extract/recreate the large Play button artwork in reference: horizontal rounded luminous lime green glossy button with warm golden rim, inset green shading and curved shine highlights, mounted on three chunky brown wooden horizontal planks with rounded corners and rich grain. Completely REMOVE letters and triangle symbol; center of green button must be blank for native UI text and icon. One tightly framed horizontal asset, aspect ratio 2.2:1. Match original polished cozy cartoon UI exactly, bold clean brown outlines and warm painted highlights. No text, no letters, no numerals, no logos, no other scenery or objects. Genuinely transparent background outside asset, no dark glow.",
+      "output": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a10275-2ab7-7de1-a71b-ad9e6d28243b\\exec-ed142f92-108d-4cb2-bf19-d4e7a82c0c3f.png",
+      "path": "assets/menu/v2/play.png"
+    },
+    {
+      "id": "nav_story",
+      "prompt": "Use case: background-extraction. Input is style and design reference. Recreate ONLY the bottom Story navigation button in reference as one individual icon+panel asset. Warm rounded square cream-to-peach face, thick beveled brown wood outer rim, golden inner rim, brown drop shadow. Upper center icon is the same simple small open brown story book with cream pages and decorative ruled lines. Lower 25 percent BLANK for UI label. Entire button visible, tightly framed, approx square. Match original polished cozy cartoon UI exactly, bold clean brown outlines and warm painted highlights. No text, no letters, no numerals, no logos, no other scenery or objects. Genuinely transparent background outside asset, no dark glow.",
+      "output": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a10275-2ab7-7de1-a71b-ad9e6d28243b\\exec-82064c36-911d-4a78-8372-be26db63bf9c.png",
+      "path": "assets/menu/v2/nav_story.png"
+    },
+    {
+      "id": "nav_records",
+      "prompt": "Use case: background-extraction. Input is style and design reference. Recreate ONLY the bottom Leaderboard navigation button in reference as one individual icon+panel asset. Warm rounded square cream-to-peach face, thick beveled brown wood outer rim, golden inner rim, brown drop shadow. Upper center icon is the same simple gold trophy cup with two handles and little base. Lower 25 percent BLANK for UI label. Entire button visible, tightly framed, approx square. Match original polished cozy cartoon UI exactly, bold clean brown outlines and warm painted highlights. No text, no letters, no numerals, no logos, no other scenery or objects. Genuinely transparent background outside asset, no dark glow.",
+      "output": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a10275-2ab7-7de1-a71b-ad9e6d28243b\\exec-8c169356-d7be-409c-90d0-4e553ebde33b.png",
+      "path": "assets/menu/v2/nav_records.png"
+    },
+    {
+      "id": "nav_shop",
+      "prompt": "Use case: background-extraction. Input is style and design reference. Recreate ONLY the bottom Shop navigation button in reference as one individual icon+panel asset. Warm rounded square cream-to-peach face, thick beveled brown wood outer rim, golden inner rim, brown drop shadow. Upper center icon is the same small simple wooden shop red cream striped awning, three little food jars, no extra detail. Lower 25 percent BLANK for UI label. Entire button visible, tightly framed, approx square. Match original polished cozy cartoon UI exactly, bold clean brown outlines and warm painted highlights. No text, no letters, no numerals, no logos, no other scenery or objects. Genuinely transparent background outside asset, no dark glow.",
+      "output": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a10275-2ab7-7de1-a71b-ad9e6d28243b\\exec-c90415fb-2a48-48ec-87f0-623428fec026.png",
+      "path": "assets/menu/v2/nav_shop.png"
+    },
+    {
+      "id": "nav_achievements",
+      "prompt": "Use case: background-extraction. Input is style and design reference. Recreate ONLY the bottom Achievements navigation button in reference as one individual icon+panel asset. Warm rounded square cream-to-peach face, thick beveled brown wood outer rim, golden inner rim, brown drop shadow. Upper center icon is the same three ascending golden bars on small green base. Lower 25 percent BLANK for UI label. Entire button visible, tightly framed, approx square. Match original polished cozy cartoon UI exactly, bold clean brown outlines and warm painted highlights. No text, no letters, no numerals, no logos, no other scenery or objects. Genuinely transparent background outside asset, no dark glow.",
+      "output": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a10275-2ab7-7de1-a71b-ad9e6d28243b\\exec-40a193ac-d9ec-44bf-a2b9-792926ba66a8.png",
+      "path": "assets/menu/v2/nav_achievements.png"
+    },
+    {
+      "id": "tagline",
+      "prompt": "Use case: background-extraction. Input is style and design reference. Recreate ONLY the curved brown wooden ribbon banner immediately below logo in reference. Warm wood grain, beveled brown outline, golden rim, curved edges and subtle shaded thickness. Blank center with NO TEXT. Tightly framed wide horizontal banner asset aspect ratio 5:1. Match original polished cozy cartoon UI exactly, bold clean brown outlines and warm painted highlights. No text, no letters, no numerals, no logos, no other scenery or objects. Genuinely transparent background outside asset, no dark glow.",
+      "output": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a10275-2ab7-7de1-a71b-ad9e6d28243b\\exec-fa0f0909-60de-4170-813c-bd852aa7af30.png",
+      "path": "assets/menu/v2/tagline.png"
+    }
+  ],
+  "note": "Navigation panels contain icons but no text. Native labels remain multilingual. Play artwork is blank with separate native label and play glyph."
+}

@@ -1,0 +1,31 @@
+{
+  "generator": "built-in imagegen",
+  "assets": [
+    {
+      "id": "frame",
+      "prompt": "Reference image is visual style guide ONLY. Generate one isolated empty square wooden match-3 game board FRAME, like the board's outer rim in the reference. Straight-on orthographic front view, thin rounded raised caramel honey wood rim with dark chocolate contour, double bevel, warm gold highlight on top/left, subtle grain, softly rounded corners and discreet bottom shadow. Large completely transparent hollow square centre occupying 90 percent of width and height, no backing, NO cells or grid, no food, no characters, no foliage, no writing. Edge thickness consistent approximately 5 percent per side. All four edges and corners fully visible. Transparent background outside frame and inside hollow. Production cozy cartoon game UI asset.",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a10275-2ab7-7de1-a71b-ad9e6d28243b\\exec-28a1272a-7839-496b-bbc6-b6b94efd037a.png",
+      "output_path": "assets/ui/board_v1/frame.png"
+    },
+    {
+      "id": "slot",
+      "prompt": "Reference image is visual style guide ONLY. Generate one isolated square game board SLOT recess matching a single wooden cell on the reference match-3 board. Orthographic front view, rounded square warm brown recessed wooden pocket, thin smooth honey gold bevel highlights on bottom and right, shadow inner upper edge, one neatly folded deep forest-green banana leaf liner covering most of the pocket interior. Subtle leaf veins, restrained detail readable at 48px. No kuih, no food, no writing, no symbols, no outer board, no multiple cells, no glow. Thin rim, clean rounded silhouette, genuine transparent outside background. Occupies nearly whole square canvas. Polished cozy cartoon mobile game UI.",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a10275-2ab7-7de1-a71b-ad9e6d28243b\\exec-1460de17-deb2-4ff1-bcc4-02d2d0800834.png",
+      "output_path": "assets/ui/board_v1/slot.png"
+    },
+    {
+      "id": "moves_board",
+      "ref": "C:/Users/WDzul78/AppData/Local/Temp/codex-clipboard-23e06d7f-712c-4bea-8235-83c1940aa7a8.png",
+      "prompt": "Reference is a precise design style guide. Recreate ONLY this hanging wooden moves-counter sign as a polished production cartoon UI asset. Warm rich brown wood, rounded rectangular plaque, dark chocolate outer contour, thin honey bevel rim, subtle horizontal wood grain. Two short green cord loops at upper left and upper right. Face entirely blank for native count and MOVES text. No text and no numbers. Front view, approx width:height 1.15:1 including short cord loops. Match the cozy hand-painted kuih game reference closely, not ornate or shiny metallic. Transparent background, minimal outside margins.",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a10275-2ab7-7de1-a71b-ad9e6d28243b\\exec-324fbe96-8dc2-4eac-a4cd-ca8c5e891fe2.png",
+      "output_path": "assets/ui/gameplay_v4/moves_board.png"
+    },
+    {
+      "id": "star_meter",
+      "ref": "C:/Users/WDzul78/AppData/Local/Temp/codex-clipboard-30cdf4eb-65e0-4ca5-8cef-d705f661ca1e.png",
+      "prompt": "Reference is precise design guide. Recreate ONLY this beautiful star progress meter as a production cartoon mobile UI asset. One glossy golden five-point star protrudes at LEFT and connects seamlessly to a rounded honey wood rectangular pill frame. Dark chocolate recessed EMPTY interior runs from just behind star to right end, surrounded by a thin warm cream gold inner bevel and caramel wood outer border with dark brown outline. Star has simple cream highlights and subtle amber shading. Width:height about 3.7:1. No filled progress, no segmented fill, NO letters or numbers; centre left blank for native dynamic fill and count. Front view, match cozy kuih game design reference closely. Genuine transparent background outside the silhouette, minimal canvas margin.",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a10275-2ab7-7de1-a71b-ad9e6d28243b\\exec-177ca02b-f952-492c-8d0f-919d2f9d964e.png",
+      "output_path": "assets/ui/gameplay_v4/star_meter.png"
+    }
+  ]
+}

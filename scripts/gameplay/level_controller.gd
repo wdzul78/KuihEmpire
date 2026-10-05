@@ -12,6 +12,11 @@ extends Control
 
 const EXTRA_MOVES := 5
 
+@export_group("Editable UI Layout")
+@export var tutorial_layout: PackedScene = GameUILayout.TUTORIAL
+@export var campaign_layout: PackedScene = GameUILayout.CAMPAIGN
+@export var show_slot_background := false
+@export_group("Stage")
 @export var level_id: int = 0
 @export var tutorial_index: int = 0
 
@@ -21,9 +26,14 @@ var active_index: int = 0
 var moves_left: int = 0
 var move_budget: int = 0
 var finished: bool = false
+var score := StageScoreController.new()
+var stage_result: StageResult
+var _failure_recorded := false
+var _used_booster := false
 var is_tutorial: bool = false
 var _serving: bool = false
 var _served_index: int = 0
+var _tutorial_combo: StringName = &""
 var _pause_overlay: Control = null
 
 var _root: Control
@@ -38,9 +48,12 @@ var _target_label: Label
 
 
 func _ready() -> void:
+	AudioManager.play_music(AudioManager.GAMEPLAY_MUSIC)
+	AudioManager.set_music_ducked(false)
 	process_mode = Node.PROCESS_MODE_PAUSABLE
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_build()
+	EconomyManager.booster_used.connect(func() -> void: _used_booster = true)
 	_start_level()
 
 
@@ -56,16 +69,26 @@ func _build() -> void:
 		level = LevelLibrary.get_level(_resolve_level_id())
 
 	backdrop = GeraiBackdrop.new()
-	backdrop.background_id = level.background_id
+	backdrop.name = "StallBackground"
+	backdrop.location_id = LocationDefinition.for_stage(level.id).id
 	backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_root.add_child(backdrop)
+	LocationManager.stall_upgraded.connect(func(id: StringName, state: int) -> void:
+		if not is_tutorial and id == backdrop.location_id:
+			StallUpgradeCelebration.show_upgrade.call_deferred(self, id, state)
+	)
 
 	hud = HUD.new()
+	hud.name = "GameplayHUD"
+	hud.tutorial_layout = tutorial_layout
+	hud.campaign_layout = campaign_layout
 	hud.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_root.add_child(hud)
 	# Must be after add_child: the HUD builds its children in _ready.
 	hud.set_tutorial_mode(is_tutorial)
-	hud.set_stage(level.id, level.title)
+	hud.booster_bar.practice_mode = false
+	hud.booster_bar.set_available(not is_tutorial)
+	hud.set_stage(level.id, TutorialText.text(level.title) if is_tutorial else level.title)
 	hud.set_coins(EconomyManager.coins())
 	hud.settings_pressed.connect(_open_pause_menu)
 	hud.restart_pressed.connect(_on_restart)
@@ -73,8 +96,21 @@ func _build() -> void:
 	hud.booster_requested.connect(_on_booster_requested)
 
 	board = MatchBoard.new()
+	board.name = "MatchBoard"
+	board.show_slot_background = show_slot_background
 	board.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	hud.board_holder.add_child(board)
+	score.score_changed.connect(func(total: int) -> void: hud.set_score(total))
+	score.feedback.connect(board.show_score_feedback)
+	board.clear_resolved.connect(func(cleared: BoardState.ClearResult, cascade: int) -> void:
+		if not finished:
+			score.add_clear(cleared, cascade)
+			if coach != null:
+				if cleared.combo != &"":
+					_tutorial_combo = cleared.combo
+			if not is_tutorial and not cleared.activated.is_empty():
+				GameplayEvents.specials_used.emit(cleared.activated.size(), cleared.activated.size() >= 2)
+	)
 	board.kuih_collected.connect(_on_kuih_collected)
 	board.move_committed.connect(_on_move_committed)
 	board.settled.connect(_on_settled)
@@ -82,25 +118,37 @@ func _build() -> void:
 	board.swap_attempted.connect(_on_swap_attempted)
 	board.blocker_progress.connect(_on_blocker_progress)
 	board.special_created.connect(_on_special_created)
+	board.special_activated.connect(func(kind: int) -> void:
+		if coach != null:
+			coach.notify_special_activated(kind)
+	)
 
 	_build_target_banner()
 
 	if is_tutorial:
 		coach = TutorialCoach.new()
+		coach.name = "TutorialCoach"
+		coach.dialogue_host = hud.order_panel
 		coach.finished.connect(_on_coach_finished)
 		_root.add_child(coach)
 
 	story = StoryPopup.new()
+	story.name = "StoryDialogue"
+	story.inline_mode = true
+	story.highlighted_character = hud.order_panel._aina
+	story.speaker_changed.connect(func(speaker: int) -> void: hud.order_panel.set_story_speaker(speaker); hud.order_panel.set_story_clearance(story._card))
 	story.finished.connect(_on_story_finished)
 	_root.add_child(story)
 
 	result = ResultOverlay.new()
+	result.name = "StageResult"
 	result.visible = false
 	_root.add_child(result)
 	result.continue_pressed.connect(_on_result_continue)
 	result.retry_pressed.connect(_on_result_retry)
 	result.home_pressed.connect(_on_result_home)
 	result.watch_ad_for_moves.connect(_on_watch_ad)
+	result.booster_pressed.connect(_on_result_booster)
 
 	EconomyManager.coins_changed.connect(_on_coins_changed)
 
@@ -131,16 +179,22 @@ func _resolve_level_id() -> int:
 
 
 func _start_level() -> void:
+	score.setup(level)
+	hud.configure_score(level)
+	stage_result = null
 	orders.clear()
 	for spec in level.customer_orders:
 		orders.append(CustomerOrder.from_spec(spec))
 	active_index = 0
 	_served_index = 0
+	_tutorial_combo = &""
 	_serving = false
 	_hint_signature = ""
 	move_budget = level.move_budget()
 	moves_left = move_budget
 	finished = false
+	_failure_recorded = false
+	_used_booster = not GameManager.pending_start_specials.is_empty()
 	if result != null:
 		result.visible = false
 	_hide_target_prompt()
@@ -148,10 +202,26 @@ func _start_level() -> void:
 	if not is_tutorial:
 		ProgressionManager.record_attempt()
 	board.build(level)
+	if not is_tutorial:
+		board.apply_start_specials(GameManager.pending_start_specials)
+		GameManager.pending_start_specials.clear()
 	hud.set_moves(moves_left, move_budget)
 	hud.booster_bar.refresh()
 	_refresh_order_ui()
 
+	if scene_file_path == SceneManager.LEVEL and not KuihIntroduction.unseen(level.kuih).is_empty():
+		board.enabled = false
+		if coach != null:
+			coach.set_process_input(false)
+		KuihIntroduction.present(self, level.kuih, _begin_presentation)
+	else:
+		_begin_presentation()
+
+
+func _begin_presentation() -> void:
+	board.enabled = true
+	if coach != null:
+		coach.set_process_input(true)
 	if is_tutorial:
 		_start_coach()
 	elif level.story_before != &"" and not ProgressionManager.story_seen(level.story_before):
@@ -160,6 +230,7 @@ func _start_level() -> void:
 
 func _start_coach() -> void:
 	coach.begin(level.tutorial_steps)
+	board.swap_filter = coach.allows_swap
 	# Teach the collection lesson against the kuih the customer actually wants.
 	var order := active_order()
 	if order != null:
@@ -171,16 +242,33 @@ func _start_coach() -> void:
 
 
 func _on_story_finished() -> void:
+	hud.order_panel.set_story_speaker(-1)
 	if level != null and level.story_before != &"":
 		ProgressionManager.mark_story_seen(level.story_before)
 
 
+func _order_collected_count() -> int:
+	var total := 0
+	for order in orders:
+		total += order.total_collected
+	return total
+
+func _refresh_delivery_targets() -> void:
+	if board == null or board.logic == null:
+		return
+	var current := active_order()
+	board.logic.order_remaining = current.remaining.duplicate() if current != null else {}
+
 func _refresh_order_ui() -> void:
+	_refresh_delivery_targets()
 	if active_index >= orders.size():
-		hud.order_panel.bind(null)
+		# Retain the last fulfilled tray while the tutorial explains serving and
+		# while the results arrive. Lessons without orders still hide the tray.
+		hud.order_panel.bind(orders.back() if not orders.is_empty() else null)
 		hud.set_queue([])
 		return
 	hud.order_panel.bind(orders[active_index])
+	story.customer_name = orders[active_index].customer.display_name if orders[active_index].customer != null else "Customer"
 	var waiting: Array = []
 	for i in range(active_index + 1, orders.size()):
 		var order: CustomerOrder = orders[i]
@@ -220,7 +308,9 @@ func _on_blocker_progress(hits: Array) -> void:
 
 func _on_coach_finished() -> void:
 	# The lesson is taught; hand the player straight to the objective.
-	hud.set_stage(level.id, level.title)
+	hud.set_stage(level.id, TutorialText.text(level.title) if is_tutorial else level.title)
+	if not board.busy:
+		_on_settled.call_deferred()
 
 
 var _hint_signature: String = ""
@@ -229,6 +319,8 @@ var _hint_signature: String = ""
 func _process(_delta: float) -> void:
 	if coach == null or board == null:
 		return
+	if not board.busy and board.logic != null:
+		coach.guide_special_activation(board.logic)
 	var cells := coach.hint_cells()
 	var signature := str(cells)
 	if signature == _hint_signature:
@@ -237,7 +329,10 @@ func _process(_delta: float) -> void:
 	if cells.is_empty():
 		board.clear_hints()
 	else:
-		board.highlight_cells(cells)
+		if cells.size() == 2 and cells[0].distance_to(cells[1]) == 1:
+			board.focus_cells(cells)
+		else:
+			board.highlight_cells(cells)
 
 
 # --- gameplay --------------------------------------------------------------
@@ -256,6 +351,7 @@ func _on_kuih_collected(totals: Dictionary) -> void:
 		for id in totals:
 			ProgressionManager.add_mastery(id, int(totals[id]))
 
+	var before := _order_collected_count()
 	var leftover: Dictionary = totals
 	var i := active_index
 	while i < orders.size() and not leftover.is_empty():
@@ -263,6 +359,7 @@ func _on_kuih_collected(totals: Dictionary) -> void:
 		if not orders[i].is_complete():
 			break
 		i += 1
+	score.add_collection(_order_collected_count() - before)
 	if i > active_index:
 		# Advance immediately: the next cascade must collect for the next guest,
 		# even while the previous guest's celebration is still playing.
@@ -271,6 +368,7 @@ func _on_kuih_collected(totals: Dictionary) -> void:
 			_serve_pending()
 	else:
 		hud.order_panel.animate_progress()
+	_refresh_delivery_targets()
 	if coach != null:
 		coach.notify_collected(totals)
 
@@ -279,7 +377,12 @@ func _serve_pending() -> void:
 	_serving = true
 	board.enabled = false
 	while _served_index < active_index:
+		# Collection may already target the next guest; show this guest's ticks
+		# during their serving celebration before moving on to the next order.
+		hud.order_panel.bind(orders[_served_index])
 		orders[_served_index].served = true
+		if not is_tutorial:
+			GameplayEvents.order_served.emit()
 		hud.order_panel.cheer()
 		AudioManager.play(AudioManager.Sfx.SERVE, 1.0, -3.0)
 		UIKit.sparkle_burst(_root, _root.get_global_rect().get_center(), Palette.GOLD_PALE, 14)
@@ -295,17 +398,35 @@ func _serve_pending() -> void:
 
 
 func _on_settled() -> void:
-	if finished or _serving:
+	if finished or _serving or board.busy:
 		return
+	if coach != null and _tutorial_combo != &"":
+		var combo := _tutorial_combo
+		_tutorial_combo = &""
+		coach.notify_combo(combo)
 	if _objectives_met():
 		_win()
 	elif moves_left <= 0 and level.allow_fail:
+		if not _failure_recorded:
+			HeartManager.consume_on_failure(is_tutorial)
+			_failure_recorded = true
+			if not is_tutorial:
+				GameplayEvents.stage_failed.emit(level.id)
 		finished = true
 		board.enabled = false
-		result.show_fail(_missing_summary(), true)
+		result.stage_number = level.id
+		result.tutorial_stage = is_tutorial
+		stage_result = StageResultCalculator.calculate(false, score.total, moves_left, level)
+		GameManager.pending_score = stage_result.final_score
+		GameManager.pending_stars = 0
+		GameManager.pending_coins = 0
+		GameManager.report_result(false)
+		result.show_fail(_missing_summary(), true, stage_result)
 
 
 func _objectives_met() -> bool:
+	if is_tutorial and coach != null and not coach.is_done():
+		return false
 	if orders.is_empty():
 		return true
 	for order in orders:
@@ -323,7 +444,7 @@ func _missing_summary() -> String:
 		for id in order.item_ids():
 			var left := int(order.remaining.get(id, 0))
 			if left > 0:
-				parts.append("%d %s" % [left, KuihLibrary.get_name(id)])
+				parts.append("%d %s" % [left, KuihLibrary.get_display_name(id)])
 	if parts.is_empty() and level.require_blockers_cleared and board.logic != null:
 		var leftover := board.logic.remaining_blockers()
 		if leftover > 0:
@@ -334,23 +455,31 @@ func _missing_summary() -> String:
 
 
 func _win() -> void:
-	if finished:
+	if finished or not _objectives_met():
 		return
 	finished = true
 	board.enabled = false
-	var stars := 3 if level.always_three_stars else level.stars_for_moves_left(moves_left)
-	var coins := level.coin_reward()
+	stage_result = StageResultCalculator.calculate(true, score.total, moves_left, level, not is_tutorial and ProgressionManager.first_clear_available(level.id), 0 if is_tutorial else ProgressionManager.best_score(level.id))
+	score.add_points(stage_result.move_bonus)
+	var stars := stage_result.earned_stars
+	var coins := stage_result.total_coins
 	var unlocks: Array[StringName] = []
-	var is_new_best := false
+	var is_new_best := stage_result.is_new_best and not is_tutorial
 
 	if is_tutorial:
 		# Tutorial stages never touch the campaign progress.
+		if not ProgressionManager.claim_tutorial_reward(level.tutorial_index):
+			coins = 0
+			stage_result.total_coins = 0
+			stage_result.base_coins = 0
+			stage_result.score_bonus = 0
+			stage_result.star_bonus = 0
 		EconomyManager.add_coins(coins)
 		ProgressionManager.save_tutorial_index(level.tutorial_index)
+		if level.tutorial_index == 9:
+			ProgressionManager.unlock_delivery()
 	else:
-		var previous_best := ProgressionManager.stars_for(level.id)
-		is_new_best = stars > previous_best
-		ProgressionManager.record_win(level.id, stars, moves_left)
+		ProgressionManager.record_win(level.id, stars, moves_left, stage_result.final_score)
 		ProgressionManager.record_win_count()
 		EconomyManager.add_coins(coins)
 		if level.kuih_unlock != &"" and KuihLibrary.has(level.kuih_unlock):
@@ -360,16 +489,27 @@ func _win() -> void:
 		if level.id == LevelLibrary.CHAPTER_FINALE:
 			ProgressionManager.unlock_chapter(&"map")
 
+	GameManager.pending_score = stage_result.final_score
 	GameManager.pending_stars = stars
 	GameManager.pending_coins = coins
 	GameManager.pending_moves_left = moves_left
 	GameManager.pending_unlocks = unlocks
+	if not is_tutorial:
+		GameplayEvents.stage_completed.emit(level.id, stars, stage_result.final_score, _used_booster)
 	GameManager.report_result(true)
 
 	hud.set_coins(EconomyManager.coins())
-	result.show_win(level.title, stars, coins, unlocks, is_new_best)
+	result.stage_number = TutorialLibrary.lesson_number(level.tutorial_index) if is_tutorial else level.id
+	result.tutorial_final = is_tutorial and TutorialLibrary.is_last(level.tutorial_index)
+	result.tutorial_stage = is_tutorial
+	result.show_win(level.title, stars, coins, unlocks, is_new_best, stage_result)
+	var free_bonus := HeartManager.reward_win(level.id, is_tutorial)
+	if free_bonus > 0:
+		var celebration := UIKit.label("Free Play · %d min!" % [free_bonus / 60], 30, Palette.PINK_DARK)
+		celebration.name = "FreePlayReward"
+		JourneyArt.place(result, celebration, Rect2(.20, .20, .60, .04))
 
-	if not is_tutorial and level.story_after != &"":
+	if not is_tutorial and JourneyLibrary.milestone(level.id).is_empty() and level.story_after != &"":
 		if not ProgressionManager.story_seen(level.story_after):
 			ProgressionManager.mark_story_seen(level.story_after)
 			story.play(BeatLibrary.get_beat(level.story_after))
@@ -377,14 +517,21 @@ func _win() -> void:
 
 # --- boosters --------------------------------------------------------------
 
+func _consume_booster(booster: int) -> bool:
+	if is_tutorial:
+		return false
+	return EconomyManager.use_booster(booster)
+
 func _on_booster_requested(booster: int) -> void:
+	if is_tutorial:
+		return
 	if _pause_overlay != null or finished or _serving or board == null or board.busy or not board.enabled:
 		return
 	board.cancel_targeting()
 	_hide_target_prompt()
 	match booster:
 		EconomyManager.Booster.SHUFFLE:
-			if not EconomyManager.use_booster(booster):
+			if not _consume_booster(booster):
 				return
 			await board.booster_shuffle()
 		EconomyManager.Booster.GIFT:
@@ -396,15 +543,15 @@ func _on_booster_requested(booster: int) -> void:
 						wanted.append(id)
 			if wanted.is_empty():
 				return
-			if not EconomyManager.use_booster(booster):
+			if not _consume_booster(booster):
 				return
 			await board.booster_gift(wanted)
 		EconomyManager.Booster.EXTRA_MOVES:
-			if not EconomyManager.use_booster(booster):
+			if not _consume_booster(booster):
 				return
 			_grant_moves(EXTRA_MOVES)
 		EconomyManager.Booster.SPATULA, EconomyManager.Booster.TRAY:
-			if not EconomyManager.has_booster(booster):
+			if not hud.booster_bar.practice_mode and not EconomyManager.has_booster(booster):
 				return
 			_show_target_prompt(booster)
 			board.begin_targeting(booster)
@@ -414,7 +561,7 @@ func _on_booster_requested(booster: int) -> void:
 
 
 func _show_target_prompt(booster: int) -> void:
-	_target_label.text = "Tap a kuih to scoop it out" if booster == EconomyManager.Booster.SPATULA else "Tap the middle of the 3 x 3 area"
+	_target_label.text = TutorialText.text("Tap a kuih to scoop it out" if booster == EconomyManager.Booster.SPATULA else "Tap the middle of the 3 x 3 area")
 	_target_banner.visible = true
 	_target_banner.pivot_offset = Vector2(410, 42)
 	_target_banner.scale = Vector2(0.8, 0.8)
@@ -427,6 +574,8 @@ func _hide_target_prompt() -> void:
 
 
 func _on_booster_targeted(booster: int, pos: Vector2i) -> void:
+	if is_tutorial:
+		return
 	if _pause_overlay != null or finished or _serving or board == null or board.busy or not board.enabled:
 		return
 	if booster not in [EconomyManager.Booster.SPATULA, EconomyManager.Booster.TRAY]:
@@ -438,7 +587,7 @@ func _on_booster_targeted(booster: int, pos: Vector2i) -> void:
 	_hide_target_prompt()
 	board.cancel_targeting()
 	hud.booster_bar.cancel_selection()
-	if not EconomyManager.use_booster(booster):
+	if not _consume_booster(booster):
 		return
 	if booster == EconomyManager.Booster.SPATULA:
 		if not board.logic.is_playable(pos):
@@ -465,6 +614,12 @@ func _on_hint() -> void:
 		return
 	if not bool(GameManager.setting("show_hints", true)):
 		return
+	if coach != null:
+		var guided := coach.guided_cells()
+		if not guided.is_empty():
+			board.focus_cells(guided)
+			AudioManager.play(AudioManager.Sfx.TAP, 1.2, -6.0)
+			return
 	if board.show_hint():
 		AudioManager.play(AudioManager.Sfx.TAP, 1.2, -6.0)
 
@@ -475,39 +630,32 @@ func _open_pause_menu() -> void:
 	if finished or _pause_overlay != null:
 		return
 	AudioManager.play(AudioManager.Sfx.TAP)
-	var overlay := Control.new()
+	var overlay := PauseOverlay.new()
 	_pause_overlay = overlay
-	overlay.process_mode = Node.PROCESS_MODE_WHEN_PAUSED
-	overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	overlay.mouse_filter = Control.MOUSE_FILTER_STOP
-	var dim := ColorRect.new()
-	dim.color = Color(0.15, 0.10, 0.05, 0.74)
-	dim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	overlay.add_child(dim)
-	var center := CenterContainer.new()
-	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	overlay.add_child(center)
-	var card := UIKit.card(Vector2(840, 0))
-	center.add_child(card)
-	var stack := UIKit.vbox(16)
-	card.add_child(stack)
-	stack.add_child(UIKit.title("Paused", 68))
-	stack.add_child(UIKit.label("%s  ·  %s" % [level.title, level.tag], 28, Palette.INK_SOFT))
-	var resume := UIKit.primary_button("Resume")
-	resume.pressed.connect(func() -> void:
+	overlay.stage_title = "%s · %s" % [level.title, JourneyArt.localized("Tutorial", "Tutorial") if is_tutorial else level.tag]
+	overlay.tutorial = is_tutorial
+	overlay.restart_available = not (board.busy or _serving or finished)
+	overlay.extra_count = EconomyManager.booster_count(EconomyManager.Booster.EXTRA_MOVES)
+	overlay.extra_available = overlay.restart_available and EconomyManager.has_booster(EconomyManager.Booster.EXTRA_MOVES)
+	overlay.resume_pressed.connect(func() -> void:
 		AudioManager.play(AudioManager.Sfx.TAP)
 		_resume_level()
 	)
-	stack.add_child(resume)
-	var quit := UIKit.button("Quit" if is_tutorial else "Quit to Stall", 32, Palette.WOOD_LIGHT)
-	quit.pressed.connect(func() -> void:
+	overlay.restart_pressed.connect(func() -> void:
+		_resume_level()
+		_on_restart()
+	)
+	overlay.extra_moves_pressed.connect(func() -> void:
+		_resume_level()
+		_on_booster_requested(EconomyManager.Booster.EXTRA_MOVES)
+	)
+	overlay.quit_pressed.connect(func() -> void:
 		AudioManager.play(AudioManager.Sfx.TAP)
 		_resume_level()
 		finished = true
 		board.enabled = false
 		GameManager.go_home()
 	)
-	stack.add_child(quit)
 	_root.add_child(overlay)
 	get_tree().paused = true
 	SaveManager._flush()
@@ -536,7 +684,10 @@ func _on_restart() -> void:
 	if _pause_overlay != null or finished or _serving or board.busy:
 		return
 	AudioManager.play(AudioManager.Sfx.TAP)
-	_start_level()
+	if is_tutorial:
+		_start_level()
+	else:
+		GameManager.play_level(level.id)
 
 
 func _on_result_continue() -> void:
@@ -551,19 +702,25 @@ func _on_result_continue() -> void:
 		return
 	result.visible = false
 	if is_tutorial:
-		var next := level.tutorial_index + 1
-		if TutorialLibrary.has(next):
+		var next := TutorialLibrary.next_index(level.tutorial_index)
+		if not TutorialLibrary.is_last(level.tutorial_index) and TutorialLibrary.has(next):
 			GameManager.play_tutorial(next)
 		else:
 			ProgressionManager.complete_tutorial()
-			# The prologue is replayed as a recap now that the player has read it
-			# once, so Skip is offered - the first read is the only forced one.
-			SceneManager.goto_story(
-				StoryLibrary.PROLOGUE,
-				ProgressionManager.story_read(StoryLibrary.PROLOGUE),
-				SceneManager.HOME
-			)
+			GameManager.pending_tutorial_index = 0
+			GameManager.pending_level_id = ProgressionManager.current_level()
+			SceneManager.goto(SceneManager.WELCOME if OnboardingProgress.pending() else SceneManager.JOURNEY)
 		return
+	if not JourneyLibrary.milestone(level.id).is_empty() and not ProgressionManager.story_seen(StringName("milestone_scene_%d" % level.id)):
+		var milestone := JourneyMilestonePopup.new()
+		add_child(milestone)
+		milestone.show_milestone(level.id)
+		milestone.dismissed.connect(_advance_campaign)
+		return
+	_advance_campaign()
+
+
+func _advance_campaign() -> void:
 	var next_level := level.id + 1
 	if LevelLibrary.has_level(next_level):
 		GameManager.play_level(next_level)
@@ -572,7 +729,16 @@ func _on_result_continue() -> void:
 
 
 func _on_result_retry() -> void:
-	_start_level()
+	if is_tutorial:
+		_start_level()
+	else:
+		GameManager.play_level(level.id)
+
+
+func _on_result_booster() -> void:
+	if not result.is_win and EconomyManager.use_booster(EconomyManager.Booster.EXTRA_MOVES):
+		_on_result_continue()
+		hud.booster_bar.refresh()
 
 
 func _on_result_home() -> void:
@@ -580,7 +746,9 @@ func _on_result_home() -> void:
 
 
 func _on_watch_ad() -> void:
-	_on_result_continue()
+	if await HeartManager.request_rewarded_ad():
+		if is_instance_valid(result) and result.visible and not result.is_win:
+			_on_result_continue()
 
 
 func _unhandled_input(event: InputEvent) -> void:

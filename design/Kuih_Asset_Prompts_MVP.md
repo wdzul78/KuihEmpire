@@ -144,3 +144,9 @@ Tiada fail imej dihasilkan atau script gameplay diubah oleh penyediaan brief ini
 - [Masala Vadai](https://nutriweb.org.my/cms/picture/upload/file/hcwo-vol-3.pdf)
 
 Rujukan menyokong identiti makanan; arah clear, letupan, penanda emas dan aturan combo ialah reka bentuk fiksyen permainan.
+
+## Keputusan aset terkini — 4 Oktober 2026
+
+Arahan terbaru pengguna menggantikan cadangan Lapis terdahulu: `design/kuih_lapis.png` kini special clear baris (`assets/specials/lapis_row.png`); `design/special_kek_lapis.png` ialah Kek Lapis Sarawak clear kolum (`assets/specials/lapis_column.png`). Kedua-duanya sudah dipasang dalam game. Prompt ordinary Lapis dan dua varian special di atas ialah brief lama.
+
+Cadangan set biasa baharu: Ang Ku, Onde-onde, Seri Muka, Vadai, Koci dan Karipap. Lima aset pertama tersedia; Karipap belum dibekalkan. Pemilihan set ini masih cadangan, sebelum menggantikan pool biasa dan ID campaign.

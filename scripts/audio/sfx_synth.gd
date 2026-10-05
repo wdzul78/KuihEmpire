@@ -164,3 +164,58 @@ static func drop() -> AudioStreamWAV:
 	return _make(0.12, func(t: float, _d: float) -> float:
 		return (sin(t * TAU * 240.0) * 0.5 + sin(t * TAU * 480.0) * 0.2) * exp(-t * 34.0)
 	)
+
+
+## Warm rising sweep for a completed match line.
+static func line_clear() -> AudioStreamWAV:
+	return _make(.32, func(t: float, d: float) -> float:
+		var phase := TAU * (480.0 * t + 1100.0 * t * t)
+		return (sin(phase) * .38 + sin(phase * 2) * .09) * sin(PI * t / d) * exp(-t * 7)
+	)
+
+## Separate voices for each special: airy cross, rounded tray pop, magic bells.
+static func special_activation(kind: int) -> AudioStreamWAV:
+	if kind == BoardCell.Special.ORDER:
+		return _make(.8, func(t: float, _d: float) -> float:
+			var value := 0.0
+			for i in 6:
+				var local := t - i * .075
+				if local >= 0:
+					var frequency := 660.0 * pow(2, float(i) / 6)
+					value += (sin(local * TAU * frequency) + .22 * sin(local * TAU * frequency * 2)) * exp(-local * 8) * .18
+			return value
+		)
+	if kind == BoardCell.Special.DULANG:
+		return _make(.55, func(t: float, _d: float) -> float:
+			var phase := TAU * (180 * t + 85 * (1 - exp(-t * 8)) / 8)
+			return sin(phase) * exp(-t * 10) * .55 + sin(t * TAU * 1046.5) * exp(-t * 6) * .18
+		)
+	var rng := _noise(75)
+	var smooth := [0.0]
+	return _make(.52, func(t: float, d: float) -> float:
+		smooth[0] = lerpf(smooth[0], rng.randf_range(-1, 1), .08)
+		var env := sin(PI * t / d)
+		return smooth[0] * env * .8 + sin(TAU * (450 * t + 700 * t * t)) * env * .20
+	)
+
+static func success() -> AudioStreamWAV:
+	var melody := [523.25, 659.25, 783.99, 1046.5, 783.99, 1046.5]
+	return _make(1.7, func(t: float, _d: float) -> float:
+		var value := 0.0
+		for i in melody.size():
+			var local := t - i * .16
+			if local >= 0:
+				var frequency: float = melody[i]
+				value += (sin(local * TAU * frequency) + .25 * sin(local * TAU * frequency * 2)) * (1-exp(-local * 90)) * exp(-local * 4) * .19
+		return value
+	)
+
+static func delivery_launch() -> AudioStreamWAV:
+	return _make(.42, func(t: float, d: float) -> float:
+		return sin(TAU * (380 * t + 900 * t * t)) * sin(PI * t / d) * .22
+	)
+
+static func delivery_hit() -> AudioStreamWAV:
+	return _make(.3, func(t: float, _d: float) -> float:
+		return (sin(TAU * 1046.5 * t) + .35 * sin(TAU * 1568 * t)) * exp(-t * 14) * .28
+	)

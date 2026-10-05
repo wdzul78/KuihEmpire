@@ -23,6 +23,13 @@ static func _make(
 ) -> CustomerData:
 	var c := CustomerData.new()
 	c.id = p_id
+	var art_path := "res://assets/characters/fullbody_v2/%s.png" % p_id
+	if p_id == &"runner":
+		art_path = "res://assets/characters/fullbody_v2/runner_rider.png"
+	elif p_id == &"encik" or p_id == &"meiling":
+		art_path = "res://assets/characters/fullbody_v2/%s_v3.png" % p_id
+	if ResourceLoader.exists(art_path):
+		c.texture = load(art_path) as Texture2D
 	c.display_name = p_name
 	c.kind = p_kind
 	c.cloth = p_cloth
@@ -41,6 +48,18 @@ static func _build() -> Resource:
 
 	var root := Resource.new()
 	root.set_meta("customers", {
+		&"meena": _make(
+			&"meena", "Meena", CustomerData.Kind.NORMAL,
+			Color("58b8bf"), Color("b578bb"), Color("b87a4e"), 3,
+			"A sweet treat to share after work, please.",
+			0.9, 1.1
+		),
+		&"meiling": _make(
+			&"meiling", "Mei Ling", CustomerData.Kind.FAMILY,
+			Color("ef8b79"), Color("b9ddd1"), Color("e6bd96"), 3,
+			"My family loves your kuih, Aina!",
+			1.15, 1.3
+		),
 		&"pakyai": _make(
 			&"pakyai", "Pakyai", CustomerData.Kind.NORMAL,
 			Color("c9a227"), Color("f4dfa0"), Color("e0b48c"), 1,
@@ -70,9 +89,9 @@ static func _build() -> Resource:
 			1.2, 1.45
 		),
 		&"runner": _make(
-			&"runner", "Runner Din", CustomerData.Kind.LAST_MINUTE,
-			Color("e2543f"), Color("ffd7cd"), Color("b87a4e"), 3,
-			"Quick quick! Market closes in ten minutes!",
+			&"runner", "Rider Din", CustomerData.Kind.LAST_MINUTE,
+			Color("26ae68"), Color("e6f4d7"), Color("b87a4e"), 3,
+			"Pickup for delivery, Aina. My customer is waiting!",
 			0.85, 1.15
 		),
 		&"tourist": _make(

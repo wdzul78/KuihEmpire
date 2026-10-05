@@ -1,0 +1,59 @@
+{
+  "generation_tool": "Built-in image_gen.imagegen",
+  "reference": "design/Kuih Empire_ Sweet Match Adventure.png",
+  "purpose": "MVP visual playtest; generated PNG sources preserved without pixel edits",
+  "generated": [
+    {
+      "file": "assets/backgrounds/gerai_mvp.png",
+      "transparent": false,
+      "prompt": "Create ONE production game background asset for a portrait mobile match-3 game Kuih Empire. Use the supplied concept image only as STYLE reference: charming Malaysian roadside kuih stall, warm polished honey-brown wood, bold brown outlines, cheerful illustrated casual game style, pink cream striped awning, banana palms, baskets, bright blue sky, distant kampung roofs. This must be scenery only, without any UI, logo, text, letters, numbers, counters, match board, tiles, buttons, speech bubbles, food icons or people. Portrait 9:16 composition. A shaded low contrast open middle zone from 20% to 88% height, with peripheral timber posts and leafy scenery so the game's real board and HUD remain readable over it. Gentle richer scenery at outer edges, warm wooden countertop at bottom, diffuse morning light, polished cohesive cartoon artwork. Reference is a mood/style reference, not an edit target. Save PNG."
+    },
+    {
+      "file": "assets/kuih/kuih_ketayap.png",
+      "transparent": true,
+      "prompt": "Generate one isolated game sprite of Kuih Ketayap for Kuih Empire mobile match-3. Style reference is the supplied Malaysian stall concept ONLY. A single plump short rolled pandan-green crepe, diagonal from lower left to upper right, visible tight spiral of crepe and dark coconut filling at front end. It is food, not a banana leaf or leaf bundle: smooth soft crepe skin with rounded edges. Match the cheerful polished 2.5D illustrated food assets: appetizing highlights, saturated pandan green, dark chocolate-brown thin outline, no cartoon face, no tray or plate, no letters or text, no glow, no drop shadow outside silhouette. Three-quarter camera. One object centered, fill 82% of a square canvas. Strong recognizable spiral readable at 48px. TRUE TRANSPARENT background. Reference is style reference, not edit target."
+    },
+    {
+      "file": "assets/characters/aina_mvp.png",
+      "transparent": true,
+      "prompt": "Generate ONE isolated transparent character portrait sprite for mobile casual game Kuih Empire. Reference supplied concept image defines Aina: cheerful young adult Malaysian kuih stall owner, warm light-brown skin, pink floral hijab fully covering hair and neck, pink long sleeves, cream baker apron, big expressive friendly brown eyes, warm smiling mouth. Match the reference's polished cute 2D cartoon style, bold brown outlines, rounded shapes, gentle cel shading, no photorealism. Waist-up bust, facing slightly right, presenting kuih with ONE open hand gesture and the other near her apron. Entire head, hands and torso contained inside the square canvas with generous margin; no cut-off head or hands. No UI, food, stall scenery, lettering, speech bubble, signature or logo. TRUE transparent background. Character should remain legible as a small customer/story portrait. Reference is style and character design reference, not an edit target."
+    },
+    {
+      "file": "assets/boosters/sudip.png",
+      "transparent": true,
+      "prompt": "One isolated Sudip booster icon for Malaysian Kuih Empire casual mobile game. Friendly polished 2.5D cartoon, thick dark brown outline, warm wood handle diagonally up-right, broad silver slotted cooking spatula head down-left. A single spatula, centered and fills 80% of square canvas, clearly legible at 48px. True transparent background. No button, frame, text, number, logo, sparkle, scenery or other object. Match the supplied concept's booster icon style. Reference only for style."
+    },
+    {
+      "file": "assets/boosters/dulang.png",
+      "transparent": true,
+      "prompt": "One isolated Dulang booster icon for Kuih Empire mobile casual game. A round shallow golden serving tray seen at three-quarter slight top view, raised warm gold rim, simple embossed golden crown symbol at center, clearly a tray rather than coin. Polished cute 2.5D cartoon illustration, chunky dark-brown outline, glossy warm highlights, centered fills 80% square canvas, legible at 48px. TRUE transparent background. No lettering, no button/frame, no number, no food, no scenery, no sparkles outside silhouette. Follow reference booster visual style; reference is style only."
+    },
+    {
+      "file": "assets/boosters/shuffle.png",
+      "transparent": true,
+      "prompt": "One isolated Shuffle booster symbol for Kuih Empire casual mobile game. Two chunky curved arrows forming a horizontal circular exchange: glossy bubblegum pink upper arrow points right, glossy turquoise blue lower arrow points left. Balanced readable two-arrow loop, thick dark brown outline, playful rounded polished 2.5D cartoon highlights consistent with supplied concept art. Centered fills 80% square canvas. TRUE transparent background. No button/frame, no text, numbers, logo, scenery or additional symbols. Reference is visual style only."
+    },
+    {
+      "file": "assets/boosters/tapau.png",
+      "transparent": true,
+      "prompt": "One isolated Tapau booster icon for Kuih Empire Malaysian casual mobile game. A small square kraft-paper takeaway gift box wrapped with glossy pandan-green ribbon and big leafy bow, cream front hanging tag bearing ONLY a simple golden crown pictogram, no letters. Three-quarter view, cute polished 2.5D cartoon, thick dark brown outlines, golden paper highlights, clearly readable box silhouette at 48px. Object centered fills 80% square canvas. TRUE transparent background. No button, frame, text, letters, numbers, extra objects, scenery or outer sparkles. Match supplied concept booster icon style. Reference is style reference only."
+    }
+  ],
+  "supplied": [
+    "assets/kuih/onde_onde.png",
+    "assets/kuih/kuih_koci.png",
+    "assets/kuih/seri_muka.png",
+    "assets/kuih/ang_ku_kueh.png",
+    "assets/kuih/vadai.png",
+    "assets/specials/lapis_row.png",
+    "assets/specials/lapis_column.png",
+    "assets/specials/keria.png",
+    "assets/specials/bom.png"
+  ],
+  "notes": [
+    "Normal Lapis replaced by Koci with recipe/mastery save migration.",
+    "Same MVP backdrop across campaign chapters pending individual chapter art.",
+    "Aina uses one happy portrait for every expression pending expression variants.",
+    "Sprite alpha bounds fitted at runtime; source PNGs unchanged."
+  ]
+}

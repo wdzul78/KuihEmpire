@@ -29,8 +29,13 @@ SceneManager="*res://scripts/core/scene_manager.gd"
 SaveManager="*res://scripts/core/save_manager.gd"
 ProgressionManager="*res://scripts/core/progression_manager.gd"
 EconomyManager="*res://scripts/core/economy_manager.gd"
+LocationManager="*res://scripts/core/location_manager.gd"
+HeartManager="*res://scripts/core/heart_manager.gd"
 AudioManager="*res://scripts/core/audio_manager.gd"
 GameManager="*res://scripts/core/game_manager.gd"
+GameplayEvents="*res://scripts/core/gameplay_events.gd"
+AchievementManager="*res://scripts/core/achievement_manager.gd"
+RankingManager="*res://scripts/core/ranking_manager.gd"
 
 [display]
 

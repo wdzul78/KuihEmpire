@@ -11,6 +11,7 @@ enum Cast { AINA, IBU, FRIEND, RIVAL, CUSTOMER }
 enum Mood { HAPPY, EXCITED, THINKING, SURPRISED, DETERMINED, CHEEKY }
 
 const OUTLINE := Color("4a2c17")
+const AINA_ART = preload("res://assets/characters/fullbody_v2/aina.png")
 
 @export var cast: Cast = Cast.AINA:
 	set(value):
@@ -24,8 +25,33 @@ const OUTLINE := Color("4a2c17")
 	set(value):
 		expression = value
 		queue_redraw()
-## 0 = head and shoulders, 1 = bust with apron.
+## 0 = portrait crop for queue chips, 1 = complete character including feet.
+static var _regions: Dictionary = {}
 @export_range(0, 1, 1) var framing: int = 1
+## Optional foreground counter: conceal the lower body across the entire sprite,
+## including portions outside the board's rounded side edges.
+var occluding_board: Control = null
+## Keep the complete head below active dialogue, even when wrapped text grows.
+var dialogue_clearance: Control = null
+var story_clearance: Control = null
+
+func _clearance_y() -> float:
+	var top := -INF
+	for bubble in [dialogue_clearance, story_clearance]:
+		if is_instance_valid(bubble) and bubble.is_visible_in_tree():
+			# Use the resting rectangle so entrance animation cannot push the head up.
+			# Side characters sit outside the order bubble's tail. Reserve its
+			# rounded body, while story dialogue reserves the complete bubble.
+			var body_ratio := .80 if bubble == dialogue_clearance else 1.0
+			top = maxf(top, bubble.get_global_transform().origin.y + bubble.size.y * body_ratio + 14)
+	return top - get_global_transform().origin.y
+
+func artwork_rect(region: Rect2) -> Rect2:
+	var fit := minf(size.x / region.size.x, size.y / region.size.y)
+	var fitted := region.size * fit
+	var destination := Rect2((size - fitted) * .5, fitted)
+	destination.position.y = maxf(destination.position.y, _clearance_y())
+	return destination
 
 
 func _ready() -> void:
@@ -83,9 +109,31 @@ func _draw() -> void:
 	var side := minf(size.x, size.y)
 	var origin := Vector2((size.x - side) * 0.5, (size.y - side) * 0.5)
 	var u := Rect2(origin, Vector2(side, side))
+	u.position.y = maxf(u.position.y, _clearance_y())
+	var art: Texture2D = AINA_ART if cast == Cast.AINA else (customer.texture if cast == Cast.CUSTOMER and customer != null else null)
+	if art != null:
+		_draw_character(art)
+		return
 
 	_draw_body(u)
 	_draw_head(u)
+
+
+func _draw_character(art: Texture2D) -> void:
+	var key := art.resource_path
+	if not _regions.has(key):
+		_regions[key] = Rect2(art.get_image().get_used_rect())
+	var region: Rect2 = _regions[key]
+	if framing == 0:
+		region.size.y *= 0.38
+	var destination := artwork_rect(region)
+	if is_instance_valid(occluding_board):
+		var edge := occluding_board.get_global_rect().position.y - get_global_rect().position.y
+		var visible_height := clampf(edge - destination.position.y, 0, destination.size.y)
+		region.size.y *= visible_height / destination.size.y
+		destination.size.y = visible_height
+	if destination.size.y > 0:
+		draw_texture_rect_region(art, destination, region)
 
 
 func _draw_body(u: Rect2) -> void:

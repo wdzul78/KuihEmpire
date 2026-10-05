@@ -39,41 +39,7 @@ static func _build() -> void:
 	_decks = {}
 
 	# --- Prologue: shown once, before Stage 1 of the tutorial flow.
-	_decks[PROLOGUE] = [
-		StoryPage.make(
-			"Gerai Keluarga, Kuching",
-			StoryBeat.Speaker.AINA,
-			[
-				"Three generations have sold kuih from this same wooden counter.",
-				"Morning is quiet. The air still smells like pandan and steam.",
-				"My name is Aina. Today the stall is mine.",
-			],
-			[&"onde_onde", &"kuih_lapis"],
-			&"stall_dawn"
-		),
-		StoryPage.make(
-			"The Book With Empty Pages",
-			StoryBeat.Speaker.AINA,
-			[
-				"Under the counter I found my grandmother's recipe book.",
-				"Most of the pages are blank.",
-				"Every kuih I serve writes a new line.",
-			],
-			[&"seri_muka", &"kuih_ketayap"],
-			&"kuching_market"
-		),
-		StoryPage.make(
-			"Festival Kuih Kita",
-			StoryBeat.Speaker.AINA,
-			[
-				"At the end of the season there is a festival. Kuih Kita.",
-				"To get a table there I need Festival Stamps.",
-				"One tray at a time, then.",
-			],
-			[&"ang_ku_kueh", &"vadai"],
-			&"festival"
-		),
-	]
+	_decks[PROLOGUE] = OpeningStory.pages()
 
 	# --- Chapter intros. Only the ones we have content for are authored;
 	# chapters without a deck simply start on their first level.
@@ -86,7 +52,7 @@ static func _build() -> void:
 				"Everyone knows everyone. Every order matters.",
 				"Ready when you are.",
 			],
-			[&"onde_onde", &"vadai"],
+			[&"onde_onde", &"keria"],
 			&"kuching_market"
 		),
 	]
@@ -99,7 +65,7 @@ static func _build() -> void:
 				"The whole road is lined with stalls and everyone smells like coconut.",
 				"This is where the season ends, and where the next one begins.",
 			],
-			[&"seri_muka", &"kuih_lapis", &"vadai"],
+			[&"ang_ku_kueh", &"kuih_koci", &"keria"],
 			&"festival"
 		),
 	]
@@ -108,7 +74,7 @@ static func _build() -> void:
 static func label_for(group_id: StringName) -> String:
 	match group_id:
 		PROLOGUE:
-			return "Prologue"
+			return JourneyArt.localized("Cerita Pembukaan", "Opening Story")
 		KUCHING:
 			return "Chapter 1  ·  Kuching"
 		&"festival_finale":

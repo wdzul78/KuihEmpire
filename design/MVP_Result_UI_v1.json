@@ -1,0 +1,33 @@
+{
+  "mode": "built-in image_gen",
+  "assets": [
+    {
+      "id": "panel",
+      "ref": "stage success.png",
+      "prompt": "Use case: ui-mockup. Asset: isolated transparent game results popup skin. Reference is STYLE AND PANEL SHAPE ONLY. Recreate the cream parchment rounded rectangular panel with polished honey wood rim, top centered small blank cream wooden title tab, banana leaves and hibiscus/frangipani flowers at top-left and bottom corners. Portrait rectangular roughly 1:1 square panel (reference popup region only), generous cream blank interior. NO CHARACTER, NO BACKGROUND, NO TEXT, NO NUMBERS, NO STARS, NO COIN, NO BUTTONS. Completely empty cream interior for native game text and separate native widgets. Crisp cheerful Malaysian cartoon mobile game, thick dark brown outlines, painted highlights. Entire panel uncut, transparent outside decoration.",
+      "output_path": "assets/ui/results_v1/panel.png"
+    },
+    {
+      "id": "aina_success",
+      "ref": "stage success.png",
+      "prompt": "Use case: illustration-story. Asset: transparent isolated Aina success character layer for game popup. Reference locks exact character identity/style. Generate ONLY Aina smiling excitedly, eyes bright, one hand presenting to her left (viewer left) and other hand near apron. Pink hijab with cream floral motifs, pale pink long sleeves and long skirt, cream apron, slim build. 3/4 character from head to lower skirt, entirely visible with generous transparent margin. No popup, text, UI, background or other objects. Clean dark brown outlines and polished 2D mobile cartoon matching the reference. Facing viewer left, intended behind popup on right. No edge clipping.",
+      "output_path": "assets/ui/results_v1/aina_success.png"
+    },
+    {
+      "id": "aina_failed",
+      "ref": "stage failed.png",
+      "prompt": "Use case: illustration-story. Asset: transparent isolated Aina failure character layer for game popup. Reference locks exact character identity/style. Generate ONLY Aina with disappointed teary eyes, gently worried expression, small cartoon tear drops, hands near cheeks like reference. Pink hijab with cream floral motifs, pale pink long sleeves and long skirt, cream apron, slim build. 3/4 character from head to lower skirt, entirely visible with generous transparent margin. No popup, text, UI, background or other objects. Clean dark brown outlines and polished 2D mobile cartoon matching the reference. Facing viewer left, intended behind popup on right. No edge clipping.",
+      "output_path": "assets/ui/results_v1/aina_failed.png"
+    },
+    {
+      "id": "button_green",
+      "prompt": "Use case: ui-mockup. Transparent standalone horizontal rounded pill button for Malaysian cozy mobile game. Match reference green NEXT STAGE button artwork exactly in spirit: richly shaded bright leaf green centre, very subtle banana leaf patterns on left and right ends, thin cream gold bevel inside thick dark brown outer outline, polished 2D cartoon highlights, width to height 6:1. Entire button uncut. NO TEXT, NO ARROW, NO UI, NO PANEL, NO BACKGROUND. Actual transparent outside.",
+      "output_path": "assets/ui/results_v1/button_green.png"
+    },
+    {
+      "id": "button_pink",
+      "prompt": "Use case: ui-mockup. Transparent standalone horizontal rounded pill button for Malaysian cozy mobile game. Match reference pink PLAY AGAIN button artwork exactly in spirit: richly shaded rosy pink centre, glossy upper edge, fine cream gold bevel inside thick warm brown outer outline, polished 2D cartoon highlights, width to height 8:1. Entire button uncut. NO TEXT, NO ICON, NO UI, NO PANEL, NO BACKGROUND. Actual transparent outside.",
+      "output_path": "assets/ui/results_v1/button_pink.png"
+    }
+  ]
+}

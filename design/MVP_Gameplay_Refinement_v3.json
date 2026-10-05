@@ -1,0 +1,30 @@
+{
+  "generator": "built-in imagegen",
+  "assets": [
+    {
+      "id": "keria",
+      "folder": "assets/kuih/cartoon_v3",
+      "refs": [
+        "F:/WDzul78/Documents/Godot/Projects/kuih-empire/assets/kuih/cartoon_v2/keria.png"
+      ],
+      "prompt": "Edit target: kuih keria game tile. Replace the scalloped flower-shaped outer edge with a beautiful smooth round plump donut ring and a generous perfectly clear circular centre hole. Golden orange Malaysian sweet potato keria with a light glossy sugar glaze, a few restrained sugar flecks. Keep the bold dark brown outline, appealing simplified colourful cartoon mobile puzzle style and three-quarter top view. One isolated centred donut, fills 85% square, no leaf, no plate, no sparkles, no text. Genuine transparent background including the hole.",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a10275-2ab7-7de1-a71b-ad9e6d28243b\\exec-4ee4fa67-3be1-415f-9d8f-c7d160a20731.png"
+    },
+    {
+      "id": "ang_ku_kueh",
+      "folder": "assets/kuih/cartoon_v3",
+      "refs": [
+        "F:/WDzul78/Documents/Godot/Projects/kuih-empire/design/ang_ku_kueh.png",
+        "F:/WDzul78/Documents/Godot/Projects/kuih-empire/assets/kuih/cartoon_v2/keria.png"
+      ],
+      "prompt": "Use first image as identity reference for Malaysian red ang ku kuih and second as cartoon style reference ONLY. Create a single production mobile match-3 tile: bright vermilion red rounded oval tortoise-shell ang ku cake with clear simplified embossed hexagonal shell pattern, glossy highlights and bold dark chocolate outline. Clean colourful polished cartoon illustration, same three-quarter top view as style reference, highly readable at 48 pixels. No realistic grain, no plate, no leaf, no words, no aura. Isolated centred fills 85% square, genuinely transparent background.",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a10275-2ab7-7de1-a71b-ad9e6d28243b\\exec-dc5ee7c7-e80f-40d5-9d9a-62f95ee27d51.png"
+    },
+    {
+      "id": "speech_bubble",
+      "folder": "assets/ui/gameplay_v3",
+      "prompt": "Use case: stylized-concept. A single blank speech bubble UI asset for a cozy Malaysian kuih stall cartoon mobile game. Wide rounded rectangular creamy ivory parchment face, subtly warm pale honey edge shading, elegant bold dark brown contour with thin gold inner rim, soft discreet shadow. Small smoothly curved speech tail at bottom right points toward the character standing to the right. Width to height approximately 3:1, generous flat clean blank central area for native text, no lettering, no icons, no extra objects. Cute polished hand-painted game UI style. Entire bubble visible, genuinely transparent background around it, fill canvas with minimal margin.",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a10275-2ab7-7de1-a71b-ad9e6d28243b\\exec-cbb9c970-e152-490d-b0a9-b677090ada8f.png"
+    }
+  ]
+}

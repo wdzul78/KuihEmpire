@@ -1,0 +1,8 @@
+# Aina waves hello on story page two
+
+Asset: `assets/story/prologue_v1/aina_wave_v1.png`.
+Generated with the built-in imagegen tool using the existing full-body Aina artwork as the character/style reference. The original character asset is unchanged. The new waist-up pose fills most of the illustration height on page two, facing the player and waving. The Hi! bubble remains native UI. Story illustrations now have rounded corners through an atlas-aware Godot shader; the source PNGs remain unchanged.
+
+Final prompt:
+
+Use case: illustration-story. Create a new pose of Aina from the reference, as an isolated transparent character cutout for the second story panel of Kuih Empire. Preserve her exact identity and clothing: cheerful young Malay woman, big expressive black eyes, rounded chibi cartoon face, pink hijab with pale yellow flowers and brown inner cap, long pink sleeves, cream apron with two brown buttons and front pocket. She faces DIRECTLY TOWARDS THE VIEWER, looks into the camera, smiles warmly with open mouth, and raises her right hand beside her head waving hello, palm facing the viewer with five natural fingers. Other hand rests gently on her apron. Waist-up portrait, large head and torso fill the frame; include the entire waving hand and hijab with generous safe margins so nothing is cropped. Same polished 2D cartoon mobile game style, dark brown outlines, warm soft shading and clean crisp readable silhouette. Actual transparent alpha background, no background scenery, no dark halo, no ground shadow, no lettering, no speech bubble, no UI, no watermark. Only one Aina and two hands. The game will add the Hi! dialogue natively.

@@ -1,8 +1,8 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene format=3 uid="uid://cddqvxskuu35d"]
 
-[ext_resource type="Script" path="res://scripts/gameplay/level_controller.gd" id="1_level"]
+[ext_resource type="Script" uid="uid://b6x26qqersbe4" path="res://scripts/gameplay/level_controller.gd" id="1_level"]
 
-[node name="LevelScreen" type="Control"]
+[node name="LevelScreen" type="Control" unique_id=141686246]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0

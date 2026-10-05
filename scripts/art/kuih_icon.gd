@@ -17,6 +17,7 @@ extends Control
 const OUTLINE := Color("4a2c17")
 const OUTLINE_WIDTH := 0.05
 const SHADOW := Color(0.25, 0.15, 0.05, 0.18)
+static var _art_regions: Dictionary = {}
 
 @export var kuih: KuihData = null:
 	set(value):
@@ -26,6 +27,10 @@ const SHADOW := Color(0.25, 0.15, 0.05, 0.18)
 @export var show_outline: bool = true
 ## Slightly bigger drawing used for the Recipe Book and order chips.
 @export var detail_level: int = 1
+var special_kind: int = BoardCell.Special.NONE:
+	set(value):
+		special_kind = value
+		queue_redraw()
 
 
 func _ready() -> void:
@@ -55,11 +60,22 @@ func _draw() -> void:
 	if kuih == null:
 		return
 	var rect := _unit()
+	var special_art := BoardArt.special_texture(special_kind)
+	if special_art != null:
+		var width_scale := 1.0
+		if special_kind in [BoardCell.Special.TAPAU_VERTICAL, BoardCell.Special.DULANG]:
+			# Give the tall carrier and radiant tray more of their own cell.
+			# Dulang's soft rays may spill slightly; its solid tray stays in the cell.
+			var edge := minf(size.x,size.y)*(.90 if special_kind == BoardCell.Special.TAPAU_VERTICAL else 1.12)
+			rect = Rect2((size-Vector2.ONE*edge)*.5,Vector2.ONE*edge)
+			if special_kind == BoardCell.Special.TAPAU_VERTICAL:
+				rect.position.x -= size.x*.065
+				rect.position.y += size.y*.025
+			width_scale = 1.45 if special_kind == BoardCell.Special.TAPAU_VERTICAL else 1.0
+		_draw_asset(special_art, rect, width_scale)
+		return
 	if kuih.texture != null:
-		var texture_size := kuih.texture.get_size()
-		var ratio := minf(rect.size.x / texture_size.x, rect.size.y / texture_size.y)
-		var art_size := texture_size * ratio
-		draw_texture_rect(kuih.texture, Rect2(rect.get_center() - art_size * 0.5, art_size), false)
+		_draw_asset(kuih.texture, rect)
 		return
 	# Soft ground shadow keeps every tile readable against the board.
 	draw_circle(_u(rect, 0.5, 0.86), rect.size.x * 0.30, SHADOW)
@@ -91,6 +107,23 @@ func _draw() -> void:
 
 
 # --- primitives ------------------------------------------------------------
+
+## Fit the opaque sprite rather than its transparent padding. Source PNGs stay intact.
+func _draw_asset(texture: Texture2D, rect: Rect2, width_scale: float = 1.0) -> void:
+	var key := texture.get_instance_id()
+	if not _art_regions.has(key):
+		var bitmap := texture.get_image()
+		var region := Rect2(Vector2.ZERO, texture.get_size())
+		if bitmap != null:
+			var used := bitmap.get_used_rect()
+			if used.size.x > 0 and used.size.y > 0:
+				region = Rect2(used)
+		_art_regions[key] = region
+	var source: Rect2 = _art_regions[key]
+	var ratio := minf(rect.size.x / source.size.x, rect.size.y / source.size.y)
+	var art_size := source.size * ratio
+	art_size.x = minf(rect.size.x,art_size.x*width_scale)
+	draw_texture_rect_region(texture, Rect2(rect.get_center() - art_size * 0.5, art_size), source)
 
 func _disc(center: Vector2, radius: float, color: Color, outlined: bool = true) -> void:
 	if show_outline and outlined:

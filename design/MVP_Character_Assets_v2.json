@@ -1,0 +1,88 @@
+{
+  "generator": "built-in imagegen",
+  "reference": "design/Kuih Empire Character Design Board.png",
+  "active_overrides": {
+    "runner": "runner_rider.png",
+    "encik": "encik_v3.png",
+    "meiling": "meiling_v3.png"
+  },
+  "layout": "Full body customer left, Aina right, dialogue and order between; queue uses head crop.",
+  "steamer": "Tutorial 7 now queue only. First steamer at campaign 21; strong two-hit steamer at 30. Overlay z-order fixed.",
+  "stall_recommendation": "20 main stages/stall plus 8 tutorial lessons; current 30-stage campaign retained for MVP testing.",
+  "assets": [
+    {
+      "id": "aina",
+      "prompt": "Use case: stylized-concept. Generate one production game character sprite of Aina, STRICTLY matching Aina's identity and clean modern Malaysian chibi cartoon art in the reference character design board. Reference is style and identity only. FULL BODY from entire floral pink hijab crown to BOTH complete cream shoes, pink long baju kurung, cream apron with pocket, cheerful large black eyes, rounded proportions, bold clean dark brown outlines, simple soft cel shading. Three-quarter pose facing LEFT, welcoming customer with open hand toward left. Exactly one character, no food tray, no lettering, no board, no environment. Transparent background. Generous clear padding around head, hands and feet: NOTHING cropped. Portrait composition, whole body centered, crisp mobile game readable silhouette."
+    },
+    {
+      "id": "pakyai",
+      "prompt": "Use case: stylized-concept. One production full body customer sprite for Kuih Empire. Subject: Pakyai, friendly middle-aged Malay man, black songkok, mustard gold baju Melayu, dark trousers, brown shoes, small moustache. Reference image is STYLE ONLY: match its friendly Malaysian mobile game chibi characters with large expressive black eyes, rounded proportions, clean bold dark brown outlines, simple soft cel shading and warm colours. Three-quarter pose facing RIGHT toward Aina, friendly smile, one hand lightly gesturing toward right. Entire head, hands, legs and BOTH shoes fully visible with generous padding. Transparent background, NO backdrop or shadow glow, no text, no food, no board, exactly ONE character. Keep clean readable shapes at small mobile game size. Portrait composition centered.",
+      "path": "assets/characters/fullbody_v2/pakyai.png"
+    },
+    {
+      "id": "makcik",
+      "prompt": "Use case: stylized-concept. One production full body customer sprite for Kuih Empire. Subject: Makcik Ros, friendly middle-aged Malay woman in purple hijab and lavender baju kurung, cream shoes. Reference image is STYLE ONLY: match its friendly Malaysian mobile game chibi characters with large expressive black eyes, rounded proportions, clean bold dark brown outlines, simple soft cel shading and warm colours. Three-quarter pose facing RIGHT toward Aina, friendly smile, one hand lightly gesturing toward right. Entire head, hands, legs and BOTH shoes fully visible with generous padding. Transparent background, NO backdrop or shadow glow, no text, no food, no board, exactly ONE character. Keep clean readable shapes at small mobile game size. Portrait composition centered.",
+      "path": "assets/characters/fullbody_v2/makcik.png"
+    },
+    {
+      "id": "abang",
+      "prompt": "Use case: stylized-concept. One production full body customer sprite for Kuih Empire. Subject: Abang Amir, young adult Malay man, short black hair, navy blue collared shirt, cream trousers, brown shoes. Reference image is STYLE ONLY: match its friendly Malaysian mobile game chibi characters with large expressive black eyes, rounded proportions, clean bold dark brown outlines, simple soft cel shading and warm colours. Three-quarter pose facing RIGHT toward Aina, friendly smile, one hand lightly gesturing toward right. Entire head, hands, legs and BOTH shoes fully visible with generous padding. Transparent background, NO backdrop or shadow glow, no text, no food, no board, exactly ONE character. Keep clean readable shapes at small mobile game size. Portrait composition centered.",
+      "path": "assets/characters/fullbody_v2/abang.png"
+    },
+    {
+      "id": "kakak",
+      "prompt": "Use case: stylized-concept. One production full body customer sprite for Kuih Empire. Subject: Kak Yan, adult Malay woman in rose pink hijab and deep rose baju kurung with cream floral details, cream shoes. Reference image is STYLE ONLY: match its friendly Malaysian mobile game chibi characters with large expressive black eyes, rounded proportions, clean bold dark brown outlines, simple soft cel shading and warm colours. Three-quarter pose facing RIGHT toward Aina, friendly smile, one hand lightly gesturing toward right. Entire head, hands, legs and BOTH shoes fully visible with generous padding. Transparent background, NO backdrop or shadow glow, no text, no food, no board, exactly ONE character. Keep clean readable shapes at small mobile game size. Portrait composition centered.",
+      "path": "assets/characters/fullbody_v2/kakak.png"
+    },
+    {
+      "id": "encik",
+      "prompt": "Use case: stylized-concept. One production full body customer sprite for Kuih Empire. Subject: Encik Lim, middle-aged Chinese Malaysian office man, short black hair, round glasses, charcoal collared shirt, grey trousers, brown shoes. Reference image is STYLE ONLY: match its friendly Malaysian mobile game chibi characters with large expressive black eyes, rounded proportions, clean bold dark brown outlines, simple soft cel shading and warm colours. Three-quarter pose facing RIGHT toward Aina, friendly smile, one hand lightly gesturing toward right. Entire head, hands, legs and BOTH shoes fully visible with generous padding. Transparent background, NO backdrop or shadow glow, no text, no food, no board, exactly ONE character. Keep clean readable shapes at small mobile game size. Portrait composition centered.",
+      "path": "assets/characters/fullbody_v2/encik.png"
+    },
+    {
+      "id": "runner",
+      "prompt": "Use case: stylized-concept. One production full body customer sprite for Kuih Empire. Subject: Runner Din, young adult Malay delivery man, short black hair, red delivery jacket, dark trousers, sneakers, small delivery satchel. Reference image is STYLE ONLY: match its friendly Malaysian mobile game chibi characters with large expressive black eyes, rounded proportions, clean bold dark brown outlines, simple soft cel shading and warm colours. Three-quarter pose facing RIGHT toward Aina, friendly smile, one hand lightly gesturing toward right. Entire head, hands, legs and BOTH shoes fully visible with generous padding. Transparent background, NO backdrop or shadow glow, no text, no food, no board, exactly ONE character. Keep clean readable shapes at small mobile game size. Portrait composition centered.",
+      "path": "assets/characters/fullbody_v2/runner.png"
+    },
+    {
+      "id": "tourist",
+      "prompt": "Use case: stylized-concept. One production full body customer sprite for Kuih Empire. Subject: A friendly adult woman tourist in a straw sunhat, yellow blouse, cream long trousers, orange small shoulder bag, brown shoes. Reference image is STYLE ONLY: match its friendly Malaysian mobile game chibi characters with large expressive black eyes, rounded proportions, clean bold dark brown outlines, simple soft cel shading and warm colours. Three-quarter pose facing RIGHT toward Aina, friendly smile, one hand lightly gesturing toward right. Entire head, hands, legs and BOTH shoes fully visible with generous padding. Transparent background, NO backdrop or shadow glow, no text, no food, no board, exactly ONE character. Keep clean readable shapes at small mobile game size. Portrait composition centered.",
+      "path": "assets/characters/fullbody_v2/tourist.png"
+    },
+    {
+      "id": "festival",
+      "prompt": "Use case: stylized-concept. One production full body customer sprite for Kuih Empire. Subject: A friendly adult Malay woman festival guest, rose red hijab and red baju kurung with tasteful gold trim, gold shoes. Reference image is STYLE ONLY: match its friendly Malaysian mobile game chibi characters with large expressive black eyes, rounded proportions, clean bold dark brown outlines, simple soft cel shading and warm colours. Three-quarter pose facing RIGHT toward Aina, friendly smile, one hand lightly gesturing toward right. Entire head, hands, legs and BOTH shoes fully visible with generous padding. Transparent background, NO backdrop or shadow glow, no text, no food, no board, exactly ONE character. Keep clean readable shapes at small mobile game size. Portrait composition centered.",
+      "path": "assets/characters/fullbody_v2/festival.png"
+    },
+    {
+      "id": "nenek",
+      "prompt": "Use case: stylized-concept. One production full body customer sprite for Kuih Empire. Subject: Nenek Halimah, kind elderly Malay grandmother, grey blue hijab and pale blue long baju kurung, round spectacles, cream shoes. Reference image is STYLE ONLY: match its friendly Malaysian mobile game chibi characters with large expressive black eyes, rounded proportions, clean bold dark brown outlines, simple soft cel shading and warm colours. Three-quarter pose facing RIGHT toward Aina, friendly smile, one hand lightly gesturing toward right. Entire head, hands, legs and BOTH shoes fully visible with generous padding. Transparent background, NO backdrop or shadow glow, no text, no food, no board, exactly ONE character. Keep clean readable shapes at small mobile game size. Portrait composition centered.",
+      "path": "assets/characters/fullbody_v2/nenek.png"
+    },
+    {
+      "id": "meena",
+      "prompt": "Use case: stylized-concept. Production Kuih Empire customer FULL BODY sprite. Meena, a friendly adult Indian Malaysian woman with medium brown skin, large black eyes, long black hair in a braid, small simple bindi, turquoise long kurta, purple dupatta shawl, cream trousers and brown flats. Match ONLY the reference's warm clean Malaysian chibi mobile game illustration style, rounded proportions, bold dark brown outlines and soft cel shading. Three-quarter facing RIGHT, smiling and lightly gesturing toward Aina. Exactly one character, fully visible from head to both shoes with generous margin, centered portrait canvas. True transparent background with NO environment, NO glow, NO shadows behind character, NO text or labels. Friendly natural respectful design.",
+      "path": "assets/characters/fullbody_v2/meena.png"
+    },
+    {
+      "id": "meiling",
+      "prompt": "Use case: stylized-concept. Production Kuih Empire customer FULL BODY sprite. Mei Ling, a friendly adult Chinese Malaysian woman with warm light tan skin, large black eyes, chin-length straight black bob, coral blouse, cream long skirt, little mint shoulder bag and brown flats. Match ONLY the reference's warm clean Malaysian chibi mobile game illustration style, rounded proportions, bold dark brown outlines and soft cel shading. Three-quarter facing RIGHT, smiling and lightly gesturing toward Aina. Exactly one character, fully visible from head to both shoes with generous margin, centered portrait canvas. True transparent background with NO environment, NO glow, NO shadows behind character, NO text or labels. Friendly natural respectful design.",
+      "path": "assets/characters/fullbody_v2/meiling.png"
+    },
+    {
+      "id": "runner_rider",
+      "prompt": "Edit this existing full body Runner Din game sprite. Preserve his friendly face, identity, three-quarter facing RIGHT pose, full body including both feet, proportions, bold brown outlines and clean soft cartoon shading. Replace red cap with a simple green motorcycle helmet with visor raised so whole face remains visible. Replace red delivery jacket and shoes with jade green jacket and green/white sneakers. Replace small satchel with a clearly visible box-shaped insulated food-delivery backpack on his back, green with cream reflective strip. Generic local food delivery rider, ABSOLUTELY NO company names, logos, symbols or lettering. True transparent background with no glow or scenery, complete body with margin.",
+      "path": "assets/characters/fullbody_v2/runner_rider.png"
+    },
+    {
+      "id": "encik_v3",
+      "prompt": "Edit ONLY the eyes of this existing full-body Kuih Empire Chinese Malaysian customer sprite. Change both oversized round eyes to noticeably narrower natural almond-shaped eyes with gently defined upper eyelids, warm dark irises and friendly smile. Keep eyes OPEN and expressive. Preserve exactly the same person, face shape, hair, skin colour, glasses if present, outfit, pose, full body, feet, clean brown outlines and soft cartoon shading. Respectful natural character design. Preserve transparent background. No text, no new objects, no crop.",
+      "path": "assets/characters/fullbody_v2/encik_v3.png"
+    },
+    {
+      "id": "meiling_v3",
+      "prompt": "Edit ONLY the eyes of this existing full-body Kuih Empire Chinese Malaysian customer sprite. Change both oversized round eyes to noticeably narrower natural almond-shaped eyes with gently defined upper eyelids, warm dark irises and friendly smile. Keep eyes OPEN and expressive. Preserve exactly the same person, face shape, hair, skin colour, glasses if present, outfit, pose, full body, feet, clean brown outlines and soft cartoon shading. Respectful natural character design. Preserve transparent background. No text, no new objects, no crop.",
+      "path": "assets/characters/fullbody_v2/meiling_v3.png"
+    }
+  ]
+}

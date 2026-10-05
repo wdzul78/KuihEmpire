@@ -16,9 +16,6 @@ enum SwapOutcome {
 
 const MIN_MATCH := 3
 const DULANG_RADIUS := 1
-## Tapau clears its row *and* its column. One line in the master plan, but the
-## cross is far more satisfying and matches genre expectations.
-const TAPAU_CLEARS_CROSS := true
 const SHUFFLE_MAX_ATTEMPTS := 60
 
 
@@ -27,6 +24,7 @@ const SHUFFLE_MAX_ATTEMPTS := 60
 class MatchRun extends RefCounted:
 	var cells: Array[Vector2i] = []
 	var horizontal: bool = true
+	var square: bool = false
 
 
 class MatchGroup extends RefCounted:
@@ -76,8 +74,16 @@ class ClearResult extends RefCounted:
 	var cleared: Dictionary = {}
 	## Array of { pos, special, kuih } for freshly created special tiles.
 	var created: Array[Dictionary] = []
+	var match_runs: Array[MatchRun] = []
+	## Activation entries include chain_depth for ordered visual waves.
+	var activated: Array[Dictionary] = []
 	var blockers: Array[BlockerHit] = []
 	var targets: Array[TargetProgress] = []
+	var direct_blocker_hits: Dictionary = {}
+	var combo: StringName = &""
+	var combo_origin := Vector2i(-1,-1)
+	var combo_members: Dictionary = {}
+	var combo_cells: Array[Vector2i] = []
 
 	func is_empty() -> bool:
 		return cleared.is_empty() and blockers.is_empty() and targets.is_empty()
@@ -109,6 +115,10 @@ var pool: Array[KuihData] = []
 var pool_by_id: Dictionary = {}
 var rng := RandomNumberGenerator.new()
 var shuffles_used: int = 0
+var delivery_enabled := false
+var order_remaining: Dictionary = {}
+# Target priorities live in logic and can be configured independently of VFX.
+var delivery_priorities: Array[StringName] = [&"order", &"blocker", &"objective", &"useful"]
 ## Emitted whenever a match creates a special tile, so the tutorial coach can
 ## react to the lesson actually landing.
 signal special_created(kind: int)
@@ -246,6 +256,9 @@ func _would_match(x: int, y: int, candidate: KuihData) -> bool:
 		var d := get_cell(Vector2i(x, y - 2))
 		if c != null and d != null and c.kuish_id() == candidate.id and d.kuish_id() == candidate.id:
 			return true
+	if delivery_enabled and x > 0 and y > 0:
+		if get_cell(Vector2i(x-1, y)).kuish_id() == candidate.id and get_cell(Vector2i(x, y-1)).kuish_id() == candidate.id and get_cell(Vector2i(x-1, y-1)).kuish_id() == candidate.id:
+			return true
 	return false
 
 
@@ -268,6 +281,8 @@ func find_matches(preferred: Array = []) -> Array[MatchGroup]:
 	var runs: Array[MatchRun] = []
 	runs.append_array(_scan_runs(true))
 	runs.append_array(_scan_runs(false))
+	if delivery_enabled:
+		runs.append_array(_scan_squares())
 	if runs.is_empty():
 		return []
 
@@ -304,6 +319,24 @@ func find_matches(preferred: Array = []) -> Array[MatchGroup]:
 		_classify_group(g, preferred)
 	return groups
 
+
+func _scan_squares() -> Array[MatchRun]:
+	var squares: Array[MatchRun] = []
+	for y in height - 1:
+		for x in width - 1:
+			var positions: Array[Vector2i] = [Vector2i(x,y), Vector2i(x+1,y), Vector2i(x,y+1), Vector2i(x+1,y+1)]
+			var id := get_cell(positions[0]).kuish_id()
+			var valid := id != &""
+			for pos in positions:
+				var cell := get_cell(pos)
+				if not cell.is_playable() or cell.special != BoardCell.Special.NONE or cell.kuish_id() != id:
+					valid = false
+			if valid:
+				var square := MatchRun.new()
+				square.cells = positions
+				square.square = true
+				squares.append(square)
+	return squares
 
 func _scan_runs(horizontal: bool) -> Array[MatchRun]:
 	var runs: Array[MatchRun] = []
@@ -365,7 +398,11 @@ func _classify_group(group: MatchGroup, preferred: Array) -> void:
 	var max_v := 0
 	var h_count := 0
 	var v_count := 0
+	var has_square := false
 	for run in group.runs:
+		if run.square:
+			has_square = true
+			continue
 		if run.horizontal:
 			max_h = maxi(max_h, run.cells.size())
 			h_count += 1
@@ -378,7 +415,16 @@ func _classify_group(group: MatchGroup, preferred: Array) -> void:
 	elif max_h >= MIN_MATCH and max_v >= MIN_MATCH:
 		group.special = BoardCell.Special.DULANG
 	elif max_h == 4 or max_v == 4:
-		group.special = BoardCell.Special.TAPAU
+		# A deliberate swipe determines the package's firing direction.
+		# Cascades have no swipe, so use the matched line's orientation.
+		group.special = BoardCell.Special.TAPAU if max_h == 4 else BoardCell.Special.TAPAU_VERTICAL
+		if preferred.size() == 2:
+			var from: Vector2i = preferred[0]
+			var to: Vector2i = preferred[1]
+			if from.distance_to(to) == 1 and (group.has(from) or group.has(to)):
+				group.special = BoardCell.Special.TAPAU if from.y == to.y else BoardCell.Special.TAPAU_VERTICAL
+	elif has_square:
+		group.special = BoardCell.Special.HANTAR
 	else:
 		group.special = BoardCell.Special.NONE
 
@@ -447,7 +493,7 @@ func has_any_match() -> bool:
 func try_swap(a: Vector2i, b: Vector2i) -> SwapOutcome:
 	if a == b:
 		return SwapOutcome.INVALID
-	if not (a.x == b.x or a.y == b.y):
+	if absi(a.x-b.x) + absi(a.y-b.y) != 1:
 		return SwapOutcome.INVALID
 	var ca := get_cell(a)
 	var cb := get_cell(b)
@@ -460,6 +506,16 @@ func try_swap(a: Vector2i, b: Vector2i) -> SwapOutcome:
 
 	swap_cells(a, b)
 	if ca.special != BoardCell.Special.NONE or cb.special != BoardCell.Special.NONE:
+		# Special Order targets the kuih deliberately swapped with it.
+		# Keep creation's fallback type for chain hits without a swap partner.
+		if ca.special == BoardCell.Special.ORDER and cb.special != BoardCell.Special.ORDER:
+			ca.order_kuish = cb.kuish_id()
+		if cb.special == BoardCell.Special.ORDER and ca.special != BoardCell.Special.ORDER:
+			cb.order_kuish = ca.kuish_id()
+		if ca.special == BoardCell.Special.HANTAR and cb.special == BoardCell.Special.NONE:
+			ca.order_kuish = cb.kuish_id()
+		if cb.special == BoardCell.Special.HANTAR and ca.special == BoardCell.Special.NONE:
+			cb.order_kuish = ca.kuish_id()
 		return SwapOutcome.ACTIVATED_SPECIAL
 	if has_any_match():
 		return SwapOutcome.PLAYED
@@ -497,6 +553,7 @@ func resolve(preferred: Array = []) -> ClearResult:
 	var protect: Dictionary = {}
 	var queue: Array[Vector2i] = []
 	for group in groups:
+		result.match_runs.append_array(group.runs)
 		if group.special != BoardCell.Special.NONE:
 			var origin := group.origin
 			var origin_cell := get_cell(origin)
@@ -534,6 +591,16 @@ func activate_specials(positions: Array) -> ClearResult:
 			queue.append(pos)
 	if queue.is_empty():
 		return result
+	# Only a deliberate swap of two directional specials forms a cross.
+	# Chain hits keep each individual special's native direction.
+	if queue.size() == 2:
+		var a := queue[0]
+		var b := queue[1]
+		if absi(a.x-b.x) + absi(a.y-b.y) == 1 and _is_directional(get_cell(a).special) and _is_directional(get_cell(b).special):
+			result.combo = &"sweet_cross"
+			result.combo_origin = b
+			result.combo_members = {a: true, b: true}
+			result.combo_cells = _cross_cells(b)
 	_run_clear(queue, result, {})
 	_register_blocker_progress(result)
 	_register_target_progress(result)
@@ -541,6 +608,9 @@ func activate_specials(positions: Array) -> ClearResult:
 
 
 func _run_clear(queue: Array[Vector2i], result: ClearResult, protect: Dictionary) -> void:
+	var chain_depth: Dictionary = {}
+	for origin in queue:
+		chain_depth[origin] = 0
 	var order_count := 0
 	for pos in queue:
 		var probe := get_cell(pos)
@@ -566,9 +636,13 @@ func _run_clear(queue: Array[Vector2i], result: ClearResult, protect: Dictionary
 		if protect.has(pos):
 			continue
 		var cell := get_cell(pos)
-		if cell == null or not cell.has_kuish():
+		if cell == null:
 			continue
-
+		if cell.has_overlay():
+			_damage_delivery_blocker(pos, result)
+			continue
+		if not cell.has_kuish():
+			continue
 		var info := ClearInfo.new()
 		var cleared_kuih: KuihData = cell.kuih
 		info.kuih = cleared_kuih
@@ -577,8 +651,16 @@ func _run_clear(queue: Array[Vector2i], result: ClearResult, protect: Dictionary
 		result.cleared[pos] = info
 
 		if info.by_special:
-			for bp in _blast_cells(pos, cell):
+			var excluded := protect.duplicate()
+			for pending in queue:
+				excluded[pending] = true
+			var affected: Array[Vector2i] = result.combo_cells.duplicate() if result.combo_members.has(pos) else _blast_cells(pos, cell, excluded)
+			result.activated.append({"pos": pos, "kind": cell.special, "cells": affected,
+				"chain_depth": int(chain_depth.get(pos, 0))})
+			for bp in affected:
 				if not seen.has(bp) and not protect.has(bp):
+					if not chain_depth.has(bp):
+						chain_depth[bp] = int(chain_depth.get(pos, 0)) + 1
 					queue.append(bp)
 
 	for pos in result.cleared:
@@ -587,12 +669,33 @@ func _run_clear(queue: Array[Vector2i], result: ClearResult, protect: Dictionary
 			cell.clear_kuish()
 
 
-func _blast_cells(pos: Vector2i, cell: BoardCell) -> Array[Vector2i]:
+static func _is_directional(kind: int) -> bool:
+	return kind in [BoardCell.Special.TAPAU, BoardCell.Special.TAPAU_VERTICAL]
+
+func _cross_cells(origin: Vector2i) -> Array[Vector2i]:
+	var out: Array[Vector2i] = []
+	for x in width:
+		var pos := Vector2i(x, origin.y)
+		if is_playable(pos):
+			out.append(pos)
+	for y in height:
+		var pos := Vector2i(origin.x, y)
+		if not out.has(pos) and is_playable(pos):
+			out.append(pos)
+	return out
+
+func _blast_cells(pos: Vector2i, cell: BoardCell, excluded: Dictionary = {}) -> Array[Vector2i]:
 	var out: Array[Vector2i] = []
 	match cell.special:
+		BoardCell.Special.HANTAR:
+			out.append(pos)
+			var target := select_delivery_target(pos, excluded, cell.order_kuish)
+			if target != Vector2i(-1, -1):
+				out.append(target)
 		BoardCell.Special.TAPAU:
 			for x in width:
 				out.append(Vector2i(x, pos.y))
+		BoardCell.Special.TAPAU_VERTICAL:
 			for y in height:
 				out.append(Vector2i(pos.x, y))
 		BoardCell.Special.DULANG:
@@ -604,21 +707,67 @@ func _blast_cells(pos: Vector2i, cell: BoardCell) -> Array[Vector2i]:
 			for y in height:
 				for x in width:
 					var other := get_cell(Vector2i(x, y))
-					if other != null and other.is_playable() and other.kuish_id() == wanted:
+					# Packages are separate items, not the hidden kuih used to create them.
+					if other != null and other.is_playable() and other.special == BoardCell.Special.NONE and other.kuish_id() == wanted:
 						out.append(Vector2i(x, y))
 	var filtered: Array[Vector2i] = []
 	for p in out:
 		if not is_inside(p):
 			continue
 		var c := get_cell(p)
-		if c != null and c.is_playable():
+		if c != null and (c.is_playable() or (cell.special == BoardCell.Special.HANTAR and c.has_overlay())):
 			filtered.append(p)
 	return filtered
 
 
+func select_delivery_target(origin: Vector2i, excluded: Dictionary = {}, preferred_kuih: StringName = &"") -> Vector2i:
+	var candidates: Array[Vector2i] = []
+	var objectives: Dictionary = {}
+	for y in height:
+		for x in width:
+			var pos := Vector2i(x,y)
+			var cell := get_cell(pos)
+			if cell.is_target():
+				objectives[cell.target_kuish] = true
+			if pos != origin and not excluded.has(pos) and (cell.is_playable() or cell.has_overlay()):
+				candidates.append(pos)
+	# A deliberate ordinary-kuih swap overrides automatic order priorities.
+	if preferred_kuih != &"":
+		for pos in candidates:
+			var cell := get_cell(pos)
+			if cell.is_playable() and cell.special == BoardCell.Special.NONE and cell.kuish_id() == preferred_kuih:
+				return pos
+	for priority in delivery_priorities:
+		for pos in candidates:
+			var cell := get_cell(pos)
+			if priority == &"order" and cell.is_playable() and int(order_remaining.get(cell.kuish_id(),0)) > 0:
+				return pos
+			if priority == &"blocker" and cell.has_overlay():
+				return pos
+			if priority == &"objective" and cell.is_playable() and objectives.has(cell.kuish_id()):
+				return pos
+			if priority == &"useful" and cell.is_playable():
+				return pos
+	return candidates[rng.randi_range(0, candidates.size()-1)] if not candidates.is_empty() else Vector2i(-1,-1)
+
+func _damage_delivery_blocker(pos: Vector2i, result: ClearResult) -> void:
+	if result.direct_blocker_hits.has(pos):
+		return
+	result.direct_blocker_hits[pos] = true
+	var cell := get_cell(pos)
+	var hit := BlockerHit.new()
+	hit.pos = pos
+	hit.kind = cell.blocker_kind
+	cell.blocker_hp = maxi(0, cell.blocker_hp - 1)
+	hit.hp_left = cell.blocker_hp
+	hit.removed = cell.blocker_hp == 0
+	if hit.removed:
+		cell.remove_obstacle()
+	result.blockers.append(hit)
+
 ## A leaf, cover, steamer or syrup is opened by matching right next to it.
 func _register_blocker_progress(result: ClearResult) -> void:
-	var touched: Dictionary = {}
+	var touched: Dictionary = result.direct_blocker_hits.duplicate()
 	for key in result.cleared:
 		var origin: Vector2i = key
 		for dy in range(-1, 2):
@@ -752,6 +901,8 @@ func _is_valid_pair(a: Vector2i, b: Vector2i) -> bool:
 		return false
 	if not ca.is_playable() or not cb.is_playable():
 		return false
+	if ca.special != BoardCell.Special.NONE or cb.special != BoardCell.Special.NONE:
+		return true
 	if ca.kuish_id() == cb.kuish_id():
 		return false
 	swap_cells(a, b)

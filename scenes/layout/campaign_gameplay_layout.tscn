@@ -1,0 +1,552 @@
+[gd_scene load_steps=21 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/backgrounds/gerai_mvp.png" id="Art_Background"]
+
+[ext_resource type="Texture2D" path="res://assets/ui/logo_dessert.png" id="Art_Logo"]
+
+[ext_resource type="Texture2D" path="res://assets/ui/gameplay_v2/settings.png" id="Art_Pause"]
+
+[ext_resource type="Texture2D" path="res://assets/ui/gameplay_v3/speech_bubble.png" id="Art_Bubble"]
+
+[ext_resource type="Texture2D" path="res://assets/ui/gameplay_v2/order_board.png" id="Art_Order"]
+
+[ext_resource type="Texture2D" path="res://assets/characters/fullbody_v2/aina.png" id="Art_Aina"]
+
+[ext_resource type="Texture2D" path="res://assets/characters/fullbody_v2/kakak.png" id="Art_Customer"]
+
+[ext_resource type="Texture2D" path="res://assets/ui/board_v1/frame.png" id="Art_Board"]
+
+[ext_resource type="Texture2D" path="res://assets/ui/gameplay_v2/booster_tray.png" id="Art_Tray"]
+
+[ext_resource type="Texture2D" path="res://assets/boosters/sudip.png" id="Art_Spatula"]
+
+[ext_resource type="Texture2D" path="res://assets/boosters/dulang.png" id="Art_Dulang"]
+
+[ext_resource type="Texture2D" path="res://assets/boosters/shuffle.png" id="Art_Shuffle"]
+
+[ext_resource type="Texture2D" path="res://assets/boosters/tapau.png" id="Art_Tapau"]
+
+[ext_resource type="Script" path="res://scripts/ui/editor_layout_character.gd" id="LayoutCharacterPreview"]
+
+[sub_resource type="StyleBoxFlat" id="CreamPanel"]
+bg_color = Color(1, 0.941, 0.792, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.773, 0.545, 0.259, 1)
+corner_radius_top_left = 24
+corner_radius_top_right = 24
+corner_radius_bottom_left = 24
+corner_radius_bottom_right = 24
+
+[sub_resource type="AtlasTexture" id="Texture_Aina"]
+atlas = ExtResource("Art_Aina")
+region = Rect2(0, 93, 915, 1409)
+
+[sub_resource type="AtlasTexture" id="Texture_Customer"]
+atlas = ExtResource("Art_Customer")
+region = Rect2(121, 47, 845, 1453)
+
+[sub_resource type="AtlasTexture" id="Texture_Order"]
+atlas = ExtResource("Art_Order")
+region = Rect2(26, 22, 1724, 839)
+
+[sub_resource type="AtlasTexture" id="Texture_Pause"]
+atlas = ExtResource("Art_Pause")
+region = Rect2(94, 53, 1066, 1151)
+
+[sub_resource type="AtlasTexture" id="Texture_Tray"]
+atlas = ExtResource("Art_Tray")
+region = Rect2(30, 41, 2112, 635)
+
+[node name="CampaignGameplayLayout" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1080.0
+offset_bottom = 1920.0
+mouse_filter = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="StallBackground" type="TextureRect" parent="."]
+layout_mode = 0
+anchor_left = 0
+anchor_top = 0
+anchor_right = 1
+anchor_bottom = 1
+mouse_filter = 2
+metadata/_edit_use_anchors_ = true
+tooltip_text = "Layout: StallBackground; artwork: assets/backgrounds/gerai_mvp.png"
+texture = ExtResource("Art_Background")
+expand_mode = 1
+stretch_mode = 0
+
+[node name="Logo" type="TextureRect" parent="."]
+layout_mode = 0
+anchor_left = 0.025
+anchor_top = 0.012
+anchor_right = 0.265
+anchor_bottom = 0.107
+mouse_filter = 2
+metadata/_edit_use_anchors_ = true
+tooltip_text = "Layout: Logo; artwork: assets/ui/logo_dessert.png"
+texture = ExtResource("Art_Logo")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="HeartMeter" type="Panel" parent="."]
+layout_mode = 0
+anchor_left = 0.265
+anchor_top = 0.037
+anchor_right = 0.465
+anchor_bottom = 0.08099999999999999
+mouse_filter = 2
+metadata/_edit_use_anchors_ = true
+theme_override_styles/panel = SubResource("CreamPanel")
+
+[node name="HeartPreview" type="Label" parent="HeartMeter"]
+layout_mode = 0
+anchor_left = 0
+anchor_top = 0
+anchor_right = 1
+anchor_bottom = 1
+mouse_filter = 2
+metadata/_edit_use_anchors_ = true
+theme_override_colors/font_color = Color(0.29, 0.17, 0.09, 1)
+theme_override_font_sizes/font_size = 36
+text = "5  Full"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ScoreMeter" type="Panel" parent="."]
+layout_mode = 0
+anchor_left = 0.485
+anchor_top = 0.043
+anchor_right = 0.89
+anchor_bottom = 0.095
+mouse_filter = 2
+metadata/_edit_use_anchors_ = true
+theme_override_styles/panel = SubResource("CreamPanel")
+
+[node name="ScoreValue" type="Label" parent="ScoreMeter"]
+layout_mode = 0
+anchor_left = 0.08
+anchor_top = 0.065
+anchor_right = 0.92
+anchor_bottom = 0.495
+mouse_filter = 2
+metadata/_edit_use_anchors_ = true
+theme_override_colors/font_color = Color(0.29, 0.17, 0.09, 1)
+theme_override_font_sizes/font_size = 36
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PauseButton" type="TextureRect" parent="."]
+layout_mode = 0
+anchor_left = 0.905
+anchor_top = 0.0389
+anchor_right = 0.98
+anchor_bottom = 0.0811
+mouse_filter = 2
+metadata/_edit_use_anchors_ = true
+tooltip_text = "Layout: PauseButton; artwork: assets/ui/gameplay_v2/settings.png"
+texture = SubResource("Texture_Pause")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="StageTitleFrame" type="Panel" parent="."]
+layout_mode = 0
+anchor_left = 0.12
+anchor_top = 0.09
+anchor_right = 0.66
+anchor_bottom = 0.13
+mouse_filter = 2
+metadata/_edit_use_anchors_ = true
+theme_override_styles/panel = SubResource("CreamPanel")
+visible = false
+
+[node name="StageTitle" type="Label" parent="."]
+layout_mode = 0
+anchor_left = 0.04
+anchor_top = 0.115
+anchor_right = 0.26
+anchor_bottom = 0.14300000000000002
+mouse_filter = 2
+metadata/_edit_use_anchors_ = true
+theme_override_colors/font_color = Color(0.29, 0.17, 0.09, 1)
+theme_override_font_sizes/font_size = 24
+text = "First Order"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HintButton" type="Label" parent="."]
+layout_mode = 0
+anchor_left = 0.3
+anchor_top = 0.09
+anchor_right = 0.355
+anchor_bottom = 0.11499999999999999
+mouse_filter = 2
+metadata/_edit_use_anchors_ = true
+theme_override_colors/font_color = Color(0.29, 0.17, 0.09, 1)
+theme_override_font_sizes/font_size = 28
+text = "Hint"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MovesPanel" type="TextureRect" parent="."]
+layout_mode = 0
+anchor_left = 0.815
+anchor_top = 0.102
+anchor_right = 0.965
+anchor_bottom = 0.18
+mouse_filter = 2
+metadata/_edit_use_anchors_ = true
+tooltip_text = "Layout: MovesPanel; artwork: assets/ui/gameplay_v2/order_board.png"
+texture = SubResource("Texture_Order")
+expand_mode = 1
+stretch_mode = 0
+visible = true
+
+[node name="MovesValue" type="Label" parent="MovesPanel"]
+layout_mode = 0
+anchor_left = 0.12
+anchor_top = 0.3
+anchor_right = 0.88
+anchor_bottom = 0.7
+mouse_filter = 2
+metadata/_edit_use_anchors_ = true
+theme_override_colors/font_color = Color(0.29, 0.17, 0.09, 1)
+theme_override_font_sizes/font_size = 46
+text = "22"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MovesCaption" type="Label" parent="MovesPanel"]
+layout_mode = 0
+anchor_left = 0.1
+anchor_top = 0.7
+anchor_right = 0.9
+anchor_bottom = 0.9299999999999999
+mouse_filter = 2
+metadata/_edit_use_anchors_ = true
+theme_override_colors/font_color = Color(0.29, 0.17, 0.09, 1)
+theme_override_font_sizes/font_size = 21
+text = "MOVES"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="LessonBadge" type="TextureRect" parent="."]
+layout_mode = 0
+anchor_left = 0.79
+anchor_top = 0.091
+anchor_right = 0.97
+anchor_bottom = 0.17099999999999999
+mouse_filter = 2
+metadata/_edit_use_anchors_ = true
+tooltip_text = "Layout: LessonBadge; artwork: assets/ui/gameplay_v2/order_board.png"
+texture = SubResource("Texture_Order")
+expand_mode = 1
+stretch_mode = 0
+visible = false
+
+[node name="LessonPreview" type="Label" parent="LessonBadge"]
+layout_mode = 0
+anchor_left = 0
+anchor_top = 0
+anchor_right = 1
+anchor_bottom = 1
+mouse_filter = 2
+metadata/_edit_use_anchors_ = true
+theme_override_colors/font_color = Color(0.29, 0.17, 0.09, 1)
+theme_override_font_sizes/font_size = 28
+text = "LESSON\nPractice"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CustomerQueue" type="Control" parent="."]
+layout_mode = 0
+anchor_left = 0.04
+anchor_top = 0.15
+anchor_right = 0.25
+anchor_bottom = 0.18
+mouse_filter = 2
+metadata/_edit_use_anchors_ = true
+
+
+[node name="OrderArea" type="Control" parent="."]
+layout_mode = 0
+anchor_left = 0.045
+anchor_top = 0.115
+anchor_right = 0.9550000000000001
+anchor_bottom = 0.34
+mouse_filter = 2
+metadata/_edit_use_anchors_ = true
+tooltip_text = "Parent area for dialogue, characters and the order board."
+
+
+[node name="CustomerCharacter" type="Control" parent="OrderArea"]
+layout_mode = 0
+anchor_left = -0.015
+anchor_top = 0.1
+anchor_right = 0.325
+anchor_bottom = 1.7000000000000002
+mouse_filter = 2
+metadata/_edit_use_anchors_ = true
+tooltip_text = "Layout: CustomerCharacter; artwork: assets/characters/fullbody_v2/kakak.png"
+script = ExtResource("LayoutCharacterPreview")
+portrait_texture = ExtResource("Art_Customer")
+
+[node name="AinaCharacter" type="Control" parent="OrderArea"]
+layout_mode = 0
+anchor_left = 0.675
+anchor_top = 0.1
+anchor_right = 1.0150000000000001
+anchor_bottom = 1.7000000000000002
+mouse_filter = 2
+metadata/_edit_use_anchors_ = true
+tooltip_text = "Layout: AinaCharacter; artwork: assets/characters/fullbody_v2/aina.png"
+script = ExtResource("LayoutCharacterPreview")
+portrait_texture = ExtResource("Art_Aina")
+
+[node name="DialogueBubble" type="TextureRect" parent="OrderArea"]
+layout_mode = 0
+anchor_left = 0.22
+anchor_top = 0.12
+anchor_right = 0.78
+anchor_bottom = 0.48
+mouse_filter = 2
+metadata/_edit_use_anchors_ = true
+tooltip_text = "Layout: DialogueBubble; artwork: assets/ui/gameplay_v3/speech_bubble.png"
+texture = ExtResource("Art_Bubble")
+expand_mode = 1
+stretch_mode = 0
+
+[node name="SpeakerName" type="Label" parent="OrderArea/DialogueBubble"]
+layout_mode = 0
+anchor_left = 0.05
+anchor_top = 0.06
+anchor_right = 0.9500000000000001
+anchor_bottom = 0.26
+mouse_filter = 2
+metadata/_edit_use_anchors_ = true
+theme_override_colors/font_color = Color(0.29, 0.17, 0.09, 1)
+theme_override_font_sizes/font_size = 24
+text = "Customer"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="InstructionText" type="Label" parent="OrderArea/DialogueBubble"]
+layout_mode = 0
+anchor_left = 0.05
+anchor_top = 0.28
+anchor_right = 0.9500000000000001
+anchor_bottom = 0.71
+mouse_filter = 2
+metadata/_edit_use_anchors_ = true
+theme_override_colors/font_color = Color(0.29, 0.17, 0.09, 1)
+theme_override_font_sizes/font_size = 22
+text = "Fill the order to serve the customer."
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="OrderBoard" type="TextureRect" parent="OrderArea"]
+layout_mode = 0
+anchor_left = 0.21
+anchor_top = 0.78
+anchor_right = 0.7899999999999999
+anchor_bottom = 1.28
+mouse_filter = 2
+metadata/_edit_use_anchors_ = true
+tooltip_text = "Layout: OrderBoard; artwork: assets/ui/gameplay_v2/order_board.png"
+texture = SubResource("Texture_Order")
+expand_mode = 1
+stretch_mode = 0
+
+[node name="OrderTitle" type="Label" parent="OrderArea/OrderBoard"]
+layout_mode = 0
+anchor_left = 0.25
+anchor_top = 0.015
+anchor_right = 0.75
+anchor_bottom = 0.185
+mouse_filter = 2
+metadata/_edit_use_anchors_ = true
+theme_override_colors/font_color = Color(0.29, 0.17, 0.09, 1)
+theme_override_font_sizes/font_size = 32
+text = "Order"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="KuihItems" type="Control" parent="OrderArea/OrderBoard"]
+layout_mode = 0
+anchor_left = 0.08
+anchor_top = 0.24
+anchor_right = 0.9199999999999999
+anchor_bottom = 0.9299999999999999
+mouse_filter = 2
+metadata/_edit_use_anchors_ = true
+tooltip_text = "Runtime kuih icons and counts are generated here."
+
+
+[node name="OrderItemsPreview" type="Label" parent="OrderArea/OrderBoard/KuihItems"]
+layout_mode = 0
+anchor_left = 0
+anchor_top = 0
+anchor_right = 1
+anchor_bottom = 1
+mouse_filter = 2
+metadata/_edit_use_anchors_ = true
+theme_override_colors/font_color = Color(0.29, 0.17, 0.09, 1)
+theme_override_font_sizes/font_size = 24
+text = "Kuih items + order counts"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PuzzleBoard" type="TextureRect" parent="."]
+layout_mode = 0
+anchor_left = 0.07
+anchor_top = 0.405
+anchor_right = 0.9299999999999999
+anchor_bottom = 0.8380000000000001
+mouse_filter = 2
+metadata/_edit_use_anchors_ = true
+tooltip_text = "Layout: PuzzleBoard; artwork: assets/ui/board_v1/frame.png"
+texture = ExtResource("Art_Board")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="BoardPreview" type="Label" parent="PuzzleBoard"]
+layout_mode = 0
+anchor_left = 0
+anchor_top = 0
+anchor_right = 1
+anchor_bottom = 1
+mouse_filter = 2
+metadata/_edit_use_anchors_ = true
+theme_override_colors/font_color = Color(0.29, 0.17, 0.09, 1)
+theme_override_font_sizes/font_size = 36
+text = "PuzzleBoard\nTiles generated at runtime"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SpecialItemsTray" type="TextureRect" parent="."]
+layout_mode = 0
+anchor_left = 0.12
+anchor_top = 0.845
+anchor_right = 0.88
+anchor_bottom = 0.97
+mouse_filter = 2
+metadata/_edit_use_anchors_ = true
+tooltip_text = "Layout: SpecialItemsTray; artwork: assets/ui/gameplay_v2/booster_tray.png"
+texture = SubResource("Texture_Tray")
+expand_mode = 1
+stretch_mode = 0
+
+[node name="SpatulaPreview" type="TextureRect" parent="SpecialItemsTray"]
+layout_mode = 0
+anchor_left = 0.06
+anchor_top = 0.1
+anchor_right = 0.25
+anchor_bottom = 0.75
+mouse_filter = 2
+metadata/_edit_use_anchors_ = true
+tooltip_text = "Layout: SpatulaPreview; artwork: assets/boosters/sudip.png"
+texture = ExtResource("Art_Spatula")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="SpatulaCaption" type="Label" parent="SpecialItemsTray"]
+layout_mode = 0
+anchor_left = 0.06
+anchor_top = 0.75
+anchor_right = 0.25
+anchor_bottom = 0.92
+mouse_filter = 2
+metadata/_edit_use_anchors_ = true
+theme_override_colors/font_color = Color(0.29, 0.17, 0.09, 1)
+theme_override_font_sizes/font_size = 26
+text = "Spatula"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="DulangPreview" type="TextureRect" parent="SpecialItemsTray"]
+layout_mode = 0
+anchor_left = 0.29000000000000004
+anchor_top = 0.1
+anchor_right = 0.48000000000000004
+anchor_bottom = 0.75
+mouse_filter = 2
+metadata/_edit_use_anchors_ = true
+tooltip_text = "Layout: DulangPreview; artwork: assets/boosters/dulang.png"
+texture = ExtResource("Art_Dulang")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="DulangCaption" type="Label" parent="SpecialItemsTray"]
+layout_mode = 0
+anchor_left = 0.29000000000000004
+anchor_top = 0.75
+anchor_right = 0.48000000000000004
+anchor_bottom = 0.92
+mouse_filter = 2
+metadata/_edit_use_anchors_ = true
+theme_override_colors/font_color = Color(0.29, 0.17, 0.09, 1)
+theme_override_font_sizes/font_size = 26
+text = "Tray"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ShufflePreview" type="TextureRect" parent="SpecialItemsTray"]
+layout_mode = 0
+anchor_left = 0.52
+anchor_top = 0.1
+anchor_right = 0.71
+anchor_bottom = 0.75
+mouse_filter = 2
+metadata/_edit_use_anchors_ = true
+tooltip_text = "Layout: ShufflePreview; artwork: assets/boosters/shuffle.png"
+texture = ExtResource("Art_Shuffle")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ShuffleCaption" type="Label" parent="SpecialItemsTray"]
+layout_mode = 0
+anchor_left = 0.52
+anchor_top = 0.75
+anchor_right = 0.71
+anchor_bottom = 0.92
+mouse_filter = 2
+metadata/_edit_use_anchors_ = true
+theme_override_colors/font_color = Color(0.29, 0.17, 0.09, 1)
+theme_override_font_sizes/font_size = 26
+text = "Shuffle"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TapauPreview" type="TextureRect" parent="SpecialItemsTray"]
+layout_mode = 0
+anchor_left = 0.75
+anchor_top = 0.1
+anchor_right = 0.94
+anchor_bottom = 0.75
+mouse_filter = 2
+metadata/_edit_use_anchors_ = true
+tooltip_text = "Layout: TapauPreview; artwork: assets/boosters/tapau.png"
+texture = ExtResource("Art_Tapau")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="TapauCaption" type="Label" parent="SpecialItemsTray"]
+layout_mode = 0
+anchor_left = 0.75
+anchor_top = 0.75
+anchor_right = 0.94
+anchor_bottom = 0.92
+mouse_filter = 2
+metadata/_edit_use_anchors_ = true
+theme_override_colors/font_color = Color(0.29, 0.17, 0.09, 1)
+theme_override_font_sizes/font_size = 26
+text = "Tapau"
+horizontal_alignment = 1
+vertical_alignment = 1

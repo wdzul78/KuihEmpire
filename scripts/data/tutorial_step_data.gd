@@ -3,9 +3,8 @@ extends Resource
 
 ## One coaching beat inside a tutorial stage.
 ##
-## The coach is **soft**: the player may always swap freely. A step just explains
-## what to try and waits for the right thing to happen, so nobody is ever
-## blocked from touching the board.
+## Intro steps wait for a dialogue tap. Scripted special steps preserve their
+## layout for the highlighted swap; other lessons allow normal exploration.
 
 enum Gate {
 	## Tap to continue. Used for the setup line before the actual lesson.
@@ -26,6 +25,11 @@ enum Gate {
 	COLLECTED,
 	## Wait for the customer to be served.
 	SERVED,
+	## Swap the created special with a neighbour and watch the completed effect.
+	ACTIVATED_SPECIAL,
+	CREATED_HANTAR,
+	CREATED_VERTICAL,
+	ACTIVATED_CROSS,
 }
 
 @export var title: String = ""

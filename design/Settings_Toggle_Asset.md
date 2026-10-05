@@ -1,0 +1,7 @@
+# Settings toggle asset
+
+Generated with the built-in imagegen tool. Asset: `assets/ui/settings_v1/toggle_sheet.png`. The original alpha is retained. SettingsToggle uses two native Godot regions for ON and OFF; no generated text is used.
+
+Final prompt:
+
+Use case: ui-mockup. Asset type: one production sprite sheet for a Malaysian cozy cartoon match-3 mobile game's settings toggle. Transparent PNG background. Two horizontal toggle switches, arranged one directly above the other, identical size, centered in a square canvas, ample transparent padding. Top switch ON: polished carved honey-brown wood pill-shaped outer frame with thick dark brown outline and golden inner bevel; inset glossy bright leaf-green track; large round ivory/gold button on the RIGHT with a small dark green check mark. Bottom switch OFF: exactly matching wood frame, muted warm grey-beige inset track; identical ivory/gold round button on the LEFT with a small dark brown cross mark. No text, no letters, no labels, no extra objects. Each switch about 80% canvas width and 25% canvas height; top centered at y=25%, bottom y=75%. Friendly hand-painted 2D game art, soft volumetric highlights, clean bold outlines, tropical kuih stall game palette, fully straight-on orthographic view, visibly readable at phone size. Keep each switch self-contained with no overlap between rows. Real alpha transparency; do not paint a background or checkerboard.

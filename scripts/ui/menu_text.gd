@@ -1,0 +1,51 @@
+class_name MenuText
+extends RefCounted
+
+const WORDS := {
+	"stage_complete": ["STAGE %d SELESAI", "STAGE %d COMPLETE"],
+	"lesson_complete": ["LATIHAN %d SELESAI", "LESSON %d COMPLETE"],
+	"stage_failed": ["STAGE %d GAGAL", "STAGE %d FAILED"],
+	"order_served": ["PESANAN SIAP!", "ORDER SERVED!"],
+	"almost_there": ["HAMPIR BERJAYA!", "ALMOST THERE!"],
+	"served_perfectly": ["Semua pesanan berjaya disiapkan!", "Every order served perfectly!"],
+	"few_more_kuih": ["Sedikit lagi kuih untuk siapkan pesanan.", "Just a few more kuih to finish the order."],
+	"next_stage": ["STAGE SETERUSNYA", "NEXT STAGE"],
+	"next_lesson": ["LATIHAN SETERUSNYA", "NEXT LESSON"],
+	"open_gift": ["BUKA HADIAH", "OPEN YOUR GIFT"],
+	"start_journey": ["MULAKAN PERJALANAN", "START YOUR JOURNEY"],
+	"try_again": ["CUBA LAGI", "TRY AGAIN"],
+	"play_again": ["MAIN SEMULA", "PLAY AGAIN"],
+	"use_booster": ["GUNA BOOSTER", "USE BOOSTER"],
+	"back_stall": ["KEMBALI KE GERAI", "BACK TO STALL"],
+	"new_best": ["Rekod baharu!", "New best!"],
+	"inventory_moves": ["+5 Gerakan · Booster (%d)", "+5 Moves · Booster (%d)"],
+	"free_moves": ["+5 Gerakan · Percuma", "+5 Moves · Free"],
+	"coin_moves": ["+5 Gerakan · %d Coin", "+5 Moves · %d Coins"],
+	"ad_moves": ["Tonton iklan · +5 Gerakan", "Watch Ad · +5 Moves"],
+	"memories": ["Cerita yang telah dilalui", "Your story so far"],
+	"no_memories": ["Cerita di sini akan tersimpan selepas anda melaluinya.", "Memories appear here after you experience them."],
+	"stats": ["Dimainkan %d · Selesai %d · Bintang %d", "Played %d · Cleared %d · Stars %d"],
+	"on": ["AKTIF", "ON"], "off": ["MATI", "OFF"],
+	"play": ["Main", "Play"], "tutorial": ["Mula tutorial", "Start tutorial"],
+	"story": ["Cerita", "Story"], "records": ["Ranking", "Leaderboard"],
+	"shop": ["Gerai", "Shop"], "achievements": ["Pencapaian", "Achievements"],
+	"map": ["Perjalanan", "Journey"], "recipes": ["Resipi", "Recipes"],
+	"route_progress": ["Kemajuan %d/%d stage · ★ %d", "Progress %d/%d stages · ★ %d"],
+	"stop_progress": ["%d/%d stage selesai · ★ %d/%d", "%d/%d stages cleared · ★ %d/%d"],
+	"tagline": ["Manis dalam Setiap Senyuman", "Sweetness in Every Smile"],
+	"motto": ["Kuih enak, hari lebih ceria", "Good kuih, brighter days"],
+	"maker": ["Pembuat Kuih", "Kuih Maker"], "settings": ["Tetapan", "Settings"],
+	"back": ["Kembali", "Back"], "name": ["Nama pemain", "Player name"],
+	"avatar": ["Pilih avatar", "Choose avatar"],
+	"language": ["Bahasa", "Language"], "music": ["Muzik", "Music"],
+	"sfx": ["Kesan bunyi", "Sound effects"], "haptics": ["Getaran", "Haptics"],
+	"hints": ["Petunjuk gerakan", "Move hints"], "reset": ["Reset kemajuan", "Reset progress"],
+	"reset_done": ["Kemajuan direset. Aina kembali ke gerai kecil.", "Progress reset. Aina is back at the small stall."],
+	"local": ["Rekod pemain pada peranti ini", "Player records on this device"],
+	"empty": ["Main untuk mencipta rekod pertama!", "Play to create your first record!"],
+	"close": ["Tutup", "Close"], "stage": ["Stage", "Stage"],
+}
+
+static func text(key: String) -> String:
+	var words: Array = WORDS.get(key, [key, key])
+	return words[1 if SaveManager.get_setting("language", "en") == "en" else 0]

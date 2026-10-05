@@ -5,6 +5,8 @@ extends Node
 ## Chapters unlock through play only - never through payment
 ## (Master Plan section 29).
 
+signal gerai_upgraded()
+
 signal stars_changed(level_id: int, stars: int)
 signal level_unlocked(level_id: int)
 signal recipe_unlocked(recipe_id: StringName)
@@ -25,14 +27,15 @@ func stars_for(level_id: int) -> int:
 	return int(level_record(level_id).get("stars", 0))
 
 
-## Cozy gating: everything up to two levels past the last clear is open, plus
-## anything already cleared for replay. No harsh walls.
+## Sequential stage unlocks; any winning star rating opens the next stage.
 func is_level_unlocked(level_id: int) -> bool:
-	if level_id <= FIRST_LEVEL:
+	if not LevelLibrary.has_level(level_id):
+		return false
+	if level_id == FIRST_LEVEL:
 		return true
 	if stars_for(level_id) > 0:
 		return true
-	return level_id <= highest_cleared() + 2
+	return level_id <= highest_cleared() + 1
 
 
 func current_level() -> int:
@@ -60,21 +63,52 @@ func total_stars() -> int:
 	return total
 
 
-func record_win(level_id: int, stars: int, moves_left: int) -> void:
+func record_win(level_id: int, stars: int, moves_left: int, score: int = 0) -> void:
 	var reached := current_level()
 	var table := _level_table()
 	var key := str(level_id)
 	var record: Dictionary = table.get(key, {})
 	var previous := int(record.get("stars", 0))
-	record["stars"] = maxi(previous, stars)
+	record["stars"] = maxi(previous, clampi(stars, 1, 3))
+	record["best_score"] = maxi(int(record.get("best_score", 0)), score)
+	record["completed"] = true
+	record["first_clear_claimed"] = true
 	record["best_moves_left"] = maxi(int(record.get("best_moves_left", 0)), moves_left)
 	table[key] = record
 	SaveManager.data["levels"] = table
 	SaveManager.mark_dirty()
 
-	if level_id + 1 > reached:
+	claim_journey_milestones()
+	if LevelLibrary.has_level(level_id + 1) and level_id + 1 > reached:
 		level_unlocked.emit(level_id + 1)
 	stars_changed.emit(level_id, int(record["stars"]))
+
+
+func world_state() -> int:
+	return LocationManager.structural_level(&"family_stall")
+
+
+## Existing saves derive the same world state; persistent claim flags prevent
+## duplicate grants. HeartManager owns its separate Free Play claims.
+func claim_journey_milestones() -> void:
+	for stage in JourneyLibrary.MILESTONES:
+		if stars_for(stage) <= 0:
+			continue
+		var flag := StringName("milestone_claim_%d" % stage)
+		if story_seen(flag):
+			continue
+		var info: Dictionary = JourneyLibrary.milestone(stage)
+		unlock_recipe(info["recipe"])
+		var gerai: Dictionary = SaveManager.data.get("gerai", {})
+		var cosmetics: Array = gerai.get("cosmetics", [])
+		if not cosmetics.has(info["cosmetic"]):
+			cosmetics.append(info["cosmetic"])
+		gerai["cosmetics"] = cosmetics
+		if stage == 30:
+			gerai["level"] = maxi(2, int(gerai.get("level", 1)))
+			unlock_chapter(&"school_canteen")
+		SaveManager.data["gerai"] = gerai
+		mark_story_seen(flag)
 
 
 func record_attempt() -> void:
@@ -191,14 +225,9 @@ func gerai_level() -> int:
 	return int((SaveManager.data.get("gerai", {}) as Dictionary).get("level", 1))
 
 
-func upgrade_gerai(cost: int) -> bool:
-	if not EconomyManager.spend_coins(cost):
-		return false
-	var gerai: Dictionary = SaveManager.data.get("gerai", {})
-	gerai["level"] = gerai_level() + 1
-	SaveManager.data["gerai"] = gerai
-	SaveManager.mark_dirty()
-	return true
+func upgrade_gerai(_cost: int) -> bool:
+	# Compatibility entry point: the authored milestone/cost gate is authoritative.
+	return LocationManager.upgrade(&"family_stall")
 
 
 static func gerai_stage_name(level: int) -> String:
@@ -224,7 +253,7 @@ func reset_all() -> void:
 
 ## 0 means the player has not started the tutorial yet.
 func tutorial_index() -> int:
-	return int(SaveManager.data.get("tutorial_index", 0))
+	return TutorialLibrary.resume_index(int(SaveManager.data.get("tutorial_index", 0)))
 
 
 func tutorial_done() -> bool:
@@ -232,18 +261,38 @@ func tutorial_done() -> bool:
 
 
 func needs_tutorial() -> bool:
-	return not tutorial_done()
+	return not tutorial_done() or not delivery_unlocked()
 
+
+func delivery_unlocked() -> bool:
+	return bool(SaveManager.data.get("special_unlocks", {}).get("hantar", false))
+
+func unlock_delivery() -> void:
+	var unlocks: Dictionary = SaveManager.data.get("special_unlocks", {})
+	unlocks["hantar"] = true
+	SaveManager.data["special_unlocks"] = unlocks
+	SaveManager.mark_dirty()
 
 func save_tutorial_index(index: int) -> void:
-	SaveManager.data["tutorial_index"] = clampi(index, 1, TutorialLibrary.count())
+	SaveManager.data["tutorial_index"] = TutorialLibrary.resume_index(clampi(index, 1, TutorialLibrary.count()))
 	SaveManager.mark_dirty()
 
 
 func complete_tutorial() -> void:
-	SaveManager.data["tutorial_index"] = TutorialLibrary.count()
+	unlock_delivery()
+	SaveManager.data["tutorial_index"] = TutorialLibrary.ACTIVE_LESSONS.back()
 	SaveManager.data["tutorial_done"] = true
 	SaveManager.mark_dirty()
+
+func claim_tutorial_reward(index: int) -> bool:
+	var claimed: Array = SaveManager.data.get("tutorial_rewarded", [])
+	var key := str(index)
+	if key in claimed:
+		return false
+	claimed.append(key)
+	SaveManager.data["tutorial_rewarded"] = claimed
+	SaveManager.mark_dirty()
+	return true
 
 
 ## Lets the player replay lessons from Home or the journey map.
@@ -266,3 +315,19 @@ func mark_story_read(group_id: StringName) -> void:
 	list.append(String(group_id))
 	SaveManager.data["story_read"] = list
 	SaveManager.mark_dirty()
+
+
+func best_score(level_id: int) -> int:
+	return int(level_record(level_id).get("best_score", 0))
+
+func first_clear_available(level_id: int) -> bool:
+	var record := level_record(level_id)
+	return not bool(record.get("first_clear_claimed", stars_for(level_id) > 0))
+
+
+func total_best_score() -> int:
+	var total := 0
+	for id in range(1, LevelLibrary.count() + 1):
+		if stars_for(id) > 0:
+			total += best_score(id)
+	return total

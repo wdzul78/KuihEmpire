@@ -17,8 +17,10 @@ const INPUT_ACTIONS := {
 
 ## Populated by the level screen when a stage is cleared.
 var pending_level_id: int = 0
+var pending_start_specials: Array[int] = []
 var pending_stars: int = 0
 var pending_moves_left: int = 0
+var pending_score: int = 0
 var pending_coins: int = 0
 ## Recipe / kuih ids revealed by the last cleared level, shown on the result screen.
 var pending_unlocks: Array[StringName] = []
@@ -45,14 +47,35 @@ func _register_actions() -> void:
 
 
 func play_level(level_id: int) -> void:
+	if not LevelLibrary.has_level(level_id) or not ProgressionManager.is_level_unlocked(level_id):
+		return
 	pending_level_id = level_id
+	pending_start_specials.clear()
+	pending_tutorial_index = 0
+	SceneManager.goto(SceneManager.JOURNEY)
+
+
+func start_selected_stage() -> void:
+	if ProgressionManager.needs_tutorial():
+		play_next()
+		return
+	if not LevelLibrary.has_level(pending_level_id) or not ProgressionManager.is_level_unlocked(pending_level_id):
+		return
+	if not HeartManager.can_start_stage():
+		HeartRefillDialog.open(get_tree().current_scene)
+		return
+	if SceneManager._busy:
+		return
+	for booster in pending_start_specials:
+		if not EconomyManager.has_booster(booster):
+			return
 	pending_tutorial_index = 0
 	SceneManager.goto(SceneManager.LEVEL)
 
 
 ## Plays a tutorial stage, showing the matching story deck first if it has one.
 func play_tutorial(index: int) -> void:
-	index = clampi(index, 1, TutorialLibrary.count())
+	index = TutorialLibrary.resume_index(clampi(index, 1, TutorialLibrary.count()))
 	pending_tutorial_index = index
 	ProgressionManager.save_tutorial_index(index)
 	SceneManager.goto(SceneManager.LEVEL)
@@ -61,7 +84,9 @@ func play_tutorial(index: int) -> void:
 ## Where PLAY should send the player right now.
 func next_play_target() -> Dictionary:
 	if ProgressionManager.needs_tutorial():
-		return {"tutorial": maxi(1, ProgressionManager.tutorial_index())}
+		return {"tutorial": 9 if ProgressionManager.tutorial_done() and not ProgressionManager.delivery_unlocked() else maxi(1, ProgressionManager.tutorial_index())}
+	if OnboardingProgress.pending():
+		return {"welcome": true}
 	return {"level": ProgressionManager.current_level()}
 
 
@@ -69,12 +94,15 @@ func play_next() -> void:
 	var target := next_play_target()
 	if target.has("tutorial"):
 		play_tutorial(int(target["tutorial"]))
+	elif target.has("welcome"):
+		SceneManager.goto(SceneManager.WELCOME)
 	else:
 		play_level(int(target["level"]))
 
 
 func go_home() -> void:
 	pending_level_id = 0
+	pending_start_specials.clear()
 	pending_tutorial_index = 0
 	pending_unlocks.clear()
 	SceneManager.goto(SceneManager.HOME)
@@ -86,6 +114,7 @@ func go_journey() -> void:
 
 func clear_pending() -> void:
 	pending_unlocks.clear()
+	pending_score = 0
 	pending_coins = 0
 	pending_stars = 0
 	pending_moves_left = 0

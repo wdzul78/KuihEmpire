@@ -6,12 +6,14 @@ const FADE_OUT := 0.22
 const FADE_IN := 0.28
 
 const BOOT := "res://scenes/boot/boot.tscn"
+const WELCOME := "res://scenes/ui/onboarding_finish.tscn"
 const HOME := "res://scenes/menu/home.tscn"
 const LEVEL := "res://scenes/game/level_screen.tscn"
 const STORY := "res://scenes/story/story_screen.tscn"
 const JOURNEY := "res://scenes/world/journey_map.tscn"
 const GERAI := "res://scenes/stall/gerai_screen.tscn"
 const RECIPE_BOOK := "res://scenes/ui/recipe_book.tscn"
+const ACHIEVEMENTS := "res://scenes/ui/achievements_screen.tscn"
 const SETTINGS := "res://scenes/ui/settings_screen.tscn"
 
 ## Which storyline deck is queued for the next [method goto_story] call.
@@ -49,6 +51,8 @@ func goto(path: String, instant: bool = false) -> void:
 	if not instant:
 		await fade_out()
 	get_tree().change_scene_to_file(path)
+	AudioManager.play_music(AudioManager.GAMEPLAY_MUSIC if path == LEVEL else AudioManager.MENU_MUSIC)
+	AudioManager.set_music_ducked(false)
 	# Let the new scene build before revealing it.
 	await get_tree().process_frame
 	await get_tree().process_frame

@@ -29,7 +29,7 @@ Current audit and MVP priorities: [MVP_STATUS.md](MVP_STATUS.md).
 
 ```bash
 # Rules, board invariants, specials, obstacles + a 30-stage balance report
-godot --headless --script res://tools/test_runner.gd
+godot --headless res://tools/balance_scene.tscn
 
 # Builds every screen, plays real swaps, fires every booster (needs a GL context
 # for the _draw paths to actually execute)
@@ -74,7 +74,7 @@ is easiest to see:
 | T1 | 3x3 | swipe up and down |
 | T2 | 3x3 | swipe left and right |
 | T3 | 3x3 | collect, and your first customer |
-| T4 | 4x4 | match 4 to make a Tapau Pack |
+| T4 | 4x4 | match 4 to make Tapau |
 | T5 | 5x5 | L and T shapes make a Dulang |
 | T6 | 6x6 | banana leaf covers |
 | T7 | 7x7 | the steamer and the queue |
@@ -120,10 +120,10 @@ Match → Serve → Earn → Upgrade → Discover → Travel → Repeat
 ### Match mechanics (plan section 15)
 
 * **Match 3** - basic collection.
-* **Match 4** → **Tapau Pack** - clears a full row *and* column.
+* **Match 4 (horizontal or vertical)** → **Tapau Pack** - clears its full row and column.
 * **L / T** → **Dulang** - clears a 3x3 area.
 * **Match 5** → **Special Order** - collects every tile of one kuih type.
-* Combos: Tapau+Tapau, Dulang+Tapau, Special Order+kuih, Special Order+Special
+* Chained effects: Tapau+Tapau, Dulang+Tapau, Special Order+kuih, Special Order+Special
   Order (full board wipe).
 
 ### Obstacles (plan section 18)
@@ -364,3 +364,35 @@ Local saves validate nested values, write a temporary file before replacement,
 and retain the previous good save as a `.bak`. A corrupt primary loads the backup;
 Reset Progress replaces both copies with a fresh game. Failed writes keep pending
 data dirty for another flush.
+
+The supplied line-special artwork is installed at `assets/specials/lapis_row.png`
+and `assets/specials/lapis_column.png`. Each carries a direction marker and a
+source-type badge because it still matches the kuih type used to create it.
+The normal-tile replacement set (Koci instead of ordinary Lapis, plus Karipap)
+is a proposal awaiting selection; campaign IDs and normal artwork are unchanged.
+
+### MVP visual playtest
+
+Seven new PNGs were generated with built-in imagegen using the supplied Sweet Match Adventure concept as the style reference: gerai background, Aina, Ketayap, Sudip, Dulang, Shuffle and Tapau. Supplied food PNGs are now used for six normal tiles and four specials. Original PNG pixels are preserved; KuihIcon fits their alpha bounds at runtime.
+
+Normal tiles: Onde-onde, Koci, Seri Muka, Ketayap, Ang Ku and Vadai. Ordinary Lapis IDs were migrated to Koci across campaign, tutorial and recipe data. Old recipe unlock/mastery saves are normalized to Koci on load.
+
+Open `tools/visual_playtest_scene.tscn` in Godot and press **F6** for stage 18 with all six foods, using the separate disposable `user://kuih_visual_playtest.json` save. Press **F5** for the regular boot/tutorial/campaign flow.
+
+Generated assets, supplied assets, exact prompts and temporary art limitations are recorded in `design/MVP_Visual_Assets.json`. Full visual fixture is `.shots/14_lapis_specials.png`; Home is `.shots/05_home.png`. Desktop import, rules, save migration, regression, runtime smoke and screenshot rendering passed. Android device performance remains to be tested.
+
+### Active visual revision: cartoon v2
+
+The latest user preference restores classic board specials: match 4 makes Tapau (row AND column), L/T makes Dulang (3x3), straight 5 makes Special Order (one kuih type). Directional Lapis/Keria/Bom special art remains archived and is no longer selected. Boosters remain separately available through inventory.
+
+Six normal foods now match the supplied visual proposal: Onde-onde, Lapis Pandan, WHITE Koci, Ketayap, Keria and pink Kuih Lapis. PNGs live in `assets/kuih/cartoon_v2`; Dulang tray and Special Order clipboard live in `assets/specials/cartoon_v2`. The earlier PNGs are preserved. Old Seri Muka/Ang Ku/Vadai recipe unlocks and mastery migrate to the corresponding new normal IDs.
+
+Exact prompts and active asset paths: `design/MVP_Cartoon_v2_Assets.json`. Preview: `.shots/14_classic_specials.png`. Open `tools/visual_playtest_scene.tscn` and press F6 for a separate-save playtest.
+
+Character revision: full-body Aina and 11 customers now use transparent sprites from `assets/characters/fullbody_v2`, including Chinese Malaysian Encik Lim/Mei Ling, Indian Malaysian Meena and an unbranded delivery rider Din. Customer left, Aina right, dialogue/order between them. Exact prompts and active versions are in `design/MVP_Character_Assets_v2.json`. Stage 18 preview includes the new customers. Steamer is removed from tutorial 7 and introduced at campaign 21; covers now render above food tiles.
+
+Gameplay layout follows Sweet Match Adventure proportions: large logo, coin/status pills, hanging move counter, named food order chips, gold wooden board with banana-leaf slots and a four-button booster tray. Header progress counts actual stage order collections. Restart and +5 Moves are available from Settings/Pause. Existing customer-left/Aina-right staging and 8x8 campaign rules are retained.
+
+Journey/heart update: Campaign Play, Next Stage, Retry and Restart show the illustrated Journey map before entry. The map contains all 30 individual stages across three chapter pages and retains seen-story memories. HeartManager adds 5 hearts, failure-only consumption, offline 30-minute recovery, coin refills and saved 15/30-minute Free Play rewards. Tutorials are exempt. Rewarded ads stay hidden until a verified provider is connected. Implementation details and art prompts are in design/Journey_Heart_Implementation.md and design/MVP_Journey_UI_v1.json.
+
+The supplied four-frame finger tap sheet now animates under tap-required dialogue. DialogueSpotlight keeps the bubble and hand bright while dimming other UI; action tutorial steps restore normal screen visibility. Heart, menu, persistence and regression checks use disposable saves; rendered fixtures are available in .shots.

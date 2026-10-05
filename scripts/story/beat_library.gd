@@ -27,7 +27,7 @@ static func all_ids() -> Array:
 	return [
 		&"beat_01_open", &"beat_04_tapau", &"beat_07_leaf", &"beat_10_rush",
 		&"beat_15_book", &"beat_20_weekend", &"beat_20_done", &"beat_28_rival",
-		&"beat_30_finale", &"beat_30_done",
+		&"beat_30_finale", &"beat_30_done", &"beat_21_steamer", &"beat_12_special_order",
 	]
 
 
@@ -45,15 +45,16 @@ static func _build(id: StringName) -> StoryBeat:
 	match id:
 
 		&"beat_01_open":
-			return _lines(id, StoryBeat.Speaker.AINA, [
-				"This stall has been in the family for three generations.",
-				"Morning, the wooden counter still smells like pandan.",
-				"Let's make the best kuih in Kuching.",
+			var beat := _lines(id, StoryBeat.Speaker.AINA, [
+				"Morning, Aina! One kuih for the ride home, please.",
+				"Morning! Let's make your kuih fresh. Match three of the same kind to fill the order.",
 			])
+			beat.line_speakers = [StoryBeat.Speaker.CUSTOMER, StoryBeat.Speaker.AINA]
+			return beat
 
 		&"beat_04_tapau":
 			return _lines(id, StoryBeat.Speaker.AINA, [
-				"Four in a row... and the kuih wrapped themselves in a tapau pack!",
+				"Four in a row... and a Tapau Pack appeared!",
 				"Send it across the whole row and everything flies.",
 			])
 
@@ -67,6 +68,12 @@ static func _build(id: StringName) -> StoryBeat:
 			return _lines(id, StoryBeat.Speaker.IBU, [
 				"Morning rush! Every table wants something sweet.",
 				"Take a breath. One tray at a time.",
+			])
+
+		&"beat_12_special_order":
+			return _lines(id, StoryBeat.Speaker.AINA, [
+				"Match five in a straight line to make a Special Order.",
+				"Swap it with a kuih to collect every kuih of that kind on the board!",
 			])
 
 		&"beat_15_book":
@@ -88,6 +95,12 @@ static func _build(id: StringName) -> StoryBeat:
 				"Nenek Halimah said the onde-onde was the softest she has had.",
 			])
 
+		&"beat_21_steamer":
+			return _lines(id, StoryBeat.Speaker.AINA, [
+				"These kuih are still covered by steamer lids. Match beside a basket to open it.",
+				"Once the lid lifts, you can move and match the kuih inside. Later, stronger lids need two hits.",
+			])
+
 		&"beat_28_rival":
 			return _lines(id, StoryBeat.Speaker.RIVAL, [
 				"So this is the famous stall. Hmm. Not bad, I suppose.",
@@ -96,14 +109,14 @@ static func _build(id: StringName) -> StoryBeat:
 
 		&"beat_30_finale":
 			return _lines(id, StoryBeat.Speaker.AINA, [
-				"Market rush day. Every kuih we know, all in one go.",
-				"Order the trays. This is our weekend.",
-			], "Weekend Market Rush")
+				"Our neighbours have ordered kuih for the whole community!",
+				"Let's serve them together and bring our family stall to life.",
+			], "Big Community Order")
 
 		&"beat_30_done":
 			return _lines(id, StoryBeat.Speaker.IBU, [
 				"You did it. The stall is full and the queue is still here.",
-				"Next stop, kuih I have not even tasted yet.",
+				"Our next destination is the school canteen. A new story awaits!",
 			], "From Tradition to Empire")
 
 	return null

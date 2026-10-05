@@ -19,6 +19,9 @@ func _ready() -> void:
 	SaveManager.save_path = TEST_PATH
 	SaveManager.reset()
 	# Round trip through JSON (numbers become floats) and repeated replacement.
+	var migrated: Dictionary = SaveManager._normalize({"recipes": ["kuih_lapis", "vadai", "lapis_pandan", "kuih_koci"], "mastery": {"kuih_lapis": 25, "vadai": 8, "lapis_pandan": 12}})
+	check(migrated["recipes"].has("kuih_lapis") and migrated["recipes"].has("keria") and migrated["recipes"].has("ang_ku_kueh") and migrated["recipes"].has("kuih_koci"), "normal food unlock migration failed")
+	check(migrated["mastery"].get("kuih_lapis") == 25 and migrated["mastery"].get("keria") == 8 and migrated["mastery"].get("ang_ku_kueh") == 12, "normal food mastery migration failed")
 	SaveManager.data["coins"] = 777
 	SaveManager.data["levels"] = {"3": {"stars": 2, "best_moves_left": 8}}
 	check(SaveManager.save_game(), "first atomic save failed")
@@ -37,17 +40,18 @@ func _ready() -> void:
 		"mastery": {"onde_onde": "bad"}, "gerai": {"level": -5, "cosmetics": [42, "pink", "pink"]},
 		"stats": {"levels_played": "bad", "moves_played": 12},
 		"recipes": [null, 42, "onde_onde", "onde_onde"], "story_read": "bad", "chapters": null,
-		"tutorial_index": 999, "tutorial_done": "true"
+		"tutorial_index": 999, "tutorial_done": "true", "onboarding": {"gift_claimed": "true", "restored": 99}, "kuih_seen": [1,"onde_onde","onde_onde"]
 	}))
 	SaveManager.load_game()
 	check(EconomyManager.coins() == 250, "invalid coin type was not defaulted")
+	check(not SaveManager.data.onboarding.gift_claimed and not SaveManager.data.onboarding.restored and SaveManager.data.kuih_seen == ["onde_onde"], "new onboarding fields reject malformed values")
 	check(EconomyManager.booster_count(EconomyManager.Booster.SPATULA) == 3, "invalid booster container was not defaulted")
 	check(GameManager.setting("sfx") == true and GameManager.setting("music") == false, "settings normalization lost defaults or valid setting")
 	check(ProgressionManager.stars_for(1) == 0 and ProgressionManager.stars_for(2) == 3, "level records were not sanitized")
 	check(not SaveManager.data["levels"].has("31"), "invalid stage survived normalization")
 	check(ProgressionManager.mastery(&"onde_onde") == 0 and ProgressionManager.gerai_level() == 1, "invalid nested values survived")
 	check(ProgressionManager.unlocked_recipes() == ["onde_onde"], "recipe list not filtered/deduplicated")
-	check(ProgressionManager.tutorial_index() == 8 and not ProgressionManager.tutorial_done(), "tutorial normalization failed")
+	check(ProgressionManager.tutorial_index() == TutorialLibrary.count() and not ProgressionManager.tutorial_done(), "tutorial normalization failed")
 	check(ProgressionManager.stats()["moves_played"] == 12, "partial stats lost valid values")
 	# Reset must also replace the recovery copy, not resurrect erased progress.
 	SaveManager.reset()

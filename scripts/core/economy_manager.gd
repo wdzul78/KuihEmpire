@@ -2,11 +2,11 @@ extends Node
 
 ## Coin and booster economy (autoload: `EconomyManager`).
 ##
-## One currency only (coins) plus boosters - no gems, no premium tokens
-## (Master Plan section 36).
+## Gameplay purchases use coins. Diamond balance is saved for the menu header.
 
 signal coins_changed(amount: int)
 signal boosters_changed()
+signal booster_used()
 
 enum Booster { SPATULA, TRAY, SHUFFLE, GIFT, EXTRA_MOVES }
 
@@ -29,6 +29,10 @@ const BOOSTER_NAMES := {
 
 func coins() -> int:
 	return int(SaveManager.data.get("coins", 0))
+
+
+func diamonds() -> int:
+	return int(SaveManager.data.get("diamonds", 0))
 
 
 func add_coins(amount: int) -> void:
@@ -79,6 +83,7 @@ func use_booster(booster: Booster) -> bool:
 	SaveManager.data["boosters"] = table
 	SaveManager.mark_dirty()
 	boosters_changed.emit()
+	booster_used.emit()
 	return true
 
 

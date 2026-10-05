@@ -1,9 +1,9 @@
-extends SceneTree
+extends Node
 
 ## Headless smoke test + balance harness (Master Plan sections 61 and 76).
 ##
 ## Run with:
-##   godot --headless --script res://tools/test_runner.gd
+##   godot --headless res://tools/balance_scene.tscn
 ##
 ## It drives [BoardState] directly - no view, no tweens - so it can play all 30
 ## MVP stages thousands of times and report win rates. Any stage that a greedy
@@ -12,16 +12,22 @@ extends SceneTree
 const TRIALS := 8
 
 var failures: Array[String] = []
+var _last_score := 0
 
 
-func _initialize() -> void:
+func _ready() -> void:
+	run.call_deferred()
+
+func run() -> void:
 	var start := Time.get_ticks_msec()
 	_test_board_invariants()
 	_test_specials()
 	_test_blockers()
 	_test_tutorial_layouts()
 	_print_tutorial_report()
-	var report := _simulate_all()
+	var report: Array = []
+	if not "--rules-only" in OS.get_cmdline_user_args():
+		report = _simulate_all()
 	print("")
 	print("Balance report")
 	print("-------------")
@@ -35,13 +41,14 @@ func _initialize() -> void:
 		print("  ! " + failure)
 	print("")
 	print("Elapsed: %d ms" % (Time.get_ticks_msec() - start))
-	quit(0 if failures.is_empty() else 1)
+	get_tree().quit(0 if failures.is_empty() else 1)
 
 
 # --- unit style checks -----------------------------------------------------
 
 func _make_board(level: LevelDefinition, seed_value: int) -> BoardState:
 	var board := BoardState.new()
+	board.delivery_enabled = level.tutorial_index in [9, 5, 7, 8]
 	board.setup(level.width, level.height, level.kuih, seed_value)
 	if not level.fixed_layout.is_empty():
 		if not board.apply_layout(level.fixed_layout):
@@ -52,6 +59,9 @@ func _make_board(level: LevelDefinition, seed_value: int) -> BoardState:
 		if not board.has_possible_move():
 			board.shuffle_board()
 	board.apply_blockers(level.blockers)
+	if level.tutorial_index == 11:
+		board.get_cell(Vector2i(1,1)).special = BoardCell.Special.TAPAU
+		board.get_cell(Vector2i(2,1)).special = BoardCell.Special.TAPAU_VERTICAL
 	return board
 
 
@@ -60,6 +70,9 @@ func _test_board_invariants() -> void:
 	var board := _make_board(level, 12345)
 
 	for attempt in 40:
+		# MatchBoard reshuffles when a cascade settles without a legal move.
+		if not board.has_possible_move():
+			board.shuffle_board()
 		var moves := board.find_possible_moves(6)
 		if moves.is_empty():
 			_check(false, "seed %d: no legal move found on a fresh board" % attempt)
@@ -99,12 +112,12 @@ func _board_consistent(board: BoardState) -> bool:
 
 
 func _test_specials() -> void:
-	# A single horizontal run of four must become a Tapau Pack.
+	# A horizontal four creates Tapau Pack.
 	var board := _force_board([
-		[&"onde_onde", &"onde_onde", &"onde_onde", &"onde_onde", &"ang_ku_kueh"],
-		[&"kuih_ketayap", &"seri_muka", &"vadai", &"kuih_lapis", &"seri_muka"],
-		[&"seri_muka", &"ang_ku_kueh", &"kuih_ketayap", &"vadai", &"kuih_lapis"],
-		[&"vadai", &"kuih_lapis", &"seri_muka", &"ang_ku_kueh", &"kuih_ketayap"],
+		[&"onde_onde", &"onde_onde", &"onde_onde", &"onde_onde", &"kuih_lapis"],
+		[&"kuih_ketayap", &"ang_ku_kueh", &"keria", &"kuih_koci", &"ang_ku_kueh"],
+		[&"ang_ku_kueh", &"kuih_lapis", &"kuih_ketayap", &"keria", &"kuih_koci"],
+		[&"keria", &"kuih_koci", &"ang_ku_kueh", &"kuih_lapis", &"kuih_ketayap"],
 	])
 	var groups := board.find_matches()
 	_check(groups.size() == 1, "expected exactly one match group, found %d" % groups.size())
@@ -114,29 +127,50 @@ func _test_specials() -> void:
 			"match-4 produced special %d instead of TAPAU" % groups[0].special
 		)
 
-	# Fire a Tapau on a pristine board: it must wipe its row and its column.
+	# A single horizontal special clears only its row.
 	var firing := _force_board([
-		[&"onde_onde", &"kuih_lapis", &"seri_muka", &"vadai", &"kuih_ketayap"],
-		[&"vadai", &"kuih_ketayap", &"onde_onde", &"kuih_lapis", &"seri_muka"],
-		[&"seri_muka", &"vadai", &"kuih_ketayap", &"onde_onde", &"kuih_lapis"],
-		[&"kuih_lapis", &"seri_muka", &"vadai", &"kuih_ketayap", &"onde_onde"],
+		[&"onde_onde", &"kuih_koci", &"ang_ku_kueh", &"keria", &"kuih_ketayap"],
+		[&"keria", &"kuih_ketayap", &"onde_onde", &"kuih_koci", &"ang_ku_kueh"],
+		[&"ang_ku_kueh", &"keria", &"kuih_ketayap", &"onde_onde", &"kuih_koci"],
+		[&"kuih_koci", &"ang_ku_kueh", &"keria", &"kuih_ketayap", &"onde_onde"],
 	])
 	var trigger := Vector2i(2, 2)
 	firing.get_cell(trigger).special = BoardCell.Special.TAPAU
 	var fired := firing.activate_specials([trigger])
-	var expected := firing.width + firing.height - 1
+	var expected := firing.width
 	_check(
 		fired.cleared.size() == expected,
 		"Tapau cleared %d tiles, expected %d" % [fired.cleared.size(), expected]
 	)
 
+	# Vertical four creates a column-only Tapau.
+	var column_board := _force_board([
+		[&"onde_onde", &"kuih_koci", &"ang_ku_kueh", &"keria", &"kuih_ketayap"],
+		[&"onde_onde", &"kuih_ketayap", &"keria", &"kuih_koci", &"ang_ku_kueh"],
+		[&"onde_onde", &"keria", &"kuih_ketayap", &"ang_ku_kueh", &"kuih_koci"],
+		[&"onde_onde", &"ang_ku_kueh", &"keria", &"kuih_ketayap", &"kuih_koci"],
+	])
+	var column_groups := column_board.find_matches()
+	_check(column_groups.size() == 1, "expected one vertical match")
+	if not column_groups.is_empty():
+		_check(column_groups[0].special == BoardCell.Special.TAPAU_VERTICAL, "vertical four must create vertical Tapau")
+	column_board.get_cell(Vector2i(0, 2)).special = BoardCell.Special.TAPAU_VERTICAL
+	var column_result := column_board.activate_specials([Vector2i(0, 2)])
+	_check(column_result.cleared.size() == column_board.height, "vertical special must clear one column")
+	for pos in column_result.cleared:
+		_check(pos.x == 0, "vertical special cleared outside its column")
+	for pos in fired.cleared:
+		_check(pos.y == trigger.y, "horizontal special cleared outside its row")
+	_check(BoardArt.special_texture(BoardCell.Special.TAPAU) != null, "row artwork missing")
+	_check(BoardArt.special_texture(BoardCell.Special.TAPAU_VERTICAL) != null, "column artwork missing")
+
 	# An L shape must become a Dulang that clears 3x3.
 	var lshape := _force_board([
-		[&"onde_onde", &"onde_onde", &"onde_onde", &"seri_muka", &"kuih_lapis"],
-		[&"kuih_lapis", &"kuih_ketayap", &"onde_onde", &"vadai", &"seri_muka"],
-		[&"kuih_ketayap", &"vadai", &"onde_onde", &"seri_muka", &"kuih_ketayap"],
-		[&"vadai", &"seri_muka", &"kuih_lapis", &"kuih_ketayap", &"onde_onde"],
-		[&"seri_muka", &"kuih_ketayap", &"vadai", &"onde_onde", &"kuih_lapis"],
+		[&"onde_onde", &"onde_onde", &"onde_onde", &"ang_ku_kueh", &"kuih_koci"],
+		[&"kuih_koci", &"kuih_ketayap", &"onde_onde", &"keria", &"ang_ku_kueh"],
+		[&"kuih_ketayap", &"keria", &"onde_onde", &"ang_ku_kueh", &"kuih_ketayap"],
+		[&"keria", &"ang_ku_kueh", &"kuih_koci", &"kuih_ketayap", &"onde_onde"],
+		[&"ang_ku_kueh", &"kuih_ketayap", &"keria", &"onde_onde", &"kuih_koci"],
 	])
 	var lgroups := lshape.find_matches()
 	var dulang_ok := false
@@ -157,27 +191,78 @@ func _test_specials() -> void:
 
 	# Five in a row must become a Special Order.
 	var five := _force_board([
-		[&"vadai", &"vadai", &"vadai", &"vadai", &"vadai"],
-		[&"kuih_lapis", &"seri_muka", &"kuih_ketayap", &"ang_ku_kueh", &"onde_onde"],
-		[&"seri_muka", &"kuih_ketayap", &"ang_ku_kueh", &"onde_onde", &"kuih_lapis"],
-		[&"kuih_ketayap", &"ang_ku_kueh", &"onde_onde", &"kuih_lapis", &"seri_muka"],
+		[&"keria", &"keria", &"keria", &"keria", &"keria"],
+		[&"kuih_koci", &"ang_ku_kueh", &"kuih_ketayap", &"kuih_lapis", &"onde_onde"],
+		[&"ang_ku_kueh", &"kuih_ketayap", &"kuih_lapis", &"onde_onde", &"kuih_koci"],
+		[&"kuih_ketayap", &"kuih_lapis", &"onde_onde", &"kuih_koci", &"ang_ku_kueh"],
 	])
 	var order_ok := false
 	for group in five.find_matches():
 		if group.special == BoardCell.Special.ORDER:
 			order_ok = true
 	_check(order_ok, "five in a row did not create a Special Order")
+	# A package's hidden creation kuih must not make it a color-collection target.
+	for kind in [BoardCell.Special.DULANG,BoardCell.Special.TAPAU,BoardCell.Special.TAPAU_VERTICAL,BoardCell.Special.HANTAR,BoardCell.Special.ORDER]:
+		var independent := BoardState.new()
+		independent.setup(5,5,KuihLibrary.starter_set(),89)
+		var origin := Vector2i(2,2)
+		var neighbour := Vector2i(3,2)
+		var package_pos := Vector2i(0,0)
+		var wanted := independent.pool[0]
+		independent.get_cell(origin).special = BoardCell.Special.ORDER
+		independent.get_cell(origin).order_kuish = independent.pool[1].id
+		independent.get_cell(neighbour).kuih = wanted
+		independent.get_cell(package_pos).kuih = wanted
+		independent.get_cell(package_pos).special = kind
+		independent.try_swap(origin,neighbour)
+		var ordinary_collection := independent.activate_specials([origin,neighbour])
+		_check(ordinary_collection.activated.size() == 1, "color collection must not trigger unrelated packages")
+		_check(not ordinary_collection.cleared.has(package_pos) and independent.get_cell(package_pos).special == kind, "color collection preserves unrelated special")
+	# Swapping Special Order must collect the partner's type, not its creation type.
+	for partner in KuihLibrary.starter_set():
+		for reverse in [false, true]:
+			var color_board := BoardState.new()
+			color_board.setup(5,5,KuihLibrary.starter_set(),424)
+			var origin := Vector2i(2,2)
+			var neighbour := Vector2i(3,2)
+			color_board.get_cell(origin).kuih = KuihLibrary.get_kuih(&"kuih_lapis")
+			color_board.get_cell(origin).special = BoardCell.Special.ORDER
+			color_board.get_cell(origin).order_kuish = &"kuih_lapis"
+			color_board.get_cell(neighbour).kuih = partner
+			var pair := [neighbour,origin] if reverse else [origin,neighbour]
+			_check(color_board.try_swap(pair[0],pair[1]) == BoardState.SwapOutcome.ACTIVATED_SPECIAL, "Special Order accepts either swipe order")
+			_check(color_board.get_cell(neighbour).order_kuish == partner.id, "Special Order targets swapped partner")
+			var expected_order_cells: Dictionary = {neighbour:true}
+			for y in color_board.height:
+				for x in color_board.width:
+					var pos := Vector2i(x,y)
+					if color_board.get_cell(pos).kuish_id() == partner.id:
+						expected_order_cells[pos] = true
+			var collected := color_board.activate_specials(pair)
+			_check(collected.cleared.size() == expected_order_cells.size(), "Special Order clears exactly partner type plus package")
+			for pos in collected.cleared:
+				_check(expected_order_cells.has(pos), "Special Order must leave other kuih types intact")
+	# A Dulang activates with every neighbouring kuih, without a match-three.
+	for partner in KuihLibrary.starter_set():
+		var dulang_board := BoardState.new()
+		dulang_board.setup(5, 5, KuihLibrary.starter_set(), 321)
+		dulang_board.get_cell(Vector2i(2, 2)).kuih = KuihLibrary.get_kuih(&"kuih_lapis")
+		dulang_board.get_cell(Vector2i(2, 2)).special = BoardCell.Special.DULANG
+		dulang_board.get_cell(Vector2i(3, 2)).kuih = partner
+		_check(dulang_board.try_swap(Vector2i(2, 2), Vector2i(3, 2)) == BoardState.SwapOutcome.ACTIVATED_SPECIAL, "Dulang did not activate with %s" % partner.id)
+		var blast := dulang_board.activate_specials([Vector2i(2, 2), Vector2i(3, 2)])
+		_check(blast.cleared.size() == 9, "Dulang must clear a 3x3 area with %s" % partner.id)
 	print("special tiles ............ ok")
 
 
 func _force_board(rows: Array) -> BoardState:
 	var pool: Array[KuihData] = [
 		KuihLibrary.get_kuih(&"onde_onde"),
-		KuihLibrary.get_kuih(&"kuih_lapis"),
-		KuihLibrary.get_kuih(&"seri_muka"),
-		KuihLibrary.get_kuih(&"kuih_ketayap"),
+		KuihLibrary.get_kuih(&"kuih_koci"),
 		KuihLibrary.get_kuih(&"ang_ku_kueh"),
-		KuihLibrary.get_kuih(&"vadai"),
+		KuihLibrary.get_kuih(&"kuih_ketayap"),
+		KuihLibrary.get_kuih(&"kuih_lapis"),
+		KuihLibrary.get_kuih(&"keria"),
 	]
 	var board := BoardState.new()
 	board.setup((rows[0] as Array).size(), rows.size(), pool, 999)
@@ -253,9 +338,11 @@ func _test_tutorial_layouts() -> void:
 	var special_gate := {
 		4: BoardCell.Special.TAPAU,
 		5: BoardCell.Special.DULANG,
+		9: BoardCell.Special.HANTAR,
+		10: BoardCell.Special.TAPAU_VERTICAL,
 	}
 
-	for index in range(1, TutorialLibrary.count() + 1):
+	for index in TutorialLibrary.ACTIVE_LESSONS:
 		var stage := TutorialLibrary.get_stage(index)
 		var board := _make_board(stage, 1000 + index * 31)
 
@@ -274,7 +361,7 @@ func _test_tutorial_layouts() -> void:
 			"tutorial %d: board has no legal move, the coach can never pass" % index
 		)
 		_check(not stage.allow_fail, "tutorial %d: must not be losable" % index)
-		_check(stage.always_three_stars, "tutorial %d: must always award three stars" % index)
+		_check(stage.score_three_star >= stage.score_two_star and stage.score_two_star > 0, "tutorial %d: score thresholds invalid" % index)
 		_check(not stage.tutorial_steps.is_empty(), "tutorial %d: has no coaching steps" % index)
 
 		var moves := board.find_possible_moves(128)
@@ -343,7 +430,7 @@ func _print_tutorial_report() -> void:
 	lines.append("")
 	lines.append("Tutorial report")
 	lines.append("----------------")
-	for index in range(1, TutorialLibrary.count() + 1):
+	for index in TutorialLibrary.ACTIVE_LESSONS:
 		var stage := TutorialLibrary.get_stage(index)
 		var wins := 0
 		var seeds := 4
@@ -378,9 +465,12 @@ static func _gate_name(gate: int) -> String:
 		TutorialStepData.Gate.SWAP_HORIZONTAL: "swipe horizontal",
 		TutorialStepData.Gate.CREATED_TAPAU: "make tapau",
 		TutorialStepData.Gate.CREATED_DULANG: "make dulang",
+		TutorialStepData.Gate.CREATED_HANTAR: "make delivery",
 		TutorialStepData.Gate.BLOCKER_OPENED: "open covers",
 		TutorialStepData.Gate.COLLECTED: "collect",
 		TutorialStepData.Gate.SERVED: "serve",
+		TutorialStepData.Gate.ACTIVATED_SPECIAL: "activate special",
+		TutorialStepData.Gate.ACTIVATED_CROSS: "combine cross",
 	}
 	return String(names.get(gate, "?"))
 
@@ -405,6 +495,25 @@ func _play_tutorial(stage: LevelDefinition, seed_value: int) -> bool:
 	var budget := maxi(24, stage.move_budget() * 3)
 
 	if orders.is_empty():
+		if gate == TutorialStepData.Gate.ACTIVATED_CROSS:
+			var a := Vector2i(1,1)
+			var b := Vector2i(2,1)
+			return board.try_swap(a,b) == BoardState.SwapOutcome.ACTIVATED_SPECIAL and board.activate_specials([a,b]).combo == &"sweet_cross"
+		if gate == TutorialStepData.Gate.ACTIVATED_SPECIAL:
+			for step in stage.tutorial_steps:
+				if step.gate in [TutorialStepData.Gate.CREATED_TAPAU, TutorialStepData.Gate.CREATED_DULANG, TutorialStepData.Gate.CREATED_HANTAR, TutorialStepData.Gate.CREATED_VERTICAL] and step.highlight.size() == 2:
+					var a := step.highlight[0]
+					var b := step.highlight[1]
+					if board.try_swap(a, b) == BoardState.SwapOutcome.INVALID:
+						return false
+					var made := board.resolve([a, b])
+					for entry in made.created:
+						var pos: Vector2i = entry.pos
+						for direction in [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]:
+							var neighbour: Vector2i = pos + direction
+							if board.try_swap(pos, neighbour) == BoardState.SwapOutcome.ACTIVATED_SPECIAL:
+								return not board.activate_specials([pos, neighbour]).activated.is_empty()
+			return false
 		return _play_lesson_board(board, gate, 12)
 
 	while guard < budget:
@@ -415,7 +524,8 @@ func _play_tutorial(stage: LevelDefinition, seed_value: int) -> bool:
 			break
 		var a: Vector2i = best["a"]
 		var b: Vector2i = best["b"]
-		if board.try_swap(a, b) == BoardState.SwapOutcome.INVALID:
+		var outcome := board.try_swap(a, b)
+		if outcome == BoardState.SwapOutcome.INVALID:
 			continue
 
 		# Gesture lessons are taught by the swap itself.
@@ -426,12 +536,12 @@ func _play_tutorial(stage: LevelDefinition, seed_value: int) -> bool:
 		if gate == TutorialStepData.Gate.SWAP_HORIZONTAL and a.y == b.y:
 			return true
 
-		var result := board.resolve([a, b])
+		var result := board.activate_specials([a,b]) if outcome == BoardState.SwapOutcome.ACTIVATED_SPECIAL else board.resolve([a, b])
 		var steps := 0
 		while not result.is_empty() and steps < 40:
 			steps += 1
 			if gate == TutorialStepData.Gate.CREATED_TAPAU:
-				if _has_special(result, BoardCell.Special.TAPAU):
+				if (_has_special(result, BoardCell.Special.TAPAU) or _has_special(result, BoardCell.Special.TAPAU_VERTICAL)):
 					return true
 			if gate == TutorialStepData.Gate.CREATED_DULANG:
 				if _has_special(result, BoardCell.Special.DULANG):
@@ -471,7 +581,8 @@ func _play_lesson_board(board: BoardState, gate: int, budget: int) -> bool:
 			break
 		var a: Vector2i = best["a"]
 		var b: Vector2i = best["b"]
-		if board.try_swap(a, b) == BoardState.SwapOutcome.INVALID:
+		var outcome := board.try_swap(a, b)
+		if outcome == BoardState.SwapOutcome.INVALID:
 			continue
 		if gate == TutorialStepData.Gate.SWAP_ANY:
 			return true
@@ -479,8 +590,14 @@ func _play_lesson_board(board: BoardState, gate: int, budget: int) -> bool:
 			return true
 		if gate == TutorialStepData.Gate.SWAP_HORIZONTAL and a.y == b.y:
 			return true
+		if outcome == BoardState.SwapOutcome.ACTIVATED_SPECIAL:
+			var activation := board.activate_specials([a, b])
+			if gate == TutorialStepData.Gate.ACTIVATED_SPECIAL and not activation.activated.is_empty():
+				return true
 		var result := board.resolve([a, b])
-		if gate == TutorialStepData.Gate.CREATED_TAPAU and _has_special(result, BoardCell.Special.TAPAU):
+		if gate == TutorialStepData.Gate.ACTIVATED_SPECIAL and not result.created.is_empty():
+			continue
+		if gate == TutorialStepData.Gate.CREATED_TAPAU and (_has_special(result, BoardCell.Special.TAPAU) or _has_special(result, BoardCell.Special.TAPAU_VERTICAL)):
 			return true
 		if gate == TutorialStepData.Gate.CREATED_DULANG and _has_special(result, BoardCell.Special.DULANG):
 			return true
@@ -490,7 +607,7 @@ func _play_lesson_board(board: BoardState, gate: int, budget: int) -> bool:
 		var steps := 0
 		while not cascade.is_empty() and steps < 40:
 			steps += 1
-			if gate == TutorialStepData.Gate.CREATED_TAPAU and _has_special(cascade, BoardCell.Special.TAPAU):
+			if gate == TutorialStepData.Gate.CREATED_TAPAU and (_has_special(cascade, BoardCell.Special.TAPAU) or _has_special(cascade, BoardCell.Special.TAPAU_VERTICAL)):
 				return true
 			if gate == TutorialStepData.Gate.CREATED_DULANG and _has_special(cascade, BoardCell.Special.DULANG):
 				return true
@@ -537,25 +654,29 @@ func _simulate_all() -> Array[String]:
 	var lines: Array[String] = []
 	var total_wins := 0
 	var total_runs := 0
-	for id in range(1, LevelLibrary.count() + 1):
+	var trials := 16 if "--starter-only" in OS.get_cmdline_user_args() else 2 if "--quick-balance" in OS.get_cmdline_user_args() else TRIALS
+	for id in range(1, 11 if "--starter-only" in OS.get_cmdline_user_args() else LevelLibrary.count() + 1):
 		var level := LevelLibrary.get_level(id)
 		var wins := 0
 		var star_sum := 0
-		for trial in TRIALS:
+		var scores: Array[int] = []
+		for trial in trials:
 			var stars := _play(level, 1000 + trial * 7919)
 			if stars > 0:
+				scores.append(_last_score)
 				wins += 1
 				star_sum += stars
 		total_wins += wins
-		total_runs += TRIALS
-		var rate := 100.0 * float(wins) / float(TRIALS)
+		total_runs += trials
+		var rate := 100.0 * float(wins) / float(trials)
 		var effective := _effective_items(level)
 		var per_move := float(effective) / float(maxi(1, level.move_budget()))
 		var flag := "ok " if rate >= 70.0 else "!! "
+		lines.append("stage %d final scores: %s" % [id, str(scores)])
 		lines.append(
-			"%sstage %2d  win %3d%%  ★%.1f  moves %2d  items %3d (%.2f/move)  blockers %d  %s" % [
+			"%sstage %2d  win %3d%%  Ã¢Ëœâ€¦%.1f  moves %2d  items %3d (%.2f/move)  blockers %d  %s" % [
 				flag, id, int(rate),
-				float(star_sum) / float(maxi(1, TRIALS)),
+				float(star_sum) / float(maxi(1, trials)),
 				level.move_budget(),
 				effective,
 				per_move,
@@ -585,12 +706,15 @@ func _effective_items(level: LevelDefinition) -> int:
 
 ## Returns 0 for a loss, otherwise the star count.
 func _play(level: LevelDefinition, seed_value: int) -> int:
+	_last_score = 0
 	var board := _make_board(level, seed_value)
 	var orders: Array[CustomerOrder] = []
 	for spec in level.customer_orders:
 		orders.append(CustomerOrder.from_spec(spec))
 	var index := 0
 	var moves_left := level.move_budget()
+	var scoring := StageScoreController.new()
+	scoring.setup(level)
 	var guard := 0
 
 	while moves_left > 0 and guard < 400:
@@ -600,22 +724,29 @@ func _play(level: LevelDefinition, seed_value: int) -> int:
 			break
 		var a: Vector2i = best["a"]
 		var b: Vector2i = best["b"]
-		if board.try_swap(a, b) == BoardState.SwapOutcome.INVALID:
+		var outcome := board.try_swap(a, b)
+		if outcome == BoardState.SwapOutcome.INVALID:
 			continue
 		moves_left -= 1
-		_apply(board, [a, b], orders, index)
+		_apply(board, [a, b], orders, index, scoring, outcome)
 		index = _first_unfinished(orders)
 
 		if _cleared(orders) and (not level.require_blockers_cleared or board.remaining_blockers() == 0):
-			return level.stars_for_moves_left(moves_left)
+			var result := StageResultCalculator.calculate(true, scoring.total, moves_left, level)
+			_last_score = result.final_score
+			return result.earned_stars
 	return 0
 
 
-func _apply(board: BoardState, preferred: Array, orders: Array[CustomerOrder], index: int) -> void:
-	var result := board.resolve(preferred)
+func _apply(board: BoardState, preferred: Array, orders: Array[CustomerOrder], index: int, scoring: StageScoreController, outcome: int) -> void:
+	var result := board.activate_specials(preferred) if outcome == BoardState.SwapOutcome.ACTIVATED_SPECIAL else board.resolve(preferred)
 	var guard := 0
 	while not result.is_empty() and guard < 40:
+		scoring.add_clear(result, guard)
 		guard += 1
+		var before := 0
+		for order in orders:
+			before += order.total_collected
 		var totals := result.collected_totals()
 		var i := index
 		var leftover: Dictionary = totals
@@ -624,6 +755,10 @@ func _apply(board: BoardState, preferred: Array, orders: Array[CustomerOrder], i
 			if not orders[i].is_complete():
 				break
 			i += 1
+		var after := 0
+		for order in orders:
+			after += order.total_collected
+		scoring.add_collection(after - before)
 		board.apply_gravity()
 		board.refill()
 		result = board.resolve([])

@@ -6,9 +6,11 @@ extends RefCounted
 
 enum Special {
 	NONE,   ## Plain match-3 tile.
-	TAPAU,  ## Gift box - clears a full row and column.
+	TAPAU, ## Horizontal special - clears one full row.
 	DULANG, ## Round tray - clears a 3x3 area.
 	ORDER,  ## Special order - collects every tile of one kuih type.
+	TAPAU_VERTICAL, ## Vertical special - clears one full column (stable value 4).
+	HANTAR, ## Delivery package created by a 2x2 square.
 }
 
 const NO_BLOCKER := -1
@@ -16,6 +18,7 @@ const NO_BLOCKER := -1
 var kuih: KuihData = null
 var special: Special = Special.NONE
 ## For [constant Special.ORDER]: which kuih type this tile collects.
+## Target type for Special Order, or the ordinary kuih swapped with Delivery.
 var order_kuish: StringName = &""
 
 ## [enum BlockerSpec.Kind] or [constant NO_BLOCKER].

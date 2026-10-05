@@ -31,26 +31,26 @@ static func _build() -> void:
 			"note": "Green glutinous rice balls rolled in fresh coconut.\nPopular across Malaysia, especially at pasar pagi.",
 		},
 		{
-			"id": &"kuih_lapis",
-			"name": "Kuih Lapis",
-			"shape": KuihData.Shape.LAYER_CAKE,
-			"cat": KuihData.Category.LAYERED,
-			"color": Color("f76f8e"),
+			"id": &"kuih_koci",
+			"name": "Kuih Koci",
+			"shape": KuihData.Shape.PYRAMID,
+			"cat": KuihData.Category.STEAMED,
+			"color": Color("fff1d8"),
 			"accent": Color("fff3dc"),
 			"detail": Color("7cc152"),
 			"chapter": 1,
-			"note": "Thin coloured layers of coconut cake, pressed one by one.\nLoved by families for celebrations.",
+			"note": "White glutinous rice kuih served on banana leaf.",
 		},
 		{
-			"id": &"seri_muka",
-			"name": "Seri Muka",
-			"shape": KuihData.Shape.PYRAMID,
+			"id": &"ang_ku_kueh",
+			"name": "Ang Ku",
+			"shape": KuihData.Shape.ORB,
 			"cat": KuihData.Category.STEAMED,
-			"color": Color("f48fb1"),
-			"accent": Color("4e9a3f"),
-			"detail": Color("ffe9b0"),
+			"color": Color("ef4638"),
+			"accent": Color("ad241c"),
+			"detail": Color("ffab72"),
 			"chapter": 1,
-			"note": "A bright custard pyramid in a banana leaf cup.\nCommonly found across Malaysian kuih stalls.",
+			"note": "Red oval glutinous rice cake with an embossed tortoise-shell pattern.",
 		},
 		{
 			"id": &"kuih_ketayap",
@@ -61,29 +61,29 @@ static func _build() -> void:
 			"accent": Color("a8d16a"),
 			"detail": Color("3f7f2a"),
 			"chapter": 1,
-			"note": "Pandan-flavoured dough folded into crisp triangles.\nA favourite for kuih tea time.",
+			"note": "A rolled pandan crepe filled with sweet coconut.",
 		},
 		{
-			"id": &"ang_ku_kueh",
-			"name": "Ang Ku Kueh",
-			"shape": KuihData.Shape.FLOWER_RING,
-			"cat": KuihData.Category.BAKED,
-			"color": Color("e08a3c"),
+			"id": &"kuih_lapis",
+			"name": "Kuih Lapis",
+			"shape": KuihData.Shape.LAYER_CAKE,
+			"cat": KuihData.Category.LAYERED,
+			"color": Color("f76f8e"),
 			"accent": Color("b4682e"),
 			"detail": Color("ffd79a"),
 			"chapter": 1,
-			"note": "Flower shaped tortoise-shell cake, often coloured with\nred bean paste. Popular in festive kuih assortments.",
+			"note": "Pink and cream layers of steamed kuih.",
 		},
 		{
-			"id": &"vadai",
-			"name": "Vadai",
-			"shape": KuihData.Shape.BALL_RING,
+			"id": &"keria",
+			"name": "Keria",
+			"shape": KuihData.Shape.FRIED_RING,
 			"cat": KuihData.Category.FRIED,
 			"color": Color("e0a23c"),
 			"accent": Color("b9741f"),
 			"detail": Color("ffe0a8"),
 			"chapter": 1,
-			"note": "Crisp fritters made from chickpea flour and rice flour.\nBest eaten while still warm.",
+			"note": "A golden ring-shaped sweet-potato kuih.",
 		},
 		{
 			"id": &"penyaram",
@@ -165,7 +165,11 @@ static func _build() -> void:
 		kuih.chapter = def["chapter"]
 		kuih.recipe_id = def["id"]
 		kuih.note = def["note"]
-		var art_path := "res://assets/kuih/%s.png" % String(kuih.id)
+		var art_path := "res://assets/kuih/cartoon_v3/%s.png" % String(kuih.id)
+		if not ResourceLoader.exists(art_path):
+			art_path = "res://assets/kuih/cartoon_v2/%s.png" % String(kuih.id)
+		if not ResourceLoader.exists(art_path):
+			art_path = "res://assets/kuih/%s.png" % String(kuih.id)
 		if ResourceLoader.exists(art_path):
 			kuih.texture = load(art_path) as Texture2D
 		_by_id[kuih.id] = kuih
@@ -187,7 +191,7 @@ static func has(id: StringName) -> bool:
 	return _by_id.has(id)
 
 
-static func get_name(id: StringName) -> String:
+static func get_display_name(id: StringName) -> String:
 	var kuih := get_kuih(id)
 	return kuih.display_name if kuih != null else String(id)
 
@@ -200,7 +204,7 @@ static func count() -> int:
 ## The six MVP kuih (Master Plan section 13).
 static func starter_set() -> Array[KuihData]:
 	var out: Array[KuihData] = []
-	for id in [&"onde_onde", &"kuih_lapis", &"seri_muka", &"kuih_ketayap", &"ang_ku_kueh", &"vadai"]:
+	for id in [&"onde_onde", &"kuih_koci", &"ang_ku_kueh", &"kuih_ketayap", &"kuih_lapis", &"keria"]:
 		var kuih := get_kuih(id)
 		if kuih != null:
 			out.append(kuih)

@@ -1,6 +1,13 @@
 class_name MatchBoard
 extends Control
 
+## Temporary visual option: keeps the board rim/backing while hiding individual pockets.
+@export var show_slot_background := false:
+	set(value):
+		show_slot_background = value
+		if is_instance_valid(_slots):
+			_slots.queue_redraw()
+
 ## Board view and game feel layer.
 ##
 ## Owns no rules - [BoardState] does. This node translates player input into
@@ -19,6 +26,11 @@ signal booster_targeted(booster: int, pos: Vector2i)
 signal swap_attempted(from: Vector2i, to: Vector2i, accepted: bool)
 ## Emitted when a special tile is created by a match.
 signal special_created(kind: int)
+signal special_activated(kind: int)
+signal special_effect_preview(kind: int, cells: Array[Vector2i])
+signal clear_resolved(result: BoardState.ClearResult, cascade: int)
+
+const CROSS_PACKAGE_ART = preload("res://assets/boosters/tapau.png")
 
 const SWIPE_RATIO := 0.32
 const SWAP_TIME := 0.15
@@ -35,6 +47,7 @@ var enabled: bool = false
 
 var cell_size: float = 128.0
 var board_origin: Vector2 = Vector2.ZERO
+var frame_padding: float = 16.0
 
 var _slots: Control
 var _tiles: Dictionary = {}      # Vector2i -> TileView
@@ -44,6 +57,19 @@ var _drag_from: Vector2i = Vector2i(-1, -1)
 var _drag_start: Vector2 = Vector2.ZERO
 var _drag_moved: bool = false
 var _hint_cells: Array[Vector2i] = []
+var swap_filter: Callable
+var _guide_layer: Control
+var _focus_cells: Array[Vector2i] = []
+var _swipe_indicator: SwipeIndicator
+var _delivery_text_shown := false
+var _hold_created_specials := false
+var _blast_preview: Array[Vector2i] = []
+var _feedback: MatchFeedback
+var _special_text: SpecialExecutionText
+var _vfx: GameVfx
+var _guide_time := 0.0
+var _shake_tween: Tween
+var _shake_origin := Vector2.ZERO
 var targeting: int = -1
 
 
@@ -61,11 +87,32 @@ func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	clip_contents = true
 	resized.connect(_relayout)
+	_vfx = GameVfx.new()
+	_vfx.z_index = 15
+	add_child(_vfx)
+	_feedback = MatchFeedback.new()
+	add_child(_feedback)
+	_special_text = SpecialExecutionText.new()
+	add_child(_special_text)
+
+
+func _process(delta: float) -> void:
+	if _guide_layer != null and _focus_cells.size() == 2:
+		_guide_time += delta
+		_guide_layer.queue_redraw()
 
 
 # --- construction ----------------------------------------------------------
 
 func build(level: LevelDefinition) -> void:
+	_stop_burst_shake()
+	if _special_text != null:
+		_special_text.reset()
+	if _feedback != null:
+		_feedback.reset()
+	if _vfx != null:
+		_vfx.reset()
+	_hold_created_specials = level.tutorial_index in [4, 5, 9, 10, 11]
 	_clear_selection()
 	clear_hints()
 	cancel_targeting()
@@ -77,18 +124,32 @@ func build(level: LevelDefinition) -> void:
 	_overlays.clear()
 
 	logic = BoardState.new()
+	logic.delivery_enabled = level.tutorial_index in [9, 5, 7, 8] or (level.tutorial_index == 0 and ProgressionManager.delivery_unlocked())
 	logic.setup(level.width, level.height, level.kuih)
 	if not level.fixed_layout.is_empty():
 		# A hand-authored layout is the lesson. Never shuffle it - some of them
 		# have exactly one legal move on purpose.
 		logic.apply_layout(level.fixed_layout)
 	logic.apply_blockers(level.blockers)
+	if level.tutorial_index == 11:
+		logic.get_cell(Vector2i(1,1)).special = BoardCell.Special.TAPAU
+		logic.get_cell(Vector2i(2,1)).special = BoardCell.Special.TAPAU_VERTICAL
 
 	if _slots == null:
 		_slots = Control.new()
 		_slots.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		_slots.draw.connect(_draw_slots)
 		add_child(_slots)
+	if _guide_layer == null:
+		_guide_layer = Control.new()
+		_guide_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_guide_layer.z_index = 20
+		_guide_layer.draw.connect(_draw_guide)
+		add_child(_guide_layer)
+	if _swipe_indicator == null:
+		_swipe_indicator = SwipeIndicator.new()
+		_swipe_indicator.board = self
+		add_child(_swipe_indicator)
 
 	_layout_metrics()
 	if _slots != null:
@@ -106,10 +167,33 @@ func build(level: LevelDefinition) -> void:
 	enabled = true
 
 
+## Consume optional starting specials only after the campaign board exists.
+func apply_start_specials(picks: Array[int]) -> void:
+	var candidates: Array[Vector2i] = []
+	for y in logic.height:
+		for x in logic.width:
+			var pos := Vector2i(x, y)
+			if logic.get_cell(pos).is_playable():
+				candidates.append(pos)
+	if candidates.size() < picks.size():
+		return
+	for booster in picks:
+		if not EconomyManager.has_booster(booster):
+			return
+	candidates.shuffle()
+	for booster in picks:
+		var pos: Vector2i = candidates.pop_back()
+		if EconomyManager.use_booster(booster):
+			logic.get_cell(pos).special = BoardCell.Special.DULANG if booster == EconomyManager.Booster.TRAY else BoardCell.Special.TAPAU
+			_sync_tile(pos)
+
+
 func _layout_metrics() -> void:
 	if logic == null:
 		return
-	cell_size = minf(size.x / float(logic.width), size.y / float(logic.height))
+	frame_padding = clampf(minf(size.x, size.y) * .021, 8, 24)
+	var usable := size - Vector2.ONE * frame_padding * 2
+	cell_size = minf(usable.x / float(logic.width), usable.y / float(logic.height))
 	cell_size = floorf(cell_size)
 	var used := Vector2(cell_size * float(logic.width), cell_size * float(logic.height))
 	board_origin = ((size - used) * 0.5).round()
@@ -202,26 +286,16 @@ func _sync_overlay(pos: Vector2i) -> void:
 func _draw_slots() -> void:
 	if logic == null:
 		return
-	var sb := StyleBoxFlat.new()
-	sb.bg_color = Palette.BOARD_CELL_DEEP
-	sb.set_corner_radius_all(int(cell_size * 0.18))
-	sb.shadow_color = Color(0.2, 0.3, 0.1, 0.20)
-	sb.shadow_size = 4
-	sb.shadow_offset = Vector2(0, 2)
-	var tray := StyleBoxFlat.new()
-	tray.bg_color = Palette.WOOD
-	tray.set_corner_radius_all(int(cell_size * 0.22))
-	tray.border_color = Palette.WOOD_DARK
-	tray.set_border_width_all(6)
-	var frame := Rect2(
-		board_origin - Vector2(cell_size * 0.10, cell_size * 0.10),
-		Vector2(cell_size * float(logic.width), cell_size * float(logic.height)) + Vector2(cell_size * 0.20, cell_size * 0.20)
-	)
-	_slots.draw_style_box(tray, frame)
-	for y in logic.height:
-		for x in logic.width:
-			var r := Rect2(cell_to_pos(Vector2i(x, y)), Vector2(cell_size, cell_size))
-			_slots.draw_style_box(sb, r.grow(-cell_size * 0.045))
+	var board_rect := Rect2(board_origin, Vector2(cell_size * logic.width, cell_size * logic.height))
+	var frame_rect := board_rect.grow(frame_padding * .90)
+	BoardSkin.draw_softwood(_slots, frame_rect, board_rect, logic.width, logic.height, frame_padding)
+	if show_slot_background:
+		var slot_art := BoardSkin.texture("slot")
+		for y in logic.height:
+			for x in logic.width:
+				var pocket := Rect2(cell_to_pos(Vector2i(x, y)), Vector2.ONE * cell_size)
+				_slots.draw_texture_rect(slot_art, pocket.grow(-cell_size * .025), false)
+	BoardSkin.draw_frame(_slots, frame_rect, frame_padding * .82)
 
 
 # --- input -----------------------------------------------------------------
@@ -331,11 +405,48 @@ func _clear_selection() -> void:
 
 
 func clear_hints() -> void:
+	_focus_cells.clear()
+	if _swipe_indicator != null:
+		_swipe_indicator.visible = false
+	for tile in _tiles.values():
+		tile.modulate = Color.WHITE
+	if _guide_layer != null:
+		_guide_layer.queue_redraw()
 	for c in _hint_cells:
 		var tile: TileView = _tiles.get(c, null)
 		if tile != null:
 			tile.hinted = false
 	_hint_cells.clear()
+
+
+func focus_cells(cells: Array[Vector2i]) -> void:
+	highlight_cells(cells)
+	_focus_cells.assign(cells)
+	for pos in _tiles:
+		_tiles[pos].modulate = Color.WHITE if pos in cells else Color(.38, .38, .38)
+	_guide_layer.queue_redraw()
+	if cells.size() == 2 and cells[0].distance_to(cells[1]) == 1:
+		_swipe_indicator.show_swipe(cells[0], cells[1])
+
+
+func _draw_guide() -> void:
+	for pos in _blast_preview:
+		var box := Rect2(cell_to_pos(pos), Vector2.ONE * cell_size).grow(-cell_size * .035)
+		_guide_layer.draw_style_box(UIKit.flat_box(Color(1, .75, .2, .3), Palette.GOLD_PALE, 0, 6, 18), box)
+	if _focus_cells.size() != 2:
+		return
+	for pos in _focus_cells:
+		var box := Rect2(cell_to_pos(pos), Vector2.ONE * cell_size).grow(-cell_size * .04)
+		_guide_layer.draw_style_box(UIKit.flat_box(Color.TRANSPARENT, Palette.GOLD_PALE, 0, 5, 18), box)
+	var start := cell_to_pos(_focus_cells[0]) + Vector2.ONE * cell_size * .5
+	var end := cell_to_pos(_focus_cells[1]) + Vector2.ONE * cell_size * .5
+	var direction := (end - start).normalized()
+	# Align the arrow with the centres of the two highlighted swipe cells.
+	var arrow_size := Vector2(cell_size * .88, cell_size * .34)
+	var nudge := sin(_guide_time * TAU / 1.4) * cell_size * .055
+	_guide_layer.draw_set_transform((start + end) * .5 + direction * nudge, direction.angle())
+	_guide_layer.draw_texture_rect(TutorialArt.texture("swipe_arrow_green"), Rect2(-arrow_size * .5, arrow_size), false)
+	_guide_layer.draw_set_transform(Vector2.ZERO)
 
 
 ## Points the player's eye at specific cells without locking anything.
@@ -374,11 +485,16 @@ func show_hint() -> bool:
 func attempt_swap(a: Vector2i, b: Vector2i) -> void:
 	if busy or not enabled:
 		return
+	if swap_filter.is_valid() and not swap_filter.call(a, b):
+		swap_attempted.emit(a, b, false)
+		_play_invalid(a, b)
+		return
 	var outcome := logic.try_swap(a, b)
 	swap_attempted.emit(a, b, outcome != BoardState.SwapOutcome.INVALID)
 	if outcome == BoardState.SwapOutcome.INVALID:
 		_play_invalid(a, b)
 		return
+	clear_hints()
 	move_committed.emit()
 	await _play_move(a, b, [] if outcome == BoardState.SwapOutcome.PLAYED else [a, b])
 
@@ -403,6 +519,7 @@ func _play_invalid(a: Vector2i, b: Vector2i) -> void:
 
 
 func _play_move(a: Vector2i, b: Vector2i, special_positions: Array) -> void:
+	_delivery_text_shown = false
 	busy = true
 	_clear_selection()
 	await _animate_swap(a, b)
@@ -410,6 +527,20 @@ func _play_move(a: Vector2i, b: Vector2i, special_positions: Array) -> void:
 
 	var step := 0
 	var preferred: Array = [a, b]
+	var activated: Array[int] = []
+	for pos in special_positions:
+		var kind := int(logic.get_cell(pos).special)
+		if kind != BoardCell.Special.NONE and not activated.has(kind):
+			activated.append(kind)
+	# Outline the actual affected cells before they disappear. The Dulang
+	# effect used to look like a normal match followed immediately by refill.
+	for pos in special_positions:
+		var cell := logic.get_cell(pos)
+		if cell.special == BoardCell.Special.DULANG:
+			_blast_preview.assign(logic._blast_cells(pos, cell))
+			_guide_layer.queue_redraw()
+			special_effect_preview.emit(cell.special, _blast_preview.duplicate())
+			await _wait(.65 if _hold_created_specials else .3)
 	while true:
 		var result: BoardState.ClearResult
 		if special_positions.is_empty():
@@ -421,6 +552,12 @@ func _play_move(a: Vector2i, b: Vector2i, special_positions: Array) -> void:
 		if result.is_empty():
 			break
 		await _play_step(result, step)
+		preferred = [] # Refill cascades must not inherit the player's swipe.
+		# Preserve the lesson's newly made special for the player's next swap.
+		# Refill matches resolve with that activation, rather than detonating it
+		# in an automatic cascade before Aina can explain how to use it.
+		if _hold_created_specials and not result.created.is_empty():
+			break
 		step += 1
 		if step > 40:
 			break
@@ -428,6 +565,8 @@ func _play_move(a: Vector2i, b: Vector2i, special_positions: Array) -> void:
 	if not logic.has_possible_move():
 		await _play_shuffle()
 
+	for kind in activated:
+		special_activated.emit(kind)
 	busy = false
 	settled.emit()
 
@@ -479,18 +618,135 @@ func _refresh_tiles() -> void:
 				tile.position = cell_to_pos(pos)
 
 
+## Briefly merge the directional tiles into the original Tapau graphic.
+## This presentation never changes the logical special types or clear payload.
+func _animate_cross_package(result: BoardState.ClearResult) -> TextureRect:
+	var destination := cell_to_pos(result.combo_origin)
+	var merge := create_tween().set_parallel(true)
+	for pos in result.combo_members:
+		var tile: TileView = _tiles.get(pos, null)
+		if tile != null:
+			merge.tween_property(tile, "position", destination, .12).set_trans(Tween.TRANS_QUAD)
+			merge.tween_property(tile, "scale", Vector2.ONE*.55, .12)
+			merge.tween_property(tile, "modulate:a", 0.0, .12)
+	await merge.finished
+	var package := TextureRect.new()
+	package.name = "CrossComboTapauPackage"
+	var cropped := AtlasTexture.new()
+	cropped.atlas = CROSS_PACKAGE_ART
+	cropped.region = Rect2(CROSS_PACKAGE_ART.get_image().get_used_rect())
+	package.texture = cropped
+	package.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	package.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	package.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	package.size = Vector2.ONE*cell_size
+	package.position = destination
+	package.pivot_offset = package.size*.5
+	package.z_index = 20
+	package.scale = Vector2.ONE*.45
+	package.modulate.a = 0.0
+	add_child(package)
+	var pop := package.create_tween().set_parallel(true)
+	pop.tween_property(package, "scale", Vector2.ONE*1.15, .16).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	pop.tween_property(package, "modulate:a", 1.0, .10)
+	pop.set_parallel(false)
+	pop.tween_property(package, "scale", Vector2.ONE, .10).set_trans(Tween.TRANS_SINE)
+	pop.tween_interval(.14)
+	await pop.finished
+	return package
+
+
 func _play_step(result: BoardState.ClearResult, step: int) -> void:
+	clear_resolved.emit(result, step)
+	var activation_waves: Dictionary = {}
+	for activation in result.activated:
+		var depth: int = activation.get("chain_depth", 0)
+		if not activation_waves.has(depth):
+			activation_waves[depth] = []
+		activation_waves[depth].append(activation)
+	for run in result.match_runs:
+		if run.cells.size() >= 3 and not run.square:
+			_vfx.line_clear(_cell_center(run.cells.front()), _cell_center(run.cells.back()), cell_size)
+	if not result.match_runs.is_empty():
+		AudioManager.play(AudioManager.Sfx.LINE_CLEAR, 1.0 + mini(step, 6) * .06, -9)
+	var cross_package: TextureRect = null
+	if result.combo == &"sweet_cross":
+		cross_package = await _animate_cross_package(result)
+		var cross_points := PackedVector2Array()
+		for pos in result.combo_cells:
+			cross_points.append(_cell_center(pos))
+		_vfx.cross(_cell_center(result.combo_origin), cross_points, cell_size)
+		AudioManager.play(AudioManager.Sfx.CROSS_BLAST, 1.0, -4)
+	# Show each hit triggering the next specials, instead of firing the entire
+	# chain at once. All affected tiles remain visible until the waves finish.
+	var depths: Array = activation_waves.keys()
+	depths.sort()
+	var pulled: Dictionary = {}
+	for depth in depths:
+		var wave: Array = activation_waves[depth]
+		var wave_kinds: Array = []
+		for activation in wave:
+			wave_kinds.append(activation.kind)
+		_special_text.show_wave(wave_kinds,size,cell_size)
+		var launched := 0
+		var dulang_centers: Array[Vector2i] = []
+		for activation in wave:
+			if activation.kind == BoardCell.Special.HANTAR and activation.cells.size() > 1:
+				if launched < 8:
+					_vfx.delivery(_cell_center(activation.pos), _cell_center(activation.cells.back()), cell_size)
+				launched += 1
+			if activation.kind == BoardCell.Special.DULANG and not result.combo_members.has(activation.pos):
+				dulang_centers.append(activation.pos)
+		if launched > 0:
+			AudioManager.play(AudioManager.Sfx.HANTAR_LAUNCH, 1, -6)
+			await _wait(.45)
+			AudioManager.play(AudioManager.Sfx.HANTAR_HIT, 1, -5)
+		if not dulang_centers.is_empty():
+			await _charge_dulang(dulang_centers)
+		var heard: Dictionary = {}
+		for activation in wave:
+			var points := PackedVector2Array()
+			for pos in activation.cells:
+				points.append(_cell_center(pos))
+			if not result.combo_members.has(activation.pos):
+				if activation.kind == BoardCell.Special.DULANG:
+					_burst_shake()
+				var effect_origin := _cell_center(activation.pos)
+				if activation.kind == BoardCell.Special.TAPAU_VERTICAL:
+					effect_origin.x -= cell_size*.065
+					effect_origin.y += cell_size*.025
+				_vfx.special(effect_origin, activation.kind, points, cell_size)
+			if not heard.has(activation.kind):
+				heard[activation.kind] = true
+				if activation.kind != BoardCell.Special.HANTAR and not result.combo_members.has(activation.pos):
+					AudioManager.play_special(activation.kind)
+		AudioManager.haptic(35, .5)
+		# Let the gold light reach all nine slots before continuing the chain.
+		await _wait(.32 if not dulang_centers.is_empty() else .18)
+		var wave_pulls := await _pull_order_targets(result,wave,pulled,.0 if not dulang_centers.is_empty() else .14)
+		pulled.merge(wave_pulls)
+	if is_instance_valid(cross_package):
+		cross_package.queue_free()
 	# 1. new special tiles announce themselves
 	if not result.created.is_empty():
-		AudioManager.play(AudioManager.Sfx.SPECIAL)
+		var has_delivery := false
+		for created in result.created:
+			if created.special == BoardCell.Special.HANTAR:
+				has_delivery = true
+				_show_delivery_created(created.pos)
+		AudioManager.play(AudioManager.Sfx.HANTAR_CREATE if has_delivery else AudioManager.Sfx.SPECIAL)
 		for entry in result.created:
 			var pos: Vector2i = entry["pos"]
+			# A newly made special can stay in the same cell during gravity.
+			# Refresh its cached icon now; falling/refill alone will not repaint it.
+			var tile: TileView = _tiles.get(pos, null)
+			if tile != null:
+				tile.set_cell(logic.get_cell(pos))
 			special_created.emit(int(entry["special"]))
 			special_built.emit(pos)
-			var tile: TileView = _tiles.get(pos, null)
 			if tile == null:
 				continue
-			tile.scale = Vector2(1.45, 1.45)
+			tile.scale = Vector2.ONE*(1.2 if int(entry["special"]) == BoardCell.Special.DULANG else 1.45)
 			var tw := tile.create_tween()
 			tw.tween_property(tile, "scale", Vector2.ONE, 0.28).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 			_burst(cell_to_pos(pos) + Vector2(cell_size, cell_size) * 0.5, Palette.GOLD_PALE, 8)
@@ -503,12 +759,20 @@ func _play_step(result: BoardState.ClearResult, step: int) -> void:
 	for pos in result.cleared:
 		var tile: TileView = _tiles.get(pos, null)
 		if tile != null:
-			cleared_tiles.append(tile)
+			if pulled.has(pos):
+				tile.queue_free()
+			else:
+				cleared_tiles.append(tile)
 			_tiles.erase(pos)
 		if randf() < 0.34:
 			var p := cell_to_pos(pos) + Vector2(randf_range(0.2, 0.8), randf_range(0.2, 0.8)) * cell_size
 			_burst(p, _sparkle_color(result, pos), 5, 0.6)
 	await _play_clear(cleared_tiles)
+	if not _blast_preview.is_empty():
+		# Keep the empty 3Ãƒâ€”3 area visible before gravity/refill hides it.
+		await _wait(.45 if _hold_created_specials else .15)
+		_blast_preview.clear()
+		_guide_layer.queue_redraw()
 
 	# 3. blockers and packaging targets react to what was collected
 	await _play_blockers(result.blockers)
@@ -526,11 +790,65 @@ func _play_step(result: BoardState.ClearResult, step: int) -> void:
 	await _wait(SETTLE_TIME)
 
 
+func _show_delivery_created(pos: Vector2i) -> void:
+	if _delivery_text_shown:
+		return
+	_delivery_text_shown = true
+	var text := UIKit.label("PESANAN HANTAR!", 34, Palette.GOLD_PALE)
+	text.add_theme_color_override("font_outline_color", Palette.WOOD_DARK)
+	text.add_theme_constant_override("outline_size", 5)
+	text.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	text.z_index = 30
+	add_child(text)
+	text.size = Vector2(minf(size.x, cell_size * 3.2), 55)
+	text.position = Vector2(clampf(_cell_center(pos).x - text.size.x*.5, 0, size.x-text.size.x), maxf(0, _cell_center(pos).y - cell_size*.6))
+	text.pivot_offset = text.size*.5
+	text.scale = Vector2.ONE*.5
+	text.modulate.a = 0
+	var tween := text.create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(text, "scale", Vector2.ONE*1.2, .08)
+	tween.tween_property(text, "modulate:a", 1, .08)
+	tween.chain().tween_property(text, "scale", Vector2.ONE*.95, .10)
+	tween.set_parallel(false)
+	tween.tween_property(text, "scale", Vector2.ONE, .12)
+	tween.tween_interval(.20)
+	tween.set_parallel(true)
+	tween.tween_property(text, "position:y", text.position.y-25, .4)
+	tween.tween_property(text, "modulate:a", 0, .4)
+	tween.chain().tween_callback(text.queue_free)
+
 func _sparkle_color(result: BoardState.ClearResult, pos: Vector2i) -> Color:
 	var info: BoardState.ClearInfo = result.cleared.get(pos, null)
 	if info != null and info.kuih != null:
 		return info.kuih.detail
 	return Palette.WHITE
+
+func _pull_order_targets(result: BoardState.ClearResult, wave: Array, already_pulled: Dictionary, charge_delay: float) -> Dictionary:
+	var pulls: Dictionary = {}
+	var special_origins: Dictionary = {}
+	for activation in result.activated:
+		special_origins[activation.pos] = true
+	for activation in wave:
+		if activation.kind != BoardCell.Special.ORDER:
+			continue
+		for pos in activation.cells:
+			if result.cleared.has(pos) and not special_origins.has(pos) and not pulls.has(pos) and not already_pulled.has(pos) and _tiles.has(pos):
+				pulls[pos] = cell_to_pos(activation.pos)
+	if pulls.is_empty():
+		return pulls
+	# The first .18 seconds already played the electrical connection cue.
+	if charge_delay > 0:
+		await _wait(charge_delay)
+	for pos in pulls:
+		var tile: TileView = _tiles[pos]
+		tile.z_index = 12
+		var tween := tile.create_tween().set_parallel(true)
+		tween.tween_property(tile,"position",pulls[pos],.42).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+		tween.tween_property(tile,"scale",Vector2.ONE*.12,.42).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+		tween.tween_property(tile,"modulate:a",0.0,.18).set_delay(.24)
+	await _wait(.42)
+	return pulls
 
 
 func _play_clear(tiles: Array[TileView]) -> void:
@@ -700,7 +1018,10 @@ func booster_scoop(pos: Vector2i) -> void:
 	if busy or not enabled or logic == null or not logic.is_playable(pos):
 		return
 	busy = true
+	_vfx.scoop(_cell_center(pos), cell_size)
+	AudioManager.play(AudioManager.Sfx.SPATULA, 1.0, -5)
 	var cell := logic.get_cell(pos)
+	_report_booster_clear([pos])
 	var totals := {cell.kuish_id(): 1}
 	logic.get_cell(pos).clear_kuish()
 	var tile: TileView = _tiles.get(pos, null)
@@ -722,8 +1043,11 @@ func booster_tray(center: Vector2i) -> void:
 	if busy or not enabled or logic == null or not logic.is_inside(center):
 		return
 	busy = true
+	await _charge_dulang([center])
+	_burst_shake()
 	var totals: Dictionary = {}
 	var tiles: Array[TileView] = []
+	var affected := PackedVector2Array()
 	for dy in range(-1, 2):
 		for dx in range(-1, 2):
 			var pos := center + Vector2i(dx, dy)
@@ -732,11 +1056,16 @@ func booster_tray(center: Vector2i) -> void:
 			var c := logic.get_cell(pos)
 			var id := c.kuish_id()
 			totals[id] = int(totals.get(id, 0)) + 1
+			affected.append(_cell_center(pos))
 			c.clear_kuish()
 			var tile: TileView = _tiles.get(pos, null)
 			if tile != null:
 				tiles.append(tile)
 				_tiles.erase(pos)
+	_vfx.special(_cell_center(center), BoardCell.Special.DULANG, affected, cell_size)
+	AudioManager.play_special(BoardCell.Special.DULANG)
+	_report_booster_clear(_tiles_from_points(affected))
+	await _wait(.32)
 	await _play_clear(tiles)
 	kuih_collected.emit(totals)
 	await _wait(0.30)
@@ -749,6 +1078,7 @@ func booster_gift(wanted: Array) -> void:
 		return
 	busy = true
 	var tiles: Array[TileView] = []
+	var affected := PackedVector2Array()
 	var totals: Dictionary = {}
 	for y in logic.height:
 		for x in logic.width:
@@ -759,6 +1089,7 @@ func booster_gift(wanted: Array) -> void:
 			if not wanted.has(c.kuish_id()):
 				continue
 			totals[c.kuish_id()] = int(totals.get(c.kuish_id(), 0)) + 1
+			affected.append(_cell_center(pos))
 			c.clear_kuish()
 			var tile: TileView = _tiles.get(pos, null)
 			if tile != null:
@@ -767,6 +1098,9 @@ func booster_gift(wanted: Array) -> void:
 	if tiles.is_empty():
 		busy = false
 		return
+	_vfx.special(size * .5, BoardCell.Special.ORDER, affected, cell_size)
+	AudioManager.play_special(BoardCell.Special.ORDER)
+	_report_booster_clear(_tiles_from_points(affected))
 	await _play_clear(tiles)
 	kuih_collected.emit(totals)
 	await _wait(0.28)
@@ -777,7 +1111,8 @@ func booster_shuffle() -> void:
 	if busy or not enabled or logic == null:
 		return
 	busy = true
-	AudioManager.play(AudioManager.Sfx.SWAP, 0.8, -4.0)
+	_vfx.shuffle(Rect2(Vector2.ZERO, size), cell_size)
+	AudioManager.play(AudioManager.Sfx.SHUFFLE, 1.0, -5.0)
 	await _play_shuffle()
 	busy = false
 	settled.emit()
@@ -820,20 +1155,55 @@ func _wait(seconds: float) -> void:
 	await tw.finished
 
 
+func show_score_feedback(points: int, cascade: int, multiplier: float = 1.0) -> void:
+	_feedback.show_clear(points, cascade, size, multiplier)
+
+func _tiles_from_points(points: PackedVector2Array) -> Array:
+	var cells: Array = []
+	for at in points:
+		cells.append(Vector2i(((at - board_origin) / cell_size).floor()))
+	return cells
+
+func _report_booster_clear(cells: Array) -> void:
+	var cleared := BoardState.ClearResult.new()
+	for pos in cells:
+		cleared.cleared[pos] = BoardState.ClearInfo.new()
+	clear_resolved.emit(cleared, 0)
+
+
+func _cell_center(pos: Vector2i) -> Vector2:
+	return cell_to_pos(pos) + Vector2.ONE * cell_size * .5
+
 func _burst(at: Vector2, color: Color, count: int = 6, scale_mul: float = 1.0) -> void:
-	var dots := ColorRect.new()
-	dots.color = color
-	dots.size = Vector2(14, 14) * scale_mul
-	dots.pivot_offset = dots.size * 0.5
-	dots.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(dots)
-	dots.position = at - dots.size * 0.5
-	var tw := dots.create_tween()
-	tw.set_parallel(true)
-	for i in count:
-		var angle := float(i) * TAU / float(count) + randf() * 0.5
-		var dist := randf_range(cell_size * 0.35, cell_size * 0.8) * scale_mul
-		tw.tween_property(dots, "position", at - dots.size * 0.5 + Vector2(cos(angle), sin(angle)) * dist, 0.42)
-	tw.tween_property(dots, "scale", Vector2(0.15, 0.15), 0.42)
-	tw.parallel().tween_property(dots, "modulate:a", 0.0, 0.42)
-	tw.chain().tween_callback(dots.queue_free)
+	if _vfx != null:
+		_vfx.burst(at, color, count, cell_size * .5 * scale_mul)
+
+
+func _charge_dulang(centers: Array[Vector2i]) -> void:
+	for center in centers:
+		var points := PackedVector2Array()
+		for dy in range(-1,2):
+			for dx in range(-1,2):
+				var pos := center+Vector2i(dx,dy)
+				if logic.is_inside(pos):
+					points.append(_cell_center(pos))
+		_vfx.dulang_charge(_cell_center(center),points,cell_size)
+		var tile: TileView = _tiles.get(center)
+		if is_instance_valid(tile):
+			var tw := tile.create_tween()
+			tw.tween_property(tile,"scale",Vector2.ONE*.9,.08).set_trans(Tween.TRANS_SINE)
+			tw.tween_property(tile,"scale",Vector2.ONE*1.14,.10).set_trans(Tween.TRANS_SINE)
+	await _wait(.18)
+
+func _stop_burst_shake() -> void:
+	if _shake_tween != null and _shake_tween.is_valid():
+		_shake_tween.kill()
+		position = _shake_origin
+	_shake_tween = null
+
+func _burst_shake() -> void:
+	_stop_burst_shake()
+	_shake_origin = position
+	_shake_tween = create_tween()
+	for offset in [Vector2(3,-2),Vector2(-2,1),Vector2(1,0),Vector2.ZERO]:
+		_shake_tween.tween_property(self,"position",_shake_origin+offset,.03).set_trans(Tween.TRANS_SINE)

@@ -1,0 +1,11 @@
+# Clean resource icons
+
+Built-in imagegen with transparent alpha. Project assets are `assets/ui/resources_v1/heart.png` and `assets/ui/resources_v1/star.png`; originals retained in Codex generated images. Heart is a standalone icon rather than a rectangle cut from the combined heart bar. Star replaces the old sprite with white edge debris throughout the shared UI. Native AtlasTexture bounds retain the alpha, and drawing preserves the original aspect ratio.
+
+## Final heart prompt
+
+Use case: stylized-concept. Asset: clean isolated UI resource icon for Kuih Empire tropical cartoon mobile puzzle game. Polished friendly 2D game sprite, face-on straight view, balanced symmetrical silhouette, smooth solid warm dark brown outer outline, gentle glossy cream highlights confined INSIDE silhouette, soft shaded colour. Entire icon centred with 12 percent clear transparent padding on each side. Actual transparent alpha background. Every pixel outside the silhouette must be fully transparent. Crisp smooth antialiased boundary, no white fringe, no stray flecks, no jagged cutout, no cream outer sticker border, no glow, no cast shadow. No bar or frame attached, no text, no count, no button, no other objects, no watermark. Subject: one plump red heart, bright rosy red upper surface, rich crimson lower shading, thin golden inset rim INSIDE the dark brown outline. Simple readable heart icon.
+
+## Final star prompt
+
+Use case: stylized-concept. Asset: clean isolated UI resource icon for Kuih Empire tropical cartoon mobile puzzle game. Polished friendly 2D game sprite, face-on straight view, balanced symmetrical silhouette, smooth solid warm dark brown outer outline, gentle glossy cream highlights confined INSIDE silhouette, soft shaded colour. Entire icon centred with 12 percent clear transparent padding on each side. Actual transparent alpha background. Every pixel outside the silhouette must be fully transparent. Crisp smooth antialiased boundary, no white fringe, no stray flecks, no jagged cutout, no cream outer sticker border, no glow, no cast shadow. No bar or frame attached, no text, no count, no button, no other objects, no watermark. Subject: one plump five-point golden star, bright yellow gold upper surface, warm orange lower shading, small cream gleam upper left. Five softly rounded points, simple readable star icon.

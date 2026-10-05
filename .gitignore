@@ -15,8 +15,11 @@ bin/
 .shots/
 
 # Local verification logs
+.heart-*.log
 .*-test.log
 .smoke-fixed.log
+.*-import.log
+.*-shots*.log
 
 # Editor / OS noise
 .vscode/
@@ -24,3 +27,14 @@ bin/
 *.swp
 .DS_Store
 Thumbs.db
+
+# Original audio downloads and listening previews (not runtime assets)
+.audio_sources/
+.audio_preview/
+
+# Local design originals; never runtime or build assets
+.asset_backups/
+
+# Temporary attachments and local tool logs
+.codex-remote-attachments/
+.*.log

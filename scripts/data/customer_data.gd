@@ -26,6 +26,7 @@ enum Kind {
 @export_range(0.5, 3.0, 0.05) var reward_scale: float = 1.0
 
 @export_group("Portrait")
+@export var texture: Texture2D = null
 ## Drives the procedural customer art (hijab colour).
 @export var cloth: Color = Color(0.9, 0.45, 0.55)
 @export var cloth_accent: Color = Color(1, 0.85, 0.6)
