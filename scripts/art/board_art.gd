@@ -8,12 +8,34 @@ extends RefCounted
 ## Dulang = round golden tray, Special Order = crowned kuih.
 
 const OUTLINE := Color("4a2c17")
-const TAPAU_ART = preload("res://assets/specials/directional_v3/tapau_horizontal.png")
-const TAPAU_VERTICAL_ART = preload("res://assets/specials/directional_v3/tapau_vertical_blue.png")
+const TAPAU_ART = preload("res://assets/specials/directional_v8/tapau_horizontal_base.png")
+const TAPAU_VERTICAL_ART = preload("res://assets/specials/directional_v8/tapau_vertical_base.png")
+const TAPAU_DIRECTION_ART = preload("res://assets/specials/directional_v8/direction_triangle.png")
 const DULANG_ART = preload("res://assets/specials/gold_v2/dulang.png")
-const HANTAR_ART = preload("res://assets/specials/delivery_v1/pesanan_hantar.png")
-static var _delivery_region := Rect2()
+const HANTAR_ART = preload("res://assets/specials/delivery_propeller_v3/rotor_red.png")
+const HANTAR_BODY = preload("res://assets/specials/delivery_propeller_v3/body_claw.png")
+static var _delivery_food_regions: Dictionary = {}
 const ORDER_ART = preload("res://assets/specials/cartoon_v2/order.png")
+const BLOCKER_ART = {
+	BlockerSpec.Kind.BANANA_LEAF: preload("res://assets/obstacles/cartoon_v1/banana_leaf.png"),
+	BlockerSpec.Kind.FOOD_COVER: preload("res://assets/obstacles/cartoon_v1/food_cover.png"),
+	BlockerSpec.Kind.STEAMER: preload("res://assets/obstacles/cartoon_v1/steamer.png"),
+	BlockerSpec.Kind.STICKY_SYRUP: preload("res://assets/obstacles/cartoon_v1/sticky_syrup.png"),
+	BlockerSpec.Kind.PACKAGING_BOX: preload("res://assets/obstacles/cartoon_v1/packaging_box.png"),
+	BlockerSpec.Kind.EMPTY_TRAY: preload("res://assets/obstacles/cartoon_v1/empty_tray.png"),
+}
+static var _item_regions: Dictionary = {}
+
+
+static func draw_item_texture(canvas: CanvasItem, rect: Rect2, art: Texture2D) -> void:
+	if not _item_regions.has(art):
+		_item_regions[art] = Rect2(art.get_image().get_used_rect())
+	var source: Rect2 = _item_regions[art]
+	if source.size.x <= 0 or source.size.y <= 0:
+		return
+	var fit := minf(rect.size.x / source.size.x, rect.size.y / source.size.y)
+	var fitted := source.size * fit
+	canvas.draw_texture_rect_region(art, Rect2(rect.get_center() - fitted * .5, fitted), source)
 
 
 static func special_texture(special: int) -> Texture2D:
@@ -30,14 +52,62 @@ static func special_texture(special: int) -> Texture2D:
 	return null
 
 
-static func draw_delivery(canvas: CanvasItem, rect: Rect2) -> void:
-	if _delivery_region.size == Vector2.ZERO:
-		_delivery_region = Rect2(HANTAR_ART.get_image().get_used_rect())
-	var fit := minf(rect.size.x / _delivery_region.size.x, rect.size.y / _delivery_region.size.y)
-	var fitted := _delivery_region.size * fit
-	canvas.draw_texture_rect_region(HANTAR_ART, Rect2(rect.position + (rect.size-fitted)*.5, fitted), _delivery_region)
+## Independent direction overlays: compact at rest, moving outward on activation.
+## Explicit opaque bounds ignore almost-transparent padding without editing PNGs.
+static func draw_directional(canvas: CanvasItem, rect: Rect2, vertical: bool, spread: float, arrow_alpha: float = 1.0) -> void:
+	var edge := minf(rect.size.x,rect.size.y)
+	var center := rect.get_center()
+	var body_edge := edge*(.82 if vertical else .84)
+	var body_rect := Rect2(center-Vector2.ONE*body_edge*.5,Vector2.ONE*body_edge)
+	var source := Rect2(155,131,906,1014) if vertical else Rect2(0,45,1334,1110)
+	var art: Texture2D = TAPAU_VERTICAL_ART if vertical else TAPAU_ART
+	var fit := minf(body_rect.size.x/source.size.x,body_rect.size.y/source.size.y)
+	var body_size := source.size*fit
+	canvas.draw_texture_rect_region(art,Rect2(center-body_size*.5,body_size),source)
+	var distance := edge*((.18 if vertical else .19)+clampf(spread,0,1)*.095)
+	for side in [-1,1]:
+		var offset := Vector2(0,side*distance) if vertical else Vector2(side*distance,0)
+		var angle: float = side*PI*.5 if vertical else (PI if side < 0 else 0.0)
+		draw_direction_marker(canvas,center+offset,edge,angle,arrow_alpha)
+
+
+static func draw_direction_marker(canvas: CanvasItem, at: Vector2, cell: float, angle: float, alpha: float = 1.0) -> void:
+	if alpha <= 0:
+		return
+	var source := Rect2(284,254,690,766)
+	var marker_size := source.size*(cell*.40/source.size.y)
+	canvas.draw_set_transform(at,angle)
+	canvas.draw_texture_rect_region(TAPAU_DIRECTION_ART,Rect2(-marker_size*.5,marker_size),source,Color(1,1,1,alpha))
+	canvas.draw_set_transform(Vector2.ZERO)
+
+
+static func draw_delivery(canvas: CanvasItem, rect: Rect2, angle: float = 0.0, flying: bool = false, payload: Texture2D = null) -> void:
+	var edge := minf(rect.size.x,rect.size.y)
+	var center := rect.get_center()
+	if flying:
+		var body_source := Rect2(118,80,782,1330)
+		var body_size := Vector2(edge*.38,edge*.65)
+		var body_at := center+Vector2(-body_size.x*.5,-edge*.12)
+		if payload != null:
+			if not _delivery_food_regions.has(payload):
+				_delivery_food_regions[payload] = Rect2(payload.get_image().get_used_rect())
+			var source: Rect2 = _delivery_food_regions[payload]
+			var food_size := source.size * (edge*.29/maxf(source.size.x,source.size.y))
+			canvas.draw_texture_rect_region(payload,Rect2(center+Vector2(0,edge*.39)-food_size*.5,food_size),source)
+		canvas.draw_texture_rect_region(HANTAR_BODY,Rect2(body_at,body_size),body_source)
+		center.y -= edge*.18
+	# Rotate around the actual hub, rather than the PNG canvas centre.
+	var fit := edge/1220.0
+	var source := Rect2(38,88,1172,1046)
+	var hub := Vector2(625,680)
+	canvas.draw_set_transform(center,angle,Vector2(1,.42) if flying else Vector2.ONE)
+	canvas.draw_texture_rect_region(HANTAR_ART,Rect2((source.position-hub)*fit,source.size*fit),source)
+	canvas.draw_set_transform(Vector2.ZERO)
 
 static func draw_blocker(canvas: CanvasItem, rect: Rect2, kind: int, hp: int, max_hp: int) -> void:
+	if BLOCKER_ART.has(kind):
+		draw_item_texture(canvas, rect.grow(-minf(rect.size.x, rect.size.y) * .05), BLOCKER_ART[kind])
+		return
 	match kind:
 		BlockerSpec.Kind.BANANA_LEAF:
 			_draw_leaf(canvas, rect)

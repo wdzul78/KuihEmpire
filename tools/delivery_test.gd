@@ -33,12 +33,16 @@ func run() -> void:
             var neighbour := Vector2i(2,1)
             swapped.get_cell(origin).special = BoardCell.Special.HANTAR
             swapped.get_cell(neighbour).kuih = partner
+            swapped.get_cell(Vector2i(0,3)).kuih = partner
             swapped.order_remaining = {&"kuih_ketayap":99,&"ang_ku_kueh":99}
             var pair := [neighbour,origin] if reverse else [origin,neighbour]
             check(swapped.try_swap(pair[0],pair[1]) == BoardState.SwapOutcome.ACTIVATED_SPECIAL, "delivery accepts either swap direction")
             check(swapped.get_cell(neighbour).order_kuish == partner.id, "delivery remembers partner type")
             var collected := swapped.activate_specials(pair)
-            check(collected.activated.size() == 1 and collected.activated[0].cells.size() == 2, "delivery still selects exactly one other target")
+            check(collected.activated.size() == 1 and collected.activated[0].cells.size() == 6, "delivery clears five cross cells and one remote target")
+            for local in swapped.delivery_cross(neighbour):
+                check(collected.cleared.has(local), "swap includes every local cross cell")
+            check(not collected.activated[0].cells.has(Vector2i(3,2)), "cross excludes diagonals")
             var chosen: Vector2i = collected.activated[0].cells.back()
             check(collected.cleared[chosen].kuih.id == partner.id, "swapped partner type wins over unmet-order priority")
     var locked := board(false)
@@ -64,7 +68,7 @@ func run() -> void:
     targets.get_cell(Vector2i.ZERO).special = BoardCell.Special.HANTAR
     var hit := targets.activate_specials([Vector2i.ZERO])
     check(targets.get_cell(blocked).blocker_hp == 1 and hit.blockers.size() == 1, "delivery hits one blocker layer")
-    check(hit.cleared.size() == 1 and targets.get_cell(blocked).has_kuish(), "covered kuih remains below damaged blocker")
+    check(hit.cleared.size() == 3 and targets.get_cell(blocked).has_kuish(), "corner cross clears three cells and covered kuih remains")
     var blank_blocker := board()
     blank_blocker.get_cell(Vector2i.ZERO).special = BoardCell.Special.HANTAR
     blank_blocker.get_cell(blocked).clear_kuish()

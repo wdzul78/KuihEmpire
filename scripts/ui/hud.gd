@@ -79,6 +79,16 @@ func set_tutorial_mode(value: bool) -> void:
 
 	if is_instance_valid(order_panel):
 		GameUILayout.apply_hud(self, tutorial_layout if value else campaign_layout)
+		GameUILayout.apply_order(order_panel, tutorial_layout if value else campaign_layout)
+		order_panel.set_compact(not value)
+		get_node("Logo").hide()
+		get_node("HeartMeter").hide()
+		_queue_row.hide()
+		_title_plaque.show()
+		_title_label.add_theme_color_override("font_color",Palette.WOOD_DARK)
+		_title_label.add_theme_constant_override("outline_size",0)
+		_title_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		_title_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 
 
 func _ready() -> void:
@@ -86,6 +96,7 @@ func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_build()
 	resized.connect(queue_redraw)
+	MobileLayout.bind(self)
 
 
 ## Proportions follow Sweet Match Adventure; board rules still use an 8x8 grid.
@@ -257,7 +268,7 @@ func _round_button(text: String, color: Color) -> Button:
 # --- updates ---------------------------------------------------------------
 
 func set_stage(stage_id: int, title: String) -> void:
-	_stage_title.text = "%s" % title
+	_stage_title.text = title if _is_tutorial else "Stage %d\n%s" % [stage_id,title]
 
 
 func set_coins(amount: int) -> void:

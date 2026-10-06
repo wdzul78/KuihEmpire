@@ -1,0 +1,1 @@
+User-selected victory sound: win op5Big Game Win Pack1 01.wav. Copied unchanged from the user sound effects library. Played when the stage victory result opens.

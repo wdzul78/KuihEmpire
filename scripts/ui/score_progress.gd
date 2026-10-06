@@ -12,6 +12,8 @@ func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_number = JourneyArt.label(self, "0", Rect2(.08, .065, .84, .43), 36, Palette.WOOD_DARK)
 	_number.name = "ScoreValue"
+	var caption := JourneyArt.label(self, "Score", Rect2(.08,.055,.84,.19),22,Palette.WOOD_DARK)
+	caption.name = "ScoreCaption"
 	_number.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_star_art = GameplaySkin.texture("star")
 	resized.connect(_refresh)

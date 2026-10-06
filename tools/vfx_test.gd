@@ -61,12 +61,14 @@ func run() -> void:
 		run_step(board, result)
 		await get_tree().create_timer(.12).timeout
 		assert(not board._vfx.effects.is_empty())
-		assert(board._special_text.visible and board._special_text.get_child_count() == 1)
+		if kind != BoardCell.Special.DULANG:
+			assert(board._special_text.visible and board._special_text.get_child_count() == 1)
 		if kind == BoardCell.Special.DULANG:
 			assert(board._vfx.effects.any(func(e: Dictionary) -> bool: return e.kind == "charge"))
 			assert(not board._vfx.effects.any(func(e: Dictionary) -> bool: return e.kind == "flower_wave"))
-			await get_tree().create_timer(.14).timeout
+			await get_tree().create_timer(.58).timeout
 			assert(board._vfx.effects.any(func(e: Dictionary) -> bool: return e.kind == "flower_wave"))
+			assert(board._special_text.visible and board._special_text.get_child_count() == 1)
 		assert(score.total >= result.cleared.size() * score.rules.points_per_kuih)
 		assert(board._feedback.visible)
 		await shot(str(kind))
@@ -94,9 +96,11 @@ func run() -> void:
 		var wav: AudioStreamWAV = AudioManager._streams[sound]
 		assert(wav.data.size() > 2000)
 		var peak := 0
-		for i in range(0, wav.data.size(), 2):
-			peak = maxi(peak, absi(wav.data.decode_s16(i)))
-		assert(peak > 100 and peak < SfxSynth.PEAK)
+		var samples := wav.data
+		for i in range(0, samples.size(), 2):
+			peak = maxi(peak, absi(samples.decode_s16(i)))
+		var playback_gain := -3.0 if sound == AudioManager.Sfx.SUCCESS else 0.0
+		assert(peak > 100 and peak < 32767 and float(peak)*db_to_linear(playback_gain) < SfxSynth.PEAK)
 	AudioManager.sfx_enabled = false
 	var voice := AudioManager._next_voice
 	AudioManager.play_special(BoardCell.Special.TAPAU)

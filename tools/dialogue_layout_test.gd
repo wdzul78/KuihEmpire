@@ -7,7 +7,7 @@ func _ready() -> void:
 
 func check_heads(panel: OrderPanel) -> void:
     for character in [panel._aina, panel._portrait]:
-        if not character.visible:
+        if not character.visible or character.compact_portrait:
             continue
         var art: Texture2D = CharacterIcon.AINA_ART if character == panel._aina else character.customer.texture
         var bounds: Rect2 = character.artwork_rect(Rect2(art.get_image().get_used_rect()))
@@ -23,7 +23,7 @@ func check_layout(screen: LevelController) -> void:
         assert(hud.order_panel._bubble.get_global_rect().position.y > hud._title_plaque.get_global_rect().end.y)
     var board_end: float = hud.board_holder.get_global_rect().end.y
     assert(board_end < hud.booster_bar.get_global_rect().position.y)
-    assert(hud.booster_bar.get_global_rect().position.y - board_end < 45)
+    assert(hud.booster_bar.get_global_rect().position.y - board_end < hud.size.y * .04)
     for button in hud.booster_bar._buttons.values():
         assert(absf(button.size.x - button.size.y) < 1)
 

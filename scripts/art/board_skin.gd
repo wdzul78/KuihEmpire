@@ -31,28 +31,28 @@ static func draw_frame(canvas: CanvasItem, rect: Rect2, rim_width: float) -> voi
 ## Pale wooden tray surface. Grain and grid stay behind the food and never pulse.
 static func draw_softwood(canvas: CanvasItem, frame: Rect2, board: Rect2, columns: int, rows: int, padding: float) -> void:
 	var surface := StyleBoxFlat.new()
-	surface.bg_color = Color("dfb77f")
+	surface.bg_color = Color("f4dda6")
 	surface.set_corner_radius_all(int(padding * 1.2))
 	canvas.draw_style_box(surface, frame)
 	# Broad, gentle tonal bands read as wood rather than separate sunken pockets.
-	for band in range(24):
-		var t := float(band) / 24.0
-		var warmth := Color("eccb98").lerp(Color("d4a66d"), t)
-		warmth.a = .35
-		canvas.draw_rect(Rect2(board.position + Vector2(0, board.size.y * t), Vector2(board.size.x, board.size.y / 24.0 + .5)), warmth)
-	for grain in range(30):
-		var baseline := board.position.y + board.size.y * (grain + .5) / 30.0
+	for band in range(12):
+		var t := float(band) / 12.0
+		var warmth := Color("fff0c2").lerp(Color("eac88b"), t)
+		warmth.a = .12
+		canvas.draw_rect(Rect2(board.position + Vector2(0, board.size.y * t), Vector2(board.size.x, board.size.y / 12.0 + .5)), warmth)
+	for grain in range(12):
+		var baseline := board.position.y + board.size.y * (grain + .5) / 12.0
 		var points := PackedVector2Array()
 		for step in range(33):
 			var t := float(step) / 32.0
 			var wave := sin(t * 9.0 + grain * 1.73) * padding * .22 + sin(t * 19.0 + grain * .61) * padding * .07
 			points.append(Vector2(board.position.x + board.size.x * t, clampf(baseline + wave, board.position.y, board.end.y)))
-		canvas.draw_polyline(points, Color(.47, .29, .13, .065), 1.3, true)
+		canvas.draw_polyline(points, Color(.47, .29, .13, .025), 1.0, true)
 	# Thin, low-contrast lines mark cell boundaries without enclosing each kuih.
-	var grid := Color(.40, .24, .10, .16)
+	var grid := Color(.40, .24, .10, .08)
 	for column in range(1, columns):
 		var x := board.position.x + board.size.x * column / columns
-		canvas.draw_line(Vector2(x, board.position.y), Vector2(x, board.end.y), grid, 2.4, true)
+		canvas.draw_line(Vector2(x, board.position.y), Vector2(x, board.end.y), grid, 1.0, true)
 	for row in range(1, rows):
 		var y := board.position.y + board.size.y * row / rows
-		canvas.draw_line(Vector2(board.position.x, y), Vector2(board.end.x, y), grid, 2.4, true)
+		canvas.draw_line(Vector2(board.position.x, y), Vector2(board.end.x, y), grid, 1.0, true)

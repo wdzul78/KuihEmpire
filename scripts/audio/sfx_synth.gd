@@ -61,17 +61,47 @@ static func invalid() -> AudioStreamWAV:
 	)
 
 
-## Bright ping that climbs a little with every cascade step.
+## Original soft bubble pops and a short glass chime for the golden match FX.
 static func match(step: int) -> AudioStreamWAV:
-	var semis := mini(step, 8) * 2
-	var freq := 660.0 * pow(2.0, float(semis) / 12.0)
-	return _make(0.24, func(t: float, _d: float) -> float:
-		var env := exp(-t * 12.0)
-		return (
-			sin(t * TAU * freq) * 0.55
-			+ sin(t * TAU * freq * 2.0) * 0.22
-			+ sin(t * TAU * freq * 3.0) * 0.08
-		) * env
+	return match_pop(0, pow(2.0, float(mini(step,7)) / 12.0))
+
+
+static func match_pop(variant: int, pitch: float = 1.0) -> AudioStreamWAV:
+	var timbre := 1.0 + float(clampi(variant,0,3)) * .025
+	return _make(.36, func(t: float, d: float) -> float:
+		var value := 0.0
+		for index in 3:
+			var local := t - float(index) * .027
+			if local < 0:
+				continue
+			var phase := TAU * (160.0 * local + 4.2 * (1.0-exp(-local*65.0))) * timbre * pitch
+			var envelope := (1.0-exp(-local*1100.0)) * exp(-local*55.0)
+			value += sin(phase) * envelope * (.38 - index*.065)
+		for index in 2:
+			var local := t - .075 - float(index)*.045
+			if local < 0:
+				continue
+			var frequency := (1046.5 if index == 0 else 1568.0) * pitch
+			var envelope := (1.0-exp(-local*300.0)) * exp(-local*22.0)
+			value += (sin(local*TAU*frequency)*.17 + sin(local*TAU*frequency*2.02)*.035) * envelope
+		return value * (1.0-smoothstep(d-.04,d,t))
+	)
+
+
+## Original ascending bell stingers for the three combo milestones.
+static func combo(count: int) -> AudioStreamWAV:
+	var tier := clampi(count-3,0,2)
+	var semitones: Array = [[0,4,7],[0,4,7,12],[0,4,7,12,16]][tier]
+	return _make(.68+tier*.12,func(t: float, _d: float) -> float:
+		var value := 0.0
+		for i in semitones.size():
+			var local: float = t-i*.075
+			if local < 0:
+				continue
+			var frequency := 523.25*pow(2.0,float(semitones[i])/12.0)
+			var envelope := (1.0-exp(-local*180))*exp(-local*9)
+			value += (sin(local*TAU*frequency)*.23+sin(local*TAU*frequency*2)*.07)*envelope
+		return value
 	)
 
 

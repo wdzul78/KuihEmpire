@@ -69,6 +69,7 @@ func _build() -> void:
 		level = LevelLibrary.get_level(_resolve_level_id())
 
 	backdrop = GeraiBackdrop.new()
+	backdrop.gameplay_mode = true
 	backdrop.name = "StallBackground"
 	backdrop.location_id = LocationDefinition.for_stage(level.id).id
 	backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -231,6 +232,7 @@ func _begin_presentation() -> void:
 func _start_coach() -> void:
 	coach.begin(level.tutorial_steps)
 	board.swap_filter = coach.allows_swap
+	board.activation_filter = coach.allows_activation.bind(board.logic)
 	# Teach the collection lesson against the kuih the customer actually wants.
 	var order := active_order()
 	if order != null:

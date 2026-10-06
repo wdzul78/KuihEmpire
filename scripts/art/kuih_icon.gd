@@ -18,6 +18,15 @@ const OUTLINE := Color("4a2c17")
 const OUTLINE_WIDTH := 0.05
 const SHADOW := Color(0.25, 0.15, 0.05, 0.18)
 static var _art_regions: Dictionary = {}
+var _rotor_time := 0.0
+var directional_spread: float = 0.0:
+	set(value):
+		directional_spread = clampf(value,0,1)
+		queue_redraw()
+var directional_alpha: float = 1.0:
+	set(value):
+		directional_alpha = clampf(value,0,1)
+		queue_redraw()
 
 @export var kuih: KuihData = null:
 	set(value):
@@ -30,16 +39,24 @@ static var _art_regions: Dictionary = {}
 var special_kind: int = BoardCell.Special.NONE:
 	set(value):
 		special_kind = value
+		set_process(value == BoardCell.Special.HANTAR)
 		queue_redraw()
 
 
 func _ready() -> void:
+	set_process(special_kind == BoardCell.Special.HANTAR)
 	# Only supply a default - callers routinely ask for a bigger icon and this
 	# runs after they set one.
 	if custom_minimum_size == Vector2.ZERO:
 		custom_minimum_size = Vector2(64, 64)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	resized.connect(queue_redraw)
+
+
+func _process(delta: float) -> void:
+	_rotor_time += delta
+	if is_visible_in_tree():
+		queue_redraw()
 
 
 func set_kuih(value: KuihData) -> void:
@@ -60,18 +77,23 @@ func _draw() -> void:
 	if kuih == null:
 		return
 	var rect := _unit()
+	if special_kind == BoardCell.Special.HANTAR:
+		var edge := minf(size.x,size.y)*.86
+		BoardArt.draw_delivery(self,Rect2((size-Vector2.ONE*edge)*.5,Vector2.ONE*edge),_rotor_time*1.4)
+		return
+	if special_kind in [BoardCell.Special.TAPAU,BoardCell.Special.TAPAU_VERTICAL]:
+		BoardArt.draw_directional(self,Rect2(Vector2.ZERO,size),special_kind == BoardCell.Special.TAPAU_VERTICAL,directional_spread,directional_alpha)
+		return
 	var special_art := BoardArt.special_texture(special_kind)
 	if special_art != null:
 		var width_scale := 1.0
-		if special_kind in [BoardCell.Special.TAPAU_VERTICAL, BoardCell.Special.DULANG]:
-			# Give the tall carrier and radiant tray more of their own cell.
-			# Dulang's soft rays may spill slightly; its solid tray stays in the cell.
-			var edge := minf(size.x,size.y)*(.90 if special_kind == BoardCell.Special.TAPAU_VERTICAL else 1.12)
+		if special_kind == BoardCell.Special.HANTAR:
+			var edge := minf(size.x,size.y)*.90
 			rect = Rect2((size-Vector2.ONE*edge)*.5,Vector2.ONE*edge)
-			if special_kind == BoardCell.Special.TAPAU_VERTICAL:
-				rect.position.x -= size.x*.065
-				rect.position.y += size.y*.025
-			width_scale = 1.45 if special_kind == BoardCell.Special.TAPAU_VERTICAL else 1.0
+		if special_kind == BoardCell.Special.DULANG:
+			# Dulang's soft rays may spill slightly; its solid tray stays in the cell.
+			var edge := minf(size.x,size.y)*1.12
+			rect = Rect2((size-Vector2.ONE*edge)*.5,Vector2.ONE*edge)
 		_draw_asset(special_art, rect, width_scale)
 		return
 	if kuih.texture != null:

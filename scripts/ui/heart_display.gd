@@ -40,7 +40,7 @@ func _layout_labels() -> void:
 		_timer.size = Vector2(maxf(0, size.x - size.y * (1.57 if refill_enabled else 1.10)), size.y)
 	if compact_count and _count != null and _timer != null:
 		_count.hide()
-		_timer.add_theme_font_size_override("font_size", UIKit.fit_font_size(_timer.text, mini(26, roundi(size.y*.36)), maxf(0, _timer.size.x-8)))
+		_timer.add_theme_font_size_override("font_size", UIKit.fit_font_size(_timer.text, maxf(0, _timer.size.x-8), clampi(roundi(size.y*.36),10,26)))
 	queue_redraw()
 
 func _draw() -> void:

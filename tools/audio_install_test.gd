@@ -14,6 +14,8 @@ func _ready() -> void:
 func run() -> void:
 	AudioManager._notification(NOTIFICATION_APPLICATION_FOCUS_IN)
 	AudioManager.apply_settings({"music": true, "sfx": true})
+	check(AudioManager._streams[AudioManager.Sfx.INVALID].resource_path.ends_with("/invalid_connect_v1/puzzle_tile_adjust_connect_05.wav"), "rejected tile move uses user-selected Connect 05 sound")
+	check(AudioManager._streams[AudioManager.Sfx.SUCCESS].resource_path.ends_with("/win_pack_v1/big_game_win_pack1_01.wav"), "victory uses user-selected Big Game Win sound")
 	for which in AudioManager.FILE_SFX:
 		var stream := AudioManager._streams.get(which) as AudioStreamWAV
 		check(stream != null and stream.resource_path.begins_with("res://audio/sfx/"), "file-backed SFX %s" % which)
@@ -21,18 +23,24 @@ func run() -> void:
 			continue
 		check(stream.format == AudioStreamWAV.FORMAT_16_BITS, "SFX uses PCM, not boot synthesis or compressed bytes")
 		var peak := 0
-		for i in range(0, stream.data.size(), 2):
-			peak = maxi(peak, absi(stream.data.decode_s16(i)))
-		check(peak > 100 and peak < 20000, "SFX has audible signal and mixing headroom")
-		check(stream.get_length() > 0 and stream.get_length() < 2.2, "SFX bounded duration")
-	check(AudioManager._match_variants.size() == 4, "four original soft pop variants loaded")
+		var samples := stream.data
+		for i in range(0, samples.size(), 2):
+			peak = maxi(peak, absi(samples.decode_s16(i)))
+		# Supplied recordings retain their original samples, with playback gain.
+		var gain := -7.0 if which == AudioManager.Sfx.MATCH else (-3.0 if which == AudioManager.Sfx.SUCCESS else 0.0)
+		var effective_peak := float(peak) * db_to_linear(gain)
+		check(peak > 100 and peak < 32767 and effective_peak < 20000, "SFX has audible signal and mixing headroom")
+		var duration_limit := 12.0 if which == AudioManager.Sfx.SUCCESS else 2.2
+		check(stream.get_length() > 0 and stream.get_length() < duration_limit, "SFX bounded duration")
+	check(AudioManager._match_variants.size() == 1, "user-selected Little Jump Up sound loaded")
 	var last_variant := -1
 	for step in range(10):
 		var next_voice := AudioManager._next_voice
 		AudioManager.play_match(step)
 		var played := AudioManager._voices[next_voice]
-		check(played.stream is AudioStreamWAV and played.stream.resource_path.contains("/v2/match_"), "match uses cozy variants")
-		check(last_variant != AudioManager._last_match_variant, "consecutive clears vary timbre")
+		check(played.stream is AudioStreamWAV and played.stream.resource_path.ends_with("/match_jump_v1/little_jump_up_01.wav"), "match uses user-selected sound")
+		if AudioManager._match_variants.size() > 1:
+			check(last_variant != AudioManager._last_match_variant, "consecutive clears vary timbre")
 		check(is_equal_approx(played.pitch_scale,pow(2.0,float(AudioManager.CASCADE_NOTES[mini(step,7)])/12.0)), "cascade uses ascending musical notes and caps at seven")
 		last_variant = AudioManager._last_match_variant
 		played.stop()

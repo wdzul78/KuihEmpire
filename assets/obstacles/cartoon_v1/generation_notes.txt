@@ -1,0 +1,12 @@
+Generated with the built-in imagegen tool, 2026-10-06.
+Six separate transparent PNGs. Original generated files retained.
+Shared style: Kuih Empire Malaysian match-3 sprite; premium glossy cartoon 2.5D,
+chocolate outline, rounded bold silhouette, upper-left warm lighting, readable at
+40px, centered with narrow padding. Transparent alpha, no external shadows,
+text, numbers, rays, sparkles, scene, border or extra objects.
+banana_leaf: A folded emerald green banana leaf food cover, broad diamond-square silhouette, tucked overlapping leaf folds, clear central vein and a few wide veins, no food showing.
+food_cover: A traditional Malaysian tudung saji food cover, closed domed woven rattan cover in coral red and warm pink, small top knob, broad circular base rim. Simple wide woven strips.
+steamer: A closed round bamboo food steamer basket with lid and three squat stacked tiers, honey tan wood, dark seams, chunky bamboo handles, no food or steam.
+sticky_syrup: An amber caramel sticky syrup puddle, irregular round chunky blob with three short drips and glossy cream highlights, translucent golden center and darker amber border. No container.
+packaging_box: An OPEN empty kraft brown takeaway food box with lid raised behind, wide visible empty interior on lower front half, simple broad folding flaps. No food, symbols or label.
+empty_tray: An EMPTY rectangular silver serving tray, rounded corners and thick raised silver rim, slight three-quarter top view, broad empty pale silver interior, small handles either side. No food or decoration.

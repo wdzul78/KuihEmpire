@@ -34,8 +34,11 @@ var occluding_board: Control = null
 ## Keep the complete head below active dialogue, even when wrapped text grows.
 var dialogue_clearance: Control = null
 var story_clearance: Control = null
+var compact_portrait := false
 
 func _clearance_y() -> float:
+	if compact_portrait:
+		return -INF
 	var top := -INF
 	for bubble in [dialogue_clearance, story_clearance]:
 		if is_instance_valid(bubble) and bubble.is_visible_in_tree():
@@ -111,12 +114,39 @@ func _draw() -> void:
 	var u := Rect2(origin, Vector2(side, side))
 	u.position.y = maxf(u.position.y, _clearance_y())
 	var art: Texture2D = AINA_ART if cast == Cast.AINA else (customer.texture if cast == Cast.CUSTOMER and customer != null else null)
+	if compact_portrait:
+		draw_circle(size*.5,side*.50,Palette.WOOD_DARK)
+		draw_circle(size*.5,side*.47,Palette.GOLD)
+		draw_circle(size*.5,side*.42,Palette.CREAM)
+		if art != null:
+			_draw_compact_art(art, side)
+		else:
+			var face_size := Vector2.ONE * side * 1.18
+			_draw_head(Rect2(size*.5 - Vector2(face_size.x*.5,face_size.y*.34),face_size))
+		return
 	if art != null:
 		_draw_character(art)
 		return
 
 	_draw_body(u)
 	_draw_head(u)
+
+
+func _draw_compact_art(art: Texture2D, side: float) -> void:
+	# Crop the face, then clip it to the medallion without modifying the asset.
+	var region := Rect2(art.get_image().get_used_rect())
+	if cast == Cast.AINA:
+		region = Rect2(art.get_size()*Vector2(.30,.06),art.get_size()*Vector2(.50,.333))
+	else:
+		var crop_side := region.size.y*.38
+		region = Rect2(Vector2(region.get_center().x-crop_side*.5,region.position.y),Vector2.ONE*crop_side)
+	var points := PackedVector2Array()
+	var uv := PackedVector2Array()
+	for index in 64:
+		var direction := Vector2.from_angle(TAU*float(index)/64.0)
+		points.append(size*.5 + direction*side*.42)
+		uv.append((region.position+(direction*.5+Vector2.ONE*.5)*region.size)/art.get_size())
+	draw_polygon(points,PackedColorArray([Color.WHITE]),uv,art)
 
 
 func _draw_character(art: Texture2D) -> void:
@@ -126,6 +156,9 @@ func _draw_character(art: Texture2D) -> void:
 	var region: Rect2 = _regions[key]
 	if framing == 0:
 		region.size.y *= 0.38
+		if compact_portrait:
+			region.position.x += region.size.x*.025
+			region.size.x = minf(region.size.x,region.size.y*1.10)
 	var destination := artwork_rect(region)
 	if is_instance_valid(occluding_board):
 		var edge := occluding_board.get_global_rect().position.y - get_global_rect().position.y

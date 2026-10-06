@@ -15,7 +15,8 @@ enum SwapOutcome {
 }
 
 const MIN_MATCH := 3
-const DULANG_RADIUS := 1
+const DULANG_SINGLE_MASK := [[1,1,1], [1,1,1], [1,1,1]]
+const DULANG_DOUBLE_MASK := [[0,1,1,1,0], [1,1,1,1,1], [1,1,1,1,1], [1,1,1,1,1], [0,1,1,1,0]]
 const SHUFFLE_MAX_ATTEMPTS := 60
 
 
@@ -84,6 +85,10 @@ class ClearResult extends RefCounted:
 	var combo_origin := Vector2i(-1,-1)
 	var combo_members: Dictionary = {}
 	var combo_cells: Array[Vector2i] = []
+	var delivery_targets: Array[Vector2i] = []
+	var converted: Array[Vector2i] = []
+	var conversion_kind: int = BoardCell.Special.NONE
+	var conversion_kuih: StringName = &""
 
 	func is_empty() -> bool:
 		return cleared.is_empty() and blockers.is_empty() and targets.is_empty()
@@ -339,13 +344,15 @@ func _scan_squares() -> Array[MatchRun]:
 	return squares
 
 func _scan_runs(horizontal: bool) -> Array[MatchRun]:
+	# Specials are independent items; their hidden creation kuih must never
+	# count towards a normal match or detonate during refill cascades.
 	var runs: Array[MatchRun] = []
 	if horizontal:
 		for y in height:
 			var x := 0
 			while x < width:
 				var cell := get_cell(Vector2i(x, y))
-				if not cell.is_playable():
+				if not cell.is_playable() or cell.special != BoardCell.Special.NONE:
 					x += 1
 					continue
 				var id := cell.kuish_id()
@@ -353,7 +360,7 @@ func _scan_runs(horizontal: bool) -> Array[MatchRun]:
 				var nx := x + 1
 				while nx < width:
 					var other := get_cell(Vector2i(nx, y))
-					if not other.is_playable() or other.kuish_id() != id:
+					if not other.is_playable() or other.special != BoardCell.Special.NONE or other.kuish_id() != id:
 						break
 					run_cells.append(Vector2i(nx, y))
 					nx += 1
@@ -370,7 +377,7 @@ func _scan_runs(horizontal: bool) -> Array[MatchRun]:
 			var y := 0
 			while y < height:
 				var cell := get_cell(Vector2i(x, y))
-				if not cell.is_playable():
+				if not cell.is_playable() or cell.special != BoardCell.Special.NONE:
 					y += 1
 					continue
 				var id := cell.kuish_id()
@@ -378,7 +385,7 @@ func _scan_runs(horizontal: bool) -> Array[MatchRun]:
 				var ny := y + 1
 				while ny < height:
 					var other := get_cell(Vector2i(x, ny))
-					if not other.is_playable() or other.kuish_id() != id:
+					if not other.is_playable() or other.special != BoardCell.Special.NONE or other.kuish_id() != id:
 						break
 					run_cells.append(Vector2i(x, ny))
 					ny += 1
@@ -601,6 +608,64 @@ func activate_specials(positions: Array) -> ClearResult:
 			result.combo_origin = b
 			result.combo_members = {a: true, b: true}
 			result.combo_cells = _cross_cells(b)
+		elif absi(a.x-b.x) + absi(a.y-b.y) == 1 and get_cell(a).special == BoardCell.Special.DULANG and get_cell(b).special == BoardCell.Special.DULANG:
+			result.combo = &"rounded_dulang"
+			result.combo_origin = b
+			result.combo_members = {a: true, b: true}
+			result.combo_cells = area_mask_cells(b, DULANG_DOUBLE_MASK)
+		elif absi(a.x-b.x) + absi(a.y-b.y) == 1 and get_cell(a).special == BoardCell.Special.HANTAR and get_cell(b).special == BoardCell.Special.HANTAR:
+			result.combo = &"triple_delivery"
+			result.combo_origin = b
+			result.combo_members = {a: true, b: true}
+			var excluded: Dictionary = {}
+			for origin in [a, b]:
+				for local in delivery_cross(origin):
+					var cell := get_cell(local)
+					if not excluded.has(local) and (cell.is_playable() or cell.has_overlay()):
+						result.combo_cells.append(local)
+					excluded[local] = true
+			for i in 3:
+				var target := select_delivery_target(b, excluded)
+				if target == Vector2i(-1,-1):
+					break
+				result.delivery_targets.append(target)
+				result.combo_cells.append(target)
+				excluded[target] = true
+		elif absi(a.x-b.x) + absi(a.y-b.y) == 1 and get_cell(a).special == BoardCell.Special.ORDER and get_cell(b).special == BoardCell.Special.ORDER:
+			result.combo = &"order_wipe"
+			result.combo_origin = b
+			result.combo_members = {a: true, b: true}
+			for y in height:
+				for x in width:
+					var pos := Vector2i(x,y)
+					var cell := get_cell(pos)
+					if cell.is_playable() or cell.has_overlay():
+						result.combo_cells.append(pos)
+		elif absi(a.x-b.x) + absi(a.y-b.y) == 1 and (get_cell(a).special == BoardCell.Special.ORDER or get_cell(b).special == BoardCell.Special.ORDER):
+			var order_pos := a if get_cell(a).special == BoardCell.Special.ORDER else b
+			var partner_pos := b if order_pos == a else a
+			result.combo = &"order_conversion"
+			result.combo_origin = order_pos
+			# Consume Order without its normal same-colour clear. The partner and
+			# converted specials execute their native footprints exactly once.
+			result.combo_members = {order_pos: true}
+			result.conversion_kind = get_cell(partner_pos).special
+			var types: Array[StringName] = []
+			for row in grid:
+				for cell in row:
+					if cell.is_playable() and cell.special == BoardCell.Special.NONE and not types.has(cell.kuish_id()):
+						types.append(cell.kuish_id())
+			if not types.is_empty():
+				result.conversion_kuih = types[rng.randi_range(0,types.size()-1)]
+				for y in height:
+					for x in width:
+						var pos := Vector2i(x,y)
+						var cell := get_cell(pos)
+						if cell.is_playable() and cell.special == BoardCell.Special.NONE and cell.kuish_id() == result.conversion_kuih:
+							cell.special = result.conversion_kind
+							cell.order_kuish = &""
+							result.converted.append(pos)
+							queue.append(pos)
 	_run_clear(queue, result, {})
 	_register_blocker_progress(result)
 	_register_target_progress(result)
@@ -611,6 +676,8 @@ func _run_clear(queue: Array[Vector2i], result: ClearResult, protect: Dictionary
 	var chain_depth: Dictionary = {}
 	for origin in queue:
 		chain_depth[origin] = 0
+	for i in result.converted.size():
+		chain_depth[result.converted[i]] = 1 + i / 6
 	var order_count := 0
 	for pos in queue:
 		var probe := get_cell(pos)
@@ -676,11 +743,11 @@ func _cross_cells(origin: Vector2i) -> Array[Vector2i]:
 	var out: Array[Vector2i] = []
 	for x in width:
 		var pos := Vector2i(x, origin.y)
-		if is_playable(pos):
+		if is_playable(pos) or get_cell(pos).has_overlay():
 			out.append(pos)
 	for y in height:
 		var pos := Vector2i(origin.x, y)
-		if not out.has(pos) and is_playable(pos):
+		if not out.has(pos) and (is_playable(pos) or get_cell(pos).has_overlay()):
 			out.append(pos)
 	return out
 
@@ -688,8 +755,11 @@ func _blast_cells(pos: Vector2i, cell: BoardCell, excluded: Dictionary = {}) -> 
 	var out: Array[Vector2i] = []
 	match cell.special:
 		BoardCell.Special.HANTAR:
-			out.append(pos)
-			var target := select_delivery_target(pos, excluded, cell.order_kuish)
+			out.assign(delivery_cross(pos))
+			var unavailable := excluded.duplicate()
+			for local in out:
+				unavailable[local] = true
+			var target := select_delivery_target(pos, unavailable, cell.order_kuish)
 			if target != Vector2i(-1, -1):
 				out.append(target)
 		BoardCell.Special.TAPAU:
@@ -699,25 +769,67 @@ func _blast_cells(pos: Vector2i, cell: BoardCell, excluded: Dictionary = {}) -> 
 			for y in height:
 				out.append(Vector2i(pos.x, y))
 		BoardCell.Special.DULANG:
-			for dy in range(-DULANG_RADIUS, DULANG_RADIUS + 1):
-				for dx in range(-DULANG_RADIUS, DULANG_RADIUS + 1):
-					out.append(pos + Vector2i(dx, dy))
+			out.assign(area_mask_cells(pos, DULANG_SINGLE_MASK))
 		BoardCell.Special.ORDER:
 			var wanted := cell.order_kuish
 			for y in height:
 				for x in width:
 					var other := get_cell(Vector2i(x, y))
 					# Packages are separate items, not the hidden kuih used to create them.
-					if other != null and other.is_playable() and other.special == BoardCell.Special.NONE and other.kuish_id() == wanted:
+					if other != null and (other.is_playable() or other.has_overlay()) and other.special == BoardCell.Special.NONE and other.kuish_id() == wanted:
 						out.append(Vector2i(x, y))
 	var filtered: Array[Vector2i] = []
 	for p in out:
 		if not is_inside(p):
 			continue
 		var c := get_cell(p)
-		if c != null and (c.is_playable() or (cell.special == BoardCell.Special.HANTAR and c.has_overlay())):
+		if c != null and (c.is_playable() or c.has_overlay()):
 			filtered.append(p)
 	return filtered
+
+
+## Centered matrix mask, clipped before access. Keep empty cells so presentation
+## can reuse the footprint after the logical clear has already removed kuih.
+func area_mask_cells(origin: Vector2i, mask: Array) -> Array[Vector2i]:
+	var cells: Array[Vector2i] = []
+	var half_y := mask.size() / 2
+	for y in mask.size():
+		var row: Array = mask[y]
+		var half_x := row.size() / 2
+		for x in row.size():
+			var pos := origin + Vector2i(x-half_x, y-half_y)
+			if row[x] != 0 and is_inside(pos):
+				cells.append(pos)
+	return cells
+
+
+## Local plus footprint, clipped at board edges. The remote target is appended last.
+func delivery_cross(origin: Vector2i) -> Array[Vector2i]:
+	var cells: Array[Vector2i] = []
+	for offset in [Vector2i.ZERO, Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]:
+		var pos: Vector2i = origin + offset
+		if is_inside(pos):
+			cells.append(pos)
+	return cells
+
+
+## Double tap chooses a normal neighbour, favouring outstanding orders, then
+## the most common local type. Stable cross order breaks ties.
+func delivery_local_kuih(origin: Vector2i) -> StringName:
+	var counts: Dictionary = {}
+	for pos in delivery_cross(origin):
+		var cell := get_cell(pos)
+		if cell.is_playable() and cell.special == BoardCell.Special.NONE:
+			var id := cell.kuish_id()
+			counts[id] = int(counts.get(id, 0)) + 1
+	var chosen: StringName = &""
+	var best := -1
+	for id in counts:
+		var rank := int(counts[id]) + (10 if int(order_remaining.get(id, 0)) > 0 else 0)
+		if rank > best:
+			best = rank
+			chosen = id
+	return chosen
 
 
 func select_delivery_target(origin: Vector2i, excluded: Dictionary = {}, preferred_kuih: StringName = &"") -> Vector2i:

@@ -43,9 +43,93 @@ func line_clear(a: Vector2, b: Vector2, cell: float, color: Color = Color("ffe38
 	else:
 		burst((a + b) * .5, color, 8, cell * .7)
 
+
+## One bounded batch gives every cleared item a gold glow and 48 fragments,
+## including a full 10x10 wipe without hitting the shared particle pool cap.
+func kuih_dissolve(items: Array[Dictionary], cell: float, delay: float = .08) -> void:
+	if items.is_empty():
+		return
+	_effect("kuih_dissolve", Vector2.ZERO, Vector2.ZERO, Color.WHITE, cell, .70, delay)
+	effects.back()["items"] = items.duplicate(true)
+
+
+func special_formation(at: Vector2, points: PackedVector2Array, cell: float, kind: int) -> void:
+	var color := Color("a9f56b")
+	match kind:
+		BoardCell.Special.TAPAU_VERTICAL: color = Color("65d9ff")
+		BoardCell.Special.DULANG: color = Color("ffd966")
+		BoardCell.Special.ORDER: color = Color("efb0ff")
+		BoardCell.Special.HANTAR: color = Color("ff9688")
+	_effect("special_formation", at, Vector2.ZERO, color, cell, .48)
+	effects.back()["points"] = points
+
+
+func _draw_special_formation(effect: Dictionary) -> void:
+	var cell: float = effect.width
+	var gather := smoothstep(.16, .40, effect.age)
+	var fade := 1.0 - smoothstep(.40, .48, effect.age)
+	var pulse := sin(clampf(effect.age / .20, 0, 1) * PI * .5)
+	for point in effect.points:
+		var at: Vector2 = point.lerp(effect.a, gather)
+		_match_glow(at, cell * (1.05 - gather * .45), pulse * fade)
+		for sign_value in [-1, 1]:
+			var offset := Vector2(sign_value * cell * .24, -sign_value * cell * .16) * (1.0-gather)
+			_star(at + offset, cell * .24, Color("fff6d7", pulse * fade), effect.age * 2)
+	_match_glow(effect.a, cell * (1.0 + gather * .65), gather * fade)
+
+
+## Light-only gradient: the stock glow texture has dark translucent pixels.
+## Use pale yellow layers so match light cannot shade the slot underneath.
+func _match_glow(at: Vector2, edge: float, intensity: float) -> void:
+	for layer in range(14, 0, -1):
+		var fraction := float(layer) / 14.0
+		var color := Color("fff18a").lerp(Color("ffffe5"), 1.0-fraction)
+		color.a = intensity * (.025 + .075 * (1.0-fraction))
+		draw_circle(at, edge * .5 * fraction, color)
+	draw_circle(at, edge * .14, Color("fffed5", intensity * .45))
+
+
+func _draw_kuih_dissolve(effect: Dictionary) -> void:
+	var t: float = clampf((effect.age - .10) / (effect.life - .10), 0, 1)
+	var cell: float = effect.width
+	var fade := 1.0 - smoothstep(.12, 1.0, t)
+	for index in effect.items.size():
+		var item: Dictionary = effect.items[index]
+		var glow := sin(clampf(effect.age / .08, 0, 1) * PI * .5) * (1.0 - smoothstep(.18, .42, effect.age))
+		_match_glow(item.at, cell * 1.15, glow)
+		if effect.age < .10:
+			continue
+		# Staggered directions/speeds fill a cloud rather than a thin ring.
+		for spark in 48:
+			var tint := Color("ffe34d") if spark % 3 == 0 else Color("ffbd27")
+			if spark % 4 == 0:
+				tint = Color("fff7ad")
+			tint.a = fade
+			var angle: float = spark * 2.39996323
+			var reach: float = .30 + float(spark % 5) * .17
+			var distance := cell * (.08 + reach * (1.0 - pow(1.0-t, 2)))
+			var at: Vector2 = item.at + Vector2.from_angle(angle) * distance
+			at.y -= cell * .12 * t * t
+			var edge := cell * (.14 if spark % 3 == 0 else .10) * (1.0-t*.65)
+			if spark % 3 == 0:
+				_star(at, edge * 1.8, tint, angle + t)
+			else:
+				draw_set_transform(at, angle + t * 3)
+				draw_colored_polygon(PackedVector2Array([
+					Vector2(-edge*.5,-edge*.25), Vector2(edge*.25,-edge*.45),
+					Vector2(edge*.5,edge*.25), Vector2(-edge*.25,edge*.5)]), tint)
+				draw_set_transform(Vector2.ZERO)
+
 func scoop(at: Vector2, cell: float) -> void:
 	_effect("scoop", at, at - Vector2(0, cell * 1.3), Color("fff1ad"), cell * .55, .55)
 	burst(at, Color("fff0bd"), 10, cell * .6)
+
+
+func tapau_lane(a: Vector2, b: Vector2, cell: float, color: Color) -> void:
+	_effect("beam",a,b,color,cell*.32,.42)
+	effects.back()["tapau"] = true
+	effects.back()["cell"] = cell
+	burst(a,color,5,cell*.35)
 
 func shuffle(bounds: Rect2, cell: float) -> void:
 	_effect("swirl", bounds.get_center(), Vector2.ZERO, Color("b7ef77"), bounds.size.x * .43, .75)
@@ -65,17 +149,19 @@ func special(at: Vector2, kind: int, affected: PackedVector2Array, cell: float) 
 	_effect("flash", at, Vector2.ZERO, color, cell * 1.8, .35)
 	burst(at, color, 22, cell * 1.4)
 	if kind == BoardCell.Special.TAPAU or kind == BoardCell.Special.TAPAU_VERTICAL:
+		_effect("tapau_slots",at,Vector2.ZERO,color,cell,.42)
+		effects.back()["points"] = affected
 		var low := at
 		var high := at
 		for p in affected:
 			low = low.min(p)
 			high = high.max(p)
 		if kind == BoardCell.Special.TAPAU:
-			line_clear(at,Vector2(low.x-cell*.45,at.y),cell,color,true)
-			line_clear(at,Vector2(high.x+cell*.45,at.y),cell,color,true)
+			tapau_lane(at,Vector2(low.x-cell*.45,at.y),cell,color)
+			tapau_lane(at,Vector2(high.x+cell*.45,at.y),cell,color)
 		else:
-			line_clear(at,Vector2(at.x,low.y-cell*.45),cell,color,true)
-			line_clear(at,Vector2(at.x,high.y+cell*.45),cell,color,true)
+			tapau_lane(at,Vector2(at.x,low.y-cell*.45),cell,color)
+			tapau_lane(at,Vector2(at.x,high.y+cell*.45),cell,color)
 	else:
 		for p in affected:
 			if kind == BoardCell.Special.ORDER:
@@ -101,25 +187,108 @@ func order_electric(at: Vector2, affected: PackedVector2Array, cell: float) -> v
 	effects.back()["points"] = affected
 	burst(at,Color("fff1aa"),12,cell*.5)
 
-func dulang_charge(at: Vector2, affected: PackedVector2Array, cell: float) -> void:
-	_effect("charge", at, Vector2.ZERO, Color("fff0a2"), cell, .18)
-	for point in affected:
-		_effect("preview", point, Vector2.ZERO, Color("ffd768"), cell*.92, .18)
+func dulang_charge(at: Vector2, affected: PackedVector2Array, cell: float, foods: Array[Dictionary] = [], double_blast: bool = false) -> void:
+	_effect("charge", at, Vector2.ZERO, Color("fff0a2"), cell, .72)
+	effects.back()["foods"] = foods
+	effects.back()["points"] = affected
+	effects.back()["double_blast"] = double_blast
 
-func dulang_burst(at: Vector2, affected: PackedVector2Array, cell: float) -> void:
-	_effect("flower_wave", at, Vector2.ZERO, Color("ffd25e"), cell*1.38, .58)
-	_effect("flash", at, Vector2.ZERO, Color("fff4ce"), cell*1.65, .24)
-	burst(at, Color("ffe79a"), 16, cell*.85)
-	burst(at, Color("ffce50"), 12, cell*.65)
-	for point in affected:
-		# The centre lights first; travelling glints reach the outer slots next.
-		_effect("gold_slot", at, point, Color("ffd768"), cell*.88, .72,
-			at.distance_to(point) / cell * .045)
 
-func delivery(origin: Vector2, target: Vector2, cell: float) -> void:
-	_effect("delivery", origin, target, Color("a6e864"), cell * .75, .60)
-	_effect("arrival", target, Vector2.ZERO, Color("fff0b7"), cell * .8, .80)
-	burst(origin, Color("fff0b7"), 5, cell * .3)
+func _draw_dulang_charge(effect: Dictionary) -> void:
+	var cell: float = effect.width
+	var grow := smoothstep(0, .20, effect.age)
+	var edge := cell * lerpf(1.0, 4.5 if effect.get("double_blast",false) else 2.9, grow)
+	_match_glow(effect.a, edge * 1.05, .65 * grow)
+	BoardArt.draw_item_texture(self, Rect2(effect.a - Vector2.ONE * edge * .5, Vector2.ONE * edge), BoardArt.DULANG_ART)
+	var gather := smoothstep(.20, .53, effect.age)
+	for index in effect.foods.size():
+		var food: Dictionary = effect.foods[index]
+		var destination: Vector2 = effect.a + Vector2((index % 3 - 1) * cell * .38, (index / 3 - 1) * cell * .25)
+		if effect.get("double_blast",false):
+			destination = effect.a + Vector2.from_angle(index * 2.39996323) * sqrt(float(index)+1) * cell * .22
+		var at: Vector2 = food.at.lerp(destination, gather)
+		at.y -= sin(gather * PI) * cell * .30
+		var food_edge := cell * lerpf(.82, .48, gather)
+		BoardArt.draw_item_texture(self, Rect2(at - Vector2.ONE * food_edge * .5, Vector2.ONE * food_edge), food.texture)
+
+func dulang_burst(at: Vector2, affected: PackedVector2Array, cell: float, double_blast: bool = false) -> void:
+	# The loaded tray disappears at the blast; no 3x3 slot borders or fill.
+	for index in range(effects.size()-1, -1, -1):
+		if effects[index].kind == "charge" and effects[index].a.is_equal_approx(at):
+			effects.remove_at(index)
+	var spread := 1.8 if double_blast else 1.0
+	_effect("flower_wave", at, Vector2.ZERO, Color("ffd25e"), cell*1.5*spread, .58)
+	_effect("dulang_radial", at, Vector2.ZERO, Color("ffe79a"), cell*1.5*spread, .52)
+	if double_blast:
+		# One logical hit; the delayed outer pulse is purely visual.
+		_effect("flower_wave", at, Vector2.ZERO, Color("fff2bd"), cell*2.75, .65, .15)
+		_effect("dulang_radial", at, Vector2.ZERO, Color("ffd25e"), cell*2.75, .60, .15)
+	burst(at, Color("ffe79a"), 144 if double_blast else 96, cell*1.15*spread)
+	burst(at, Color("ffce50"), 96 if double_blast else 64, cell*.85*spread)
+	var fragments: Array[Dictionary] = []
+	var fragment_groups := 9 if double_blast else 6
+	for index in fragment_groups:
+		fragments.append({"at": at + Vector2.from_angle(index * TAU / fragment_groups) * cell * .25*spread, "color": Color("ffe34d")})
+	kuih_dissolve(fragments, cell * 1.15*spread, 0)
+
+func delivery_cross(origin: Vector2, targets: PackedVector2Array, cell: float) -> void:
+	_effect("robot_cross",origin,Vector2.ZERO,Color("dce6ed"),cell,.58)
+	effects.back()["points"] = targets
+
+
+func _draw_robot_cross(effect: Dictionary) -> void:
+	var age: float = effect.age
+	var reach := smoothstep(0,.18,age)*(1-smoothstep(.25,.50,age))
+	var grip := smoothstep(.18,.25,age)
+	var edge: float = effect.width
+	for target in effect.points:
+		var direction: Vector2 = (target-effect.a).normalized()
+		var side := direction.orthogonal()
+		var start: Vector2 = effect.a+direction*edge*.16
+		var end: Vector2 = effect.a.lerp(target,reach)
+		var joint := start.lerp(end,.5)+side*edge*.09*reach
+		var arm := PackedVector2Array([start,joint,end])
+		draw_polyline(arm,Color("242c36"),edge*.14,true)
+		draw_polyline(arm,Color("a4b3c2"),edge*.085,true)
+		draw_polyline(arm,Color("f1f6f9"),edge*.025,true)
+		for point in [start,joint,end]:
+			draw_circle(point,edge*.075,Color("242c36"))
+			draw_circle(point,edge*.045,Color("ced9e1"))
+		var opening := lerpf(.23,.12,grip)
+		for sign_value in [-1,1]:
+			var finger := PackedVector2Array([end,end+side*sign_value*edge*opening-direction*edge*.08,end+side*sign_value*edge*opening+direction*edge*.12,end+side*sign_value*edge*opening*.6+direction*edge*.18])
+			draw_polyline(finger,Color("252e38"),edge*.09,true)
+			draw_polyline(finger,Color("d4dfe8"),edge*.035,true)
+
+
+func delivery(origin: Vector2, target: Vector2, cell: float, payload: Texture2D = null) -> void:
+	_effect("delivery", origin, target, Color("ff6155"), cell * 1.05, 1.10)
+	effects.back()["payload"] = payload
+	_effect("arrival", target, Vector2.ZERO, Color("fff0df"), cell * .8, .80)
+	burst(origin, Color("ffaaa0"), 5, cell * .3)
+
+
+func _draw_delivery(effect: Dictionary) -> void:
+	var age: float = effect.age
+	var edge: float = effect.width
+	var pickup: Vector2 = effect.b-Vector2(0,edge*.39)
+	var outbound := smoothstep(.05,.45,age)
+	var leaving := smoothstep(.60,1.10,age)
+	var at := _curve(effect.a,pickup,edge*.65,outbound)
+	if age >= .60:
+		at = _curve(pickup,Vector2(effect.b.x,-edge*2),edge*.6,leaving)
+	var trail := PackedVector2Array()
+	for i in 12:
+		var earlier := maxf(0,age-(11-i)*.012)
+		if age >= .60:
+			trail.append(_curve(pickup,Vector2(effect.b.x,-edge*2),edge*.6,smoothstep(.60,1.10,earlier)))
+		else:
+			trail.append(_curve(effect.a,pickup,edge*.65,smoothstep(.05,.45,earlier)))
+	draw_polyline(trail,Color(1,.3,.25,.20),maxf(2,edge*.12),true)
+	draw_polyline(trail,Color(1,.93,.85,.65),maxf(1,edge*.035),true)
+	_glow(at,edge*.8,Color(1,.4,.3,.2))
+	var food: Texture2D = effect.get("payload",null) if age >= .45 else null
+	BoardArt.draw_delivery(self,Rect2(at-Vector2.ONE*edge*.5,Vector2.ONE*edge),age*36,true,food)
 
 func celebrate(bounds: Rect2) -> void:
 	reset()
@@ -170,6 +339,57 @@ func _gold_glint(at: Vector2, edge: float, color: Color, angle: float = 0.0) -> 
 func _curve(a: Vector2, b: Vector2, bend: float, t: float) -> Vector2:
 	return a.lerp(b, t) + Vector2(0, -sin(t * PI) * bend)
 
+func _draw_tapau_lane(effect: Dictionary, t: float) -> void:
+	var origin: Vector2 = effect.a
+	var endpoint: Vector2 = effect.b
+	var cell: float = effect.cell
+	var direction := (endpoint-origin).normalized()
+	var travel := smoothstep(0,.48,t)
+	var front := origin.lerp(endpoint,travel)
+	var flash := .40+.60*pow(sin(effect.age*PI*9),2)
+	var fade := (1-smoothstep(.72,1,t))*flash
+	var color := Color(effect.color,fade)
+	var normal := direction.orthogonal()
+	var points := PackedVector2Array()
+	var segments := clampi(int(origin.distance_to(front)/(cell*.18)),6,48)
+	for index in segments+1:
+		var progress := float(index)/segments
+		var jitter := sin(index*2.4+clock*65)*cell*.055*sin(progress*PI)
+		points.append(origin.lerp(front,progress)+normal*jitter)
+	draw_line(origin,front,Color(color,fade*.13),cell*.52,true)
+	draw_line(origin,front,Color(color,fade*.27),cell*.30,true)
+	draw_polyline(points,color,cell*.14,true)
+	draw_polyline(points,Color("f4ffff",fade),maxf(2,cell*.045),true)
+	_glow(front,cell*.85,Color(color,fade*.45))
+	var marker_from := origin+direction*cell*.18
+	var marker_to := endpoint-direction*cell*.24
+	BoardArt.draw_direction_marker(self,marker_from.lerp(marker_to,travel),cell*1.2,direction.angle(),fade)
+
+
+func _draw_tapau_slots(effect: Dictionary) -> void:
+	var cell: float = effect.width
+	for point in effect.points:
+		var delay: float = effect.a.distance_to(point)/cell*.018
+		var age: float = effect.age-delay
+		if age < 0:
+			continue
+		var pulse := (.3+.7*pow(sin(age*PI*9),2))*(1-smoothstep(.28,.42,effect.age))
+		var rect := Rect2(point-Vector2.ONE*cell*.44,Vector2.ONE*cell*.88)
+		var tint := Color(effect.color,pulse*.26)
+		draw_rect(rect,tint,true)
+		draw_rect(rect,Color(effect.color,pulse*.65),false,maxf(2,cell*.065))
+		var perimeter := PackedVector2Array()
+		for side in 4:
+			var corners := [rect.position,rect.position+Vector2(rect.size.x,0),rect.end,rect.position+Vector2(0,rect.size.y)]
+			var start: Vector2 = corners[side]
+			var finish: Vector2 = corners[(side+1)%4]
+			var normal := (finish-start).normalized().orthogonal()
+			for index in 4:
+				perimeter.append(start.lerp(finish,float(index)/4)+normal*sin(index*2.7+clock*80)*cell*.018)
+		perimeter.append(perimeter[0])
+		draw_polyline(perimeter,Color("efffff",pulse*.9),maxf(1.2,cell*.025),true)
+
+
 func _draw() -> void:
 	for e in effects:
 		if e.age < 0.0:
@@ -178,6 +398,12 @@ func _draw() -> void:
 		var color: Color = e.color
 		color.a *= 1.0 - smoothstep(.18, 1.0, t)
 		match e.kind:
+			"special_formation":
+				_draw_special_formation(e)
+			"kuih_dissolve":
+				_draw_kuih_dissolve(e)
+			"tapau_slots":
+				_draw_tapau_slots(e)
 			"order_electric":
 				var pull := clampf((e.age-.32)/.42,0,1)
 				pull *= pull
@@ -218,10 +444,7 @@ func _draw() -> void:
 						var offset: Vector2 = Vector2.from_angle(PI*.25 + i*PI*.5 + shine*.18)*e.width*.40
 						_gold_glint(e.b + offset, e.width*(.24 + .10*sin(shine*PI)), Color("fff8da",alpha), shine*.35)
 			"charge":
-				_glow(e.a,e.width*(.5+t*.9),Color(color,t*.6))
-				for i in 5:
-					var point: Vector2 = e.a+Vector2.from_angle(i*TAU/5+t)*e.width*(.5-t*.3)
-					_star(point,e.width*.13,Color(color,t))
+				_draw_dulang_charge(e)
 			"preview":
 				var rect := Rect2(e.a-Vector2.ONE*e.width*.5,Vector2.ONE*e.width)
 				draw_style_box(UIKit.flat_box(Color(color,t*.10),Color(color,t*.5),8,2),rect)
@@ -236,23 +459,17 @@ func _draw() -> void:
 				draw_polyline(wave,Color("fff7dc",color.a*.85),2,true)
 				for i in 5:
 					_star(e.a+Vector2.from_angle(i*TAU/5)*radius,e.width*.18,color,t*.2)
+			"dulang_radial":
+				var radius: float = e.width*(1-pow(1-t,3))
+				_match_glow(e.a,maxf(1,radius*2), (1-t)*.65)
+				draw_arc(e.a,maxf(1,radius),0,TAU,80,Color("fff8dc",(1-t)*.8),maxf(1,e.width*.025*(1-t)),true)
 			"flash":
 				_glow(e.a, e.width * (1 + t * .7), Color(color, color.a * .55))
 				_star(e.a, e.width * (.65 + t * .3), color, t * .2)
 			"delivery":
-				# Flight duration still agrees with the board's .45-second hit cue.
-				var progress := smoothstep(0.0, .75, t)
-				var at := _curve(e.a, e.b, e.width * .80, progress)
-				var trail := PackedVector2Array()
-				for i in 14:
-					trail.append(_curve(e.a, e.b, e.width * .80, maxf(0, progress - .30 + i * .30 / 13)))
-				draw_polyline(trail, Color("85b850", color.a * .2), 10, true)
-				draw_polyline(trail, Color("fff3af", color.a * .8), 3, true)
-				for i in 4:
-					var behind := maxf(0, progress - i * .08)
-					_star(_curve(e.a, e.b, e.width * .80, behind), e.width * .3, Color("fff4b2", color.a * (1-i*.18)))
-				_glow(at, e.width * 1.7, Color("caff9e", color.a * .4))
-				BoardArt.draw_delivery(self, Rect2(at - Vector2.ONE * e.width * .5, Vector2.ONE * e.width))
+				_draw_delivery(e)
+			"robot_cross":
+				_draw_robot_cross(e)
 			"arrival":
 				if t > .54:
 					var hit := (t - .54) / .46
@@ -260,6 +477,9 @@ func _draw() -> void:
 					for i in 6:
 						_star(e.a + Vector2.from_angle(i*TAU/6) * e.width * hit, e.width * .5, Color(color, 1-hit))
 			"beam":
+				if e.get("tapau",false):
+					_draw_tapau_lane(e,t)
+					continue
 				var front: Vector2 = e.a.lerp(e.b, smoothstep(0.0, .52, t))
 				var thickness: float = maxf(1, e.width * (1-t))
 				for layer in range(4, 0, -1):

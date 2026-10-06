@@ -121,6 +121,17 @@ func _build() -> void:
 
 
 func _recenter() -> void:
+	var side := clampf(minf(size.y,(size.x-54)/4.0),80,136)
+	for button in _buttons.values():
+		var holder := button.get_parent() as Control
+		holder.custom_minimum_size = Vector2.ONE*side
+		button.custom_minimum_size = Vector2.ONE*side
+		button.offset_bottom = side
+		var badge := holder.get_node_or_null("Badge") as Control
+		if badge != null:
+			badge.position = Vector2(side-42,-4)
+			badge.custom_minimum_size = Vector2(44,44)
+			badge.size = Vector2(44,44)
 	queue_redraw()
 
 

@@ -33,7 +33,7 @@ func _ready() -> void:
 	pivot_offset = size * 0.5
 	icon = KuihIcon.new()
 	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	icon.cell_ratio = 0.82
+	icon.cell_ratio = 0.92
 	add_child(icon)
 	_rim_light = Control.new()
 	_rim_light.name = "DulangRimSparkle"
@@ -106,7 +106,15 @@ func _sync_special_idle() -> void:
 	_idle_special_kind = kind
 	icon.scale = Vector2.ONE
 	icon.rotation = 0.0
+	icon.directional_spread = 0.0
+	icon.directional_alpha = 1.0
 	if kind == BoardCell.Special.NONE:
+		return
+	if kind in [BoardCell.Special.TAPAU,BoardCell.Special.TAPAU_VERTICAL]:
+		# Show the new special immediately, then repeat after a three-second rest.
+		_set_directional_idle(0.0)
+		_special_idle_tween = icon.create_tween().set_loops()
+		_special_idle_tween.tween_method(_set_directional_idle,0.0,4.2,4.2)
 		return
 	# One gentle left-right cycle over 4.8 seconds, without a scale pulse.
 	_wiggle_amplitude = deg_to_rad(1.2 if kind in [BoardCell.Special.TAPAU, BoardCell.Special.TAPAU_VERTICAL] else 2.0)
@@ -123,6 +131,27 @@ func _set_special_wiggle(phase: float) -> void:
 	if icon != null:
 		icon.rotation = sin(phase)*_wiggle_amplitude
 
+
+
+func _set_directional_idle(seconds: float) -> void:
+	if icon == null:
+		return
+	icon.directional_spread = smoothstep(.16,1.05,seconds)
+	icon.directional_alpha = smoothstep(0,.18,seconds)*(1-smoothstep(.75,1.15,seconds))
+
+
+func animate_directional_activation() -> void:
+	if icon == null:
+		return
+	if _special_idle_tween != null and _special_idle_tween.is_valid():
+		_special_idle_tween.kill()
+	_special_idle_tween = null
+	icon.directional_alpha = 1.0
+	icon.directional_spread = 0.0
+	var tween := icon.create_tween()
+	tween.tween_property(icon,"directional_spread",1.0,.15).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	tween.parallel().tween_method(func(seconds: float): icon.directional_alpha = .3+.7*pow(cos(seconds*PI*18),2),0.0,.15,.15)
+	tween.tween_property(icon,"directional_alpha",0.0,.03)
 
 
 func set_selected(value: bool) -> void:

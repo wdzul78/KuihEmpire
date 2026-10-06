@@ -33,19 +33,21 @@ enum Sfx {
 	CROSS_BLAST,
 	SPATULA,
 	SHUFFLE,
+	HANTAR_EXIT,
 }
 
 const MENU_MUSIC := "res://audio/music/menu.ogg"
 const GAMEPLAY_MUSIC := "res://audio/music/cozy_puzzle_gameplay.ogg"
 const FILE_SFX := {
-	Sfx.TAP: "tap", Sfx.SWAP: "swap", Sfx.INVALID: "invalid",
-	Sfx.MATCH: "v2/match_1", Sfx.SPECIAL: "v2/special_create", Sfx.SERVE: "v2/serve",
+	Sfx.TAP: "tap", Sfx.SWAP: "swap", Sfx.INVALID: "invalid_connect_v1/puzzle_tile_adjust_connect_05",
+	Sfx.MATCH: "match_jump_v1/little_jump_up_01", Sfx.SPECIAL: "v2/special_create", Sfx.SERVE: "v2/serve",
 	Sfx.FAIL: "fail", Sfx.REWARD: "v2/reward", Sfx.UNLOCK: "v2/unlock",
 	Sfx.PACK: "pack", Sfx.DROP: "drop", Sfx.LINE_CLEAR: "v2/line_clear",
 	Sfx.TAPAU_BLAST: "v2/directional_tapau", Sfx.TRAY_BLAST: "v2/tray_burst",
-	Sfx.ORDER_BURST: "v2/order_burst", Sfx.SUCCESS: "v2/success",
-	Sfx.HANTAR_CREATE: "v2/hantar_create", Sfx.HANTAR_LAUNCH: "v2/hantar_launch",
-	Sfx.HANTAR_HIT: "v2/hantar_hit", Sfx.CROSS_BLAST: "v2/cross_tapau",
+	Sfx.ORDER_BURST: "v2/order_burst", Sfx.SUCCESS: "win_pack_v1/big_game_win_pack1_01",
+	Sfx.HANTAR_CREATE: "v2/hantar_create", Sfx.HANTAR_LAUNCH: "delivery_rotor_v1/rotor_launch",
+	Sfx.HANTAR_HIT: "delivery_rotor_v1/claw_pickup", Sfx.CROSS_BLAST: "v2/cross_tapau",
+	Sfx.HANTAR_EXIT: "delivery_rotor_v1/rotor_exit",
 	Sfx.SPATULA: "v2/spatula", Sfx.SHUFFLE: "v2/shuffle",
 }
 
@@ -91,15 +93,14 @@ func _ready() -> void:
 	_streams[Sfx.HANTAR_CREATE] = SfxSynth.pack()
 	_streams[Sfx.HANTAR_LAUNCH] = SfxSynth.delivery_launch()
 	_streams[Sfx.HANTAR_HIT] = SfxSynth.delivery_hit()
+	_streams[Sfx.HANTAR_EXIT] = SfxSynth.delivery_launch()
 	for which in FILE_SFX:
 		var path := "res://audio/sfx/%s.wav" % FILE_SFX[which]
 		if ResourceLoader.exists(path):
 			_streams[which] = load(path)
 
-	for i in 4:
-		var path := "res://audio/sfx/v2/match_%d.wav" % (i+1)
-		if ResourceLoader.exists(path):
-			_match_variants.append(load(path) as AudioStreamWAV)
+	if _streams.has(Sfx.MATCH):
+		_match_variants.append(_streams[Sfx.MATCH] as AudioStreamWAV)
 
 	for i in SFX_VOICES:
 		var player := AudioStreamPlayer.new()
@@ -157,6 +158,15 @@ func play_match(step: int) -> void:
 		stream = SfxSynth.match(step)
 		_cache[key] = stream
 	play_stream(stream, 1.0, -3.0)
+
+
+func play_combo(count: int) -> void:
+	if count not in [3,4,5] or not sfx_enabled or _suspended:
+		return
+	var key := "combo_praise_%d" % count
+	if not _cache.has(key):
+		_cache[key] = SfxSynth.combo(count)
+	play_stream(_cache[key],1.0,-5.0)
 
 
 func play_stream(stream: AudioStream, pitch: float = 1.0, volume_db: float = 0.0) -> void:

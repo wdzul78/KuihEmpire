@@ -1,5 +1,9 @@
 # Project working instructions
 
+## Android builds
+
+Do not generate an APK after routine changes. Build an APK only when the user explicitly requests it.
+
 ## Back up designs before changing them
 
 The user requires a separate original copy BEFORE every design edit or asset replacement. This includes generated images, icons, audio assets, and related UI layout/scene files being changed for a design adjustment. Versioned asset directories alone do not replace this backup.

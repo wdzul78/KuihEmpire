@@ -22,6 +22,7 @@ func _ready() -> void:
 	UIKit.apply_root_theme(self)
 	_build()
 	_refresh()
+	MobileLayout.bind(self,["BackgroundLayer"])
 	ProgressionManager.stars_changed.connect(func(_a: int, _b: int) -> void: _refresh())
 	EconomyManager.coins_changed.connect(func(_a: int) -> void: _refresh())
 

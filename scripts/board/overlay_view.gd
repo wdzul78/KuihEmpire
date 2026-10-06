@@ -45,16 +45,29 @@ func _draw() -> void:
 	var r := Rect2(Vector2.ZERO, size)
 	BoardArt.draw_blocker(self, r, kind, hp, max_hp)
 	if not is_target():
+		if max_hp > 1:
+			_draw_count(str(hp))
 		return
 	if need <= 0:
 		return
-	# little reminder of which kuih this target wants
-	if target_kuih != null:
-		draw_circle(Vector2(r.size.x * 0.5, r.size.y * 0.36), r.size.x * 0.16, Palette.WOOD_DARK)
-		draw_circle(Vector2(r.size.x * 0.5, r.size.y * 0.36), r.size.x * 0.13, target_kuih.color)
+	# Show the actual requested kuih inside the open container.
+	if target_kuih != null and target_kuih.texture != null:
+		var edge := minf(size.x, size.y) * .36
+		var center := size * Vector2(.48, .63 if kind == BlockerSpec.Kind.PACKAGING_BOX else .5)
+		BoardArt.draw_item_texture(self, Rect2(center - Vector2.ONE * edge * .5, Vector2.ONE * edge), target_kuih.texture)
 	# progress pip strip along the bottom
-	var bar := Rect2(r.size.x * 0.16, r.size.y * 0.80, r.size.x * 0.68, r.size.y * 0.12)
-	draw_rect(bar.grow(3.0), Palette.WOOD_DARK)
+	var bar := Rect2(r.size.x * 0.16, r.size.y * 0.86, r.size.x * 0.52, r.size.y * 0.05)
+	draw_rect(bar.grow(1.0), Palette.WOOD_DARK)
 	draw_rect(bar, Color(0.85, 0.82, 0.76, 0.7))
 	var filled := bar.size.x * clampf(float(progress) / float(need), 0.0, 1.0)
 	draw_rect(Rect2(bar.position, Vector2(filled, bar.size.y)), Palette.PINK)
+	_draw_count(str(maxi(0, need - progress)))
+
+
+func _draw_count(value: String) -> void:
+	var font := get_theme_default_font()
+	var font_size := maxi(12, roundi(size.x * .28))
+	var width := font.get_string_size(value, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x
+	var at := Vector2(size.x * .94 - width, size.y * .92)
+	draw_string_outline(font, at, value, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, 4, Color("4a2c17"))
+	draw_string(font, at, value, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, Color("fff7dd"))

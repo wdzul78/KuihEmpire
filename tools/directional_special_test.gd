@@ -81,6 +81,7 @@ func run() -> void:
                 beams += 1
                 check(effect.a.y == effect.b.y if kind == H else effect.a.x == effect.b.x, "native visual beam follows its direction")
                 check(effect.a == Vector2(100,100), "directional beams start at special origin")
+                check(effect.get("tapau",false) and effect.width >= 50*.30, "Tapau has a thick electric lane and travelling direction marker")
         check(beams == 2, "two outward beams per directional activation")
     vfx.reset()
     vfx.cross(Vector2(100,100),PackedVector2Array([Vector2.ZERO,Vector2(200,200)]),50)
@@ -92,5 +93,20 @@ func run() -> void:
     check(cross_beams == 4, "cross visual has four outward beams, plus decorative flash/ring")
     vfx.free()
     check(BoardArt.special_texture(H) != BoardArt.special_texture(V), "directional sprites use distinct assets")
+    var tile := TileView.new()
+    tile.size = Vector2(50,50)
+    tile.cell = board().get_cell(Vector2i.ZERO)
+    tile.cell.special = H
+    add_child(tile)
+    await get_tree().create_timer(.30).timeout
+    check(tile.icon.directional_alpha > .9 and tile.icon.directional_spread > 0, "new Tapau shows moving arrows")
+    await get_tree().create_timer(1.0).timeout
+    check(tile.icon.directional_alpha == 0 and is_instance_valid(tile.icon), "arrows disappear while packaging remains")
+    await get_tree().create_timer(3.1).timeout
+    check(tile.icon.directional_alpha > .9, "arrows reappear after idle rest")
+    tile.animate_directional_activation()
+    await get_tree().create_timer(.20).timeout
+    check(tile.icon.directional_alpha == 0 and tile._special_idle_tween == null, "activation hands arrows to VFX and stops idle loop")
+    tile.free()
     print("Directional special tests: %s (%d problems)" % ["PASS" if problems == 0 else "FAIL",problems])
     get_tree().quit(0 if problems == 0 else 1)

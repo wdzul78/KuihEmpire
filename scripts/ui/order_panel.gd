@@ -43,6 +43,7 @@ var _chips_row: Control
 var _card: Panel
 var _bubble: PanelContainer
 var _coaching := false
+var compact_mode := true
 var tutorial_layout: PackedScene = GameUILayout.TUTORIAL
 var campaign_layout: PackedScene = GameUILayout.CAMPAIGN
 var _order: CustomerOrder = null
@@ -51,7 +52,7 @@ var _chips: Dictionary = {}   # kuih id -> {icon, count, label, root}
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	custom_minimum_size = Vector2(0, 380)
+	custom_minimum_size = Vector2.ZERO
 	_build()
 
 
@@ -191,12 +192,23 @@ func set_coaching(value: bool, preserve_tutorial_layout: bool = false) -> void:
 	if not value:
 		bind(_order)
 	GameUILayout.apply_order(self, tutorial_layout if tutorial_presentation else campaign_layout)
+	set_compact(not tutorial_presentation)
 	_layout_chips()
 	_redraw_characters()
 
 
+func set_compact(value: bool) -> void:
+	compact_mode = value
+	_portrait.framing = 0 if value else 1
+	_aina.framing = 0 if value else 1
+	_portrait.compact_portrait = value
+	_aina.compact_portrait = value
+	_bubble.visible = not value
+	_redraw_characters()
+
+
 func set_story_speaker(speaker: int) -> void:
-	_bubble.visible = speaker < 0
+	_bubble.visible = speaker < 0 and not compact_mode
 	_portrait.modulate = Color.WHITE
 	_aina.modulate = Color.WHITE
 	if speaker < 0:

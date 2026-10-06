@@ -357,6 +357,16 @@ func guided_cells() -> Array[Vector2i]:
 	return step.highlight
 
 
+func allows_activation(pos: Vector2i, logic: BoardState) -> bool:
+	if _finished or steps.is_empty():
+		return true
+	var step := _current()
+	if step.gate == TutorialStepData.Gate.ACTIVATED_SPECIAL:
+		return pos in _hint_cells and logic.get_cell(pos).special == step.gate_value
+	# Creation and combination lessons still require their demonstrated swap.
+	return step.gate not in [TutorialStepData.Gate.INTRO, TutorialStepData.Gate.CREATED_TAPAU, TutorialStepData.Gate.CREATED_DULANG, TutorialStepData.Gate.CREATED_HANTAR, TutorialStepData.Gate.CREATED_VERTICAL, TutorialStepData.Gate.ACTIVATED_CROSS]
+
+
 func allows_swap(a: Vector2i, b: Vector2i) -> bool:
 	if _finished or steps.is_empty():
 		return true

@@ -100,7 +100,8 @@ func run() -> void:
 	var previous := ProgressionManager.best_score(1)
 	live._start_level()
 	live.story.close()
-	live.score.add_points(100)
+	# Stage 1's two-star threshold is now 100; stay below it for this replay.
+	live.score.add_points(50)
 	live.moves_left = 0
 	for order in live.orders:
 		order.collect(order.target.duplicate())

@@ -1,6 +1,8 @@
 class_name GeraiBackdrop
 extends Control
 const MVP_BACKGROUND_PATH := "res://assets/backgrounds/gerai_mvp.png"
+const SOFT_GAMEPLAY_PATH := "res://assets/backgrounds/gameplay_soft_v1/kampung_soft_portrait.png"
+var gameplay_mode := false
 
 var location_id: StringName = &"family_stall"
 var structural_state := 0
@@ -85,7 +87,7 @@ func _draw() -> void:
 		var source_size := _background.get_size()
 		var scale_factor := maxf(size.x / source_size.x, size.y / source_size.y)
 		var drawn_size := source_size * scale_factor
-		draw_texture_rect(_background, Rect2((size - drawn_size) * 0.5, drawn_size), false)
+		draw_texture_rect(_background, Rect2((size - drawn_size) * 0.5, drawn_size), false, Color(.92,.92,.92) if gameplay_mode else Color.WHITE)
 		_draw_structure()
 		_draw_decor()
 		return
@@ -247,6 +249,10 @@ func _sync_environment() -> void:
 	structural_state = _state_override if _state_override >= 0 else LocationManager.structural_level(location.id)
 	background_id = location.preset
 	var path := LocationManager.effective_background(location, structural_state)
+	# Preserve location progression and upgrades; only replace the default stall
+	# wallpaper during puzzles. Other screens retain their original presentation.
+	if gameplay_mode and path == MVP_BACKGROUND_PATH:
+		path = SOFT_GAMEPLAY_PATH
 	if path != texture_path or (_background == null and not path.is_empty()):
 		texture_path = path
 		_background = load(path) if not path.is_empty() else null

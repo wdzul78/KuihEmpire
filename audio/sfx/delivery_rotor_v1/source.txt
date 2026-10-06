@@ -1,0 +1,6 @@
+Original Kuih Empire delivery SFX, generated 2026-10-06.
+Generator: tools/build_delivery_rotor_audio.py; deterministic noise synthesis.
+rotor_launch: light accelerating helicopter blade pulses and soft air swoosh.
+claw_pickup: two compact mechanical clicks.
+rotor_exit: faster blade pulses and a fading departure swoosh.
+Mono 16-bit PCM, 44100Hz. No external recordings.
