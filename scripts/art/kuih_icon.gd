@@ -19,6 +19,10 @@ const OUTLINE_WIDTH := 0.05
 const SHADOW := Color(0.25, 0.15, 0.05, 0.18)
 static var _art_regions: Dictionary = {}
 var _rotor_time := 0.0
+var order_activation: float = 0.0:
+	set(value):
+		order_activation = clampf(value, 0.0, 1.0)
+		queue_redraw()
 var directional_spread: float = 0.0:
 	set(value):
 		directional_spread = clampf(value,0,1)
@@ -39,12 +43,12 @@ var directional_alpha: float = 1.0:
 var special_kind: int = BoardCell.Special.NONE:
 	set(value):
 		special_kind = value
-		set_process(value == BoardCell.Special.HANTAR)
+		set_process(value in [BoardCell.Special.HANTAR,BoardCell.Special.DULANG,BoardCell.Special.ORDER,BoardCell.Special.TAPAU,BoardCell.Special.TAPAU_VERTICAL])
 		queue_redraw()
 
 
 func _ready() -> void:
-	set_process(special_kind == BoardCell.Special.HANTAR)
+	set_process(special_kind in [BoardCell.Special.HANTAR,BoardCell.Special.DULANG,BoardCell.Special.ORDER,BoardCell.Special.TAPAU,BoardCell.Special.TAPAU_VERTICAL])
 	# Only supply a default - callers routinely ask for a bigger icon and this
 	# runs after they set one.
 	if custom_minimum_size == Vector2.ZERO:
@@ -82,7 +86,13 @@ func _draw() -> void:
 		BoardArt.draw_delivery(self,Rect2((size-Vector2.ONE*edge)*.5,Vector2.ONE*edge),_rotor_time*1.4)
 		return
 	if special_kind in [BoardCell.Special.TAPAU,BoardCell.Special.TAPAU_VERTICAL]:
-		BoardArt.draw_directional(self,Rect2(Vector2.ZERO,size),special_kind == BoardCell.Special.TAPAU_VERTICAL,directional_spread,directional_alpha)
+		BoardArt.draw_directional(self,Rect2(Vector2.ZERO,size),special_kind == BoardCell.Special.TAPAU_VERTICAL,directional_spread,directional_alpha,_rotor_time)
+		return
+	if special_kind == BoardCell.Special.ORDER:
+		BoardArt.draw_order(self,Rect2(Vector2.ZERO,size),_rotor_time,order_activation)
+		return
+	if special_kind == BoardCell.Special.DULANG:
+		BoardArt.draw_dulang_animated(self,Rect2(Vector2.ZERO,size),_rotor_time)
 		return
 	var special_art := BoardArt.special_texture(special_kind)
 	if special_art != null:
@@ -97,6 +107,8 @@ func _draw() -> void:
 		_draw_asset(special_art, rect, width_scale)
 		return
 	if kuih.texture != null:
+		if kuih.id == &"kuih_koci":
+			rect = rect.grow(minf(rect.size.x,rect.size.y)*.025)
 		_draw_asset(kuih.texture, rect)
 		return
 	# Soft ground shadow keeps every tile readable against the board.

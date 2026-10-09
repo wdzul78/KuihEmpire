@@ -153,6 +153,14 @@ static func _build() -> void:
 		},
 	]
 
+	defs.append_array([
+		{"id": &"kuih_bom", "name": "Kuih Bom", "shape": KuihData.Shape.ORB, "cat": KuihData.Category.FRIED, "color": Color("e9a137"), "accent": Color("9b641e"), "detail": Color("fff0cf"), "chapter": 2, "note": "Golden sesame-coated fried kuih."},
+		{"id": &"seri_muka", "name": "Seri Muka", "shape": KuihData.Shape.LAYER_CAKE, "cat": KuihData.Category.LAYERED, "color": Color("8ecf22"), "accent": Color("9b641e"), "detail": Color("fff0cf"), "chapter": 2, "note": "Pandan custard over a layer of glutinous rice."},
+		{"id": &"agar_agar_ros", "name": "Agar-agar Ros", "shape": KuihData.Shape.FLOWER_RING, "cat": KuihData.Category.SNACK, "color": Color("f64b98"), "accent": Color("9b641e"), "detail": Color("fff0cf"), "chapter": 2, "note": "Rose-flavoured jelly in a flower mould."},
+		{"id": &"karipap", "name": "Karipap", "shape": KuihData.Shape.FLAKY, "cat": KuihData.Category.FRIED, "color": Color("efa133"), "accent": Color("9b641e"), "detail": Color("fff0cf"), "chapter": 2, "note": "Golden curry puff with a crimped pastry edge."},
+		{"id": &"tart", "name": "Tart", "shape": KuihData.Shape.PAPER_CUP, "cat": KuihData.Category.BAKED, "color": Color("ffcf23"), "accent": Color("9b641e"), "detail": Color("fff0cf"), "chapter": 2, "note": "Golden pastry cup filled with custard."},
+	])
+
 	for def in defs:
 		var kuih := KuihData.new()
 		kuih.id = def["id"]
@@ -172,6 +180,20 @@ static func _build() -> void:
 			art_path = "res://assets/kuih/%s.png" % String(kuih.id)
 		if ResourceLoader.exists(art_path):
 			kuih.texture = load(art_path) as Texture2D
+			# Ignore faint stray alpha outside the supplied food silhouettes.
+			var food_regions := {
+				&"kuih_koci": Rect2(151,226,951,836),
+				&"kuih_lapis": Rect2(190,168,874,943), &"keria": Rect2(150,176,946,925),
+				&"onde_onde": Rect2(168,176,919,939), &"ang_ku_kueh": Rect2(130,210,1022,879),
+				&"kuih_ketayap": Rect2(190,213,926,845), &"kuih_bom": Rect2(165,178,932,935),
+				&"seri_muka": Rect2(158,181,931,922), &"agar_agar_ros": Rect2(49,192,1145,909),
+				&"karipap": Rect2(25,179,1209,913), &"tart": Rect2(40,162,1192,969),
+			}
+			if food_regions.has(kuih.id) and art_path == "res://assets/kuih/cartoon_v3/%s.png" % String(kuih.id):
+				var framed := AtlasTexture.new()
+				framed.atlas = kuih.texture
+				framed.region = food_regions[kuih.id]
+				kuih.texture = framed
 		_by_id[kuih.id] = kuih
 		_order.append(kuih)
 

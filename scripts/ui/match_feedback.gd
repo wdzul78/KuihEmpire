@@ -29,8 +29,10 @@ func reset() -> void:
 		_tween.kill()
 	hide()
 
-func show_clear(points: int, cascade: int, board_size: Vector2, multiplier: float = 1.0) -> void:
+func show_clear(points: int, cascade: int, board_size: Vector2, multiplier: float = 1.0, origin: Vector2 = Vector2(-1, -1)) -> void:
 	reset()
+	size = Vector2(clampf(board_size.x * .48, 220, 440), minf(180, board_size.y * .20))
+	pivot_offset = size * .5
 	_combo.visible = cascade > 0
 	_multiplier.visible = cascade > 0
 	_multiplier.text = "x" + ("%.2f" % multiplier).trim_suffix("0").trim_suffix("0").trim_suffix(".")
@@ -39,8 +41,13 @@ func show_clear(points: int, cascade: int, board_size: Vector2, multiplier: floa
 		font_size -= 2
 	_multiplier.add_theme_font_size_override("font_size", font_size)
 	_points.text = "+%d" % points
+	var points_font := clampi(roundi(size.x * .14), 28, 62)
+	while points_font > 20 and _points.get_theme_font("font").get_string_size(_points.text, HORIZONTAL_ALIGNMENT_LEFT, -1, points_font).x > size.x * .40:
+		points_font -= 2
+	_points.add_theme_font_size_override("font_size", points_font)
 	tooltip_text = "Score +%d" % points
-	position = Vector2((board_size.x - size.x) * .5, board_size.y * .18)
+	var focus := origin if origin.x >= 0 else Vector2(board_size.x * .5, board_size.y * .28)
+	position = Vector2(clampf(focus.x - size.x * .5, 0, maxf(0, board_size.x - size.x)), clampf(focus.y - size.y, 12, maxf(12, board_size.y - size.y - 12)))
 	modulate.a = 1
 	scale = Vector2.ONE * .75
 	show()

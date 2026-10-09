@@ -3,6 +3,7 @@ extends Control
 
 ## Editor-only representation of a counter character; no gameplay/autoload dependency.
 @export var portrait_texture: Texture2D
+@export var compact_portrait := false
 var _texture: Texture2D
 var _region := Rect2()
 
@@ -22,6 +23,20 @@ func _draw() -> void:
         _texture = portrait_texture
         _region = Rect2(_texture.get_image().get_used_rect())
     var region := _region
+    if compact_portrait:
+        if portrait_texture.resource_path.ends_with("aina.png"):
+            region = Rect2(portrait_texture.get_size()*Vector2(.30,.06),portrait_texture.get_size()*Vector2(.50,.333))
+        else:
+            var crop_side := region.size.y*.38
+            region = Rect2(Vector2(region.get_center().x-crop_side*.5,region.position.y),Vector2.ONE*crop_side)
+        var points := PackedVector2Array()
+        var uv := PackedVector2Array()
+        for index in 64:
+            var direction := Vector2.from_angle(TAU*float(index)/64.0)
+            points.append(size*.5+direction*minf(size.x,size.y)*.5)
+            uv.append((region.position+(direction*.5+Vector2.ONE*.5)*region.size)/portrait_texture.get_size())
+        draw_polygon(points,PackedColorArray([Color.WHITE]),uv,portrait_texture)
+        return
     var fit := minf(size.x / region.size.x, size.y / region.size.y)
     var fitted := region.size * fit
     var destination := Rect2((size - fitted) * .5, fitted)

@@ -14,6 +14,7 @@ signal booster_requested(booster: int)
 
 const TOP_HEIGHT := 600
 const BOTTOM_HEIGHT := 190
+const STAGE_BOARD_PATH := "res://assets/ui/stage_profile_v1/stage_profile_board.png"
 
 var board_holder: Control
 var order_panel: OrderPanel
@@ -22,6 +23,7 @@ var booster_bar: BoosterBar
 var _coin_pill: Control
 var _title_label: Label
 var _queue_row: HBoxContainer
+var _moves_pulse: Tween
 var _moves_label: Label
 var _moves_cap: Label
 var _moves_card: Panel
@@ -32,7 +34,6 @@ var score_progress: ScoreProgress
 var _is_tutorial: bool = false
 var tutorial_layout: PackedScene = GameUILayout.TUTORIAL
 var campaign_layout: PackedScene = GameUILayout.CAMPAIGN
-var _hint_button: Button
 var _title_plaque: Panel
 
 
@@ -57,10 +58,6 @@ func set_tutorial_mode(value: bool) -> void:
 		_title_label.anchor_bottom = .127
 		_title_label.add_theme_color_override("font_color", Palette.WOOD_DARK)
 		_title_label.add_theme_constant_override("outline_size", 0)
-		_hint_button.anchor_left = .67
-		_hint_button.anchor_right = .77
-		_hint_button.anchor_top = .087
-		_hint_button.anchor_bottom = .143
 	else:
 		if _title_label != null:
 			_title_label.add_theme_font_size_override("font_size", 24)
@@ -70,24 +67,19 @@ func set_tutorial_mode(value: bool) -> void:
 			_title_label.anchor_top = .115
 			_title_label.anchor_right = .26
 			_title_label.anchor_bottom = .143
-		if _hint_button != null:
-			_hint_button.add_theme_font_size_override("font_size", 26)
-			_hint_button.anchor_left = .30
-			_hint_button.anchor_right = .355
-			_hint_button.anchor_top = .09
-			_hint_button.anchor_bottom = .115
 
 	if is_instance_valid(order_panel):
 		GameUILayout.apply_hud(self, tutorial_layout if value else campaign_layout)
 		GameUILayout.apply_order(order_panel, tutorial_layout if value else campaign_layout)
-		order_panel.set_compact(not value)
+		order_panel.set_compact(true)
 		get_node("Logo").hide()
 		get_node("HeartMeter").hide()
-		_queue_row.hide()
+		_queue_row.visible = not value
 		_title_plaque.show()
 		_title_label.add_theme_color_override("font_color",Palette.WOOD_DARK)
 		_title_label.add_theme_constant_override("outline_size",0)
-		_title_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		_title_label.autowrap_mode = TextServer.AUTOWRAP_OFF
+		_title_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 		_title_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 
 
@@ -132,16 +124,24 @@ func _build() -> void:
 	var settings := _round_button("⚙", Palette.WOOD)
 	settings.text = ""
 	GameplaySkin.button(settings, "settings")
+	settings.accessibility_name = "Settings"
+	settings.tooltip_text = "Settings"
 	settings.pressed.connect(func() -> void: settings_pressed.emit())
 	_place(settings, Rect2(0.905, 0.0389, 0.075, 0.0422))
 
 	_title_plaque = Panel.new()
 	_title_plaque.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_title_plaque.add_theme_stylebox_override("panel", UIKit.cream_box())
+	var stage_art := AtlasTexture.new()
+	stage_art.atlas = load(STAGE_BOARD_PATH)
+	stage_art.region = Rect2(9,20,1758,859)
+	var stage_style := StyleBoxTexture.new()
+	stage_style.texture = stage_art
+	_title_plaque.add_theme_stylebox_override("panel", stage_style)
 	_place(_title_plaque, Rect2(.12, .09, .54, .04))
 	_title_plaque.visible = false
 	_title_label = UIKit.label("", 24, Palette.PAPER)
 	_title_label.clip_text = true
+	_title_label.resized.connect(_fit_stage_text)
 	_title_label.add_theme_color_override("font_outline_color", Palette.WOOD_DARK)
 	_title_label.add_theme_constant_override("outline_size", 5)
 	_stage_title = _title_label
@@ -154,7 +154,7 @@ func _build() -> void:
 		_title_label.anchor_bottom = .133
 
 	_moves_card = Panel.new()
-	_moves_card.add_theme_stylebox_override("panel", GameplaySkin.box("moves_board"))
+	_moves_card.add_theme_stylebox_override("panel", GameplaySkin.box("moves_hanging"))
 	_place(_moves_card, Rect2(0.815, 0.102, 0.15, 0.078))
 	_moves_label = UIKit.label("0", 46, Palette.GOLD_PALE)
 	_moves_label.add_theme_color_override("font_outline_color", Palette.WOOD_DARK)
@@ -177,28 +177,6 @@ func _build() -> void:
 	practice.add_child(UIKit.label(JourneyArt.localized("LATIHAN", "LESSON"), 29, Palette.GOLD_PALE))
 	practice.add_child(UIKit.label(JourneyArt.localized("Santai", "Practice"), 26, Palette.PAPER))
 	_lesson_badge.visible = _is_tutorial
-	var hint := _round_button("", Palette.LEAF)
-	_hint_button = hint
-	hint.custom_minimum_size = Vector2(54, 54)
-	hint.add_theme_font_size_override("font_size", 44)
-	hint.tooltip_text = JourneyArt.localized("Tunjukkan langkah", "Show a hint")
-	for state in ["normal", "hover", "pressed"]:
-		var color := Palette.LEAF if state == "normal" else Palette.LEAF_LIGHT if state == "hover" else Palette.LEAF_DEEP
-		hint.add_theme_stylebox_override(state, UIKit.flat_box(color, Palette.WOOD_DARK, 0, 5, 54))
-	hint.pressed.connect(func() -> void: hint_pressed.emit())
-	_place(hint, Rect2(0.30, 0.09, 0.055, 0.025))
-	var hint_icon := TextureRect.new()
-	hint_icon.texture = TutorialArt.texture("hint_bulb")
-	hint_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	hint_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	hint_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	order_place(hint, hint_icon, Rect2(.12, .10, .76, .80))
-	if _is_tutorial:
-		hint.anchor_left = .755
-		hint.anchor_right = .80
-		hint.anchor_top = .095
-		hint.anchor_bottom = .12
-
 	order_panel = OrderPanel.new()
 	_place(order_panel, Rect2(0.045, 0.115, 0.91, 0.225))
 	_queue_row = UIKit.hbox(6)
@@ -224,7 +202,7 @@ func _build() -> void:
 		"ScoreMeter": score_progress, "PauseButton": settings,
 		"StageTitleFrame": _title_plaque, "StageTitle": _title_label,
 		"MovesPanel": _moves_card, "MovesValue": _moves_label, "MovesCaption": _moves_cap,
-		"LessonBadge": _lesson_badge, "HintButton": hint, "HintIcon": hint_icon,
+		"LessonBadge": _lesson_badge,
 		"OrderArea": order_panel, "CustomerQueue": _queue_row,
 		"PuzzleBoard": board_holder, "SpecialItemsTray": tray, "SpecialItems": booster_bar,
 	}
@@ -268,7 +246,27 @@ func _round_button(text: String, color: Color) -> Button:
 # --- updates ---------------------------------------------------------------
 
 func set_stage(stage_id: int, title: String) -> void:
-	_stage_title.text = title if _is_tutorial else "Stage %d\n%s" % [stage_id,title]
+	var username := str(SaveManager.data.get("profile", {}).get("name", "Player")).strip_edges()
+	if username.is_empty():
+		username = "Player"
+	_stage_title.text = "%s\n%s" % [title if _is_tutorial else "Stage %d" % stage_id,username]
+	_stage_title.tooltip_text = "%s • %s" % [title,username]
+	_fit_stage_text()
+
+
+func _fit_stage_text() -> void:
+	if not is_instance_valid(_title_label) or _title_label.size.x <= 0:
+		return
+	var font := _title_label.get_theme_font("font")
+	var font_size := 32
+	while font_size > 22:
+		var widest := 0.0
+		for line in _title_label.text.split("\n"):
+			widest = maxf(widest,font.get_string_size(line,HORIZONTAL_ALIGNMENT_LEFT,-1,font_size).x)
+		if widest <= _title_label.size.x-8 and font.get_height(font_size)*2 <= _title_label.size.y:
+			break
+		font_size -= 1
+	_title_label.add_theme_font_size_override("font_size",font_size)
 
 
 func set_coins(amount: int) -> void:
@@ -277,20 +275,21 @@ func set_coins(amount: int) -> void:
 		coin.amount = amount
 
 
-func set_moves(left: int, total: int) -> void:
+func set_moves(left: int, total: int, bonus: bool = false) -> void:
+	if _moves_pulse != null and _moves_pulse.is_valid():
+		_moves_pulse.kill()
+	_moves_pulse = null
+	_moves_label.scale = Vector2.ONE
 	_moves_label.text = str(maxi(0, left))
-	_moves_cap.text = "MOVES" if left > 3 else "HURRY!"
-	var style := GameplaySkin.box("moves_board")
-	if left <= 3:
+	_moves_cap.text = "BONUS" if bonus else ("MOVES" if left > 3 else "HURRY!")
+	var style := GameplaySkin.box("moves_hanging")
+	if left <= 3 and not bonus:
 		style.modulate_color = Color(1, .7, .7)
 	_moves_card.add_theme_stylebox_override("panel", style)
-	if left <= 3 and left > 0:
-		var tw := _moves_label.create_tween()
-		tw.set_loops()
-		tw.tween_property(_moves_label, "scale", Vector2(1.15, 1.15), 0.42)
-		tw.tween_property(_moves_label, "scale", Vector2.ONE, 0.42)
-	elif _moves_label.scale != Vector2.ONE:
-		_moves_label.scale = Vector2.ONE
+	if left <= 3 and left > 0 and not bonus:
+		_moves_pulse = _moves_label.create_tween().set_loops()
+		_moves_pulse.tween_property(_moves_label, "scale", Vector2(1.15, 1.15), .42)
+		_moves_pulse.tween_property(_moves_label, "scale", Vector2.ONE, .42)
 
 
 func set_queue(customers: Array) -> void:
@@ -304,12 +303,14 @@ func set_queue(customers: Array) -> void:
 		if customer == null:
 			continue
 		var chip := PanelContainer.new()
-		chip.add_theme_stylebox_override("panel", UIKit.cream_box())
+		chip.add_theme_stylebox_override("panel", StyleBoxEmpty.new())
 		chip.custom_minimum_size = Vector2(54, 54)
 		var portrait := CharacterIcon.new()
 		portrait.cast = CharacterIcon.Cast.CUSTOMER
 		portrait.customer = customer
 		portrait.framing = 0
+		portrait.compact_portrait = true
+		portrait.portrait_frame = true
 		portrait.custom_minimum_size = Vector2(46, 46)
 		chip.add_child(portrait)
 		_queue_row.add_child(chip)

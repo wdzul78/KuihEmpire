@@ -1,7 +1,8 @@
 class_name GeraiBackdrop
 extends Control
 const MVP_BACKGROUND_PATH := "res://assets/backgrounds/gerai_mvp.png"
-const SOFT_GAMEPLAY_PATH := "res://assets/backgrounds/gameplay_soft_v1/kampung_soft_portrait.png"
+const SOFT_GAMEPLAY_PATH := "res://assets/backgrounds/gameplay_market_v2/market_stall_portrait.png"
+const GAMEPLAY_BLUR := preload("res://shaders/gameplay_background_blur.gdshader")
 var gameplay_mode := false
 
 var location_id: StringName = &"family_stall"
@@ -70,6 +71,12 @@ const PRESETS := {
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	if gameplay_mode:
+		# Smooth source pixels when the cover scale exceeds 1 on larger phones.
+		texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+		var blur := ShaderMaterial.new()
+		blur.shader = GAMEPLAY_BLUR
+		material = blur
 	resized.connect(queue_redraw)
 	LocationManager.location_state_changed.connect(_location_changed)
 	_sync_environment()
@@ -88,8 +95,9 @@ func _draw() -> void:
 		var scale_factor := maxf(size.x / source_size.x, size.y / source_size.y)
 		var drawn_size := source_size * scale_factor
 		draw_texture_rect(_background, Rect2((size - drawn_size) * 0.5, drawn_size), false, Color(.92,.92,.92) if gameplay_mode else Color.WHITE)
-		_draw_structure()
-		_draw_decor()
+		if not gameplay_mode:
+			_draw_structure()
+			_draw_decor()
 		return
 	var w := size.x
 	var h := size.y
@@ -249,9 +257,9 @@ func _sync_environment() -> void:
 	structural_state = _state_override if _state_override >= 0 else LocationManager.structural_level(location.id)
 	background_id = location.preset
 	var path := LocationManager.effective_background(location, structural_state)
-	# Preserve location progression and upgrades; only replace the default stall
-	# wallpaper during puzzles. Other screens retain their original presentation.
-	if gameplay_mode and path == MVP_BACKGROUND_PATH:
+	# The supplied complete stall artwork is the puzzle backdrop. Location and
+	# restoration artwork continue to be displayed on the stall/shop screens.
+	if gameplay_mode:
 		path = SOFT_GAMEPLAY_PATH
 	if path != texture_path or (_background == null and not path.is_empty()):
 		texture_path = path

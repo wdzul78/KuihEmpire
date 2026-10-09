@@ -2,6 +2,8 @@ class_name SpecialExecutionText
 extends Control
 
 const SHEET = preload("res://assets/ui/special_execution_v1/titles_colored.png")
+const BADAK_TITLE = preload("res://assets/vfx/coconut_v1/badak_title.png")
+const PUTERI_TITLE = preload("res://assets/vfx/coconut_v1/puteri_title.png")
 const REGIONS := [Rect2(58,203,539,226),Rect2(670,204,549,222),Rect2(45,816,551,215),Rect2(651,829,572,176)]
 var _textures: Dictionary = {}
 var _tween: Tween
@@ -36,7 +38,7 @@ func _texture(index: int) -> Texture2D:
 		_textures[index] = atlas
 	return _textures[index]
 
-func show_wave(kinds: Array, board_size: Vector2, cell: float) -> void:
+func show_wave(kinds: Array, board_size: Vector2, cell: float, double_badak: bool = false) -> void:
 	reset()
 	var unique: Array[int] = []
 	for kind in kinds:
@@ -46,13 +48,21 @@ func show_wave(kinds: Array, board_size: Vector2, cell: float) -> void:
 	if unique.is_empty():
 		return
 	var row_height := minf(cell*.9,board_size.y*.13)
+	if unique.has(1):
+		row_height = minf(cell*1.85,board_size.y*.25)
 	size = Vector2(board_size.x*.78,row_height*unique.size())
+	if unique.has(1):
+		size.x = board_size.x*.92
 	position = Vector2((board_size.x-size.x)*.5,clampf(board_size.y*.46,0,board_size.y-size.y-20))
+	if unique.has(1):
+		position.y = clampf(board_size.y*.65,0,board_size.y-size.y-20)
 	pivot_offset = size*.5
 	for row in unique.size():
 		var graphic := TextureRect.new()
 		graphic.name = ["TapauGraphic","DulangGraphic","HantarGraphic","SpecialOrderGraphic"][unique[row]]
 		graphic.texture = _texture(unique[row])
+		if unique[row] == 1:
+			graphic.texture = PUTERI_TITLE if double_badak else BADAK_TITLE
 		graphic.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		graphic.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		graphic.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -64,7 +74,7 @@ func show_wave(kinds: Array, board_size: Vector2, cell: float) -> void:
 	show()
 	_tween = create_tween()
 	_tween.tween_property(self,"scale",Vector2.ONE,.16).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	_tween.tween_interval(.28)
+	_tween.tween_interval(.65 if unique.has(1) else .28)
 	_tween.tween_property(self,"position:y",position.y-row_height*.4,.28).set_trans(Tween.TRANS_SINE)
 	_tween.parallel().tween_property(self,"modulate:a",0.0,.28)
 	_tween.tween_callback(reset)

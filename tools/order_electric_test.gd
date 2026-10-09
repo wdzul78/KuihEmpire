@@ -37,6 +37,7 @@ func run() -> void:
 	board._play_step(result,0)
 	await get_tree().create_timer(.16).timeout
 	assert(board._vfx.effects.any(func(e: Dictionary) -> bool: return e.kind == "order_electric"))
+	assert(board._tiles[center].icon.order_activation > .10)
 	assert(target.position.distance_to(destination) == distance_before)
 	await shot("connected")
 	await get_tree().create_timer(.24).timeout
@@ -46,6 +47,20 @@ func run() -> void:
 	await get_tree().create_timer(1.3).timeout
 	assert(not is_instance_valid(target))
 	assert(board._vfx.effects.is_empty())
+	var animated := TileView.new()
+	animated.size = Vector2(100,100)
+	animated.cell = BoardCell.new()
+	animated.cell.kuih = KuihLibrary.get_kuih(&"onde_onde")
+	animated.cell.special = BoardCell.Special.ORDER
+	add_child(animated)
+	animated.animate_order_activation()
+	animated.animate_electric_flash()
+	await get_tree().create_timer(.12).timeout
+	assert(animated.icon.order_activation > 0.0 and animated.icon.order_activation < 1.0)
+	await get_tree().create_timer(.75).timeout
+	assert(is_equal_approx(animated.icon.order_activation,1.0))
+	assert(animated.icon.modulate.is_equal_approx(Color.WHITE))
+	animated.free()
 	var points := PackedVector2Array()
 	for i in 64:
 		points.append(Vector2(i%8,i/8)*50)

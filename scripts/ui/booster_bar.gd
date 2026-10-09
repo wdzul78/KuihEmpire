@@ -3,13 +3,13 @@ extends Control
 
 ## Booster tray (Master Plan section 38).
 ##
-## Sudip, Dulang, Shuffle and Tapau need the player to tap the board afterwards,
+## Tangan, Dulang, Shuffle and Tapau need the player to tap the board afterwards,
 ## so this bar only reports the request; the level screen drives the targeting.
 
 signal booster_requested(booster: int)
 
 const BUTTONS := [
-	{"booster": EconomyManager.Booster.SPATULA, "name": "Sudip", "color": Color("63a7e0")},
+	{"booster": EconomyManager.Booster.SPATULA, "name": "Tangan", "color": Color("63a7e0")},
 	{"booster": EconomyManager.Booster.TRAY, "name": "Dulang", "color": Palette.GOLD},
 	{"booster": EconomyManager.Booster.SHUFFLE, "name": "Shuffle", "color": Color("9bdc43")},
 	{"booster": EconomyManager.Booster.GIFT, "name": "Tapau", "color": Color("bc72df")},
@@ -22,8 +22,8 @@ var practice_mode := false
 var _locked_material: ShaderMaterial
 const SURFACES := ["booster_blue", "booster_gold", "booster_green", "booster_purple"]
 const ICONS := {
-	EconomyManager.Booster.SPATULA: preload("res://assets/boosters/sudip.png"),
-	EconomyManager.Booster.TRAY: preload("res://assets/boosters/dulang.png"),
+	EconomyManager.Booster.SPATULA: preload("res://assets/ui/booster_tray_v1/hand.png"),
+	EconomyManager.Booster.TRAY: preload("res://assets/specials/badak_berendam_v1/badak_berendam.png"),
 	EconomyManager.Booster.SHUFFLE: preload("res://assets/boosters/shuffle.png"),
 	EconomyManager.Booster.GIFT: preload("res://assets/boosters/tapau.png"),
 }
@@ -61,19 +61,17 @@ func _build() -> void:
 		button.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
 		button.offset_bottom = 164
 		button.focus_mode = Control.FOCUS_NONE
-		button.add_theme_stylebox_override("normal", UIKit.wood_box(entry["color"], Palette.WOOD_DARK, 12))
-		button.add_theme_stylebox_override("hover", UIKit.wood_box(Palette.jitter(entry["color"], 5, 0.08), Palette.WOOD_DARK, 12))
-		button.add_theme_stylebox_override("pressed", UIKit.wood_box(Palette.darken(entry["color"], 0.12), Palette.WOOD_DARK, 12))
-		button.add_theme_stylebox_override("disabled", UIKit.wood_box(Color("b9a891"), Color("8d8271"), 12))
+		for state in ["normal", "hover", "pressed", "disabled", "focus"]:
+			button.add_theme_stylebox_override(state, StyleBoxEmpty.new())
 		GameplaySkin.button(button, SURFACES[index])
-		var booster_name := JourneyArt.localized(entry["name"], ["Spatula", "Tray", "Shuffle", "Tapau"][index])
+		var booster_name := JourneyArt.localized(entry["name"], ["Hand", "Tray", "Shuffle", "Tapau"][index])
 		button.text = ""
 		button.tooltip_text = booster_name
 		if ICONS.has(booster):
 			button.text = ""
 			var art := TextureRect.new()
 			art.name = "BoosterArt"
-			art.texture = ICONS[booster]
+			art.texture = GameplaySkin.texture("booster_hand") if booster == EconomyManager.Booster.SPATULA else ICONS[booster]
 			art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 			art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 			art.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -98,11 +96,7 @@ func _build() -> void:
 		button.pressed.connect(_on_pressed.bind(booster))
 		holder.add_child(button)
 
-		var badge_style := StyleBoxFlat.new()
-		badge_style.bg_color = Palette.LEAF
-		badge_style.set_corner_radius_all(26)
-		badge_style.border_color = Palette.WOOD_DARK
-		badge_style.set_border_width_all(3)
+		var badge_style := GameplaySkin.box("booster_count")
 		var badge := PanelContainer.new()
 		badge.name = "Badge"
 		badge.add_theme_stylebox_override("panel", badge_style)
@@ -110,7 +104,10 @@ func _build() -> void:
 		badge.size = Vector2(56, 56)
 		badge.position = Vector2(112, -6)
 		badge.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		var badge_label := UIKit.label("0", 26, Palette.WHITE)
+		var badge_label := UIKit.label("0", 34, Palette.WHITE)
+		badge_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		badge_label.add_theme_color_override("font_outline_color", Color("8b190b"))
+		badge_label.add_theme_constant_override("outline_size", 5)
 		badge_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		badge.add_child(badge_label)
 		holder.add_child(badge)
@@ -129,9 +126,9 @@ func _recenter() -> void:
 		button.offset_bottom = side
 		var badge := holder.get_node_or_null("Badge") as Control
 		if badge != null:
-			badge.position = Vector2(side-42,-4)
-			badge.custom_minimum_size = Vector2(44,44)
-			badge.size = Vector2(44,44)
+			badge.position = Vector2(side-50,side-48)
+			badge.custom_minimum_size = Vector2(52,52)
+			badge.size = Vector2(52,52)
 	queue_redraw()
 
 
@@ -161,14 +158,8 @@ func selected() -> int:
 func _highlight() -> void:
 	for booster in _buttons:
 		var button: Button = _buttons[booster]
-		var entry: Dictionary = BUTTONS[0]
-		for candidate in BUTTONS:
-			if candidate["booster"] == booster:
-				entry = candidate
-				break
-		var base: Color = entry["color"]
 		if booster == _selected:
-			button.modulate = Palette.lighten(base, 0.35)
+			button.modulate = Color(1.18,1.18,1.18)
 			button.scale = Vector2(1.10, 1.10)
 			button.pivot_offset = button.size * 0.5
 		else:

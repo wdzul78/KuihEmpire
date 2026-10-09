@@ -1,32 +1,58 @@
-[gd_scene load_steps=21 format=3]
+[gd_scene load_steps=31 format=3]
 
-[ext_resource type="Texture2D" path="res://assets/backgrounds/gerai_mvp.png" id="Art_Background"]
-
+[ext_resource type="Texture2D" path="res://assets/backgrounds/gameplay_market_v2/market_stall_portrait.png" id="Art_Background"]
 [ext_resource type="Texture2D" path="res://assets/ui/logo_dessert.png" id="Art_Logo"]
-
-[ext_resource type="Texture2D" path="res://assets/ui/gameplay_v2/settings.png" id="Art_Pause"]
-
-[ext_resource type="Texture2D" path="res://assets/ui/gameplay_v3/speech_bubble.png" id="Art_Bubble"]
-
-[ext_resource type="Texture2D" path="res://assets/ui/gameplay_v2/order_board.png" id="Art_Order"]
-
+[ext_resource type="Texture2D" path="res://assets/ui/settings_v1/settings_pink.png" id="Art_Pause"]
+[ext_resource type="Texture2D" path="res://assets/ui/dialogue_v1/speech_bubble.png" id="Art_Bubble"]
+[ext_resource type="Texture2D" path="res://assets/ui/order_avatar_v1/order_board_avatar.png" id="Art_Order"]
+[ext_resource type="Texture2D" path="res://assets/ui/gameplay_v2/order_board.png" id="Art_Lesson"]
 [ext_resource type="Texture2D" path="res://assets/characters/fullbody_v2/aina.png" id="Art_Aina"]
-
 [ext_resource type="Texture2D" path="res://assets/characters/fullbody_v2/kakak.png" id="Art_Customer"]
-
-[ext_resource type="Texture2D" path="res://assets/ui/board_v1/frame.png" id="Art_Board"]
-
-[ext_resource type="Texture2D" path="res://assets/ui/gameplay_v2/booster_tray.png" id="Art_Tray"]
-
-[ext_resource type="Texture2D" path="res://assets/boosters/sudip.png" id="Art_Spatula"]
-
-[ext_resource type="Texture2D" path="res://assets/boosters/dulang.png" id="Art_Dulang"]
-
+[ext_resource type="Texture2D" path="res://assets/ui/board_v3/bamboo_frame.png" id="Art_Board"]
+[ext_resource type="Texture2D" path="res://assets/ui/booster_tray_v1/wooden_tray.png" id="Art_Tray"]
+[ext_resource type="Texture2D" path="res://assets/ui/booster_tray_v1/hand.png" id="Art_Spatula"]
+[ext_resource type="Texture2D" path="res://assets/specials/badak_berendam_v1/badak_berendam.png" id="Art_Dulang"]
 [ext_resource type="Texture2D" path="res://assets/boosters/shuffle.png" id="Art_Shuffle"]
-
 [ext_resource type="Texture2D" path="res://assets/boosters/tapau.png" id="Art_Tapau"]
-
 [ext_resource type="Script" path="res://scripts/ui/editor_layout_character.gd" id="LayoutCharacterPreview"]
+[ext_resource type="Texture2D" path="res://assets/ui/stage_profile_v1/stage_profile_board.png" id="Art_StageProfile"]
+[ext_resource type="Texture2D" path="res://assets/ui/score_meter_v1/score_meter_empty.png" id="Art_ScoreMeter"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[ext_resource type="Texture2D" path="res://assets/ui/moves_board_v1/hanging_moves_board.png" id="Art_MovesHanging"]
+
+[sub_resource type="AtlasTexture" id="Texture_MovesHanging"]
+atlas = ExtResource("Art_MovesHanging")
+region = Rect2(89, 0, 1039, 1078)
+
+[sub_resource type="AtlasTexture" id="StageProfileTexture"]
+atlas = ExtResource("Art_StageProfile")
+region = Rect2(9, 20, 1758, 859)
+
+[sub_resource type="StyleBoxTexture" id="StageProfileStyle"]
+texture = SubResource("StageProfileTexture")
+
+
+[sub_resource type="AtlasTexture" id="ScoreMeterTexture"]
+atlas = ExtResource("Art_ScoreMeter")
+region = Rect2(18, 180, 1500, 640)
+
+[sub_resource type="StyleBoxTexture" id="ScoreMeterStyle"]
+texture = SubResource("ScoreMeterTexture")
 
 [sub_resource type="StyleBoxFlat" id="CreamPanel"]
 bg_color = Color(1, 0.941, 0.792, 1)
@@ -48,17 +74,21 @@ region = Rect2(0, 93, 915, 1409)
 atlas = ExtResource("Art_Customer")
 region = Rect2(121, 47, 845, 1453)
 
+[sub_resource type="AtlasTexture" id="Texture_Lesson"]
+atlas = ExtResource("Art_Lesson")
+region = Rect2(26, 22, 1724, 839)
+
 [sub_resource type="AtlasTexture" id="Texture_Order"]
 atlas = ExtResource("Art_Order")
-region = Rect2(26, 22, 1724, 839)
+region = Rect2(9, 64, 2504, 560)
 
 [sub_resource type="AtlasTexture" id="Texture_Pause"]
 atlas = ExtResource("Art_Pause")
-region = Rect2(94, 53, 1066, 1151)
+region = Rect2(147, 152, 951, 949)
 
 [sub_resource type="AtlasTexture" id="Texture_Tray"]
 atlas = ExtResource("Art_Tray")
-region = Rect2(30, 41, 2112, 635)
+region = Rect2(53, 90, 2064, 524)
 
 [node name="TutorialGameplayLayout" type="Control"]
 layout_mode = 3
@@ -126,14 +156,14 @@ anchor_right = 0.73
 anchor_bottom = 0.105
 mouse_filter = 2
 metadata/_edit_use_anchors_ = true
-theme_override_styles/panel = SubResource("CreamPanel")
+theme_override_styles/panel = SubResource("ScoreMeterStyle")
 
 [node name="ScoreValue" type="Label" parent="ScoreMeter"]
 layout_mode = 0
-anchor_left = 0.08
-anchor_top = 0.24
-anchor_right = 0.92
-anchor_bottom = 0.57
+anchor_left = 0.22
+anchor_top = 0.66
+anchor_right = 0.78
+anchor_bottom = 0.94
 mouse_filter = 2
 metadata/_edit_use_anchors_ = true
 theme_override_colors/font_color = Color(0.29, 0.17, 0.09, 1)
@@ -144,13 +174,13 @@ vertical_alignment = 1
 
 [node name="PauseButton" type="TextureRect" parent="."]
 layout_mode = 0
-anchor_left = 0.9
-anchor_top = 0.015
-anchor_right = 0.975
-anchor_bottom = 0.057
+anchor_left = 0.02
+anchor_top = 0.902
+anchor_right = 0.14
+anchor_bottom = 0.9695
 mouse_filter = 2
 metadata/_edit_use_anchors_ = true
-tooltip_text = "Layout: PauseButton; artwork: assets/ui/gameplay_v2/settings.png"
+tooltip_text = "Layout: PauseButton; artwork: assets/ui/settings_v1/settings_pink.png"
 texture = SubResource("Texture_Pause")
 expand_mode = 1
 stretch_mode = 5
@@ -163,72 +193,58 @@ anchor_right = 0.335
 anchor_bottom = 0.11
 mouse_filter = 2
 metadata/_edit_use_anchors_ = true
-theme_override_styles/panel = SubResource("CreamPanel")
+theme_override_styles/panel = SubResource("StageProfileStyle")
 visible = true
 
 [node name="StageTitle" type="Label" parent="."]
 layout_mode = 0
-anchor_left = 0.045
-anchor_top = 0.038
-anchor_right = 0.315
-anchor_bottom = 0.095
+anchor_left = 0.102
+anchor_top = 0.051
+anchor_right = 0.28
+anchor_bottom = 0.094
 mouse_filter = 2
 metadata/_edit_use_anchors_ = true
 theme_override_colors/font_color = Color(0.29, 0.17, 0.09, 1)
 theme_override_font_sizes/font_size = 30
-text = "The Real Tray"
+text = "Stage 12\nPlayer"
 horizontal_alignment = 1
 vertical_alignment = 1
-autowrap_mode = 3
-
-[node name="HintButton" type="Label" parent="."]
-layout_mode = 0
-anchor_left = 0.735
-anchor_top = 0.073
-anchor_right = 0.788
-anchor_bottom = 0.113
-mouse_filter = 2
-metadata/_edit_use_anchors_ = true
-theme_override_colors/font_color = Color(0.29, 0.17, 0.09, 1)
-theme_override_font_sizes/font_size = 28
-text = "Hint"
-horizontal_alignment = 1
-vertical_alignment = 1
+autowrap_mode = 0
 
 [node name="MovesPanel" type="TextureRect" parent="."]
 layout_mode = 0
-anchor_left = 0.795
-anchor_top = 0.065
-anchor_right = 0.975
-anchor_bottom = 0.145
+anchor_left = 0.8
+anchor_top = 0.018
+anchor_right = 0.98
+anchor_bottom = 0.115
 mouse_filter = 2
 metadata/_edit_use_anchors_ = true
-tooltip_text = "Layout: MovesPanel; artwork: assets/ui/gameplay_v2/order_board.png"
-texture = SubResource("Texture_Order")
+tooltip_text = "Layout: MovesPanel; artwork: assets/ui/moves_board_v1/hanging_moves_board.png"
+texture = SubResource("Texture_MovesHanging")
 expand_mode = 1
 stretch_mode = 0
 visible = false
 
 [node name="MovesValue" type="Label" parent="MovesPanel"]
 layout_mode = 0
-anchor_left = 0.12
-anchor_top = 0.3
-anchor_right = 0.88
-anchor_bottom = 0.7
+anchor_left = 0.15
+anchor_top = 0.59
+anchor_right = 0.9
+anchor_bottom = 0.94
 mouse_filter = 2
 metadata/_edit_use_anchors_ = true
 theme_override_colors/font_color = Color(0.29, 0.17, 0.09, 1)
-theme_override_font_sizes/font_size = 58
+theme_override_font_sizes/font_size = 54
 text = "22"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="MovesCaption" type="Label" parent="MovesPanel"]
 layout_mode = 0
-anchor_left = 0.1
-anchor_top = 0.7
+anchor_left = 0.15
+anchor_top = 0.4
 anchor_right = 0.9
-anchor_bottom = 0.9299999999999999
+anchor_bottom = 0.59
 mouse_filter = 2
 metadata/_edit_use_anchors_ = true
 theme_override_colors/font_color = Color(0.29, 0.17, 0.09, 1)
@@ -246,7 +262,7 @@ anchor_bottom = 0.135
 mouse_filter = 2
 metadata/_edit_use_anchors_ = true
 tooltip_text = "Layout: LessonBadge; artwork: assets/ui/gameplay_v2/order_board.png"
-texture = SubResource("Texture_Order")
+texture = SubResource("Texture_Lesson")
 expand_mode = 1
 stretch_mode = 0
 visible = true
@@ -278,9 +294,9 @@ metadata/_edit_use_anchors_ = true
 [node name="OrderArea" type="Control" parent="."]
 layout_mode = 0
 anchor_left = 0.035
-anchor_top = 0.145
+anchor_top = 0.155
 anchor_right = 0.965
-anchor_bottom = 0.34
+anchor_bottom = 0.28
 mouse_filter = 2
 metadata/_edit_use_anchors_ = true
 tooltip_text = "Parent area for dialogue, characters and the order board."
@@ -288,34 +304,36 @@ tooltip_text = "Parent area for dialogue, characters and the order board."
 
 [node name="CustomerCharacter" type="Control" parent="OrderArea"]
 layout_mode = 0
-anchor_left = 0
-anchor_top = 0.4
-anchor_right = 0.195
-anchor_bottom = 0.99
+anchor_left = 0.018
+anchor_top = 0.196
+anchor_right = 0.181
+anchor_bottom = 0.926
 mouse_filter = 2
 metadata/_edit_use_anchors_ = true
 tooltip_text = "Layout: CustomerCharacter; artwork: assets/characters/fullbody_v2/kakak.png"
 script = ExtResource("LayoutCharacterPreview")
 portrait_texture = ExtResource("Art_Customer")
+compact_portrait = true
 
 [node name="AinaCharacter" type="Control" parent="OrderArea"]
 layout_mode = 0
-anchor_left = 0.8
-anchor_top = 0.4
-anchor_right = 1
-anchor_bottom = 0.99
+anchor_left = 0.821
+anchor_top = 0.196
+anchor_right = 0.984
+anchor_bottom = 0.926
 mouse_filter = 2
 metadata/_edit_use_anchors_ = true
 tooltip_text = "Layout: AinaCharacter; artwork: assets/characters/fullbody_v2/aina.png"
 script = ExtResource("LayoutCharacterPreview")
 portrait_texture = ExtResource("Art_Aina")
+compact_portrait = true
 
 [node name="DialogueBubble" type="TextureRect" parent="OrderArea"]
 layout_mode = 0
 anchor_left = 0.04
-anchor_top = 0
-anchor_right = 0.81
-anchor_bottom = 0.4
+anchor_top = 1.04
+anchor_right = 0.96
+anchor_bottom = 1.92
 mouse_filter = 2
 metadata/_edit_use_anchors_ = true
 tooltip_text = "Layout: DialogueBubble; artwork: assets/ui/gameplay_v3/speech_bubble.png"
@@ -354,9 +372,9 @@ autowrap_mode = 3
 
 [node name="OrderBoard" type="TextureRect" parent="OrderArea"]
 layout_mode = 0
-anchor_left = 0.2
-anchor_top = 0.42
-anchor_right = 0.8
+anchor_left = 0
+anchor_top = 0
+anchor_right = 1
 anchor_bottom = 1
 mouse_filter = 2
 metadata/_edit_use_anchors_ = true
@@ -364,13 +382,14 @@ tooltip_text = "Layout: OrderBoard; artwork: assets/ui/gameplay_v2/order_board.p
 texture = SubResource("Texture_Order")
 expand_mode = 1
 stretch_mode = 0
+z_index = -1
 
 [node name="OrderTitle" type="Label" parent="OrderArea/OrderBoard"]
 layout_mode = 0
-anchor_left = 0.25
-anchor_top = 0.015
-anchor_right = 0.75
-anchor_bottom = 0.185
+anchor_left = 0.395
+anchor_top = 0.028
+anchor_right = 0.605
+anchor_bottom = 0.19
 mouse_filter = 2
 metadata/_edit_use_anchors_ = true
 theme_override_colors/font_color = Color(0.29, 0.17, 0.09, 1)
@@ -381,10 +400,10 @@ vertical_alignment = 1
 
 [node name="KuihItems" type="Control" parent="OrderArea/OrderBoard"]
 layout_mode = 0
-anchor_left = 0.08
-anchor_top = 0.22
-anchor_right = 0.92
-anchor_bottom = 0.97
+anchor_left = 0.205
+anchor_top = 0.26
+anchor_right = 0.795
+anchor_bottom = 0.94
 mouse_filter = 2
 metadata/_edit_use_anchors_ = true
 tooltip_text = "Runtime kuih icons and counts are generated here."
@@ -407,12 +426,12 @@ vertical_alignment = 1
 [node name="PuzzleBoard" type="TextureRect" parent="."]
 layout_mode = 0
 anchor_left = 0.035
-anchor_top = 0.35
+anchor_top = 0.4
 anchor_right = 0.965
 anchor_bottom = 0.86
 mouse_filter = 2
 metadata/_edit_use_anchors_ = true
-tooltip_text = "Layout: PuzzleBoard; artwork: assets/ui/board_v1/frame.png"
+tooltip_text = "Layout: PuzzleBoard; artwork: assets/ui/board_v3/bamboo_frame.png"
 texture = ExtResource("Art_Board")
 expand_mode = 1
 stretch_mode = 5
@@ -433,13 +452,13 @@ vertical_alignment = 1
 
 [node name="SpecialItemsTray" type="TextureRect" parent="."]
 layout_mode = 0
-anchor_left = 0.17
+anchor_left = 0.18
 anchor_top = 0.885
-anchor_right = 0.85
+anchor_right = 0.9
 anchor_bottom = 0.975
 mouse_filter = 2
 metadata/_edit_use_anchors_ = true
-tooltip_text = "Layout: SpecialItemsTray; artwork: assets/ui/gameplay_v2/booster_tray.png"
+tooltip_text = "Layout: SpecialItemsTray; artwork: assets/ui/booster_tray_v1/wooden_tray.png"
 texture = SubResource("Texture_Tray")
 expand_mode = 1
 stretch_mode = 0
@@ -452,7 +471,7 @@ anchor_right = 0.25
 anchor_bottom = 0.75
 mouse_filter = 2
 metadata/_edit_use_anchors_ = true
-tooltip_text = "Layout: SpatulaPreview; artwork: assets/boosters/sudip.png"
+tooltip_text = "Layout: SpatulaPreview; artwork: assets/ui/booster_tray_v1/hand.png"
 texture = ExtResource("Art_Spatula")
 expand_mode = 1
 stretch_mode = 5
@@ -467,7 +486,7 @@ mouse_filter = 2
 metadata/_edit_use_anchors_ = true
 theme_override_colors/font_color = Color(0.29, 0.17, 0.09, 1)
 theme_override_font_sizes/font_size = 26
-text = "Spatula"
+text = "Hand"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -479,7 +498,7 @@ anchor_right = 0.48000000000000004
 anchor_bottom = 0.75
 mouse_filter = 2
 metadata/_edit_use_anchors_ = true
-tooltip_text = "Layout: DulangPreview; artwork: assets/boosters/dulang.png"
+tooltip_text = "Layout: DulangPreview; artwork: assets/specials/badak_berendam_v1/badak_berendam.png"
 texture = ExtResource("Art_Dulang")
 expand_mode = 1
 stretch_mode = 5

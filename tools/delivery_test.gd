@@ -26,6 +26,22 @@ func _ready() -> void:
     run.call_deferred()
 
 func run() -> void:
+    var distant := board()
+    for row in distant.grid:
+        for cell in row:
+            cell.kuih = KuihLibrary.get_kuih(&"kuih_koci")
+    var delivery_origin := Vector2i(1,1)
+    var near_match := Vector2i(3,1)
+    var far_match := Vector2i(3,3)
+    distant.get_cell(near_match).kuih = KuihLibrary.get_kuih(&"onde_onde")
+    distant.get_cell(far_match).kuih = KuihLibrary.get_kuih(&"onde_onde")
+    check(distant.select_delivery_target(delivery_origin, {}, &"onde_onde") == far_match, "delivery chooses the farthest matching kuih")
+    check(distant.select_delivery_target(delivery_origin, {far_match: true}, &"onde_onde") == near_match, "delivery skips an already collected distant target")
+    distant.get_cell(delivery_origin).special = BoardCell.Special.HANTAR
+    distant.get_cell(delivery_origin).order_kuish = &"onde_onde"
+    var distant_result := distant.activate_specials([delivery_origin])
+    check(distant_result.activated[0].cells.back() == far_match, "activation sends the flight to the distant match")
+    check(distant_result.cleared.has(far_match) and not distant_result.cleared.has(near_match), "remote pickup clears the distant match and leaves the nearer match")
     for partner in KuihLibrary.starter_set():
         for reverse in [true,false]:
             var swapped := board()

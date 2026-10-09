@@ -232,7 +232,7 @@ func _set_copy() -> void:
 	_secondary.text = MenuText.text("play_again" if is_win else "use_booster")
 	_home.text = MenuText.text("back_stall")
 
-func show_win(_title_text: String, stars: int, coins: int, unlocks: Array, is_new_best: bool, details: StageResult = null) -> void:
+func show_win(_title_text: String, stars: int, coins: int, unlocks: Array, is_new_best: bool, details: StageResult = null, animate: bool = true) -> void:
 	visible = true
 	is_win = true
 	_character.texture = success_portrait_artwork()
@@ -247,6 +247,9 @@ func show_win(_title_text: String, stars: int, coins: int, unlocks: Array, is_ne
 		names.append(KuihLibrary.get_display_name(id))
 	_unlocks.text = ", ".join(names) if not names.is_empty() else MenuText.text("new_best") if is_new_best else ""
 	_show_score_details(details, is_new_best)
+	if not animate:
+		hide()
+		return
 	AudioManager.play(AudioManager.Sfx.SUCCESS, 1.0, -3)
 	_animate_in()
 	if _celebration == null:

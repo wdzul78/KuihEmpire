@@ -11,6 +11,7 @@ var icon: KuihIcon = null
 var selected: bool = false:
 	set(value):
 		selected = value
+		_sync_selection_motion()
 		queue_redraw()
 var hinted: bool = false:
 	set(value):
@@ -21,7 +22,13 @@ var hinted: bool = false:
 
 var _pulse: float = 0.0
 var _pulse_tween: Tween = null
+var _hint_nudge := false
+var _hint_origin := Vector2.ZERO
 var _special_idle_tween: Tween = null
+var _selection_tween: Tween = null
+var _formation_shake_tween: Tween = null
+var _order_activation_tween: Tween = null
+var _electric_flash_tween: Tween = null
 var _idle_special_kind := BoardCell.Special.NONE
 var _wiggle_amplitude := 0.0
 var _rim_phase := 0.0
@@ -52,6 +59,7 @@ func _ready() -> void:
 		icon.kuih = initial
 		icon.special_kind = cell.special
 	_sync_special_idle()
+	_sync_selection_motion()
 
 
 func _sync_icon() -> void:
@@ -77,8 +85,23 @@ func set_cell(value: BoardCell) -> void:
 		icon.kuih = data
 		icon.special_kind = value.special
 		icon.show_outline = true
+		icon.visible = value.blocker_kind != BlockerSpec.Kind.BANANA_LEAF or not value.has_overlay()
 	_sync_special_idle()
 	queue_redraw()
+
+
+func reveal_leaf_item() -> void:
+	if icon == null:
+		return
+	icon.show()
+	icon.modulate.a = 0.0
+	icon.scale = Vector2.ONE*.55
+	var reveal := icon.create_tween()
+	reveal.tween_property(icon,"scale",Vector2.ONE,.22).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	reveal.parallel().tween_property(icon,"modulate:a",1.0,.16)
+	reveal.tween_property(icon,"rotation",-.12,.08)
+	reveal.tween_property(icon,"rotation",.10,.10)
+	reveal.tween_property(icon,"rotation",0.0,.12)
 
 
 func refresh() -> void:
@@ -158,6 +181,65 @@ func set_selected(value: bool) -> void:
 	selected = value
 
 
+func animate_order_activation() -> void:
+	if icon == null:
+		return
+	if _special_idle_tween != null and _special_idle_tween.is_valid():
+		_special_idle_tween.kill()
+	_special_idle_tween = null
+	icon.rotation = 0.0
+	if _order_activation_tween != null and _order_activation_tween.is_valid():
+		_order_activation_tween.kill()
+	icon.order_activation = 0.0
+	_order_activation_tween = create_tween()
+	_order_activation_tween.tween_property(icon,"order_activation",1.0,.78)
+
+
+func animate_electric_flash() -> void:
+	if icon == null:
+		return
+	if _electric_flash_tween != null and _electric_flash_tween.is_valid():
+		_electric_flash_tween.kill()
+	_electric_flash_tween = create_tween()
+	for tint in [Color(1.45,1.55,1.75),Color(1.75,1.55,1.15)]:
+		_electric_flash_tween.tween_property(icon,"modulate",tint,.055)
+		_electric_flash_tween.tween_property(icon,"modulate",Color.WHITE,.055)
+
+
+## Move only the artwork, leaving swap animation and special rotation independent.
+func _sync_selection_motion() -> void:
+	if _selection_tween != null and _selection_tween.is_valid():
+		_selection_tween.kill()
+	_selection_tween = null
+	if icon == null:
+		return
+	icon.position = Vector2.ZERO
+	if selected:
+		_selection_tween = icon.create_tween().set_loops()
+		_selection_tween.tween_method(_set_selection_motion, 0.0, TAU, 1.6)
+
+
+func _set_selection_motion(phase: float) -> void:
+	if icon != null:
+		icon.position = Vector2(0.0, sin(phase) * size.y * .018)
+
+
+## A brief, decaying ripple moves artwork without changing the tile's grid position.
+func play_formation_shake() -> void:
+	if icon == null or selected:
+		return
+	if _formation_shake_tween != null and _formation_shake_tween.is_valid():
+		_formation_shake_tween.kill()
+	_formation_shake_tween = create_tween()
+	_formation_shake_tween.tween_method(_set_formation_shake, 0.0, 1.0, .18)
+
+
+func _set_formation_shake(progress: float) -> void:
+	if icon != null:
+		var amplitude := minf(size.x, size.y) * .028 * (1.0-progress)
+		icon.position = Vector2(sin(progress*TAU*3), sin(progress*TAU*2)*.45) * amplitude
+
+
 ## Gentle, repeating attention pulse. The tutorial coach uses this to point at
 ## cells without ever taking control away from the player.
 ##
@@ -178,11 +260,27 @@ func _set_pulse(value: float) -> void:
 	queue_redraw()
 
 
+## Move the artwork toward the suggested slot without changing board state.
+func start_hint_nudge(direction: Vector2) -> void:
+	_stop_hint()
+	hinted = true
+	_hint_nudge = true
+	_hint_origin = position
+	var target := _hint_origin + direction.normalized() * size.x * .12
+	_pulse_tween = create_tween().set_loops()
+	_pulse_tween.tween_property(self,"position",target,.32).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	_pulse_tween.tween_property(self,"position",_hint_origin,.48).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	_pulse_tween.tween_interval(1.70)
+
+
 func _stop_hint() -> void:
 	if _pulse_tween != null and _pulse_tween.is_valid():
 		_pulse_tween.kill()
 	_pulse_tween = null
 	_pulse = 0.0
+	if _hint_nudge:
+		position = _hint_origin
+	_hint_nudge = false
 
 
 func _draw() -> void:
@@ -190,9 +288,11 @@ func _draw() -> void:
 		return
 	if selected:
 		var r := Rect2(Vector2.ZERO, size).grow(-size.x * 0.06)
-		draw_rect(r, Color(Palette.PINK.r, Palette.PINK.g, Palette.PINK.b, 0.28), true)
-		draw_rect(r, Palette.PINK_DARK, false, maxf(3.0, size.x * 0.035))
-	elif hinted:
+		var highlight := StyleBoxFlat.new()
+		highlight.bg_color = Color(1.0, .97, .84, .42)
+		highlight.set_corner_radius_all(int(size.x * .10))
+		draw_style_box(highlight, r)
+	elif hinted and not _hint_nudge:
 		# Kept strictly inside the cell so the ring can never reach a neighbour.
 		var radius := size.x * (0.38 + 0.08 * _pulse)
 		draw_circle(size * 0.5, radius, Color(1, 1, 1, 0.14 + 0.16 * _pulse))
@@ -202,18 +302,5 @@ func _draw() -> void:
 
 
 func _draw_rim_light() -> void:
-	if _idle_special_kind != BoardCell.Special.DULANG:
-		return
-	var edge := minf(size.x,size.y)
-	var center := size*Vector2(.5,.60)
-	var angle := _rim_phase*.7
-	var rim := PackedVector2Array()
-	for i in 15:
-		var sweep := angle + float(i)*.5/14.0
-		rim.append(center + Vector2(cos(sweep)*edge*.35,sin(sweep)*edge*.23))
-	_rim_light.draw_polyline(rim,Color(1,.95,.70,.65),maxf(1,edge*.018),true)
-	for i in 3:
-		var glint := angle + i*TAU/3.0
-		var point := center+Vector2(cos(glint)*edge*.35,sin(glint)*edge*.23)
-		var extent := Vector2.ONE*edge*(.08+.035*sin(_rim_phase+i*2.0))
-		_rim_light.draw_texture_rect(GameVfx.SPARKLE,Rect2(point-extent*.5,extent),false,Color(1,.97,.78,.65+.2*sin(_rim_phase+i)))
+	# The shared animated artwork draws the new tray rim and rotating rays.
+	pass

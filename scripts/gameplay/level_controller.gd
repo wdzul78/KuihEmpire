@@ -44,6 +44,8 @@ var result: ResultOverlay
 var story: StoryPopup
 var coach: TutorialCoach
 var _target_banner: PanelContainer
+var _victory_bonus: VictoryBonus
+var _victory_serial := 0
 var _target_label: Label
 
 
@@ -180,6 +182,10 @@ func _resolve_level_id() -> int:
 
 
 func _start_level() -> void:
+	_victory_serial += 1
+	if is_instance_valid(_victory_bonus):
+		_victory_bonus.cancel()
+		_victory_bonus = null
 	score.setup(level)
 	hud.configure_score(level)
 	stage_result = null
@@ -462,8 +468,10 @@ func _win() -> void:
 	finished = true
 	board.enabled = false
 	stage_result = StageResultCalculator.calculate(true, score.total, moves_left, level, not is_tutorial and ProgressionManager.first_clear_available(level.id), 0 if is_tutorial else ProgressionManager.best_score(level.id))
-	score.add_points(stage_result.move_bonus)
+	if is_tutorial or moves_left <= 0:
+		score.add_points(stage_result.move_bonus)
 	var stars := stage_result.earned_stars
+	hud.score_progress.set_completed(true)
 	var coins := stage_result.total_coins
 	var unlocks: Array[StringName] = []
 	var is_new_best := stage_result.is_new_best and not is_tutorial
@@ -504,8 +512,28 @@ func _win() -> void:
 	result.stage_number = TutorialLibrary.lesson_number(level.tutorial_index) if is_tutorial else level.id
 	result.tutorial_final = is_tutorial and TutorialLibrary.is_last(level.tutorial_index)
 	result.tutorial_stage = is_tutorial
-	result.show_win(level.title, stars, coins, unlocks, is_new_best, stage_result)
 	var free_bonus := HeartManager.reward_win(level.id, is_tutorial)
+	if not is_tutorial and moves_left > 0:
+		var serial := _victory_serial
+		result.show_win(level.title, stars, coins, unlocks, is_new_best, stage_result, false)
+		board.clear_hints()
+		board._feedback.reset()
+		board._combo_praise.reset()
+		board._special_text.reset()
+		_victory_bonus = VictoryBonus.new()
+		board.add_child(_victory_bonus)
+		_victory_bonus.steps_converted.connect(func(remaining: int, points: int) -> void:
+			if serial == _victory_serial:
+				hud.set_moves(remaining, move_budget, true)
+				score.add_points(points)
+		)
+		var bonus := _victory_bonus
+		await bonus.play(board, moves_left, level.scoring.remaining_move)
+		bonus.queue_free()
+		if serial != _victory_serial:
+			return
+		_victory_bonus = null
+	result.show_win(level.title, stars, coins, unlocks, is_new_best, stage_result)
 	if free_bonus > 0:
 		var celebration := UIKit.label("Free Play · %d min!" % [free_bonus / 60], 30, Palette.PINK_DARK)
 		celebration.name = "FreePlayReward"
@@ -629,8 +657,9 @@ func _on_hint() -> void:
 # --- flow ------------------------------------------------------------------
 
 func _open_pause_menu() -> void:
-	if finished or _pause_overlay != null:
+	if finished or _pause_overlay != null or not is_node_ready() or board == null or level == null:
 		return
+	board.cancel_interrupted_input()
 	AudioManager.play(AudioManager.Sfx.TAP)
 	var overlay := PauseOverlay.new()
 	_pause_overlay = overlay
@@ -676,10 +705,23 @@ func _exit_tree() -> void:
 		get_tree().paused = false
 
 
+var _closing := false
+
 func _notification(what: int) -> void:
-	if what == NOTIFICATION_APPLICATION_PAUSED and is_inside_tree():
-		if SceneManager.is_current(self):
-			_open_pause_menu()
+	if what == NOTIFICATION_WM_CLOSE_REQUEST:
+		_closing = true
+		return
+	# A call/OS overlay can take focus without backgrounding the activity.
+	# Keep the existing pause menu until the player explicitly presses Resume.
+	if what in [NOTIFICATION_APPLICATION_PAUSED, NOTIFICATION_APPLICATION_FOCUS_OUT] and is_node_ready() and is_inside_tree():
+		# Notification propagation can lock the parent's child list. Adding the
+		# overlay there fails, leaving a paused tree without a usable Resume.
+		_pause_after_interruption.call_deferred()
+
+
+func _pause_after_interruption() -> void:
+	if not _closing and is_inside_tree() and SceneManager.is_current(self) and not SceneManager._busy:
+		_open_pause_menu()
 
 
 func _on_restart() -> void:

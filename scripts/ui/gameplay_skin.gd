@@ -21,6 +21,26 @@ static func texture(id: String) -> Texture2D:
 	if id == "star":
 		return ResourceIconArt.texture("star")
 	if not _textures.has(id):
+		if id in ["booster_tray", "booster_hand", "booster_count"]:
+			var asset := AtlasTexture.new()
+			var files := {"booster_tray": "wooden_tray", "booster_hand": "hand", "booster_count": "red_chip"}
+			var regions := {"booster_tray": Rect2(53,90,2064,524), "booster_hand": Rect2(78,50,1102,1161), "booster_count": Rect2(71,61,1112,1114)}
+			asset.atlas = load("res://assets/ui/booster_tray_v1/%s.png" % files[id])
+			asset.region = regions[id]
+			_textures[id] = asset
+			return asset
+		if id == "settings":
+			var settings_art := AtlasTexture.new()
+			settings_art.atlas = load("res://assets/ui/settings_v1/settings_pink.png")
+			settings_art.region = Rect2(147,152,951,949)
+			_textures[id] = settings_art
+			return settings_art
+		if id == "moves_hanging":
+			var hanging := AtlasTexture.new()
+			hanging.atlas = load("res://assets/ui/moves_board_v1/hanging_moves_board.png")
+			hanging.region = Rect2(89,0,1039,1078)
+			_textures[id] = hanging
+			return hanging
 		var booster_index := ["booster_blue", "booster_gold", "booster_green", "booster_purple"].find(id)
 		if booster_index >= 0:
 			var sheet: Texture2D = load("res://assets/ui/gameplay_v5/booster_surfaces.png")
@@ -53,6 +73,22 @@ static func box(id: String, margins: Vector4 = Vector4.ZERO) -> StyleBoxTexture:
 	return style
 
 static func button(node: Button, id: String) -> void:
+	if id == "settings":
+		for state in ["normal","hover","pressed","disabled","focus"]:
+			node.add_theme_stylebox_override(state,StyleBoxEmpty.new())
+		var icon := TextureRect.new()
+		icon.name = "SettingsArtwork"
+		icon.texture = texture(id)
+		icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		node.add_child(icon)
+		icon.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		node.mouse_entered.connect(func() -> void: icon.modulate = Color(1.08,1.08,1.08))
+		node.mouse_exited.connect(func() -> void: icon.modulate = Color.WHITE)
+		node.button_down.connect(func() -> void: icon.modulate = Color(.82,.82,.82))
+		node.button_up.connect(func() -> void: icon.modulate = Color.WHITE)
+		return
 	for state in ["normal", "hover", "pressed", "disabled"]:
 		var style := box(id)
 		style.modulate_color = Color(.65, .65, .65, .8) if state == "disabled" else Color(.85, .85, .85) if state == "pressed" else Color(1.08, 1.08, 1.08) if state == "hover" else Color.WHITE

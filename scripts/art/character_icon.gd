@@ -11,6 +11,7 @@ enum Cast { AINA, IBU, FRIEND, RIVAL, CUSTOMER }
 enum Mood { HAPPY, EXCITED, THINKING, SURPRISED, DETERMINED, CHEEKY }
 
 const OUTLINE := Color("4a2c17")
+const QUEUE_RING = preload("res://assets/ui/customer_ring_v1/gold_ring.png")
 const AINA_ART = preload("res://assets/characters/fullbody_v2/aina.png")
 
 @export var cast: Cast = Cast.AINA:
@@ -35,6 +36,7 @@ var occluding_board: Control = null
 var dialogue_clearance: Control = null
 var story_clearance: Control = null
 var compact_portrait := false
+var portrait_frame := true
 
 func _clearance_y() -> float:
 	if compact_portrait:
@@ -115,14 +117,17 @@ func _draw() -> void:
 	u.position.y = maxf(u.position.y, _clearance_y())
 	var art: Texture2D = AINA_ART if cast == Cast.AINA else (customer.texture if cast == Cast.CUSTOMER and customer != null else null)
 	if compact_portrait:
-		draw_circle(size*.5,side*.50,Palette.WOOD_DARK)
-		draw_circle(size*.5,side*.47,Palette.GOLD)
-		draw_circle(size*.5,side*.42,Palette.CREAM)
+		if portrait_frame:
+			draw_circle(size*.5,side*.50,Palette.WOOD_DARK)
+			draw_circle(size*.5,side*.47,Palette.GOLD)
+			draw_circle(size*.5,side*.42,Palette.CREAM)
 		if art != null:
 			_draw_compact_art(art, side)
 		else:
 			var face_size := Vector2.ONE * side * 1.18
 			_draw_head(Rect2(size*.5 - Vector2(face_size.x*.5,face_size.y*.34),face_size))
+		if portrait_frame:
+			draw_texture_rect_region(QUEUE_RING, u, Rect2(42,37,1164,1153))
 		return
 	if art != null:
 		_draw_character(art)
@@ -144,7 +149,7 @@ func _draw_compact_art(art: Texture2D, side: float) -> void:
 	var uv := PackedVector2Array()
 	for index in 64:
 		var direction := Vector2.from_angle(TAU*float(index)/64.0)
-		points.append(size*.5 + direction*side*.42)
+		points.append(size*.5 + direction*side*(.42 if portrait_frame else .5))
 		uv.append((region.position+(direction*.5+Vector2.ONE*.5)*region.size)/art.get_size())
 	draw_polygon(points,PackedColorArray([Color.WHITE]),uv,art)
 

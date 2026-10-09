@@ -22,7 +22,7 @@ func run() -> void:
 	board._sync_overlay(guard)
 	var result := board.logic.activate_specials([origin])
 	play(board,result)
-	await get_tree().create_timer(.12).timeout
+	await get_tree().create_timer(.04).timeout
 	var trays := board._vfx.effects.filter(func(e): return e.kind == "charge")
 	assert(trays.size() == 1 and trays[0].foods.size() == 7)
 	assert(not board._tiles[origin].visible)
@@ -33,9 +33,9 @@ func run() -> void:
 			if pos != origin and pos != guard:
 				assert(not board._tiles[pos].visible)
 	assert(not board._vfx.effects.any(func(e): return e.kind in ["preview","gold_slot"]))
-	await get_tree().create_timer(.42).timeout
+	await get_tree().create_timer(.07).timeout
 	assert(board._vfx.effects.any(func(e): return e.kind == "charge"))
-	await get_tree().create_timer(.16).timeout
+	await get_tree().create_timer(.10).timeout
 	assert(not board._vfx.effects.any(func(e): return e.kind in ["charge","preview","gold_slot"]))
 	assert(board._vfx.effects.any(func(e): return e.kind == "flower_wave"))
 	assert(board._vfx.effects.any(func(e): return e.kind == "kuih_dissolve"))

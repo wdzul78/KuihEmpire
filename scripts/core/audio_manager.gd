@@ -34,6 +34,8 @@ enum Sfx {
 	SPATULA,
 	SHUFFLE,
 	HANTAR_EXIT,
+	ORDER_ZAP,
+	PUTERI_VOCAL,
 }
 
 const MENU_MUSIC := "res://audio/music/menu.ogg"
@@ -43,12 +45,14 @@ const FILE_SFX := {
 	Sfx.MATCH: "match_jump_v1/little_jump_up_01", Sfx.SPECIAL: "v2/special_create", Sfx.SERVE: "v2/serve",
 	Sfx.FAIL: "fail", Sfx.REWARD: "v2/reward", Sfx.UNLOCK: "v2/unlock",
 	Sfx.PACK: "pack", Sfx.DROP: "drop", Sfx.LINE_CLEAR: "v2/line_clear",
-	Sfx.TAPAU_BLAST: "v2/directional_tapau", Sfx.TRAY_BLAST: "v2/tray_burst",
+	Sfx.TAPAU_BLAST: "v2/directional_tapau", Sfx.TRAY_BLAST: "coconut_v1/water_bomb_shared",
 	Sfx.ORDER_BURST: "v2/order_burst", Sfx.SUCCESS: "win_pack_v1/big_game_win_pack1_01",
 	Sfx.HANTAR_CREATE: "v2/hantar_create", Sfx.HANTAR_LAUNCH: "delivery_rotor_v1/rotor_launch",
 	Sfx.HANTAR_HIT: "delivery_rotor_v1/claw_pickup", Sfx.CROSS_BLAST: "v2/cross_tapau",
 	Sfx.HANTAR_EXIT: "delivery_rotor_v1/rotor_exit",
 	Sfx.SPATULA: "v2/spatula", Sfx.SHUFFLE: "v2/shuffle",
+	Sfx.ORDER_ZAP: "electric_order_v1/zap",
+	Sfx.PUTERI_VOCAL: "coconut_v1/puteri_vocal",
 }
 
 static var instance: AudioManager
@@ -89,6 +93,7 @@ func _ready() -> void:
 	_streams[Sfx.TAPAU_BLAST] = SfxSynth.special_activation(BoardCell.Special.TAPAU)
 	_streams[Sfx.TRAY_BLAST] = SfxSynth.special_activation(BoardCell.Special.DULANG)
 	_streams[Sfx.ORDER_BURST] = SfxSynth.special_activation(BoardCell.Special.ORDER)
+	_streams[Sfx.ORDER_ZAP] = SfxSynth.special_activation(BoardCell.Special.ORDER)
 	_streams[Sfx.SUCCESS] = SfxSynth.success()
 	_streams[Sfx.HANTAR_CREATE] = SfxSynth.pack()
 	_streams[Sfx.HANTAR_LAUNCH] = SfxSynth.delivery_launch()
@@ -280,4 +285,5 @@ func play_special(kind: int) -> void:
 		sound = Sfx.TRAY_BLAST
 	elif kind == BoardCell.Special.ORDER:
 		sound = Sfx.ORDER_BURST
+		play(Sfx.ORDER_ZAP, 1.0, -7)
 	play(sound, 1.0, -4)

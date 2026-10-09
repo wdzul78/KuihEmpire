@@ -88,6 +88,7 @@ class ClearResult extends RefCounted:
 	var delivery_targets: Array[Vector2i] = []
 	var converted: Array[Vector2i] = []
 	var conversion_kind: int = BoardCell.Special.NONE
+	var conversion_kinds: Dictionary = {}
 	var conversion_kuih: StringName = &""
 
 	func is_empty() -> bool:
@@ -650,6 +651,10 @@ func activate_specials(positions: Array) -> ClearResult:
 			# converted specials execute their native footprints exactly once.
 			result.combo_members = {order_pos: true}
 			result.conversion_kind = get_cell(partner_pos).special
+			var mixed_directional := result.conversion_kind in [BoardCell.Special.TAPAU,BoardCell.Special.TAPAU_VERTICAL]
+			var first_direction := BoardCell.Special.TAPAU
+			if mixed_directional and rng.randi_range(0,1) == 1:
+				first_direction = BoardCell.Special.TAPAU_VERTICAL
 			var types: Array[StringName] = []
 			for row in grid:
 				for cell in row:
@@ -663,6 +668,17 @@ func activate_specials(positions: Array) -> ClearResult:
 						var cell := get_cell(pos)
 						if cell.is_playable() and cell.special == BoardCell.Special.NONE and cell.kuish_id() == result.conversion_kuih:
 							cell.special = result.conversion_kind
+							if mixed_directional:
+								# Guarantee both axes when at least two targets exist;
+								# additional targets choose their direction independently.
+								var index := result.converted.size()
+								if index == 0:
+									cell.special = first_direction
+								elif index == 1:
+									cell.special = BoardCell.Special.TAPAU_VERTICAL if first_direction == BoardCell.Special.TAPAU else BoardCell.Special.TAPAU
+								else:
+									cell.special = BoardCell.Special.TAPAU if rng.randi_range(0,1) == 0 else BoardCell.Special.TAPAU_VERTICAL
+							result.conversion_kinds[pos] = cell.special
 							cell.order_kuish = &""
 							result.converted.append(pos)
 							queue.append(pos)
@@ -845,10 +861,18 @@ func select_delivery_target(origin: Vector2i, excluded: Dictionary = {}, preferr
 				candidates.append(pos)
 	# A deliberate ordinary-kuih swap overrides automatic order priorities.
 	if preferred_kuih != &"":
+		var farthest := Vector2i(-1, -1)
+		var farthest_distance := -1
 		for pos in candidates:
 			var cell := get_cell(pos)
 			if cell.is_playable() and cell.special == BoardCell.Special.NONE and cell.kuish_id() == preferred_kuih:
-				return pos
+				# Fly to the most distant matching kuih, outside the local pickup.
+				var distance := (pos - origin).length_squared()
+				if distance > farthest_distance:
+					farthest_distance = distance
+					farthest = pos
+		if farthest != Vector2i(-1, -1):
+			return farthest
 	for priority in delivery_priorities:
 		for pos in candidates:
 			var cell := get_cell(pos)

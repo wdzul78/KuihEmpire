@@ -6,6 +6,7 @@ const MAX_PARTICLES := 240
 const MAX_EFFECTS := 48
 const SPARKLE := preload("res://assets/vfx/kenney/star_04.png")
 const GLOW := preload("res://assets/vfx/kenney/light_02.png")
+const COCONUT = preload("res://scripts/art/coconut_art.gd")
 var particles: Array[Dictionary] = []
 var effects: Array[Dictionary] = []
 var clock := 0.0
@@ -44,7 +45,7 @@ func line_clear(a: Vector2, b: Vector2, cell: float, color: Color = Color("ffe38
 		burst((a + b) * .5, color, 8, cell * .7)
 
 
-## One bounded batch gives every cleared item a gold glow and 48 fragments,
+## One bounded batch gives every cleared item a gold glow and colored fragments,
 ## including a full 10x10 wipe without hitting the shared particle pool cap.
 func kuih_dissolve(items: Array[Dictionary], cell: float, delay: float = .08) -> void:
 	if items.is_empty():
@@ -60,15 +61,15 @@ func special_formation(at: Vector2, points: PackedVector2Array, cell: float, kin
 		BoardCell.Special.DULANG: color = Color("ffd966")
 		BoardCell.Special.ORDER: color = Color("efb0ff")
 		BoardCell.Special.HANTAR: color = Color("ff9688")
-	_effect("special_formation", at, Vector2.ZERO, color, cell, .48)
+	_effect("special_formation", at, Vector2.ZERO, color, cell, .28)
 	effects.back()["points"] = points
 
 
 func _draw_special_formation(effect: Dictionary) -> void:
 	var cell: float = effect.width
-	var gather := smoothstep(.16, .40, effect.age)
-	var fade := 1.0 - smoothstep(.40, .48, effect.age)
-	var pulse := sin(clampf(effect.age / .20, 0, 1) * PI * .5)
+	var gather := smoothstep(.08, .22, effect.age)
+	var fade := 1.0 - smoothstep(.22, .28, effect.age)
+	var pulse := sin(clampf(effect.age / .10, 0, 1) * PI * .5)
 	for point in effect.points:
 		var at: Vector2 = point.lerp(effect.a, gather)
 		_match_glow(at, cell * (1.05 - gather * .45), pulse * fade)
@@ -96,21 +97,24 @@ func _draw_kuih_dissolve(effect: Dictionary) -> void:
 	for index in effect.items.size():
 		var item: Dictionary = effect.items[index]
 		var glow := sin(clampf(effect.age / .08, 0, 1) * PI * .5) * (1.0 - smoothstep(.18, .42, effect.age))
-		_match_glow(item.at, cell * 1.15, glow)
+		_match_glow(item.at, cell * 1.30, glow * 1.20)
 		if effect.age < .10:
 			continue
 		# Staggered directions/speeds fill a cloud rather than a thin ring.
-		for spark in 48:
-			var tint := Color("ffe34d") if spark % 3 == 0 else Color("ffbd27")
+		var fragments := clampi(960 / maxi(1, effect.items.size()), 8, 40)
+		for spark in fragments:
+			var tint: Color = item.get("color", Color("ffbd27")).lerp(Color("fff4b8"), .45)
+			if spark % 3 == 0:
+				tint = Color("fff07a")
 			if spark % 4 == 0:
-				tint = Color("fff7ad")
+				tint = Color("fffce3")
 			tint.a = fade
 			var angle: float = spark * 2.39996323
 			var reach: float = .30 + float(spark % 5) * .17
 			var distance := cell * (.08 + reach * (1.0 - pow(1.0-t, 2)))
 			var at: Vector2 = item.at + Vector2.from_angle(angle) * distance
 			at.y -= cell * .12 * t * t
-			var edge := cell * (.14 if spark % 3 == 0 else .10) * (1.0-t*.65)
+			var edge := cell * (.18 if spark % 3 == 0 else .125) * (1.0-t*.65)
 			if spark % 3 == 0:
 				_star(at, edge * 1.8, tint, angle + t)
 			else:
@@ -126,7 +130,7 @@ func scoop(at: Vector2, cell: float) -> void:
 
 
 func tapau_lane(a: Vector2, b: Vector2, cell: float, color: Color) -> void:
-	_effect("beam",a,b,color,cell*.32,.42)
+	_effect("beam",a,b,color,cell*.96,.42)
 	effects.back()["tapau"] = true
 	effects.back()["cell"] = cell
 	burst(a,color,5,cell*.35)
@@ -142,7 +146,7 @@ func special(at: Vector2, kind: int, affected: PackedVector2Array, cell: float) 
 	if kind == BoardCell.Special.ORDER:
 		order_electric(at, affected, cell)
 		return
-	var color := Color("9df465") if kind == BoardCell.Special.TAPAU or kind == BoardCell.Special.TAPAU_VERTICAL else Color("ffca62")
+	var color := Color("ffda36") if kind == BoardCell.Special.TAPAU or kind == BoardCell.Special.TAPAU_VERTICAL else Color("ffca62")
 	if kind == BoardCell.Special.TAPAU_VERTICAL:
 		color = Color("55cfff")
 	_effect("ring", at, Vector2.ZERO, color, cell * (1.45 if kind == BoardCell.Special.DULANG else .65), .55)
@@ -151,6 +155,7 @@ func special(at: Vector2, kind: int, affected: PackedVector2Array, cell: float) 
 	if kind == BoardCell.Special.TAPAU or kind == BoardCell.Special.TAPAU_VERTICAL:
 		_effect("tapau_slots",at,Vector2.ZERO,color,cell,.42)
 		effects.back()["points"] = affected
+		effects.back()["vertical"] = kind == BoardCell.Special.TAPAU_VERTICAL
 		var low := at
 		var high := at
 		for p in affected:
@@ -172,13 +177,26 @@ func special(at: Vector2, kind: int, affected: PackedVector2Array, cell: float) 
 func cross(at: Vector2, affected: PackedVector2Array, cell: float) -> void:
 	var low := at
 	var high := at
+	var row := PackedVector2Array()
+	var column := PackedVector2Array()
 	for point in affected:
 		low = low.min(point)
 		high = high.max(point)
+		if absf(point.y-at.y) < cell*.1:
+			row.append(point)
+		if absf(point.x-at.x) < cell*.1:
+			column.append(point)
+	# Grouped slot bolts stay on the combo's actual cross footprint.
+	for vertical in [false, true]:
+		_effect("tapau_slots",at,Vector2.ZERO,Color("55cfff") if vertical else Color("ffda36"),cell,.55)
+		effects.back()["points"] = column if vertical else row
+		effects.back()["vertical"] = vertical
 	_effect("flash", at, Vector2.ZERO, Color("fff0a2"), cell * 2.3, .40)
 	_effect("ring", at, Vector2.ZERO, Color("fff0a2"), cell * 1.8, .6)
 	for endpoint in [Vector2(low.x-cell*.45,at.y),Vector2(high.x+cell*.45,at.y),Vector2(at.x,low.y-cell*.45),Vector2(at.x,high.y+cell*.45)]:
-		line_clear(at,endpoint,cell,Color("ffe38a"),true)
+		tapau_lane(at,endpoint,cell,Color("ffe38a"))
+		effects.back()["hide_utensil"] = true
+		_effect("roller_lane",at,endpoint,Color("ffe38a"),cell,.55)
 	burst(at, Color("fff0a2"), 24, cell*1.5)
 
 func order_electric(at: Vector2, affected: PackedVector2Array, cell: float) -> void:
@@ -188,18 +206,26 @@ func order_electric(at: Vector2, affected: PackedVector2Array, cell: float) -> v
 	burst(at,Color("fff1aa"),12,cell*.5)
 
 func dulang_charge(at: Vector2, affected: PackedVector2Array, cell: float, foods: Array[Dictionary] = [], double_blast: bool = false) -> void:
-	_effect("charge", at, Vector2.ZERO, Color("fff0a2"), cell, .72)
+	_effect("charge", at, Vector2.ZERO, Color("fff0a2"), cell, .72 if double_blast else .24)
 	effects.back()["foods"] = foods
 	effects.back()["points"] = affected
 	effects.back()["double_blast"] = double_blast
 
 
 func _draw_dulang_charge(effect: Dictionary) -> void:
+	# Reuse the complete gathering motion within the short normal-bomb charge.
+	if not effect.get("double_blast",false):
+		effect = effect.duplicate()
+		effect.age *= .64/.18
 	var cell: float = effect.width
 	var grow := smoothstep(0, .20, effect.age)
 	var edge := cell * lerpf(1.0, 4.5 if effect.get("double_blast",false) else 2.9, grow)
-	_match_glow(effect.a, edge * 1.05, .65 * grow)
-	BoardArt.draw_item_texture(self, Rect2(effect.a - Vector2.ONE * edge * .5, Vector2.ONE * edge), BoardArt.DULANG_ART)
+	var toss := smoothstep(.04,.22,effect.age)
+	var toward_screen := 1.0+.22*sin(toss*PI)+.12*toss
+	edge *= toward_screen
+	var tray_at: Vector2 = effect.a-Vector2(0,cell*.35*sin(toss*PI))
+	_match_glow(tray_at, edge * 1.05, .65 * grow)
+	COCONUT.charge(self,tray_at,edge,effect.age,effect.get("double_blast",false))
 	var gather := smoothstep(.20, .53, effect.age)
 	for index in effect.foods.size():
 		var food: Dictionary = effect.foods[index]
@@ -217,19 +243,24 @@ func dulang_burst(at: Vector2, affected: PackedVector2Array, cell: float, double
 		if effects[index].kind == "charge" and effects[index].a.is_equal_approx(at):
 			effects.remove_at(index)
 	var spread := 1.8 if double_blast else 1.0
+	_effect("coconut_burst",at,Vector2.ZERO,Color.WHITE,cell,.90 if double_blast else .55)
+	effects.back()["points"] = affected
+	effects.back()["double_blast"] = double_blast
+	_effect("impact", at, Vector2.ZERO, Color("fff9d5"), cell * 1.6 * spread, .22)
 	_effect("flower_wave", at, Vector2.ZERO, Color("ffd25e"), cell*1.5*spread, .58)
 	_effect("dulang_radial", at, Vector2.ZERO, Color("ffe79a"), cell*1.5*spread, .52)
 	if double_blast:
 		# One logical hit; the delayed outer pulse is purely visual.
 		_effect("flower_wave", at, Vector2.ZERO, Color("fff2bd"), cell*2.75, .65, .15)
 		_effect("dulang_radial", at, Vector2.ZERO, Color("ffd25e"), cell*2.75, .60, .15)
-	burst(at, Color("ffe79a"), 144 if double_blast else 96, cell*1.15*spread)
-	burst(at, Color("ffce50"), 96 if double_blast else 64, cell*.85*spread)
+	# The cream artwork carries the impact; a small accent pool preserves the
+	# character silhouette instead of burying it under dense gold confetti.
+	burst(at, Color("fff7e9"), 24 if double_blast else 16, cell*1.15*spread)
 	var fragments: Array[Dictionary] = []
-	var fragment_groups := 9 if double_blast else 6
+	var fragment_groups := 2
 	for index in fragment_groups:
 		fragments.append({"at": at + Vector2.from_angle(index * TAU / fragment_groups) * cell * .25*spread, "color": Color("ffe34d")})
-	kuih_dissolve(fragments, cell * 1.15*spread, 0)
+	kuih_dissolve(fragments, cell * .35, 0)
 
 func delivery_cross(origin: Vector2, targets: PackedVector2Array, cell: float) -> void:
 	_effect("robot_cross",origin,Vector2.ZERO,Color("dce6ed"),cell,.58)
@@ -354,40 +385,50 @@ func _draw_tapau_lane(effect: Dictionary, t: float) -> void:
 	var segments := clampi(int(origin.distance_to(front)/(cell*.18)),6,48)
 	for index in segments+1:
 		var progress := float(index)/segments
-		var jitter := sin(index*2.4+clock*65)*cell*.055*sin(progress*PI)
+		var jitter := sin(index*2.4+clock*65)*cell*.025*sin(progress*PI)
 		points.append(origin.lerp(front,progress)+normal*jitter)
-	draw_line(origin,front,Color(color,fade*.13),cell*.52,true)
-	draw_line(origin,front,Color(color,fade*.27),cell*.30,true)
-	draw_polyline(points,color,cell*.14,true)
-	draw_polyline(points,Color("f4ffff",fade),maxf(2,cell*.045),true)
+	# A full-slot energy band surrounds the electric core, for native and combo lanes.
+	draw_line(origin,front,Color(color,fade*.32),cell*.96,true)
+	draw_line(origin,front,Color(color,fade*.55),cell*.78,true)
+	draw_polyline(points,Color(color,fade*.85),cell*.46,true)
+	draw_polyline(points,Color("f4ffff",fade),maxf(2,cell*.10),true)
 	_glow(front,cell*.85,Color(color,fade*.45))
 	var marker_from := origin+direction*cell*.18
 	var marker_to := endpoint-direction*cell*.24
-	BoardArt.draw_direction_marker(self,marker_from.lerp(marker_to,travel),cell*1.2,direction.angle(),fade)
+	if not effect.get("hide_utensil",false):
+		BoardArt.draw_direction_marker(self,marker_from.lerp(marker_to,travel),cell*1.2,direction.angle(),fade)
 
 
 func _draw_tapau_slots(effect: Dictionary) -> void:
 	var cell: float = effect.width
+	var axis := Vector2.UP if effect.get("vertical", false) else Vector2.RIGHT
+	var normal := axis.orthogonal()
 	for point in effect.points:
 		var delay: float = effect.a.distance_to(point)/cell*.018
 		var age: float = effect.age-delay
 		if age < 0:
 			continue
-		var pulse := (.3+.7*pow(sin(age*PI*9),2))*(1-smoothstep(.28,.42,effect.age))
-		var rect := Rect2(point-Vector2.ONE*cell*.44,Vector2.ONE*cell*.88)
-		var tint := Color(effect.color,pulse*.26)
+		var pulse := (.3+.7*pow(sin(age*PI*9),2))*(1-smoothstep(effect.life*.67,effect.life,effect.age))
+		var rect := Rect2(point-Vector2.ONE*cell*.49,Vector2.ONE*cell*.98)
+		var tint := Color(effect.color,pulse*.32)
 		draw_rect(rect,tint,true)
-		draw_rect(rect,Color(effect.color,pulse*.65),false,maxf(2,cell*.065))
-		var perimeter := PackedVector2Array()
-		for side in 4:
-			var corners := [rect.position,rect.position+Vector2(rect.size.x,0),rect.end,rect.position+Vector2(0,rect.size.y)]
-			var start: Vector2 = corners[side]
-			var finish: Vector2 = corners[(side+1)%4]
-			var normal := (finish-start).normalized().orthogonal()
-			for index in 4:
-				perimeter.append(start.lerp(finish,float(index)/4)+normal*sin(index*2.7+clock*80)*cell*.018)
-		perimeter.append(perimeter[0])
-		draw_polyline(perimeter,Color("efffff",pulse*.9),maxf(1.2,cell*.025),true)
+		# Four flickering bolts cover the slot interior along the clearing axis.
+		# Bounds stay inside this cell, including at the board edges.
+		for lane in 4:
+			var bolt := PackedVector2Array()
+			var offset := (float(lane)-1.5)*cell*.22
+			for index in 9:
+				var along := lerpf(-.49,.49,float(index)/8.0)*cell
+				var jitter := sin(index*2.7+lane*1.9+clock*80+point.x*.03+point.y*.02)*cell*.065
+				bolt.append(point+axis*along+normal*(offset+jitter))
+			draw_polyline(bolt,Color(effect.color,pulse*.24),cell*.18,true)
+			draw_polyline(bolt,Color(effect.color,pulse*.85),maxf(2.0,cell*.075),true)
+			draw_polyline(bolt,Color("efffff",pulse*.95),maxf(1.2,cell*.035),true)
+			for branch in [2, 5]:
+				var sign_value := 1.0 if lane%2 == 0 else -1.0
+				var root: Vector2 = bolt[branch]
+				var twig := PackedVector2Array([root,root+axis*cell*.065+normal*cell*.045*sign_value,root+axis*cell*.12+normal*cell*.08*sign_value])
+				draw_polyline(twig,Color(effect.color,pulse*.75),maxf(1.5,cell*.025),true)
 
 
 func _draw() -> void:
@@ -402,27 +443,71 @@ func _draw() -> void:
 				_draw_special_formation(e)
 			"kuih_dissolve":
 				_draw_kuih_dissolve(e)
+			"roller_lane":
+				var travel := smoothstep(0,.75,t)
+				var direction: Vector2 = (e.b-e.a).normalized()
+				var roller_at: Vector2 = e.a.lerp(e.b,travel)
+				var fade := 1-smoothstep(.8,1,t)
+				var tail: Vector2 = roller_at-direction*minf(e.a.distance_to(roller_at),e.width*1.8)
+				# Broad gold motion light follows the rolling pin, nearly a slot wide.
+				draw_line(tail,roller_at,Color("ffca26",fade*.28),e.width*.96,true)
+				draw_line(tail,roller_at,Color("ffe36b",fade*.60),e.width*.65,true)
+				draw_line(tail,roller_at,Color("fffbe6",fade*.85),e.width*.18,true)
+				var roll_phase: float = e.a.distance_to(roller_at)/e.width*TAU
+				BoardArt.draw_roller(self,roller_at,e.width*1.15,direction.angle(),fade,roll_phase)
 			"tapau_slots":
 				_draw_tapau_slots(e)
 			"order_electric":
 				var pull := clampf((e.age-.32)/.42,0,1)
 				pull *= pull
-				var intensity := minf(1,e.age/.10)*(1-smoothstep(.62,.78,e.age))
-				_glow(e.a,e.width*(1.4+.12*sin(clock*18)),Color("bceeff",intensity*.45))
+				var intensity := minf(1,e.age/.06)*(1-smoothstep(.62,.78,e.age))
+				var heartbeat := .65+.35*pow(sin(e.age*TAU*5),2)
+				_glow(e.a,e.width*(1.7+.18*heartbeat),Color("bceeff",intensity*.35*heartbeat))
+				for halo in 3:
+					var halo_color := [Color("55cfff"),Color("ffda36"),Color.WHITE][halo] as Color
+					draw_circle(e.a,e.width*(.72-float(halo)*.16)*(1+.10*heartbeat),Color(halo_color,intensity*heartbeat*(.08+halo*.025)))
+				_star(e.a,e.width*1.35,Color("fff9df",intensity*heartbeat*.40),e.age*2)
 				for index in e.points.size():
 					var endpoint: Vector2 = e.points[index].lerp(e.a,pull)
 					if endpoint.distance_to(e.a)<2:
 						continue
 					var normal: Vector2 = (endpoint-e.a).normalized().orthogonal()
-					var bolt := PackedVector2Array()
-					for segment in 13:
-						var along := float(segment)/12
-						var jitter: float = sin(clock*48+segment*2.7+index*1.9)*e.width*.055*sin(along*PI)*(1-pull)
-						bolt.append(e.a.lerp(endpoint,along)+normal*jitter)
-					draw_polyline(bolt,Color("68cfff",intensity*.24),e.width*.14,true)
-					draw_polyline(bolt,Color("b7f2ff",intensity*.9),maxf(2.5,e.width*.045),true)
-					draw_polyline(bolt,Color("ffffff",intensity*.95),maxf(1.8,e.width*.024),true)
-					_star(endpoint,e.width*.17,Color("fff4b5",intensity),clock*.7)
+					# Separate living veins spread across the slot, joining at both ends.
+					for vein in 2:
+						var bolt := PackedVector2Array()
+						var vein_color := Color("55cfff") if vein%2 == 0 else Color("ffda36")
+						var core_color := Color("d9faff") if vein%2 == 0 else Color("fff6c9")
+						var phase: float = index*1.9+vein*1.7
+						for segment in 25:
+							var along := float(segment)/24.0
+							var envelope := sin(along*PI)*(1-pull*.65)
+							var spread := (float(vein)-.5)*.30
+							var wave := sin(along*TAU*2-clock*10+phase)*.095
+							var ripple := sin(along*TAU*5+clock*16+phase)*.025
+							bolt.append(e.a.lerp(endpoint,along)+normal*e.width*(spread+wave+ripple)*envelope)
+						var pulse := intensity*(.65+.35*pow(sin(clock*9+phase),2))
+						draw_polyline(bolt,Color(vein_color,pulse*.40),maxf(4.0,e.width*.10),true)
+						draw_polyline(bolt,Color(vein_color,pulse*.85),maxf(2.0,e.width*.055),true)
+						draw_polyline(bolt,Color(core_color,pulse*.95),maxf(1.5,e.width*.032),true)
+						draw_polyline(bolt,Color("ffffff",pulse),maxf(1.0,e.width*.014),true)
+						for split in [7, 15]:
+							var sign_value := -1.0 if vein%2 == 0 else 1.0
+							var branch := PackedVector2Array([bolt[split],bolt[split+2]+normal*e.width*.08*sign_value,bolt[split+4]+normal*e.width*.13*sign_value*(1-pull)])
+							draw_polyline(branch,Color(vein_color,pulse*.80),maxf(1.5,e.width*.04),true)
+							draw_polyline(branch,Color(core_color,pulse*.80),maxf(1.0,e.width*.022),true)
+						# A bright charge travels back along each vein toward the special.
+						var charge := (1-fposmod(clock*1.7+vein*.23+index*.11,1.0))*24
+						var head := mini(int(charge),23)
+						var spark: Vector2 = bolt[head].lerp(bolt[head+1],charge-head)
+						draw_circle(spark,maxf(1.2,e.width*.022),Color("ffffff",pulse))
+					draw_circle(endpoint,e.width*.45*(1-pull*.65),Color("a9f4ff",intensity*.08))
+					_star(endpoint,e.width*.22,Color("fff4b5",intensity),clock*.7)
+					for spark_index in 4:
+						var phase: float = fposmod(e.age*5+index*.17+spark_index*.25,1.0)
+						var angle: float = spark_index*TAU/4.0+index*.7+e.age*2
+						var spark_at: Vector2 = endpoint+Vector2.from_angle(angle)*e.width*(.12+phase*.34)*(1-pull*.65)
+						var spark_tint := Color("55cfff") if spark_index%2 == 0 else Color("ffda36")
+						_star(spark_at,e.width*.14*(1-phase*.5),Color(spark_tint,intensity*(1-phase)),angle)
 			"gold_slot":
 				var travel := clampf(e.age / .22, 0.0, 1.0)
 				var front: Vector2 = e.a.lerp(e.b, smoothstep(0.0, 1.0, travel))
@@ -445,6 +530,8 @@ func _draw() -> void:
 						_gold_glint(e.b + offset, e.width*(.24 + .10*sin(shine*PI)), Color("fff8da",alpha), shine*.35)
 			"charge":
 				_draw_dulang_charge(e)
+			"coconut_burst":
+				COCONUT.burst(self,e)
 			"preview":
 				var rect := Rect2(e.a-Vector2.ONE*e.width*.5,Vector2.ONE*e.width)
 				draw_style_box(UIKit.flat_box(Color(color,t*.10),Color(color,t*.5),8,2),rect)
@@ -463,6 +550,13 @@ func _draw() -> void:
 				var radius: float = e.width*(1-pow(1-t,3))
 				_match_glow(e.a,maxf(1,radius*2), (1-t)*.65)
 				draw_arc(e.a,maxf(1,radius),0,TAU,80,Color("fff8dc",(1-t)*.8),maxf(1,e.width*.025*(1-t)),true)
+			"impact":
+				var fade := 1.0 - smoothstep(.04, .22, e.age)
+				_match_glow(e.a, e.width * (1 + t), fade)
+				draw_circle(e.a, e.width * (.10 + .20 * t), Color("fffef1", fade * .85))
+				for ray in 12:
+					var direction := Vector2.from_angle(ray * TAU / 12.0)
+					draw_line(e.a + direction * e.width * .15, e.a + direction * e.width * (.28 + .50 * t), Color("fff3ab", fade * .75), maxf(1, e.width * .018 * fade), true)
 			"flash":
 				_glow(e.a, e.width * (1 + t * .7), Color(color, color.a * .55))
 				_star(e.a, e.width * (.65 + t * .3), color, t * .2)

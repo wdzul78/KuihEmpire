@@ -48,15 +48,19 @@ func run() -> void:
 				for activation in result.activated:
 					check(not seen.has(activation.pos),"every special fires once despite overlapping blasts")
 					seen[activation.pos] = activation
+				var actual_kind: int = kind
+				if kind in [BoardCell.Special.TAPAU,BoardCell.Special.TAPAU_VERTICAL] and result.converted.size() >= 2:
+					check(result.conversion_kinds.values().has(BoardCell.Special.TAPAU) and result.conversion_kinds.values().has(BoardCell.Special.TAPAU_VERTICAL),"directional conversion includes both axes")
 				for pos in result.converted:
-					check(seen.has(pos) and seen[pos].kind == kind and result.cleared[pos].source == kind,"every converted special executes")
+					actual_kind = result.conversion_kinds[pos]
+					check(seen.has(pos) and seen[pos].kind == actual_kind and result.cleared[pos].source == actual_kind,"every converted special executes its assigned axis")
 					if kind == BoardCell.Special.DULANG:
 						for hit in seen[pos].cells:
 							check(absi(hit.x-pos.x) <= 1 and absi(hit.y-pos.y) <= 1,"Dulang keeps native 3x3 footprint")
-					if kind == BoardCell.Special.TAPAU:
+					if actual_kind == BoardCell.Special.TAPAU:
 						for hit in seen[pos].cells:
 							check(hit.y == pos.y,"horizontal Tapau remains horizontal")
-					if kind == BoardCell.Special.TAPAU_VERTICAL:
+					if actual_kind == BoardCell.Special.TAPAU_VERTICAL:
 						for hit in seen[pos].cells:
 							check(hit.x == pos.x,"vertical Tapau remains vertical")
 	check(random_types.size() > 1,"chosen type varies across seeds")

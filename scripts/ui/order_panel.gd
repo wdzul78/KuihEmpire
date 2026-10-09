@@ -11,6 +11,8 @@ signal line_completed(kuih_id: StringName)
 
 const CHIP_WIDTH := 112.0
 const CHIP_HEIGHT := 182.0
+const AVATAR_BOARD_PATH := "res://assets/ui/order_avatar_v1/order_board_avatar.png"
+const AVATAR_BOARD_REGION := Rect2(9, 64, 2504, 560)
 
 class OrderTick extends Control:
 	func _ready() -> void:
@@ -31,8 +33,9 @@ class OrderTick extends Control:
 			origin + Vector2(.82, .20) * edge,
 		])
 		_stroke(PackedVector2Array([points[0] + Vector2(0, edge * .045), points[1] + Vector2(0, edge * .045), points[2] + Vector2(0, edge * .045)]), Color(.18, .28, .04, .24), edge * .24)
-		_stroke(points, Color("277a12"), edge * .23)
-		_stroke(points, Color("61e526"), edge * .17)
+		_stroke(points, Color("fff8d9"), edge * .30)
+		_stroke(points, Color("207b17"), edge * .24)
+		_stroke(points, Color("56df24"), edge * .17)
 		_stroke(PackedVector2Array([points[0] + Vector2(0, -edge * .035), points[1] + Vector2(0, -edge * .035), points[2] + Vector2(0, -edge * .035)]), Color("b7fa66"), edge * .045)
 
 var _portrait: CharacterIcon
@@ -54,6 +57,7 @@ func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	custom_minimum_size = Vector2.ZERO
 	_build()
+	resized.connect(_layout_compact_board)
 
 
 func _place(node: Control, rect: Rect2) -> void:
@@ -125,7 +129,7 @@ func bind(order: CustomerOrder) -> void:
 	# than an empty card.
 	visible = true
 	_portrait.visible = order != null
-	_card.visible = order != null
+	_card.visible = order != null or compact_mode
 	if order == null or order.customer == null:
 		_portrait.cast = CharacterIcon.Cast.CUSTOMER
 		_portrait.customer = null
@@ -146,53 +150,14 @@ func bind(order: CustomerOrder) -> void:
 	_refresh_chips()
 
 func set_coaching(value: bool, preserve_tutorial_layout: bool = false) -> void:
-	# Ending the instruction gate must not resize the characters mid-lesson.
-	# Explicit mode changes still restore the campaign layout by default.
+	# Coaching changes dialogue, while both modes retain the same portrait strip.
 	var tutorial_presentation := value or preserve_tutorial_layout
 	_coaching = value
-	if tutorial_presentation:
-		_portrait.anchor_left = -.125
-		_portrait.anchor_right = .305
-		_portrait.anchor_top = .08
-		_portrait.anchor_bottom = 1.98
-		_aina.anchor_left = .645
-		_aina.anchor_right = 1.105
-		_aina.anchor_top = .08
-		_aina.anchor_bottom = 1.98
-		_bubble.anchor_left = .06
-		_bubble.anchor_right = .73
-		_bubble.anchor_top = .12
-		_bubble.anchor_bottom = .64
-		_name_label.add_theme_font_size_override("font_size", 36)
-		_line_label.add_theme_font_size_override("font_size", 34)
-		_card.anchor_top = .78
-		_card.anchor_bottom = 1.28
-		_chips_row.anchor_top = .20
-		_chips_row.anchor_bottom = .97
 	(_bubble as SpeechBubble).speaker_on_left = not value and _order != null
-	if not tutorial_presentation:
-		_portrait.anchor_left = -.015
-		_portrait.anchor_right = .325
-		_portrait.anchor_top = .10
-		_portrait.anchor_bottom = 1.70
-		_aina.anchor_left = .675
-		_aina.anchor_right = 1.015
-		_aina.anchor_top = .10
-		_aina.anchor_bottom = 1.70
-		_bubble.anchor_left = .22
-		_bubble.anchor_right = .78
-		_bubble.anchor_top = .12
-		_bubble.anchor_bottom = .48
-		_name_label.add_theme_font_size_override("font_size", 24)
-		_line_label.add_theme_font_size_override("font_size", 22)
-		_card.anchor_top = .78
-		_card.anchor_bottom = 1.28
-		_chips_row.anchor_top = .24
-		_chips_row.anchor_bottom = .93
 	if not value:
 		bind(_order)
 	GameUILayout.apply_order(self, tutorial_layout if tutorial_presentation else campaign_layout)
-	set_compact(not tutorial_presentation)
+	set_compact(true)
 	_layout_chips()
 	_redraw_characters()
 
@@ -203,12 +168,59 @@ func set_compact(value: bool) -> void:
 	_aina.framing = 0 if value else 1
 	_portrait.compact_portrait = value
 	_aina.compact_portrait = value
-	_bubble.visible = not value
+	_portrait.portrait_frame = not value
+	_aina.portrait_frame = not value
+	if value:
+		var texture := AtlasTexture.new()
+		texture.atlas = load(AVATAR_BOARD_PATH)
+		texture.region = AVATAR_BOARD_REGION
+		var style := StyleBoxTexture.new()
+		style.texture = texture
+		_card.add_theme_stylebox_override("panel", style)
+		# The supplied frame contains both portrait rings. Paint it behind faces.
+		move_child(_card, 0)
+		_layout_compact_board()
+	else:
+		_card.add_theme_stylebox_override("panel", GameplaySkin.box("order_board"))
+		move_child(_card, get_child_count()-1)
+	_card.visible = _order != null or value
+	_bubble.visible = _coaching or not value
 	_redraw_characters()
 
 
+func _layout_compact_board() -> void:
+	if not compact_mode or not is_instance_valid(_card) or size.x <= 0 or size.y <= 0:
+		return
+	# Fit the complete strip as one image so avatar rings stay round on tablets
+	# and tall phones. Child coordinates follow its painted content areas.
+	var fit := minf(size.x/AVATAR_BOARD_REGION.size.x,size.y/AVATAR_BOARD_REGION.size.y)
+	var extent := AVATAR_BOARD_REGION.size*fit
+	var rect := Rect2((size-extent)*.5,extent)
+	for edge in [SIDE_LEFT,SIDE_TOP,SIDE_RIGHT,SIDE_BOTTOM]:
+		_card.set_anchor(edge,0)
+	_card.position = rect.position
+	_card.size = rect.size
+	_chips_row.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_chips_row.anchor_left = .205
+	_chips_row.anchor_right = .795
+	_chips_row.anchor_top = .26
+	_chips_row.anchor_bottom = .94
+	var title := _card.get_node("OrderTitle") as Label
+	title.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	title.anchor_left = .395
+	title.anchor_right = .605
+	title.anchor_top = .028
+	title.anchor_bottom = .19
+	title.add_theme_font_size_override("font_size",clampi(roundi(extent.y*.13),18,32))
+	for character in [_portrait,_aina]:
+		character.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT)
+		character.position = rect.position + extent*Vector2(.018 if character == _portrait else .821,.196)
+		character.size = Vector2.ONE*extent.y*.73
+	_layout_chips()
+
+
 func set_story_speaker(speaker: int) -> void:
-	_bubble.visible = speaker < 0 and not compact_mode
+	_bubble.visible = speaker < 0 and (_coaching or not compact_mode)
 	_portrait.modulate = Color.WHITE
 	_aina.modulate = Color.WHITE
 	if speaker < 0:
@@ -290,8 +302,8 @@ func _layout_chips() -> void:
 		var badge_position := Vector2(backing_left + backing_width * .82 - badge_edge, top + height * .88 - badge_edge)
 		entry["badge"].position = badge_position
 		entry["badge"].size = Vector2.ONE * badge_edge
-		entry["tick"].position = badge_position - Vector2.ONE * badge_edge * .10
-		entry["tick"].size = Vector2.ONE * badge_edge * 1.15
+		entry["tick"].position = badge_position - Vector2.ONE * badge_edge * .20
+		entry["tick"].size = Vector2.ONE * badge_edge * 1.45
 		var number_size := int(badge_edge * .95)
 		entry["label"].add_theme_font_size_override("font_size", number_size)
 		entry["label"].add_theme_constant_override("outline_size", maxi(3, roundi(number_size*.15)))

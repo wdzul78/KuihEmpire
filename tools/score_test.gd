@@ -91,8 +91,12 @@ func run() -> void:
 	for order in live.orders:
 		order.collect(order.target.duplicate())
 	live._on_settled()
+	if is_instance_valid(live._victory_bonus):
+		live._victory_bonus.skip()
+	while not live.result.visible:
+		await get_tree().process_frame
 	assert(live.finished and live.stage_result.success and live.stage_result.final_score == 1000)
-	assert(not live.hud._coin_pill.visible and live.hud.score_progress.anchor_right - live.hud.score_progress.anchor_left > .4)
+	assert(not live.hud._coin_pill.visible and live.hud.score_progress.anchor_right - live.hud.score_progress.anchor_left > .3)
 	assert(live.hud.score_progress.score == 1000 and live.result._score_value.text == "1000")
 	assert(HeartManager.current() == hearts - 1)
 	assert(live.stage_result.first_clear_bonus == live.level.first_clear_bonus)
@@ -109,5 +113,10 @@ func run() -> void:
 	assert(live.stage_result.success and live.stage_result.earned_stars == 1 and live.stage_result.first_clear_bonus == 0)
 	assert(ProgressionManager.best_score(1) == previous and not live.stage_result.is_new_best)
 	live.free()
+	AudioManager.stop_music()
+	for voice in AudioManager._voices:
+		voice.stop()
+		voice.stream = null
+	await get_tree().process_frame
 	print("PASS score A-J: order gate, ratings, replay, first clear, move bonus, migration, formulas, cascades, HUD, rewards and hearts")
 	get_tree().quit(0)

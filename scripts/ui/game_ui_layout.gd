@@ -19,7 +19,7 @@ static func copy_control(source: Control, target: Control) -> void:
 
 static func apply_hud(hud: Control, scene: PackedScene) -> void:
 	var guide := scene.instantiate()
-	for key in ["Logo", "HeartMeter", "ScoreMeter", "PauseButton", "StageTitleFrame", "StageTitle", "HintButton", "MovesPanel", "LessonBadge", "CustomerQueue", "OrderArea", "PuzzleBoard", "SpecialItemsTray"]:
+	for key in ["Logo", "HeartMeter", "ScoreMeter", "PauseButton", "StageTitleFrame", "StageTitle", "MovesPanel", "LessonBadge", "CustomerQueue", "OrderArea", "PuzzleBoard", "SpecialItemsTray"]:
 		var target := hud.get_node_or_null(NodePath(key)) as Control
 		var source := guide.get_node_or_null(NodePath(key)) as Control
 		if source != null and target != null:

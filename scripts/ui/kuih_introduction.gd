@@ -6,7 +6,7 @@ const NOTES := {
 	"kuih_koci": ["Kuih putih lembut di atas daun pisang.", "Soft white kuih served on banana leaf."],
 	"ang_ku_kueh": ["Kuih merah dengan corak tempurung kura-kura.", "Red kuih with a tortoise-shell pattern."],
 	"kuih_ketayap": ["Gulungan pandan berinti kelapa manis.", "A pandan roll with sweet coconut filling."],
-	"kuih_lapis": ["Kuih berlapis merah jambu, putih dan hijau.", "A pink, white and green layered kuih."],
+	"kuih_lapis": ["Kuih berlapis merah jambu dan putih krim.", "A pink and cream layered kuih."],
 	"keria": ["Kuih berbentuk cincin dengan salutan gula.", "A ring-shaped kuih with a sugar coating."],
 }
 

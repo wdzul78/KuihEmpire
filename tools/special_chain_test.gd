@@ -56,9 +56,16 @@ func run() -> void:
 	board._play_step(hit,0)
 	await get_tree().create_timer(.12).timeout
 	assert(not board._vfx.effects.any(func(e: Dictionary) -> bool: return e.kind == "beam"))
-	await get_tree().create_timer(.44).timeout
+	# Observe the next wave rather than assuming the old pre-charge timestamp.
+	var elapsed := 0.0
+	while elapsed < 2.0 and not board._vfx.effects.any(func(e: Dictionary) -> bool: return e.kind == "beam"):
+		await get_tree().create_timer(.02).timeout
+		elapsed += .02
 	assert(board._vfx.effects.any(func(e: Dictionary) -> bool: return e.kind == "beam"))
-	await get_tree().create_timer(1.3).timeout
+	elapsed = 0.0
+	while elapsed < 3.0 and (not board._vfx.effects.is_empty() or not board._vfx.particles.is_empty()):
+		await get_tree().create_timer(.02).timeout
+		elapsed += .02
 	assert(board._vfx.effects.is_empty() and board._vfx.particles.is_empty())
 	board.free()
 	AudioManager.stop_music()

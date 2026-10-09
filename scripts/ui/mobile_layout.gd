@@ -25,8 +25,12 @@ static func bind(root: Control, excluded: Array[String] = []) -> void:
 	for child in root.get_children():
 		if child is Control and String(child.name) not in excluded:
 			controls.append(child)
+	var root_ref: WeakRef = weakref(root)
 	var fit := func() -> void:
-		var safe := safe_rect(root)
+		var current_root := root_ref.get_ref() as Control
+		if current_root == null:
+			return
+		var safe := safe_rect(current_root)
 		for child in controls:
 			if not is_instance_valid(child):
 				continue
@@ -34,7 +38,7 @@ static func bind(root: Control, excluded: Array[String] = []) -> void:
 			var previous: Vector4 = child.get_meta("mobile_safe_insets",Vector4.ZERO)
 			var original := offsets-previous
 			var anchors := Vector4(child.anchor_left,child.anchor_top,child.anchor_right,child.anchor_bottom)
-			var insets := inset_offsets(root.size,safe,anchors)
+			var insets := inset_offsets(current_root.size,safe,anchors)
 			child.offset_left = original.x+insets.x
 			child.offset_top = original.y+insets.y
 			child.offset_right = original.z+insets.z
