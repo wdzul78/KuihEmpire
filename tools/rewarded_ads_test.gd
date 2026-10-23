@@ -14,6 +14,10 @@ class FakeSdk extends Node:
 	signal rewarded_ad_failed_to_show_full_screen_content(info: Variant, error: Variant)
 	var loads := 0
 	var shows := 0
+	var initialized := false
+	func initialize() -> void:
+		initialized = true
+		initialization_completed.emit(null)
 	func load_rewarded_ad() -> void: loads += 1
 	func show_rewarded_ad(_id: String) -> void: shows += 1
 
@@ -35,8 +39,8 @@ func _ready() -> void:
 	HeartManager.state()["current_hearts"] = 0
 	HeartManager.state()["last_heart_refill_timestamp"] = HeartManager.now()
 	var sdk := FakeSdk.new()
-	RewardedAds.attach_sdk(sdk)
-	sdk.initialization_completed.emit(null)
+	RewardedAds.initialize_sdk(sdk)
+	assert(sdk.initialized)
 	assert(sdk.loads == 1 and not HeartManager.can_watch_ad())
 	sdk.rewarded_ad_failed_to_load.emit(null, null)
 	assert(not HeartManager.can_watch_ad())
