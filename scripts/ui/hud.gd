@@ -81,6 +81,9 @@ func set_tutorial_mode(value: bool) -> void:
 		_title_label.autowrap_mode = TextServer.AUTOWRAP_OFF
 		_title_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 		_title_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		_title_label.add_theme_constant_override("line_spacing",0)
+		_fit_stage_text()
+		_fit_moves_text.call_deferred()
 
 
 func _ready() -> void:
@@ -140,6 +143,8 @@ func _build() -> void:
 	_place(_title_plaque, Rect2(.12, .09, .54, .04))
 	_title_plaque.visible = false
 	_title_label = UIKit.label("", 24, Palette.PAPER)
+	_title_label.material = null
+	_title_label.add_theme_font_override("font", UIKit.counter_font())
 	_title_label.clip_text = true
 	_title_label.resized.connect(_fit_stage_text)
 	_title_label.add_theme_color_override("font_outline_color", Palette.WOOD_DARK)
@@ -157,11 +162,16 @@ func _build() -> void:
 	_moves_card.add_theme_stylebox_override("panel", GameplaySkin.box("moves_hanging"))
 	_place(_moves_card, Rect2(0.815, 0.102, 0.15, 0.078))
 	_moves_label = UIKit.label("0", 46, Palette.GOLD_PALE)
+	_moves_label.material = null
+	_moves_label.add_theme_font_override("font", UIKit.counter_font())
+	_moves_label.add_theme_color_override("font_color", Color("fffdf2"))
 	_moves_label.add_theme_color_override("font_outline_color", Palette.WOOD_DARK)
 	_moves_label.add_theme_constant_override("outline_size", 4)
 	_moves_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	order_place(_moves_card, _moves_label, Rect2(.12, .30, .76, .40))
 	_moves_cap = UIKit.label("MOVES", 21, Palette.PAPER)
+	_moves_cap.material = null
+	_moves_cap.add_theme_font_override("font", UIKit.counter_font())
 	_moves_cap.add_theme_color_override("font_outline_color", Palette.WOOD_DARK)
 	_moves_cap.add_theme_constant_override("outline_size", 3)
 	_moves_cap.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
@@ -258,8 +268,8 @@ func _fit_stage_text() -> void:
 	if not is_instance_valid(_title_label) or _title_label.size.x <= 0:
 		return
 	var font := _title_label.get_theme_font("font")
-	var font_size := 32
-	while font_size > 22:
+	var font_size := 38
+	while font_size > 16:
 		var widest := 0.0
 		for line in _title_label.text.split("\n"):
 			widest = maxf(widest,font.get_string_size(line,HORIZONTAL_ALIGNMENT_LEFT,-1,font_size).x)
@@ -282,6 +292,7 @@ func set_moves(left: int, total: int, bonus: bool = false) -> void:
 	_moves_label.scale = Vector2.ONE
 	_moves_label.text = str(maxi(0, left))
 	_moves_cap.text = "BONUS" if bonus else ("MOVES" if left > 3 else "HURRY!")
+	_fit_moves_text()
 	var style := GameplaySkin.box("moves_hanging")
 	if left <= 3 and not bonus:
 		style.modulate_color = Color(1, .7, .7)
@@ -291,6 +302,21 @@ func set_moves(left: int, total: int, bonus: bool = false) -> void:
 		_moves_pulse.tween_property(_moves_label, "scale", Vector2(1.15, 1.15), .42)
 		_moves_pulse.tween_property(_moves_label, "scale", Vector2.ONE, .42)
 
+
+func _fit_moves_text() -> void:
+	for label in [_moves_label,_moves_cap]:
+		label.add_theme_font_size_override("font_size",16)
+		label.offset_left = 0
+		label.offset_top = 0
+		label.offset_right = 0
+		label.offset_bottom = 0
+		var available: Vector2 = label.get_parent().size * Vector2(label.anchor_right-label.anchor_left,label.anchor_bottom-label.anchor_top)
+		var px := 48 if label == _moves_label else 30
+		var font: Font = label.get_theme_font("font")
+		while px > 16 and (font.get_height(px) > available.y-4 or font.get_string_size(label.text,HORIZONTAL_ALIGNMENT_LEFT,-1,px).x > available.x-8):
+			px -= 1
+		label.add_theme_font_size_override("font_size",px)
+		label.clip_text = true
 
 func set_queue(customers: Array) -> void:
 	for child in _queue_row.get_children():
@@ -304,14 +330,14 @@ func set_queue(customers: Array) -> void:
 			continue
 		var chip := PanelContainer.new()
 		chip.add_theme_stylebox_override("panel", StyleBoxEmpty.new())
-		chip.custom_minimum_size = Vector2(54, 54)
+		chip.custom_minimum_size = Vector2(92, 92)
 		var portrait := CharacterIcon.new()
 		portrait.cast = CharacterIcon.Cast.CUSTOMER
 		portrait.customer = customer
 		portrait.framing = 0
 		portrait.compact_portrait = true
 		portrait.portrait_frame = true
-		portrait.custom_minimum_size = Vector2(46, 46)
+		portrait.custom_minimum_size = Vector2(88, 88)
 		chip.add_child(portrait)
 		_queue_row.add_child(chip)
 		shown += 1

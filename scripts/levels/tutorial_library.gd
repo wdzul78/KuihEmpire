@@ -20,7 +20,7 @@ extends RefCounted
 ##   T7  7x7  a second customer in the queue
 ##   T8  8x8  the full board, the real thing
 ##   T9  4x4  create and activate a 2x2 Pesanan Hantar; unlock for campaign
-##   T10 4x4  create and activate a vertical Tapau
+##   T10 4x4  create and activate a Kuih Selorot
 ##   T11 4x4  combine two directionals for a cross
 ## Display order: T1, T2, T3, T4, T10, T11, T9, T5, T7, T8.
 ##
@@ -344,11 +344,11 @@ static func _build(index: int) -> LevelDefinition:
 			])
 
 		10:
-			return _make(10, "Vertical Tapau", 4, [A, B, C, D], [
+			return _make(10, "Kuih Selorot", 4, [A, B, C, D], [
 				[A, B, C, A], [B, A, C, B], [C, C, B, C], [A, B, A, B],
 			], 0, [], [], [
-				_step_here("Make a vertical Tapau", "Slide the Ang Ku down to match FOUR. An up or down swipe makes a vertical Tapau that clears a column.", TutorialStepData.Gate.CREATED_VERTICAL, [Vector2i(2,1), Vector2i(2,2)]),
-				_step("Use the vertical Tapau", "Swap the highlighted package with its neighbour. Its arrow clears one full column.", TutorialStepData.Gate.ACTIVATED_SPECIAL, BoardCell.Special.TAPAU_VERTICAL),
+				_step_here("Make a Kuih Selorot", "Slide the Ang Ku down to match FOUR. An up or down swipe makes a Kuih Selorot that clears a column.", TutorialStepData.Gate.CREATED_VERTICAL, [Vector2i(2,1), Vector2i(2,2)]),
+				_step("Use the Kuih Selorot", "Swap the highlighted package with its neighbour. Its arrow clears one full column.", TutorialStepData.Gate.ACTIVATED_SPECIAL, BoardCell.Special.TAPAU_VERTICAL),
 				_step("One whole column!", "The arrow shows which direction your special clears.", TutorialStepData.Gate.INTRO),
 			])
 

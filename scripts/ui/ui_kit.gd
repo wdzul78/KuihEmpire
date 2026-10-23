@@ -44,21 +44,26 @@ static func graphic_label(text: String, size_px: int = 36, variant: GraphicText 
 
 static func title_font() -> Font:
 	if _title_font == null:
-		var fv := FontVariation.new()
-		fv.base_font = ThemeDB.fallback_font
-		fv.variation_embolden = 0.55
-		fv.spacing_glyph = 1
-		_title_font = fv
+		var font := FontVariation.new()
+		font.base_font = preload("res://assets/fonts/fredoka_v1/Fredoka.ttf")
+		font.variation_opentype = {2003265652: 700.0, 2003072104: 100.0}
+		font.fallbacks = [preload("res://assets/fonts/fredoka_v1/NotoSansMath.ttf"), preload("res://assets/fonts/fredoka_v1/NotoSans.ttf")]
+		_title_font = font
 	return _title_font
 
 
 static func bold_font() -> Font:
 	if _bold_font == null:
-		var fv := FontVariation.new()
-		fv.base_font = ThemeDB.fallback_font
-		fv.variation_embolden = 0.28
-		_bold_font = fv
+		var font := FontVariation.new()
+		font.base_font = preload("res://assets/fonts/fredoka_v1/Fredoka.ttf")
+		font.variation_opentype = {2003265652: 600.0, 2003072104: 100.0}
+		font.fallbacks = [preload("res://assets/fonts/fredoka_v1/NotoSansMath.ttf"), preload("res://assets/fonts/fredoka_v1/NotoSans.ttf")]
+		_bold_font = font
 	return _bold_font
+
+
+static func counter_font() -> Font:
+	return bold_font()
 
 
 static func theme() -> Theme:
@@ -95,6 +100,17 @@ static func theme() -> Theme:
 	t.set_stylebox("background", "ProgressBar", wood_box(Palette.CREAM_DEEP, Palette.WOOD_LIGHT, 0, 0.4))
 	t.set_stylebox("fill", "ProgressBar", wood_box(Palette.PINK, Palette.PINK_DARK, 0, 0.0))
 
+	t.set_color("font_color", "TooltipLabel", Color("fffbea"))
+	t.set_color("font_outline_color", "TooltipLabel", Color("301708"))
+	t.set_constant("outline_size", "TooltipLabel", 1)
+	t.set_font("font", "TooltipLabel", bold_font())
+	t.set_font_size("font_size", "TooltipLabel", 28)
+	var tooltip_box := flat_box(Color("482610"), Color("e9bd63"), 0, 2, 12)
+	tooltip_box.content_margin_left = 16
+	tooltip_box.content_margin_right = 16
+	tooltip_box.content_margin_top = 10
+	tooltip_box.content_margin_bottom = 10
+	t.set_stylebox("panel", "TooltipPanel", tooltip_box)
 	_theme = t
 	return t
 
@@ -151,6 +167,9 @@ static func label(
 	align: int = HORIZONTAL_ALIGNMENT_CENTER
 ) -> Label:
 	var l := Label.new()
+	var lettering_material := ShaderMaterial.new()
+	lettering_material.shader = preload("res://shaders/candy_text.gdshader")
+	l.material = lettering_material
 	l.text = text
 	l.horizontal_alignment = align
 	l.add_theme_font_size_override("font_size", size_px)
@@ -159,6 +178,10 @@ static func label(
 	l.autowrap_mode = TextServer.AUTOWRAP_OFF
 	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return l
+
+
+static func set_text_color(label_node: Label, color: Color) -> void:
+	label_node.add_theme_color_override("font_color", color)
 
 
 static func title(text: String, size_px: int = 72, color: Color = Palette.WOOD_DARK) -> Label:

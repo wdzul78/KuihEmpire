@@ -1,6 +1,8 @@
 class_name TileView
 extends Control
 
+const ANIMATION_PACE = preload("res://scripts/gameplay/animation_pace.gd")
+
 ## Visual for one kuih on the board.
 ##
 ## Only the kuih itself is drawn here; the tray recess underneath lives in the
@@ -85,7 +87,7 @@ func set_cell(value: BoardCell) -> void:
 		icon.kuih = data
 		icon.special_kind = value.special
 		icon.show_outline = true
-		icon.visible = value.blocker_kind != BlockerSpec.Kind.BANANA_LEAF or not value.has_overlay()
+		icon.visible = not _conceals_food(value)
 	_sync_special_idle()
 	queue_redraw()
 
@@ -171,7 +173,7 @@ func animate_directional_activation() -> void:
 	_special_idle_tween = null
 	icon.directional_alpha = 1.0
 	icon.directional_spread = 0.0
-	var tween := icon.create_tween()
+	var tween := icon.create_tween().set_speed_scale(ANIMATION_PACE.SPEED)
 	tween.tween_property(icon,"directional_spread",1.0,.15).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	tween.parallel().tween_method(func(seconds: float): icon.directional_alpha = .3+.7*pow(cos(seconds*PI*18),2),0.0,.15,.15)
 	tween.tween_property(icon,"directional_alpha",0.0,.03)
@@ -191,19 +193,36 @@ func animate_order_activation() -> void:
 	if _order_activation_tween != null and _order_activation_tween.is_valid():
 		_order_activation_tween.kill()
 	icon.order_activation = 0.0
-	_order_activation_tween = create_tween()
-	_order_activation_tween.tween_property(icon,"order_activation",1.0,.78)
+	_order_activation_tween = create_tween().set_speed_scale(ANIMATION_PACE.SPEED)
+	_order_activation_tween.tween_property(icon,"order_activation",1.0,.60)
 
+
+const PREMIUM_CHARGE = preload("res://shaders/premium_charge.gdshader")
 
 func animate_electric_flash() -> void:
 	if icon == null:
 		return
 	if _electric_flash_tween != null and _electric_flash_tween.is_valid():
 		_electric_flash_tween.kill()
-	_electric_flash_tween = create_tween()
-	for tint in [Color(1.45,1.55,1.75),Color(1.75,1.55,1.15)]:
-		_electric_flash_tween.tween_property(icon,"modulate",tint,.055)
-		_electric_flash_tween.tween_property(icon,"modulate",Color.WHITE,.055)
+	_electric_flash_tween = create_tween().set_speed_scale(ANIMATION_PACE.SPEED)
+	var glow := ShaderMaterial.new()
+	glow.shader = PREMIUM_CHARGE
+	icon.material = glow
+	_electric_flash_tween.tween_method(func(seconds: float):
+		icon.modulate = Color(1.0+.35*pow(sin(seconds*35),2),1.0+.25*pow(sin(seconds*35),2),1.0)
+		icon.scale = Vector2.ONE*(1.0+.08*pow(sin(seconds*30),2))
+		icon.position = Vector2(sin(seconds*135),cos(seconds*117))*size.x*.035
+		icon.rotation = sin(seconds*120)*deg_to_rad(2.0)
+		glow.set_shader_parameter("charge",.7+.3*pow(sin(seconds*65),2))
+	,0.0,.68,.51)
+	_electric_flash_tween.tween_callback(func():
+		icon.material = null
+		icon.rotation = 0.0
+		icon.modulate = Color.WHITE
+		icon.scale = Vector2.ONE
+		icon.position = Vector2.ZERO
+	)
+
 
 
 ## Move only the artwork, leaving swap animation and special rotation independent.
@@ -304,3 +323,7 @@ func _draw() -> void:
 func _draw_rim_light() -> void:
 	# The shared animated artwork draws the new tray rim and rotating rays.
 	pass
+
+
+static func _conceals_food(value: BoardCell) -> bool:
+	return value != null and value.has_obstacle() and value.blocker_kind in [BlockerSpec.Kind.BANANA_LEAF,BlockerSpec.Kind.FOOD_COVER,BlockerSpec.Kind.STEAMER,BlockerSpec.Kind.PACKAGING_BOX]

@@ -1,0 +1,68 @@
+[gd_resource type="Resource" script_class="StallDefinition" load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/stall_definition.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/data/stall_state.gd" id="2"]
+
+[sub_resource type="Resource" id="State0"]
+script = ExtResource("2")
+id = "old"
+display_name = "Old Family Stall"
+milestone_required = 0
+star_cost = 0
+menu_background = "res://assets/stalls/family_stall/old/background_v1.png"
+gameplay_background = "res://assets/stalls/family_stall/old/background_v1.png"
+renovation_background = "res://assets/stalls/family_stall/old/background_v1.png"
+journey_background = "res://assets/stalls/family_stall/old/background_v1.png"
+task_name = ""
+hotspot = Vector2(0.84, 0.48)
+component = "counter"
+
+[sub_resource type="Resource" id="State1"]
+script = ExtResource("2")
+id = "revived"
+display_name = "Revived Family Stall"
+milestone_required = 1
+star_cost = 5
+menu_background = "res://assets/stalls/family_stall/revived/background_v1.png"
+gameplay_background = "res://assets/stalls/family_stall/revived/background_v1.png"
+renovation_background = "res://assets/stalls/family_stall/revived/background_v1.png"
+journey_background = "res://assets/stalls/family_stall/revived/background_v1.png"
+task_name = "Restore signboard and awning"
+hotspot = Vector2(0.13, 0.12)
+component = "sign"
+
+[sub_resource type="Resource" id="State2"]
+script = ExtResource("2")
+id = "polished"
+display_name = "Polished Family Stall"
+milestone_required = 2
+star_cost = 8
+menu_background = "res://assets/stalls/family_stall/polished/background_v1.png"
+gameplay_background = "res://assets/stalls/family_stall/polished/background_v1.png"
+renovation_background = "res://assets/stalls/family_stall/polished/background_v1.png"
+journey_background = "res://assets/stalls/family_stall/polished/background_v1.png"
+task_name = "Upgrade counter and display"
+hotspot = Vector2(0.84, 0.48)
+component = "counter"
+
+[sub_resource type="Resource" id="State3"]
+script = ExtResource("2")
+id = "complete"
+display_name = "Completed Family Stall"
+milestone_required = 3
+star_cost = 12
+menu_background = "res://assets/stalls/family_stall/complete/background_v2.png"
+gameplay_background = "res://assets/stalls/family_stall/complete/background_v2.png"
+renovation_background = "res://assets/stalls/family_stall/complete/background_v2.png"
+journey_background = "res://assets/stalls/family_stall/complete/background_v2.png"
+task_name = "Finish lighting and shelves"
+hotspot = Vector2(0.89, 0.07)
+component = "lamp"
+
+[resource]
+script = ExtResource("1")
+id = &"family_stall"
+display_name = "Family Stall"
+stage_start = 1
+preset = &"stall_dawn"
+states = Array[ExtResource("2")]([SubResource("State0"), SubResource("State1"), SubResource("State2"), SubResource("State3")])

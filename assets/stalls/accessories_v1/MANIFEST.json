@@ -1,0 +1,140 @@
+{
+  "tool": "built-in imagegen",
+  "assets": [
+    {
+      "id": "hibiscus",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-fac3f40d-135b-48c1-938b-a4966c77c474.png",
+      "prompt": "Single standalone transparent PNG game asset for Kuih Empire. A red Malaysian hibiscus plant with lush green leaves in a small warm terracotta flower pot. Front three-quarter view, entire pot base visible, 2\u20133 blossoms. A decorative tabletop accessory. Warm polished stylized casual-game illustration, rounded volumes, crisp dark brown contours, readable at small mobile size, soft painted shading and glossy highlights matching cozy Malaysian kuih game artwork. Object centered, fills 80% canvas, ample transparent padding, no cast shadow on imaginary floor, no environment, no text, no letters, no UI button frame, no extra objects, no collage. Genuine transparent background.",
+      "dimensions": [
+        1223,
+        1286
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "path": "assets/stalls/accessories_v1/hibiscus.png",
+      "sha256": "cd187becbd105e1f1d329b782605def322e8e153231d94ba46c12f8f75d77a64"
+    },
+    {
+      "id": "rattan_lamp",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-a86aff71-d179-468b-97b9-9f46af370cf8.png",
+      "prompt": "Single standalone transparent PNG game asset for Kuih Empire. A hanging warm glowing woven rattan lantern with a short suspension chain, complete top hook visible. Front view, honey-coloured woven basket shade, warm cream light, rustic Malaysian stall accessory. Warm polished stylized casual-game illustration, rounded volumes, crisp dark brown contours, readable at small mobile size, soft painted shading and glossy highlights matching cozy Malaysian kuih game artwork. Object centered, fills 80% canvas, ample transparent padding, no cast shadow on imaginary floor, no environment, no text, no letters, no UI button frame, no extra objects, no collage. Genuine transparent background.",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "alpha_extrema": [
+        0,
+        254
+      ],
+      "path": "assets/stalls/accessories_v1/rattan_lamp.png",
+      "sha256": "5910e9d69175282441e38b2d1679d70febedd7613aea068e98acd78b9761469f"
+    },
+    {
+      "id": "pink_batik",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-8d21d501-a434-41cd-b3c0-edca80562dc1.png",
+      "prompt": "Single standalone transparent PNG game asset for Kuih Empire. A pink Malaysian batik tabletop runner with cream floral batik pattern, seen from shallow overhead front perspective as a horizontal narrow trapezoid laying flat, neat gold border and modest fringes, width four times its height. No table included. Warm polished stylized casual-game illustration, rounded volumes, crisp dark brown contours, readable at small mobile size, soft painted shading and glossy highlights matching cozy Malaysian kuih game artwork. Object centered, fills 80% canvas, ample transparent padding, no cast shadow on imaginary floor, no environment, no text, no letters, no UI button frame, no extra objects, no collage. Genuine transparent background.",
+      "dimensions": [
+        2172,
+        724
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "path": "assets/stalls/accessories_v1/pink_batik.png",
+      "sha256": "55d7a9729b2736625845ef357678e91acb8793a3ee1fd3b00dc3378ef8e08d0f"
+    },
+    {
+      "id": "office_plant",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-493e1d85-b4f9-49f1-8d2f-19ecc21d5e77.png",
+      "prompt": "Single standalone transparent PNG game asset for Kuih Empire. A compact lush green leafy indoor plant in a clean white ceramic cylindrical pot with teal accent band, front three-quarter view, entire pot base visible. Suitable for a school canteen or office cafeteria. Warm polished stylized casual-game illustration, rounded volumes, crisp dark brown contours, readable at small mobile size, soft painted shading and glossy highlights matching cozy Malaysian kuih game artwork. Object centered, fills 80% canvas, ample transparent padding, no cast shadow on imaginary floor, no environment, no text, no letters, no UI button frame, no extra objects, no collage. Genuine transparent background.",
+      "dimensions": [
+        1145,
+        1374
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "path": "assets/stalls/accessories_v1/office_plant.png",
+      "sha256": "287f20533b29ddca39742ce62f8ff37e9d0a6c1d0fbc7ca504490abfad1d3db1"
+    },
+    {
+      "id": "modern_pendant",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-af9ad3ac-6b7d-40b1-9e32-7d96193e0b28.png",
+      "prompt": "Single standalone transparent PNG game asset for Kuih Empire. A compact modern ceiling pendant lamp with brushed stainless steel dome shade, warm light underside and short ceiling stem with mounting cap, all fully visible. Front view, suitable for an institutional canteen. Warm polished stylized casual-game illustration, rounded volumes, crisp dark brown contours, readable at small mobile size, soft painted shading and glossy highlights matching cozy Malaysian kuih game artwork. Object centered, fills 80% canvas, ample transparent padding, no cast shadow on imaginary floor, no environment, no text, no letters, no UI button frame, no extra objects, no collage. Genuine transparent background.",
+      "dimensions": [
+        1241,
+        1268
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "path": "assets/stalls/accessories_v1/modern_pendant.png",
+      "sha256": "efed9ac5e61405e72d68fc1b9023f6b69125d725a738cb6fe72114b7afafdb17"
+    },
+    {
+      "id": "steel_organizer",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-e584aaad-a20c-4f09-b3c2-880bea524666.png",
+      "prompt": "Single standalone transparent PNG game asset for Kuih Empire. A small polished stainless steel food-service countertop organiser: neat upright spoon/fork holder beside a slim stack of clean trays in a rectangular base, front three-quarter view. Clear compact silhouette, practical hygienic canteen equipment. Warm polished stylized casual-game illustration, rounded volumes, crisp dark brown contours, readable at small mobile size, soft painted shading and glossy highlights matching cozy Malaysian kuih game artwork. Object centered, fills 80% canvas, ample transparent padding, no cast shadow on imaginary floor, no environment, no text, no letters, no UI button frame, no extra objects, no collage. Genuine transparent background.",
+      "dimensions": [
+        1312,
+        1199
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "path": "assets/stalls/accessories_v1/steel_organizer.png",
+      "sha256": "1c0e70112d833ae9b754fe3af08c321c7722c8cc49b3c6e44a6c4b5275cdc6dd"
+    },
+    {
+      "id": "renovate",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-f3bad477-42c1-47ba-bbb5-c4bdeb7ebc9a.png",
+      "prompt": "Single standalone transparent PNG game asset for Kuih Empire. A casual mobile game renovation action icon: a golden small hammer crossed with a warm wooden handled paintbrush, one bright golden star attached near lower corner. Strong simple readable silhouette. Warm polished stylized casual-game illustration, rounded volumes, crisp dark brown contours, readable at small mobile size, soft painted shading and glossy highlights matching cozy Malaysian kuih game artwork. Object centered, fills 80% canvas, ample transparent padding, no cast shadow on imaginary floor, no environment, no text, no letters, no UI button frame, no extra objects, no collage. Genuine transparent background.",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "path": "assets/stalls/accessories_v1/renovate.png",
+      "sha256": "404559ffe7ba94efd8ebd91bd802d64f239fbc7d5f43633ea5df9ed1cb0e4719"
+    },
+    {
+      "id": "style",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-ac168792-b20f-4c40-8960-eb87e500d816.png",
+      "prompt": "Single standalone transparent PNG game asset for Kuih Empire. A casual mobile game style selection icon: a warm wooden artist palette with pink, green and teal paint dots and one small paintbrush. Strong simple readable silhouette. Warm polished stylized casual-game illustration, rounded volumes, crisp dark brown contours, readable at small mobile size, soft painted shading and glossy highlights matching cozy Malaysian kuih game artwork. Object centered, fills 80% canvas, ample transparent padding, no cast shadow on imaginary floor, no environment, no text, no letters, no UI button frame, no extra objects, no collage. Genuine transparent background.",
+      "dimensions": [
+        1310,
+        1201
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "path": "assets/stalls/accessories_v1/style.png",
+      "sha256": "1b9e263c11c0b18c0befebe51a12ff3cd128a519bf26e1fd3240e2d7f4b55c05"
+    },
+    {
+      "id": "supplies",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-2a3506b5-a45e-49af-a8de-2bbdfcf074a8.png",
+      "prompt": "Single standalone transparent PNG game asset for Kuih Empire. A casual mobile game supplies action icon: a small wooden crate containing a wooden spatula and a golden serving tray, with a tiny green plus badge on front. Strong simple readable silhouette. Warm polished stylized casual-game illustration, rounded volumes, crisp dark brown contours, readable at small mobile size, soft painted shading and glossy highlights matching cozy Malaysian kuih game artwork. Object centered, fills 80% canvas, ample transparent padding, no cast shadow on imaginary floor, no environment, no text, no letters, no UI button frame, no extra objects, no collage. Genuine transparent background.",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "path": "assets/stalls/accessories_v1/supplies.png",
+      "sha256": "554bc9f054c1ae209c32bf4e48c9fb0a1b5267a39bf85a12d23b7610e53e76cf"
+    }
+  ]
+}

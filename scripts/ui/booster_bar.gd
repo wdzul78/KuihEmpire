@@ -9,10 +9,12 @@ extends Control
 signal booster_requested(booster: int)
 
 const BUTTONS := [
-	{"booster": EconomyManager.Booster.SPATULA, "name": "Tangan", "color": Color("63a7e0")},
+	{"booster": EconomyManager.Booster.HAND, "name": "Tangan", "color": Color("63a7e0")},
+	{"booster": EconomyManager.Booster.SPATULA, "name": "Sudip", "color": Palette.GOLD},
 	{"booster": EconomyManager.Booster.TRAY, "name": "Dulang", "color": Palette.GOLD},
 	{"booster": EconomyManager.Booster.SHUFFLE, "name": "Shuffle", "color": Color("9bdc43")},
-	{"booster": EconomyManager.Booster.GIFT, "name": "Tapau", "color": Color("bc72df")},
+	{"booster": EconomyManager.Booster.GIFT, "name": "Ketupat Raya", "color": Color("bc72df")},
+	{"booster": EconomyManager.Booster.ROYAL, "name": "Kek Lapis Diraja", "color": Palette.GOLD},
 ]
 
 var _buttons: Dictionary = {}   # booster -> Button
@@ -20,12 +22,14 @@ var _selected: int = -1
 var _available := true
 var practice_mode := false
 var _locked_material: ShaderMaterial
-const SURFACES := ["booster_blue", "booster_gold", "booster_green", "booster_purple"]
+const SURFACES := ["booster_blue", "booster_gold", "booster_green", "booster_purple", "booster_gold", "booster_purple"]
 const ICONS := {
-	EconomyManager.Booster.SPATULA: preload("res://assets/ui/booster_tray_v1/hand.png"),
+	EconomyManager.Booster.HAND: preload("res://assets/ui/booster_tray_v1/hand.png"),
+ EconomyManager.Booster.SPATULA: preload("res://assets/boosters/sudip.png"),
+ EconomyManager.Booster.ROYAL: preload("res://assets/specials/kek_lapis_diraja_v1/kek_lapis_diraja.png"),
 	EconomyManager.Booster.TRAY: preload("res://assets/specials/badak_berendam_v1/badak_berendam.png"),
 	EconomyManager.Booster.SHUFFLE: preload("res://assets/boosters/shuffle.png"),
-	EconomyManager.Booster.GIFT: preload("res://assets/boosters/tapau.png"),
+	EconomyManager.Booster.GIFT: preload("res://assets/vfx/ketupat_raya_v1/ketupat.png"),
 }
 
 
@@ -50,13 +54,13 @@ func _build() -> void:
 		var entry: Dictionary = BUTTONS[index]
 		var booster: int = entry["booster"]
 		var holder := Control.new()
-		holder.name = ["SpatulaSlot", "TraySlot", "ShuffleSlot", "TapauSlot"][index]
+		holder.name = "BoosterSlot%d" % booster
 		holder.custom_minimum_size = Vector2(164, 164)
 		holder.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		holder.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 
 		var button := Button.new()
-		button.name = ["SpatulaButton", "TrayButton", "ShuffleButton", "TapauButton"][index]
+		button.name = "BoosterButton%d" % booster
 		button.custom_minimum_size = Vector2(164, 164)
 		button.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
 		button.offset_bottom = 164
@@ -64,14 +68,16 @@ func _build() -> void:
 		for state in ["normal", "hover", "pressed", "disabled", "focus"]:
 			button.add_theme_stylebox_override(state, StyleBoxEmpty.new())
 		GameplaySkin.button(button, SURFACES[index])
-		var booster_name := JourneyArt.localized(entry["name"], ["Hand", "Tray", "Shuffle", "Tapau"][index])
+		var booster_name := JourneyArt.localized(entry["name"], ["Hand", "Spatula", "Tray", "Shuffle", "Ketupat Raya", "Royal Cake"][index])
 		button.text = ""
 		button.tooltip_text = booster_name
 		if ICONS.has(booster):
 			button.text = ""
 			var art := TextureRect.new()
 			art.name = "BoosterArt"
-			art.texture = GameplaySkin.texture("booster_hand") if booster == EconomyManager.Booster.SPATULA else ICONS[booster]
+			art.texture = GameplaySkin.texture("booster_hand") if booster == EconomyManager.Booster.HAND else ICONS[booster]
+			if booster == EconomyManager.Booster.GIFT:
+				art.texture = GameVfx.ketupat_body()
 			art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 			art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 			art.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -118,7 +124,7 @@ func _build() -> void:
 
 
 func _recenter() -> void:
-	var side := clampf(minf(size.y,(size.x-54)/4.0),80,136)
+	var side := clampf(minf(size.y,(size.x-18*(BUTTONS.size()-1))/float(BUTTONS.size())),56,136)
 	for button in _buttons.values():
 		var holder := button.get_parent() as Control
 		holder.custom_minimum_size = Vector2.ONE*side

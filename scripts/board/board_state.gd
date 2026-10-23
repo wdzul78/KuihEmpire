@@ -42,11 +42,13 @@ class FallMove extends RefCounted:
 	var from: Vector2i = Vector2i.ZERO
 	var to: Vector2i = Vector2i.ZERO
 	var kuih: KuihData = null
+	var path: Array[Vector2i] = []
 
 
 class SpawnEntry extends RefCounted:
 	var pos: Vector2i = Vector2i.ZERO
 	var kuih: KuihData = null
+	var entrance_y: int = 0
 
 
 class ClearInfo extends RefCounted:
@@ -90,6 +92,7 @@ class ClearResult extends RefCounted:
 	var conversion_kind: int = BoardCell.Special.NONE
 	var conversion_kinds: Dictionary = {}
 	var conversion_kuih: StringName = &""
+	var delivery_partner := Vector2i(-1,-1)
 
 	func is_empty() -> bool:
 		return cleared.is_empty() and blockers.is_empty() and targets.is_empty()
@@ -587,6 +590,27 @@ func resolve(preferred: Array = []) -> ClearResult:
 
 
 ## Fires the specials involved in a special swap (Master Plan section 16 combos).
+func clear_booster(origin: Vector2i, mode: StringName) -> ClearResult:
+	var result := ClearResult.new()
+	var queue: Array[Vector2i] = []
+	result.combo_origin = origin
+	if mode == &"royal":
+		result.combo = &"order_wipe"
+		result.combo_members[origin] = true
+		result.combo_members[origin + Vector2i(1,0)] = true
+	elif mode == &"cross":
+		result.combo = &"booster_cross"
+	for y in height:
+		for x in width:
+			var pos := Vector2i(x,y)
+			if mode == &"royal" or (mode == &"cross" and (absi(x-origin.x) <= 1 or absi(y-origin.y) <= 1)) or pos == origin:
+				queue.append(pos)
+	result.combo_cells.assign(queue)
+	_run_clear(queue, result, {})
+	_register_blocker_progress(result)
+	_register_target_progress(result)
+	return result
+
 func activate_specials(positions: Array) -> ClearResult:
 	var result := ClearResult.new()
 	var queue: Array[Vector2i] = []
@@ -609,29 +633,57 @@ func activate_specials(positions: Array) -> ClearResult:
 			result.combo_origin = b
 			result.combo_members = {a: true, b: true}
 			result.combo_cells = _cross_cells(b)
+		elif absi(a.x-b.x) + absi(a.y-b.y) == 1 and ((get_cell(a).special == BoardCell.Special.DULANG and _is_directional(get_cell(b).special)) or (get_cell(b).special == BoardCell.Special.DULANG and _is_directional(get_cell(a).special))):
+			var directional := get_cell(b).special if get_cell(a).special == BoardCell.Special.DULANG else get_cell(a).special
+			var vertical := directional == BoardCell.Special.TAPAU_VERTICAL
+			result.combo = &"badak_vertical" if vertical else &"badak_horizontal"
+			result.combo_origin = b
+			result.combo_members = {a: true, b: true}
+			for offset in range(-1,2):
+				for index in (height if vertical else width):
+					var pos := Vector2i(b.x+offset,index) if vertical else Vector2i(index,b.y+offset)
+					if is_inside(pos):
+						var cell := get_cell(pos)
+						if cell.is_playable() or cell.has_overlay():
+							result.combo_cells.append(pos)
 		elif absi(a.x-b.x) + absi(a.y-b.y) == 1 and get_cell(a).special == BoardCell.Special.DULANG and get_cell(b).special == BoardCell.Special.DULANG:
 			result.combo = &"rounded_dulang"
 			result.combo_origin = b
 			result.combo_members = {a: true, b: true}
 			result.combo_cells = area_mask_cells(b, DULANG_DOUBLE_MASK)
-		elif absi(a.x-b.x) + absi(a.y-b.y) == 1 and get_cell(a).special == BoardCell.Special.HANTAR and get_cell(b).special == BoardCell.Special.HANTAR:
-			result.combo = &"triple_delivery"
-			result.combo_origin = b
-			result.combo_members = {a: true, b: true}
-			var excluded: Dictionary = {}
-			for origin in [a, b]:
-				for local in delivery_cross(origin):
-					var cell := get_cell(local)
-					if not excluded.has(local) and (cell.is_playable() or cell.has_overlay()):
-						result.combo_cells.append(local)
-					excluded[local] = true
-			for i in 3:
-				var target := select_delivery_target(b, excluded)
-				if target == Vector2i(-1,-1):
-					break
-				result.delivery_targets.append(target)
+		elif absi(a.x-b.x) + absi(a.y-b.y) == 1 and (get_cell(a).special == BoardCell.Special.HANTAR or get_cell(b).special == BoardCell.Special.HANTAR) and get_cell(a).special != BoardCell.Special.ORDER and get_cell(b).special != BoardCell.Special.ORDER:
+			var delivery := b if get_cell(b).special == BoardCell.Special.HANTAR else a
+			var partner := a if delivery == b else b
+			result.combo = &"delivery_transfer"
+			result.combo_origin = delivery
+			result.delivery_partner = partner
+			result.combo_members = {a: true,b: true}
+			result.conversion_kind = get_cell(partner).special
+			result.combo_cells.assign(delivery_cross(delivery))
+			var excluded := {}
+			for local in result.combo_cells:
+				excluded[local] = true
+			for y in height:
+				for x in width:
+					var pos := Vector2i(x,y)
+					if get_cell(pos).special != BoardCell.Special.NONE:
+						excluded[pos] = true
+			var preferred := get_cell(delivery).order_kuish
+			if preferred == &"":
+				preferred = delivery_local_kuih(delivery)
+			var target := select_delivery_target(delivery,excluded,preferred)
+			queue.clear()
+			queue.append(delivery)
+			if target != Vector2i(-1,-1):
+				var target_cell := get_cell(target)
+				result.conversion_kuih = target_cell.kuish_id()
+				target_cell.special = result.conversion_kind
+				target_cell.order_kuish = result.conversion_kuih if result.conversion_kind == BoardCell.Special.ORDER else &""
+				result.converted.append(target)
+				result.conversion_kinds[target] = result.conversion_kind
 				result.combo_cells.append(target)
-				excluded[target] = true
+				result.delivery_targets.append(target)
+				queue.append(target)
 		elif absi(a.x-b.x) + absi(a.y-b.y) == 1 and get_cell(a).special == BoardCell.Special.ORDER and get_cell(b).special == BoardCell.Special.ORDER:
 			result.combo = &"order_wipe"
 			result.combo_origin = b
@@ -640,7 +692,7 @@ func activate_specials(positions: Array) -> ClearResult:
 				for x in width:
 					var pos := Vector2i(x,y)
 					var cell := get_cell(pos)
-					if cell.is_playable() or cell.has_overlay():
+					if cell.has_kuish() or cell.has_obstacle():
 						result.combo_cells.append(pos)
 		elif absi(a.x-b.x) + absi(a.y-b.y) == 1 and (get_cell(a).special == BoardCell.Special.ORDER or get_cell(b).special == BoardCell.Special.ORDER):
 			var order_pos := a if get_cell(a).special == BoardCell.Special.ORDER else b
@@ -651,17 +703,27 @@ func activate_specials(positions: Array) -> ClearResult:
 			# converted specials execute their native footprints exactly once.
 			result.combo_members = {order_pos: true}
 			result.conversion_kind = get_cell(partner_pos).special
+			result.combo_members[partner_pos] = true
 			var mixed_directional := result.conversion_kind in [BoardCell.Special.TAPAU,BoardCell.Special.TAPAU_VERTICAL]
 			var first_direction := BoardCell.Special.TAPAU
 			if mixed_directional and rng.randi_range(0,1) == 1:
 				first_direction = BoardCell.Special.TAPAU_VERTICAL
 			var types: Array[StringName] = []
+			var type_counts: Dictionary = {}
 			for row in grid:
 				for cell in row:
-					if cell.is_playable() and cell.special == BoardCell.Special.NONE and not types.has(cell.kuish_id()):
-						types.append(cell.kuish_id())
+					if cell.is_playable() and cell.special == BoardCell.Special.NONE:
+						var id: StringName = cell.kuish_id()
+						type_counts[id] = int(type_counts.get(id,0)) + 1
+						if not types.has(id):
+							types.append(id)
 			if not types.is_empty():
 				result.conversion_kuih = types[rng.randi_range(0,types.size()-1)]
+				if result.conversion_kind == BoardCell.Special.HANTAR:
+					result.conversion_kuih = types[0]
+					for id in types:
+						if type_counts[id] > type_counts[result.conversion_kuih]:
+							result.conversion_kuih = id
 				for y in height:
 					for x in width:
 						var pos := Vector2i(x,y)
@@ -689,6 +751,33 @@ func activate_specials(positions: Array) -> ClearResult:
 
 
 func _run_clear(queue: Array[Vector2i], result: ClearResult, protect: Dictionary) -> void:
+	if result.combo == &"order_wipe":
+		# Royal bomb removes all layers and covered food, rather than only
+		# damaging the first blocker layer and leaving its kuih untouched.
+		for y in height:
+			for x in width:
+				var pos := Vector2i(x,y)
+				var cell := get_cell(pos)
+				if cell.has_overlay():
+					var hit := BlockerHit.new()
+					hit.pos = pos
+					hit.kind = cell.blocker_kind
+					hit.removed = true
+					hit.hp_left = 0
+					result.blockers.append(hit)
+					result.direct_blocker_hits[pos] = true
+				elif cell.is_target():
+					var progress := TargetProgress.new()
+					progress.pos = pos
+					progress.kuih_id = cell.target_kuish
+					progress.progress = cell.target_need
+					progress.need = cell.target_need
+					progress.done = true
+					result.targets.append(progress)
+				if cell.has_obstacle():
+					cell.remove_obstacle()
+				if cell.has_kuish() and not queue.has(pos):
+					queue.append(pos)
 	var chain_depth: Dictionary = {}
 	for origin in queue:
 		chain_depth[origin] = 0
@@ -733,7 +822,7 @@ func _run_clear(queue: Array[Vector2i], result: ClearResult, protect: Dictionary
 		info.source = cell.special
 		result.cleared[pos] = info
 
-		if info.by_special:
+		if info.by_special and result.combo != &"order_wipe" and not (result.combo == &"order_conversion" and result.combo_members.has(pos)) and not (result.combo == &"delivery_transfer" and pos == result.delivery_partner):
 			var excluded := protect.duplicate()
 			for pending in queue:
 				excluded[pending] = true
@@ -775,7 +864,8 @@ func _blast_cells(pos: Vector2i, cell: BoardCell, excluded: Dictionary = {}) -> 
 			var unavailable := excluded.duplicate()
 			for local in out:
 				unavailable[local] = true
-			var target := select_delivery_target(pos, unavailable, cell.order_kuish)
+			var preferred := cell.order_kuish if cell.order_kuish != &"" else delivery_local_kuih(pos)
+			var target := select_delivery_target(pos, unavailable, preferred)
 			if target != Vector2i(-1, -1):
 				out.append(target)
 		BoardCell.Special.TAPAU:
@@ -787,7 +877,7 @@ func _blast_cells(pos: Vector2i, cell: BoardCell, excluded: Dictionary = {}) -> 
 		BoardCell.Special.DULANG:
 			out.assign(area_mask_cells(pos, DULANG_SINGLE_MASK))
 		BoardCell.Special.ORDER:
-			var wanted := cell.order_kuish
+			var wanted := available_order_kuih(cell.order_kuish)
 			for y in height:
 				for x in width:
 					var other := get_cell(Vector2i(x, y))
@@ -829,23 +919,18 @@ func delivery_cross(origin: Vector2i) -> Array[Vector2i]:
 	return cells
 
 
-## Double tap chooses a normal neighbour, favouring outstanding orders, then
-## the most common local type. Stable cross order breaks ties.
+## No swap: choose uniformly among distinct ordinary types in the four neighbours.
 func delivery_local_kuih(origin: Vector2i) -> StringName:
-	var counts: Dictionary = {}
+	var types: Array[StringName] = []
 	for pos in delivery_cross(origin):
+		if pos == origin:
+			continue
 		var cell := get_cell(pos)
 		if cell.is_playable() and cell.special == BoardCell.Special.NONE:
 			var id := cell.kuish_id()
-			counts[id] = int(counts.get(id, 0)) + 1
-	var chosen: StringName = &""
-	var best := -1
-	for id in counts:
-		var rank := int(counts[id]) + (10 if int(order_remaining.get(id, 0)) > 0 else 0)
-		if rank > best:
-			best = rank
-			chosen = id
-	return chosen
+			if not types.has(id):
+				types.append(id)
+	return types[rng.randi_range(0,types.size()-1)] if not types.is_empty() else &""
 
 
 func select_delivery_target(origin: Vector2i, excluded: Dictionary = {}, preferred_kuih: StringName = &"") -> Vector2i:
@@ -873,6 +958,14 @@ func select_delivery_target(origin: Vector2i, excluded: Dictionary = {}, preferr
 					farthest = pos
 		if farthest != Vector2i(-1, -1):
 			return farthest
+		# If the selected type exists only in the gust cross, keep the long
+		# flight: land on the farthest remaining eligible cell instead.
+		for pos in candidates:
+			var distance := (pos-origin).length_squared()
+			if distance > farthest_distance:
+				farthest_distance = distance
+				farthest = pos
+		return farthest
 	for priority in delivery_priorities:
 		for pos in candidates:
 			var cell := get_cell(pos)
@@ -908,7 +1001,7 @@ func _register_blocker_progress(result: ClearResult) -> void:
 		var origin: Vector2i = key
 		for dy in range(-1, 2):
 			for dx in range(-1, 2):
-				if dx == 0 and dy == 0:
+				if absi(dx) + absi(dy) != 1:
 					continue
 				var neighbour: Vector2i = origin + Vector2i(dx, dy)
 				if touched.has(neighbour):
@@ -960,34 +1053,60 @@ func _register_target_progress(result: ClearResult) -> void:
 			result.targets.append(entry)
 
 
-## Compacts every column downwards. Obstacles stay put, only kuih move.
+## Waterfall gravity: straight down first, then diagonally around fixed blockers.
 func apply_gravity() -> Array[FallMove]:
 	var moves: Array[FallMove] = []
-	for x in width:
-		var write_y := height - 1
-		for y in range(height - 1, -1, -1):
-			var source := get_cell(Vector2i(x, y))
-			if source == null or not source.has_kuish():
-				continue
-			if write_y == y:
-				write_y -= 1
-				continue
-			var target := get_cell(Vector2i(x, write_y))
-			if target == null:
-				continue
-			var carried: KuihData = source.kuih
-			var carried_special: int = source.special
-			var carried_order: StringName = source.order_kuish
-			target.kuih = carried
-			target.special = carried_special
-			target.order_kuish = carried_order
-			source.clear_kuish()
-			var move := FallMove.new()
-			move.from = Vector2i(x, y)
-			move.to = Vector2i(x, write_y)
-			move.kuih = carried
-			moves.append(move)
-			write_y -= 1
+	var moving: Dictionary = {}
+	for iteration in width * height:
+		var changed := false
+		for y in range(height-1,0,-1):
+			var reverse := rng.randi_range(0,1) == 1
+			for offset in width:
+				var x := width-1-offset if reverse else offset
+				var destination := Vector2i(x,y)
+				var target := get_cell(destination)
+				if target == null or not target.is_hole():
+					continue
+				var origin := destination + Vector2i.UP
+				var source := get_cell(origin)
+				if source == null or not source.is_playable():
+					var blocked_above := false
+					for above in range(y-1,-1,-1):
+						var overhead := get_cell(Vector2i(x,above))
+						if overhead != null and overhead.has_obstacle():
+							blocked_above = true
+							break
+					if not blocked_above:
+						continue # Ordinary columns never borrow sideways during a fall.
+					var sides := [-1,1] if rng.randi_range(0,1) == 0 else [1,-1]
+					for side in sides:
+						var candidate := destination + Vector2i(side,-1)
+						var neighbour := get_cell(candidate)
+						var below := get_cell(candidate+Vector2i.DOWN)
+						# A piece with a direct fall keeps priority in its own column.
+						if neighbour != null and neighbour.is_playable() and below != null and not below.is_hole():
+							origin = candidate
+							source = neighbour
+							break
+				if source == null or not source.is_playable():
+					continue
+				var move: FallMove = moving.get(origin)
+				if move == null:
+					move = FallMove.new()
+					move.from = origin
+					move.kuih = source.kuih
+					moves.append(move)
+				moving.erase(origin)
+				moving[destination] = move
+				move.to = destination
+				move.path.append(destination)
+				target.kuih = source.kuih
+				target.special = source.special
+				target.order_kuish = source.order_kuish
+				source.clear_kuish()
+				changed = true
+		if not changed:
+			break
 	return moves
 
 
@@ -1005,6 +1124,10 @@ func refill() -> Array[SpawnEntry]:
 			var entry := SpawnEntry.new()
 			var spawned: KuihData = cell.kuih
 			entry.pos = Vector2i(x, y)
+			for above in range(y-1,-1,-1):
+				if get_cell(Vector2i(x,above)).has_obstacle():
+					entry.entrance_y = above+1
+					break
 			entry.kuih = spawned
 			spawns.append(entry)
 	return spawns
@@ -1126,3 +1249,24 @@ func snapshot() -> Array:
 			})
 		out.append(row)
 	return out
+
+
+## Keep an explicit swap target while it exists; stale direct/chain targets
+## fall back to the most common eligible ordinary kuih without consuming RNG.
+func available_order_kuih(preferred: StringName) -> StringName:
+	var counts: Dictionary = {}
+	for y in height:
+		for x in width:
+			var cell := get_cell(Vector2i(x,y))
+			if cell != null and (cell.is_playable() or cell.has_overlay()) and cell.special == BoardCell.Special.NONE and cell.has_kuish():
+				var id := cell.kuish_id()
+				counts[id] = int(counts.get(id,0))+1
+	if int(counts.get(preferred,0)) > 0:
+		return preferred
+	var chosen: StringName = &""
+	var best := 0
+	for id in counts:
+		if int(counts[id]) > best:
+			best = int(counts[id])
+			chosen = id
+	return chosen

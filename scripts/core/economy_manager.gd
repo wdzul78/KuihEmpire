@@ -4,11 +4,14 @@ extends Node
 ##
 ## Gameplay purchases use coins. Diamond balance is saved for the menu header.
 
+const EXTRA_MOVES_COST := 900
+
+signal stars_changed(amount: int)
 signal coins_changed(amount: int)
 signal boosters_changed()
 signal booster_used()
 
-enum Booster { SPATULA, TRAY, SHUFFLE, GIFT, EXTRA_MOVES }
+enum Booster { SPATULA, TRAY, SHUFFLE, GIFT, EXTRA_MOVES, HAND, ROYAL, START_ORDER, START_DELIVERY }
 
 const BOOSTER_IDS := {
 	Booster.SPATULA: "spatula",
@@ -16,6 +19,10 @@ const BOOSTER_IDS := {
 	Booster.SHUFFLE: "shuffle",
 	Booster.GIFT: "gift",
 	Booster.EXTRA_MOVES: "extra_moves",
+	Booster.HAND: "hand",
+	Booster.ROYAL: "royal",
+	Booster.START_ORDER: "start_order",
+	Booster.START_DELIVERY: "start_delivery",
 }
 
 const BOOSTER_NAMES := {
@@ -24,12 +31,33 @@ const BOOSTER_NAMES := {
 	Booster.SHUFFLE: "Shuffle",
 	Booster.GIFT: "Tapau",
 	Booster.EXTRA_MOVES: "+5 Moves",
+	Booster.HAND: "Tangan",
+	Booster.ROYAL: "Kek Lapis Diraja",
+	Booster.START_ORDER: "Kek Lapis Sarawak",
+	Booster.START_DELIVERY: "Kuih Sepit",
 }
 
 
 func coins() -> int:
 	return int(SaveManager.data.get("coins", 0))
 
+
+## Available stars; spending never alters stage ratings or unlock progress.
+func stars() -> int:
+	return maxi(0, ProgressionManager.total_stars() + int(SaveManager.data.get("recipe_star_credits", 0)) - int(SaveManager.data.get("stars_spent", 0)))
+
+func can_afford_stars(amount: int) -> bool:
+	return stars() >= amount
+
+func spend_stars(amount: int) -> bool:
+	if amount <= 0:
+		return true
+	if not can_afford_stars(amount):
+		return false
+	SaveManager.data["stars_spent"] = int(SaveManager.data.get("stars_spent", 0)) + amount
+	SaveManager.mark_dirty()
+	stars_changed.emit(stars())
+	return true
 
 func diamonds() -> int:
 	return int(SaveManager.data.get("diamonds", 0))

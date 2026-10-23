@@ -101,6 +101,13 @@ func add_heart(amount: int = 1) -> void:
 		state()["last_heart_refill_timestamp"] = 0
 	_save()
 
+func consume_on_abandon(exempt: bool = false) -> void:
+	if exempt:
+		return
+	# Leaving a live stage ends the timed unlimited-heart reward first.
+	state()["free_play_end_timestamp"] = 0
+	consume_on_failure()
+
 func full_refill() -> void:
 	add_heart(MAX_HEARTS)
 

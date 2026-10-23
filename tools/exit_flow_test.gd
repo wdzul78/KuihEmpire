@@ -18,8 +18,25 @@ func run() -> void:
 			await get_tree().create_timer(.1).timeout
 		screen._open_pause_menu()
 		assert(get_tree().paused)
+		HeartManager.full_refill()
+		HeartManager.start_free_play(900)
+		var deadline := int(HeartManager.state()["free_play_end_timestamp"])
 		screen._pause_overlay.quit_pressed.emit()
-		await get_tree().create_timer(2.0).timeout
+		assert(get_tree().paused and not screen.finished)
+		assert(HeartManager.current() == 5 and HeartManager.is_free_play_active())
+		screen._pause_overlay._leave_dialog.canceled.emit()
+		assert(int(HeartManager.state()["free_play_end_timestamp"]) == deadline)
+		screen._pause_overlay.quit_pressed.emit()
+		screen._pause_overlay._leave_dialog.confirmed.emit()
+		assert(HeartManager.current() == 4 and not HeartManager.is_free_play_active())
+		screen._confirm_leave_stage()
+		assert(HeartManager.current() == 4)
+		var frames := 0
+		while SceneManager._busy and frames < 15000:
+			await get_tree().process_frame
+			frames += 1
+			OS.delay_msec(1) # Give the threaded loader real time under fixed-fps headless tests.
+		assert(frames < 15000)
 		assert(not get_tree().paused and not SceneManager._busy)
 		assert(get_tree().current_scene.scene_file_path == SceneManager.HOME)
 		assert(is_zero_approx(SceneManager._veil.color.a))
@@ -42,3 +59,4 @@ func run() -> void:
 	final_screen._open_pause_menu()
 	print("Window close requested while paused")
 	get_tree().root.close_requested.emit()
+

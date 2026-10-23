@@ -1,0 +1,7 @@
+{
+  "tool": "built-in image_gen",
+  "intent": "edit",
+  "asset": "selorot_vertical.png",
+  "status": "Concept only; no gameplay or build changes",
+  "prompt": "Use case: precise-object-edit. Input image1 is the EDIT TARGET: single transparent Kuih Selorot game sprite. Input image2 is a COLOR REFERENCE ONLY: real kuih selorot showing natural pale young coconut leaf wrappers. Recolor ONLY the leaf wrapper on image1 to closely match image2's PALE CREAM-YELLOW / light straw ivory coconut leaf. Light desaturated buttery yellow, cream highlights and warm beige/ochre shadows, essentially no green. Remove the saturated lemon yellow, olive-green shading and metallic golden shine from current sprite. It should read like steamed young coconut leaf in photo reference, naturally pale yellow, not metal. Preserve clear spiral band edges and fine parallel leaf veins with softer satin highlights, keep premium game rendering. Preserve EXACT cone silhouette, open mouth, caramel-brown pudding unchanged, upper loose leaf tip, orientation, framing, original canvas dimensions and transparent background. Do not copy photograph's pots, multiple cones, watermark or setting. No text, no added elements, no glow or shadow outside object."
+}

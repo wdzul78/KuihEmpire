@@ -6,4 +6,4 @@ func _ready() -> void:
 	resized.connect(queue_redraw)
 
 func _draw() -> void:
-	ResourceBarArt.draw_frame(self, "star")
+	ResourceBarArt.draw_frame(self, "star", true, false, true)

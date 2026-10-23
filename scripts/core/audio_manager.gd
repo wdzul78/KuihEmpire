@@ -9,6 +9,22 @@ extends Node
 
 const SFX_VOICES := 10
 const MUSIC_FADE := 1.4
+const VICTORY_TRACKS := [
+	"res://audio/sfx/victory_v2/win01.wav",
+	"res://audio/sfx/victory_v2/win02.wav",
+]
+var _victory_track_index := 0
+const COMBO_VOICES := {
+	1: "res://audio/sfx/combo_praise_v1/bagus.wav",
+	2: "res://audio/sfx/combo_praise_v1/terbaik.wav",
+	3: "res://audio/sfx/combo_praise_v1/sedapnya.wav",
+	4: "res://audio/sfx/combo_praise_v1/padu_teruk.wav",
+	5: "res://audio/sfx/combo_praise_v1/steadey_bos.wav",
+}
+const BAGUS_VOICES := [COMBO_VOICES[1], "res://audio/sfx/combo_praise_v2/bagus_02.wav"]
+var _bagus_voice_index := 0
+const STEADEY_VOICES := [COMBO_VOICES[5], "res://audio/sfx/combo_praise_v2/steadey_bos_02.wav"]
+var _steadey_voice_index := 0
 
 enum Sfx {
 	TAP,
@@ -38,8 +54,28 @@ enum Sfx {
 	PUTERI_VOCAL,
 }
 
-const MENU_MUSIC := "res://audio/music/menu.ogg"
-const GAMEPLAY_MUSIC := "res://audio/music/cozy_puzzle_gameplay.ogg"
+const MENU_MUSIC := "res://audio/music/menu_v2/main_menu_01.ogg"
+const MENU_PLAYLIST := [MENU_MUSIC,
+	"res://audio/music/menu_v2/main_menu_02.ogg",
+	"res://audio/music/playlist/menu_01.ogg",
+	"res://audio/music/playlist/menu_02.ogg"]
+var _menu_track_index := 0
+const GAMEPLAY_MUSIC := "res://audio/music/gameplay_v3/gameplay_01.ogg"
+const GAMEPLAY_PLAYLIST := [GAMEPLAY_MUSIC,
+	"res://audio/music/gameplay_v3/gameplay_02.ogg", "res://audio/music/gameplay_v3/gameplay_03.ogg",
+	"res://audio/music/gameplay_v3/gameplay_04.ogg",
+	"res://audio/music/gameplay_v2/gameplay_01.ogg",
+	"res://audio/music/gameplay_v2/gameplay_02.ogg", "res://audio/music/gameplay_v2/gameplay_03.ogg",
+	"res://audio/music/gameplay_v2/gameplay_04.ogg", "res://audio/music/gameplay_v2/gameplay_05.ogg",
+	"res://audio/music/gameplay_v2/gameplay_06.ogg", "res://audio/music/gameplay_v2/gameplay_07.ogg",
+	"res://audio/music/gameplay_v2/gameplay_08.ogg",
+	"res://audio/music/playlist/gameplay_01.ogg",
+	"res://audio/music/playlist/gameplay_02.ogg", "res://audio/music/playlist/gameplay_03.ogg",
+	"res://audio/music/playlist/gameplay_04.ogg", "res://audio/music/playlist/gameplay_05.ogg",
+	"res://audio/music/playlist/gameplay_06.ogg", "res://audio/music/playlist/gameplay_07.ogg",
+	"res://audio/music/playlist/gameplay_08.ogg"]
+var _gameplay_track_index := 0
+var _gameplay_puzzle_started := false
 const FILE_SFX := {
 	Sfx.TAP: "tap", Sfx.SWAP: "swap", Sfx.INVALID: "invalid_connect_v1/puzzle_tile_adjust_connect_05",
 	Sfx.MATCH: "match_jump_v1/little_jump_up_01", Sfx.SPECIAL: "v2/special_create", Sfx.SERVE: "v2/serve",
@@ -47,11 +83,11 @@ const FILE_SFX := {
 	Sfx.PACK: "pack", Sfx.DROP: "drop", Sfx.LINE_CLEAR: "v2/line_clear",
 	Sfx.TAPAU_BLAST: "v2/directional_tapau", Sfx.TRAY_BLAST: "coconut_v1/water_bomb_shared",
 	Sfx.ORDER_BURST: "v2/order_burst", Sfx.SUCCESS: "win_pack_v1/big_game_win_pack1_01",
-	Sfx.HANTAR_CREATE: "v2/hantar_create", Sfx.HANTAR_LAUNCH: "delivery_rotor_v1/rotor_launch",
-	Sfx.HANTAR_HIT: "delivery_rotor_v1/claw_pickup", Sfx.CROSS_BLAST: "v2/cross_tapau",
+	Sfx.HANTAR_CREATE: "v2/hantar_create", Sfx.HANTAR_LAUNCH: "v2/hantar_launch",
+	Sfx.HANTAR_HIT: "v2/hantar_hit", Sfx.CROSS_BLAST: "v2/cross_tapau",
 	Sfx.HANTAR_EXIT: "delivery_rotor_v1/rotor_exit",
 	Sfx.SPATULA: "v2/spatula", Sfx.SHUFFLE: "v2/shuffle",
-	Sfx.ORDER_ZAP: "electric_order_v1/zap",
+	Sfx.ORDER_ZAP: "electric_order_v4/zap",
 	Sfx.PUTERI_VOCAL: "coconut_v1/puteri_vocal",
 }
 
@@ -69,15 +105,25 @@ var _music_tween: Tween
 var _music_path := ""
 var _music_ducked := false
 var _suspended := false
-var _music_gain := -18.0
+var _music_gain := -2.0
 var _cache: Dictionary = {}
 var sfx_enabled: bool = true
+var _combo_voice: AudioStreamPlayer
+var _combo_timer: Timer
+var _combo_pending := 0
+var _combo_pending_priority := 0
 var music_enabled: bool = true
 
 
 func _ready() -> void:
 	instance = self
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	for bus_name in [&"BGM", &"SFX"]:
+		if AudioServer.get_bus_index(bus_name) < 0:
+			AudioServer.add_bus()
+			var bus_index := AudioServer.bus_count - 1
+			AudioServer.set_bus_name(bus_index, bus_name)
+			AudioServer.set_bus_send(bus_index, &"Master")
 
 	_streams[Sfx.TAP] = SfxSynth.tap()
 	_streams[Sfx.SWAP] = SfxSynth.swap()
@@ -109,24 +155,47 @@ func _ready() -> void:
 
 	for i in SFX_VOICES:
 		var player := AudioStreamPlayer.new()
-		player.bus = &"Master"
+		player.bus = &"SFX"
 		add_child(player)
 		_voices.append(player)
 
 	_music_player = AudioStreamPlayer.new()
-	_music_player.bus = &"Master"
+	_combo_voice = AudioStreamPlayer.new()
+	_combo_voice.name = "ComboVoice"
+	_combo_voice.bus = &"SFX"
+	add_child(_combo_voice)
+	_combo_timer = Timer.new()
+	_combo_timer.one_shot = true
+	_combo_timer.process_mode = Node.PROCESS_MODE_PAUSABLE
+	_combo_timer.timeout.connect(_play_pending_combo)
+	add_child(_combo_timer)
+	_combo_voice.finished.connect(func() -> void:
+		if _combo_pending > 0:
+			_combo_timer.start(.12)
+	)
+	_music_player.bus = &"BGM"
 	_music_player.name = "MusicCurrent"
-	_music_player.volume_db = -18.0
+	_music_player.volume_db = -2.0
 	add_child(_music_player)
 	_music_other = AudioStreamPlayer.new()
+	_music_other.bus = &"BGM"
 	_music_other.name = "MusicOutgoing"
 	_music_other.volume_db = -60.0
 	add_child(_music_other)
+	_music_player.finished.connect(_on_music_finished.bind(_music_player))
+	_music_other.finished.connect(_on_music_finished.bind(_music_other))
 
 
 func apply_settings(settings: Dictionary) -> void:
 	sfx_enabled = bool(settings.get("sfx", true))
 	music_enabled = bool(settings.get("music", true))
+	if not sfx_enabled or float(settings.get("sfx_volume",1.0)) <= 0.0:
+		reset_combo_voice(true)
+	for key in ["music_volume", "sfx_volume"]:
+		var bus_index := AudioServer.get_bus_index(&"BGM" if key == "music_volume" else &"SFX")
+		var volume := clampf(float(settings.get(key, 0.8 if key == "music_volume" else 1.0)), 0.0, 1.0)
+		AudioServer.set_bus_volume_db(bus_index, linear_to_db(maxf(volume, 0.0001)))
+		AudioServer.set_bus_mute(bus_index, volume <= 0.0 or (not music_enabled if key == "music_volume" else not sfx_enabled))
 	_music_player.stream_paused = not music_enabled or _suspended
 	_music_other.stream_paused = not music_enabled or _suspended
 
@@ -134,6 +203,12 @@ func apply_settings(settings: Dictionary) -> void:
 func play(which: Sfx, pitch: float = 1.0, volume_db: float = 0.0) -> void:
 	if not sfx_enabled or _suspended:
 		return
+	if which == Sfx.SUCCESS:
+		var path: String = VICTORY_TRACKS[_victory_track_index]
+		if ResourceLoader.exists(path):
+			play_stream(load(path) as AudioStream, 1.0, volume_db)
+			_victory_track_index = (_victory_track_index + 1) % VICTORY_TRACKS.size()
+			return
 	var stream: AudioStream = _streams.get(which, null)
 	if stream == null:
 		return
@@ -165,13 +240,59 @@ func play_match(step: int) -> void:
 	play_stream(stream, 1.0, -3.0)
 
 
-func play_combo(count: int) -> void:
-	if count not in [3,4,5] or not sfx_enabled or _suspended:
-		return
+func combo_duration(count: int) -> float:
+	if not COMBO_VOICES.has(count):
+		return 0.0
 	var key := "combo_praise_%d" % count
 	if not _cache.has(key):
-		_cache[key] = SfxSynth.combo(count)
-	play_stream(_cache[key],1.0,-5.0)
+		_cache[key] = load(COMBO_VOICES[count])
+	if count == 1 or count == 5:
+		var duration := 0.0
+		for path in (BAGUS_VOICES if count == 1 else STEADEY_VOICES):
+			if not _cache.has(path):
+				_cache[path] = load(path)
+			duration = maxf(duration, (_cache[path] as AudioStream).get_length())
+		return duration
+	return (_cache[key] as AudioStream).get_length()
+
+func play_combo(count: int, priority: int = 0) -> void:
+	if not COMBO_VOICES.has(count) or not sfx_enabled or _suspended:
+		return
+	var rank := count if priority <= 0 else priority
+	if rank >= _combo_pending_priority:
+		_combo_pending = count
+		_combo_pending_priority = rank
+	_combo_timer.start(.16) # Coalesce rapid milestones into the latest praise.
+
+func reset_combo_voice(stop_current: bool = false) -> void:
+	_combo_pending = 0
+	_combo_pending_priority = 0
+	if is_instance_valid(_combo_timer):
+		_combo_timer.stop()
+	if stop_current and is_instance_valid(_combo_voice):
+		_combo_voice.stop()
+
+func _play_pending_combo() -> void:
+	if _combo_voice.playing:
+		return # Finish this sentence; retain only the newest pending milestone.
+	if _combo_pending == 0 or not sfx_enabled or _suspended:
+		_combo_pending = 0
+		_combo_pending_priority = 0
+		return
+	var count := _combo_pending
+	_combo_pending = 0
+	_combo_pending_priority = 0
+	combo_duration(count) # Load into the shared cache.
+	_combo_voice.stream = _cache["combo_praise_%d" % count]
+	if count == 1:
+		_combo_voice.stream = _cache[BAGUS_VOICES[_bagus_voice_index]]
+		_bagus_voice_index = (_bagus_voice_index + 1) % BAGUS_VOICES.size()
+	elif count == 5:
+		_combo_voice.stream = _cache[STEADEY_VOICES[_steadey_voice_index]]
+		_steadey_voice_index = (_steadey_voice_index + 1) % STEADEY_VOICES.size()
+	_combo_voice.pitch_scale = 1.0
+	_combo_voice.volume_db = 0.0
+	_combo_voice.play()
 
 
 func play_stream(stream: AudioStream, pitch: float = 1.0, volume_db: float = 0.0) -> void:
@@ -184,7 +305,18 @@ func play_stream(stream: AudioStream, pitch: float = 1.0, volume_db: float = 0.0
 	player.play()
 
 
-func play_music(path: String) -> void:
+func start_puzzle_music() -> void:
+	if _gameplay_puzzle_started:
+		_gameplay_track_index = (_gameplay_track_index + 1) % GAMEPLAY_PLAYLIST.size()
+	_gameplay_puzzle_started = true
+	play_music(GAMEPLAY_PLAYLIST[_gameplay_track_index], true)
+
+func play_music(path: String, playlist_advance: bool = false) -> void:
+	if path == MENU_MUSIC and not playlist_advance:
+		# Menu navigation must not restart a track already in progress.
+		path = _music_path if _music_path in MENU_PLAYLIST else MENU_PLAYLIST[_menu_track_index]
+	elif path == GAMEPLAY_MUSIC and not playlist_advance:
+		path = _music_path if _music_path in GAMEPLAY_PLAYLIST else GAMEPLAY_PLAYLIST[_gameplay_track_index]
 	if path == _music_path and _music_player.playing:
 		return
 	if not ResourceLoader.exists(path):
@@ -193,7 +325,7 @@ func play_music(path: String) -> void:
 	var stream := resource as AudioStream
 	if stream != null:
 		if stream is AudioStreamOggVorbis:
-			stream.loop = true
+			stream.loop = path not in MENU_PLAYLIST and path not in GAMEPLAY_PLAYLIST
 		if _music_tween != null and _music_tween.is_valid():
 			_music_tween.kill()
 		var outgoing := _music_player
@@ -202,7 +334,7 @@ func play_music(path: String) -> void:
 		_music_player.stop()
 		_music_player.stream = stream
 		_music_path = path
-		_music_gain = -20.0 if path == GAMEPLAY_MUSIC else -18.0
+		_music_gain = -2.0
 		_music_ducked = false
 		_music_player.volume_db = -60.0
 		_music_player.play()
@@ -211,6 +343,16 @@ func play_music(path: String) -> void:
 		_music_tween.tween_property(_music_player, "volume_db", _music_gain, MUSIC_FADE)
 		_music_tween.tween_property(outgoing, "volume_db", -60.0, MUSIC_FADE)
 		_music_tween.chain().tween_callback(outgoing.stop)
+
+func _on_music_finished(player: AudioStreamPlayer) -> void:
+	if player != _music_player:
+		return
+	if _music_path in MENU_PLAYLIST:
+		_menu_track_index = (MENU_PLAYLIST.find(_music_path) + 1) % MENU_PLAYLIST.size()
+		play_music(MENU_PLAYLIST[_menu_track_index], true)
+	elif _music_path in GAMEPLAY_PLAYLIST:
+		_gameplay_track_index = (GAMEPLAY_PLAYLIST.find(_music_path) + 1) % GAMEPLAY_PLAYLIST.size()
+		play_music(GAMEPLAY_PLAYLIST[_gameplay_track_index], true)
 
 
 func set_music_ducked(ducked: bool) -> void:
@@ -236,6 +378,7 @@ func _notification(what: int) -> void:
 	_music_player.stream_paused = _suspended or not music_enabled
 	_music_other.stream_paused = _suspended or not music_enabled
 	if _suspended:
+		reset_combo_voice(true)
 		for voice in _voices:
 			voice.stop()
 
@@ -251,6 +394,7 @@ func stop_music() -> void:
 
 
 func _exit_tree() -> void:
+	reset_combo_voice(true)
 	stop_music()
 	_music_player.stream = null
 	_music_other.stream = null

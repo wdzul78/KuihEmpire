@@ -1,0 +1,419 @@
+{
+  "strategy": "32 state masters across eight locations, shared by 128 context slots. Institutional school and government office canteens use appropriate masonry, tile and stainless steel.",
+  "assets": [
+    {
+      "location": "family_stall",
+      "state": "old",
+      "path": "assets/stalls/family_stall/old/background_v1.png",
+      "prompt": "Create a single finished portrait 9:16 mobile game background for KUIH EMPIRE, FAMILY STALL OLD state. Use the reference image as the exact artistic style and camera composition: view from inside a wooden kuih stall toward a warm tropical Sarawak village, distant palms and hills, wooden counter across bottom 25%, left shelving and framing posts at edges, calm open centre. Replace top roof decoration with a modest visibly worn pink-and-cream striped fabric awning along top 10%. Old state: weathered but safe timber, sparse empty shelves, plain rough counter, simple blank signboard on top left; inviting but awaiting renovation. Preserve bright warm daytime lighting, soft distant background, polished casual-game painterly illustration, rich depth and rounded forms. Keep right middle clear for separately overlaid logo and left middle clear for separately overlaid Aina; quiet centre for puzzle board. Essential scene objects at edge only and crop-safe for tall phones. Absolutely no characters, cats, animals, game UI, words, logos, numbers, gameplay board or food closeups. Full-bleed standalone background, one image, no collage or borders.",
+      "source": "C:/Users/WDzul78/.codex/generated_images/01a11654-ec16-7c62-a6ea-9d5181232357/exec-8c1f60e7-16fe-4b71-88d2-d1374a20e627.png",
+      "dimensions": [
+        941,
+        1672
+      ],
+      "sha256": "15a96e6fbedf8441959253d7c30d0ed1dc884ed2e872df14ee0adc70c7b4fa9e"
+    },
+    {
+      "location": "family_stall",
+      "state": "revived",
+      "path": "assets/stalls/family_stall/revived/background_v1.png",
+      "prompt": "Edit reference into FAMILY STALL REVIVED renovation state for Kuih Empire. Repair only the awning and the top-left blank wooden signboard and supporting posts: clean fresh pink and cream fabric without holes, repaired smooth wooden sign frame, clean warm timber. Keep counter still plain and shelves modest. INVARIANTS: same exact portrait 9:16 camera, same viewpoint, posts, window aperture, distant Sarawak village houses/palms/hills/sky, light direction and colour palette, unchanged counter height and overall geometry. Preserve cosy polished casual game illustration. Make the renovation obvious but keep the broad centre and right-middle empty and low detail for overlaid game UI. No characters, animals, food closeups, letters, words, logo, numbers, game UI, board, collage or border. Output one standalone full-bleed portrait background.",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-8df677ff-8f3f-4cc5-b07a-c95c66493ffb.png",
+      "dimensions": [
+        941,
+        1672
+      ],
+      "sha256": "b92261d1567f9ff9d9e0872278265a6009cf1095569935cf3be87d3d5901001a"
+    },
+    {
+      "location": "family_stall",
+      "state": "polished",
+      "path": "assets/stalls/family_stall/polished/background_v1.png",
+      "prompt": "Edit reference into FAMILY STALL POLISHED renovation state for Kuih Empire. Repair the pink-and-cream awning and top-left blank signboard as in the revived version; additionally replace rough counters with polished golden-brown timber, a refined rounded counter rim and neatly arranged empty wooden display racks on the FAR left shelf and far right counter edge. Keep central viewing window open. INVARIANTS: same exact portrait 9:16 camera, same viewpoint, posts, window aperture, distant Sarawak village houses/palms/hills/sky, light direction and colour palette, unchanged counter height and overall geometry. Preserve cosy polished casual game illustration. Make the renovation obvious but keep the broad centre and right-middle empty and low detail for overlaid game UI. No characters, animals, food closeups, letters, words, logo, numbers, game UI, board, collage or border. Output one standalone full-bleed portrait background.",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-4195bf5d-5f4a-4ee8-b35d-797fc46f6e6a.png",
+      "dimensions": [
+        941,
+        1672
+      ],
+      "sha256": "609e8503878ade6b0de59a2c7da4a0daafe67b89b4470a5e9e95413e4ae6e88e"
+    },
+    {
+      "location": "family_stall",
+      "state": "complete",
+      "path": "assets/stalls/family_stall/complete/background_v2.png",
+      "prompt": "Edit this FAMILY STALL POLISHED background into COMPLETE state. Change only: add two small warm rattan lanterns at the very outer top corners; add a few hibiscus and healthy leaves at the FAR outer left shelf edge and far right outer frame; polish timber trim. Keep the entire original composition pixel-aligned wherever unchanged, camera, awning, shelves, counter, posts, distant houses, palms, hills and daylight. CRITICAL: the small blank signboard MUST stay at its existing far upper LEFT location, same size; do not introduce any signboard or object into the central window. The central sky/view must remain completely open, unblocked and calm for overlaid logo/puzzle board. Exact same tall portrait aspect ratio. Premium homely casual-game illustration. No characters, cats, people, animals, words, letters, logo, numbers, game UI, food closeups, collage or border. One full-bleed background.",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-69a2a3d2-067e-46eb-94be-fb12a119c72a.png",
+      "dimensions": [
+        941,
+        1672
+      ],
+      "sha256": "62f350075e36bfad90104a905013879a1f3fbd0c168b12a724cd25bca85d3e44"
+    },
+    {
+      "location": "morning_market",
+      "state": "old",
+      "path": "assets/stalls/morning_market/old/background_v1.png",
+      "prompt": "Create ONE portrait 9:16 KUIH EMPIRE background for morning_market, OLD unrenovated state. Use reference only for the polished warm casual-game painterly STYLE and exact overall COMPOSITION, but replace the location environment: a Sarawak morning farmers market, a worn green-and-cream striped awning, distant empty timber market booths and tropical palms under golden morning sunlight, plain rattan and timber serving counter. View from INSIDE a stall toward the outdoor environment. Keep framing wooden posts and sparsely furnished EMPTY shelves along far left and outer right edges; a rough but safe counter across bottom 25%, small side counter at far right lower-middle, very broad calm open centre, softly rendered distant scene. A blank worn wooden signboard at the far upper left. Old state modest/weathered but inviting. Full-bleed warm light, strong depth, rounded appealing illustrated materials, no excessive saturation. Leave right middle clear for a separate logo, left middle clear for separate character, centre clear behind puzzle board. All major props edge-only, safe side crop for taller phones. Absolutely NO characters, people, cats, animals, readable text, logos, numerals, UI, puzzle board, close-up food, collage or border. One finished standalone background.",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-ce50e26c-d66d-4936-8ec3-a12a5f8cce75.png",
+      "dimensions": [
+        941,
+        1672
+      ],
+      "sha256": "bb3b7c0dbb81bb73e324235c8f42d738eceb1f1d9bea48da00a5b7e58bf88bff"
+    },
+    {
+      "location": "morning_market",
+      "state": "revived",
+      "path": "assets/stalls/morning_market/revived/background_v1.png",
+      "prompt": "Edit reference into MORNING_MARKET REVIVED renovation state for KUIH EMPIRE. Repair only the existing worn awning with fresh new fabric using exactly its existing colours, stripes, size, shape and location; repair the existing small far-upper-left blank wooden signboard frame; clean and repair supporting posts. Leave counter plain and shelves sparsely furnished. STRICT INVARIANTS: same portrait 9:16 composition, original camera viewpoint, framing posts, counter height, same OUTSIDE location environment, trees/buildings, sky, light direction and time of day. Change ONLY foreground renovation fixtures described. Preserve the reference's softly rendered outside scenery and cosy polished casual-game painterly style. CRITICAL: blank sign stays at far upper LEFT, do NOT move it into the central opening. Keep central sky/view and right-middle totally clear for the separately overlaid logo/puzzle board and left-middle suitable for separate character. Do not add any central furniture. Full bleed, crop-safe outer framing. NO people, characters, cats, animals, words, numbers, readable text, logos, game UI, food closeups, puzzle board, collage or border. ONE finished standalone background.",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-b3ed7302-dd0d-4a32-873d-ec6dc1f4b6de.png",
+      "dimensions": [
+        941,
+        1672
+      ],
+      "sha256": "01fa97956e692151b7aaf74a947b7f411040f94f165b9b1406b7f511a22b03ba"
+    },
+    {
+      "location": "morning_market",
+      "state": "polished",
+      "path": "assets/stalls/morning_market/polished/background_v1.png",
+      "prompt": "Edit reference into MORNING_MARKET POLISHED renovation state for KUIH EMPIRE. First repair the existing awning with pristine fresh fabric in the exact existing colours and stripes, and repair its small far-upper-left blank signboard frame. Additionally replace rough counters with polished warm timber and refined rounded edges; tidy left shelving and add modest EMPTY wooden display trays at the far left shelves and a small empty display rack at the FAR RIGHT edge of the side counter. Keep fixtures at their existing positions. STRICT INVARIANTS: same portrait 9:16 composition, original camera viewpoint, framing posts, counter height, same OUTSIDE location environment, trees/buildings, sky, light direction and time of day. Change ONLY foreground renovation fixtures described. Preserve the reference's softly rendered outside scenery and cosy polished casual-game painterly style. CRITICAL: blank sign stays at far upper LEFT, do NOT move it into the central opening. Keep central sky/view and right-middle totally clear for the separately overlaid logo/puzzle board and left-middle suitable for separate character. Do not add any central furniture. Full bleed, crop-safe outer framing. NO people, characters, cats, animals, words, numbers, readable text, logos, game UI, food closeups, puzzle board, collage or border. ONE finished standalone background.",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-f8d0b5d6-6f5d-44f9-9874-758b7ab78e20.png",
+      "dimensions": [
+        941,
+        1672
+      ],
+      "sha256": "5415219bb99727af5c2429f8a829961797c19f3d34132bde7d12adae6f30e8bd"
+    },
+    {
+      "location": "morning_market",
+      "state": "complete",
+      "path": "assets/stalls/morning_market/complete/background_v1.png",
+      "prompt": "Edit reference into MORNING_MARKET COMPLETE renovation state for KUIH EMPIRE. Fully restore the existing awning in its EXACT original colours/stripes and position; refine the small existing far-upper-LEFT blank signboard frame, KEEP IT LEFT at the same location and size. Polish counters, tidy and refine left shelves and small empty far-right display rack. Add two SMALL elegant warm lanterns only at the outermost TOP corners, a few decorative tropical leaves and flowers only at FAR outer edges, attractive premium timber trim. Do not hang any central signboard. STRICT INVARIANTS: same portrait 9:16 composition, original camera viewpoint, framing posts, counter height, same OUTSIDE location environment, trees/buildings, sky, light direction and time of day. Change ONLY foreground renovation fixtures described. Preserve the reference's softly rendered outside scenery and cosy polished casual-game painterly style. CRITICAL: blank sign stays at far upper LEFT, do NOT move it into the central opening. Keep central sky/view and right-middle totally clear for the separately overlaid logo/puzzle board and left-middle suitable for separate character. Do not add any central furniture. Full bleed, crop-safe outer framing. NO people, characters, cats, animals, words, numbers, readable text, logos, game UI, food closeups, puzzle board, collage or border. ONE finished standalone background.",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-620288a5-fa7e-415a-8a3b-a13b01a2ccab.png",
+      "dimensions": [
+        941,
+        1672
+      ],
+      "sha256": "64eb94c4bb692371bfc2626ca0273692e6aeee7bed16de68f541b6e9410bc793"
+    },
+    {
+      "location": "town",
+      "state": "old",
+      "path": "assets/stalls/town/old/background_v1.png",
+      "prompt": "Create ONE portrait 9:16 KUIH EMPIRE background for town, OLD unrenovated state. Use reference only for the polished warm casual-game painterly STYLE and exact overall COMPOSITION, but replace the location environment: a Sarawak small-town weekend market stall, worn orange-and-muted-purple striped awning, distant picturesque cream-and-ochre shophouses and tropical plants under daytime sunlight, plain timber serving counter. View from INSIDE a stall toward the outdoor environment. Keep framing wooden posts and sparsely furnished EMPTY shelves along far left and outer right edges; a rough but safe counter across bottom 25%, small side counter at far right lower-middle, very broad calm open centre, softly rendered distant scene. A blank worn wooden signboard at the far upper left. Old state modest/weathered but inviting. Full-bleed warm light, strong depth, rounded appealing illustrated materials, no excessive saturation. Leave right middle clear for a separate logo, left middle clear for separate character, centre clear behind puzzle board. All major props edge-only, safe side crop for taller phones. Absolutely NO characters, people, cats, animals, readable text, logos, numerals, UI, puzzle board, close-up food, collage or border. One finished standalone background.",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-3b22f74c-dc20-483a-b613-053823482e50.png",
+      "dimensions": [
+        941,
+        1672
+      ],
+      "sha256": "361e9c525daf64b01ea1b5ebcb4723e8a022890e53f289ddc383dc9b0f9fec88"
+    },
+    {
+      "location": "town",
+      "state": "revived",
+      "path": "assets/stalls/town/revived/background_v1.png",
+      "prompt": "Edit reference into TOWN REVIVED renovation state for KUIH EMPIRE. Repair only the existing worn awning with fresh new fabric using exactly its existing colours, stripes, size, shape and location; repair the existing small far-upper-left blank wooden signboard frame; clean and repair supporting posts. Leave counter plain and shelves sparsely furnished. STRICT INVARIANTS: same portrait 9:16 composition, original camera viewpoint, framing posts, counter height, same OUTSIDE location environment, trees/buildings, sky, light direction and time of day. Change ONLY foreground renovation fixtures described. Preserve the reference's softly rendered outside scenery and cosy polished casual-game painterly style. CRITICAL: blank sign stays at far upper LEFT, do NOT move it into the central opening. Keep central sky/view and right-middle totally clear for the separately overlaid logo/puzzle board and left-middle suitable for separate character. Do not add any central furniture. Full bleed, crop-safe outer framing. NO people, characters, cats, animals, words, numbers, readable text, logos, game UI, food closeups, puzzle board, collage or border. ONE finished standalone background.",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-6d653eb7-5aad-415c-aefb-432c6b052006.png",
+      "dimensions": [
+        941,
+        1672
+      ],
+      "sha256": "14b5f5827c21c28b59ecd5028c06e178c6858000b72f542c1212479132357880"
+    },
+    {
+      "location": "town",
+      "state": "polished",
+      "path": "assets/stalls/town/polished/background_v1.png",
+      "prompt": "Edit reference into TOWN POLISHED renovation state for KUIH EMPIRE. First repair the existing awning with pristine fresh fabric in the exact existing colours and stripes, and repair its small far-upper-left blank signboard frame. Additionally replace rough counters with polished warm timber and refined rounded edges; tidy left shelving and add modest EMPTY wooden display trays at the far left shelves and a small empty display rack at the FAR RIGHT edge of the side counter. Keep fixtures at their existing positions. STRICT INVARIANTS: same portrait 9:16 composition, original camera viewpoint, framing posts, counter height, same OUTSIDE location environment, trees/buildings, sky, light direction and time of day. Change ONLY foreground renovation fixtures described. Preserve the reference's softly rendered outside scenery and cosy polished casual-game painterly style. CRITICAL: blank sign stays at far upper LEFT, do NOT move it into the central opening. Keep central sky/view and right-middle totally clear for the separately overlaid logo/puzzle board and left-middle suitable for separate character. Do not add any central furniture. Full bleed, crop-safe outer framing. NO people, characters, cats, animals, words, numbers, readable text, logos, game UI, food closeups, puzzle board, collage or border. ONE finished standalone background.",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-83fe3f2c-ddb6-41fe-a94c-b21606df7ad6.png",
+      "dimensions": [
+        941,
+        1672
+      ],
+      "sha256": "ffcfca54191d82f56321d96ff58f5b3cb3b69900f2e3861c15c1f9e5a98eb178"
+    },
+    {
+      "location": "town",
+      "state": "complete",
+      "path": "assets/stalls/town/complete/background_v1.png",
+      "prompt": "Edit reference into TOWN COMPLETE renovation state for KUIH EMPIRE. Fully restore the existing awning in its EXACT original colours/stripes and position; refine the small existing far-upper-LEFT blank signboard frame, KEEP IT LEFT at the same location and size. Polish counters, tidy and refine left shelves and small empty far-right display rack. Add two SMALL elegant warm lanterns only at the outermost TOP corners, a few decorative tropical leaves and flowers only at FAR outer edges, attractive premium timber trim. Do not hang any central signboard. STRICT INVARIANTS: same portrait 9:16 composition, original camera viewpoint, framing posts, counter height, same OUTSIDE location environment, trees/buildings, sky, light direction and time of day. Change ONLY foreground renovation fixtures described. Preserve the reference's softly rendered outside scenery and cosy polished casual-game painterly style. CRITICAL: blank sign stays at far upper LEFT, do NOT move it into the central opening. Keep central sky/view and right-middle totally clear for the separately overlaid logo/puzzle board and left-middle suitable for separate character. Do not add any central furniture. Full bleed, crop-safe outer framing. NO people, characters, cats, animals, words, numbers, readable text, logos, game UI, food closeups, puzzle board, collage or border. ONE finished standalone background.",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-3ef8509c-0270-4576-8dc0-b7a2d360c93b.png",
+      "dimensions": [
+        941,
+        1672
+      ],
+      "sha256": "20a4a347ee718b01012e77bbe0cb1876dfe6671ce07e60e51dc030d1fce53b33"
+    },
+    {
+      "location": "city",
+      "state": "old",
+      "path": "assets/stalls/city/old/background_v1.png",
+      "prompt": "Create ONE portrait 9:16 KUIH EMPIRE background for city, OLD unrenovated state. Use reference only for the polished warm casual-game painterly STYLE and exact overall COMPOSITION, but replace the location environment: a Sarawak modern city-market stall, worn deep-purple-and-cream striped awning, distant tasteful pastel city shop facades with a few modern buildings and tropical palms, plain timber serving counter. View from INSIDE a stall toward the outdoor environment. Keep framing wooden posts and sparsely furnished EMPTY shelves along far left and outer right edges; a rough but safe counter across bottom 25%, small side counter at far right lower-middle, very broad calm open centre, softly rendered distant scene. A blank worn wooden signboard at the far upper left. Old state modest/weathered but inviting. Full-bleed warm light, strong depth, rounded appealing illustrated materials, no excessive saturation. Leave right middle clear for a separate logo, left middle clear for separate character, centre clear behind puzzle board. All major props edge-only, safe side crop for taller phones. Absolutely NO characters, people, cats, animals, readable text, logos, numerals, UI, puzzle board, close-up food, collage or border. One finished standalone background.",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-637152a2-c372-4da3-927c-0d5da394c93c.png",
+      "dimensions": [
+        941,
+        1672
+      ],
+      "sha256": "24e240c051af73b90df1b6a89a5696981989939771b5bd3b372f40f95212f1d3"
+    },
+    {
+      "location": "city",
+      "state": "revived",
+      "path": "assets/stalls/city/revived/background_v1.png",
+      "prompt": "Edit reference into CITY REVIVED renovation state for KUIH EMPIRE. Repair only the existing worn awning with fresh new fabric using exactly its existing colours, stripes, size, shape and location; repair the existing small far-upper-left blank wooden signboard frame; clean and repair supporting posts. Leave counter plain and shelves sparsely furnished. STRICT INVARIANTS: same portrait 9:16 composition, original camera viewpoint, framing posts, counter height, same OUTSIDE location environment, trees/buildings, sky, light direction and time of day. Change ONLY foreground renovation fixtures described. Preserve the reference's softly rendered outside scenery and cosy polished casual-game painterly style. CRITICAL: blank sign stays at far upper LEFT, do NOT move it into the central opening. Keep central sky/view and right-middle totally clear for the separately overlaid logo/puzzle board and left-middle suitable for separate character. Do not add any central furniture. Full bleed, crop-safe outer framing. NO people, characters, cats, animals, words, numbers, readable text, logos, game UI, food closeups, puzzle board, collage or border. ONE finished standalone background.",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-cdd4d33e-6886-4321-b00f-a8a65fe3482c.png",
+      "dimensions": [
+        941,
+        1672
+      ],
+      "sha256": "67295298444801d2c522dcf28133887d4d52852ea0f61a84ea9accb4636ced50"
+    },
+    {
+      "location": "city",
+      "state": "polished",
+      "path": "assets/stalls/city/polished/background_v1.png",
+      "prompt": "Edit reference into CITY POLISHED renovation state for KUIH EMPIRE. First repair the existing awning with pristine fresh fabric in the exact existing colours and stripes, and repair its small far-upper-left blank signboard frame. Additionally replace rough counters with polished warm timber and refined rounded edges; tidy left shelving and add modest EMPTY wooden display trays at the far left shelves and a small empty display rack at the FAR RIGHT edge of the side counter. Keep fixtures at their existing positions. STRICT INVARIANTS: same portrait 9:16 composition, original camera viewpoint, framing posts, counter height, same OUTSIDE location environment, trees/buildings, sky, light direction and time of day. Change ONLY foreground renovation fixtures described. Preserve the reference's softly rendered outside scenery and cosy polished casual-game painterly style. CRITICAL: blank sign stays at far upper LEFT, do NOT move it into the central opening. Keep central sky/view and right-middle totally clear for the separately overlaid logo/puzzle board and left-middle suitable for separate character. Do not add any central furniture. Full bleed, crop-safe outer framing. NO people, characters, cats, animals, words, numbers, readable text, logos, game UI, food closeups, puzzle board, collage or border. ONE finished standalone background.",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-df8a2cdb-c13c-4656-a31b-830d54d78f6b.png",
+      "dimensions": [
+        941,
+        1672
+      ],
+      "sha256": "9db22a10bc7e8bc9766612277b03c5e1798ba85e794b7e7cbacc77cd7a327d1a"
+    },
+    {
+      "location": "city",
+      "state": "complete",
+      "path": "assets/stalls/city/complete/background_v1.png",
+      "prompt": "Edit reference into CITY COMPLETE renovation state for KUIH EMPIRE. Fully restore the existing awning in its EXACT original colours/stripes and position; refine the small existing far-upper-LEFT blank signboard frame, KEEP IT LEFT at the same location and size. Polish counters, tidy and refine left shelves and small empty far-right display rack. Add two SMALL elegant warm lanterns only at the outermost TOP corners, a few decorative tropical leaves and flowers only at FAR outer edges, attractive premium timber trim. Do not hang any central signboard. STRICT INVARIANTS: same portrait 9:16 composition, original camera viewpoint, framing posts, counter height, same OUTSIDE location environment, trees/buildings, sky, light direction and time of day. Change ONLY foreground renovation fixtures described. Preserve the reference's softly rendered outside scenery and cosy polished casual-game painterly style. CRITICAL: blank sign stays at far upper LEFT, do NOT move it into the central opening. Keep central sky/view and right-middle totally clear for the separately overlaid logo/puzzle board and left-middle suitable for separate character. Do not add any central furniture. Full bleed, crop-safe outer framing. NO people, characters, cats, animals, words, numbers, readable text, logos, game UI, food closeups, puzzle board, collage or border. ONE finished standalone background.",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-97c040eb-6131-475b-89c4-5b480fc4b6ff.png",
+      "dimensions": [
+        941,
+        1672
+      ],
+      "sha256": "643244f8759efa2257653ebb6419743b3853065d15e304d63826835cd93d2eec"
+    },
+    {
+      "location": "festival",
+      "state": "old",
+      "path": "assets/stalls/festival/old/background_v1.png",
+      "prompt": "Create ONE portrait 9:16 KUIH EMPIRE background for festival, OLD unrenovated state. Use reference only for the polished warm casual-game painterly STYLE and exact overall COMPOSITION, but replace the location environment: a Sarawak village community festival stall, worn pink-and-cream striped awning, a FEW modest colorful hanging pennants far outside the stall, distant village pavilion and greenery under sunny daylight, plain timber serving counter. View from INSIDE a stall toward the outdoor environment. Keep framing wooden posts and sparsely furnished EMPTY shelves along far left and outer right edges; a rough but safe counter across bottom 25%, small side counter at far right lower-middle, very broad calm open centre, softly rendered distant scene. A blank worn wooden signboard at the far upper left. Old state modest/weathered but inviting. Full-bleed warm light, strong depth, rounded appealing illustrated materials, no excessive saturation. Leave right middle clear for a separate logo, left middle clear for separate character, centre clear behind puzzle board. All major props edge-only, safe side crop for taller phones. Absolutely NO characters, people, cats, animals, readable text, logos, numerals, UI, puzzle board, close-up food, collage or border. One finished standalone background.",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-b62b897e-ce26-4229-8dfb-dd9de820b7c5.png",
+      "dimensions": [
+        941,
+        1672
+      ],
+      "sha256": "f25c2f7f4550cea7ae3507036b17860a13f4444e88ec52d82d90dd6cd515f185"
+    },
+    {
+      "location": "festival",
+      "state": "revived",
+      "path": "assets/stalls/festival/revived/background_v1.png",
+      "prompt": "Edit reference into FESTIVAL REVIVED renovation state for KUIH EMPIRE. Repair only the existing worn awning with fresh new fabric using exactly its existing colours, stripes, size, shape and location; repair the existing small far-upper-left blank wooden signboard frame; clean and repair supporting posts. Leave counter plain and shelves sparsely furnished. STRICT INVARIANTS: same portrait 9:16 composition, original camera viewpoint, framing posts, counter height, same OUTSIDE location environment, trees/buildings, sky, light direction and time of day. Change ONLY foreground renovation fixtures described. Preserve the reference's softly rendered outside scenery and cosy polished casual-game painterly style. CRITICAL: blank sign stays at far upper LEFT, do NOT move it into the central opening. Keep central sky/view and right-middle totally clear for the separately overlaid logo/puzzle board and left-middle suitable for separate character. Do not add any central furniture. Full bleed, crop-safe outer framing. NO people, characters, cats, animals, words, numbers, readable text, logos, game UI, food closeups, puzzle board, collage or border. ONE finished standalone background.",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-268de8b4-5483-493b-839d-b39ce51fcdbf.png",
+      "dimensions": [
+        941,
+        1672
+      ],
+      "sha256": "732888901834cc853279a70aa7470939b981ea844ae1f3c1d734fc0ac18a3b06"
+    },
+    {
+      "location": "festival",
+      "state": "polished",
+      "path": "assets/stalls/festival/polished/background_v1.png",
+      "prompt": "Edit reference into FESTIVAL POLISHED renovation state for KUIH EMPIRE. First repair the existing awning with pristine fresh fabric in the exact existing colours and stripes, and repair its small far-upper-left blank signboard frame. Additionally replace rough counters with polished warm timber and refined rounded edges; tidy left shelving and add modest EMPTY wooden display trays at the far left shelves and a small empty display rack at the FAR RIGHT edge of the side counter. Keep fixtures at their existing positions. STRICT INVARIANTS: same portrait 9:16 composition, original camera viewpoint, framing posts, counter height, same OUTSIDE location environment, trees/buildings, sky, light direction and time of day. Change ONLY foreground renovation fixtures described. Preserve the reference's softly rendered outside scenery and cosy polished casual-game painterly style. CRITICAL: blank sign stays at far upper LEFT, do NOT move it into the central opening. Keep central sky/view and right-middle totally clear for the separately overlaid logo/puzzle board and left-middle suitable for separate character. Do not add any central furniture. Full bleed, crop-safe outer framing. NO people, characters, cats, animals, words, numbers, readable text, logos, game UI, food closeups, puzzle board, collage or border. ONE finished standalone background.",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-6eb769f7-f9e8-4ee8-8b70-fd685b6ede4b.png",
+      "dimensions": [
+        941,
+        1672
+      ],
+      "sha256": "29c03f659526365a01cc5726909370efec3061aee309032412333d767f2e65da"
+    },
+    {
+      "location": "festival",
+      "state": "complete",
+      "path": "assets/stalls/festival/complete/background_v1.png",
+      "prompt": "Edit reference into FESTIVAL COMPLETE renovation state for KUIH EMPIRE. Fully restore the existing awning in its EXACT original colours/stripes and position; refine the small existing far-upper-LEFT blank signboard frame, KEEP IT LEFT at the same location and size. Polish counters, tidy and refine left shelves and small empty far-right display rack. Add two SMALL elegant warm lanterns only at the outermost TOP corners, a few decorative tropical leaves and flowers only at FAR outer edges, attractive premium timber trim. Do not hang any central signboard. STRICT INVARIANTS: same portrait 9:16 composition, original camera viewpoint, framing posts, counter height, same OUTSIDE location environment, trees/buildings, sky, light direction and time of day. Change ONLY foreground renovation fixtures described. Preserve the reference's softly rendered outside scenery and cosy polished casual-game painterly style. CRITICAL: blank sign stays at far upper LEFT, do NOT move it into the central opening. Keep central sky/view and right-middle totally clear for the separately overlaid logo/puzzle board and left-middle suitable for separate character. Do not add any central furniture. Full bleed, crop-safe outer framing. NO people, characters, cats, animals, words, numbers, readable text, logos, game UI, food closeups, puzzle board, collage or border. ONE finished standalone background.",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-e4c1cd7e-6fd7-434b-9a7a-e28257ab3766.png",
+      "dimensions": [
+        941,
+        1672
+      ],
+      "sha256": "b8d8e147a8812093e4f5014c4efa51639f90698fc1e0d48f69ea3dd5cdbf836b"
+    },
+    {
+      "location": "bazaar_ramadan",
+      "state": "old",
+      "path": "assets/stalls/bazaar_ramadan/old/background_v1.png",
+      "prompt": "Create ONE portrait 9:16 KUIH EMPIRE background for bazaar_ramadan, OLD unrenovated state. Use reference only for the polished warm casual-game painterly STYLE and exact overall COMPOSITION, but replace the location environment: a Sarawak Ramadan bazaar stall at warm twilight, worn green-and-cream striped awning, distant empty bazaar stalls and soft warm hanging golden lanterns, purple-blue dusk sky and tropical palms, plain timber serving counter. View from INSIDE a stall toward the outdoor environment. Keep framing wooden posts and sparsely furnished EMPTY shelves along far left and outer right edges; a rough but safe counter across bottom 25%, small side counter at far right lower-middle, very broad calm open centre, softly rendered distant scene. A blank worn wooden signboard at the far upper left. Old state modest/weathered but inviting. Full-bleed warm light, strong depth, rounded appealing illustrated materials, no excessive saturation. Leave right middle clear for a separate logo, left middle clear for separate character, centre clear behind puzzle board. All major props edge-only, safe side crop for taller phones. Absolutely NO characters, people, cats, animals, readable text, logos, numerals, UI, puzzle board, close-up food, collage or border. One finished standalone background.",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-315cd32d-e371-4ee8-a801-b30221e93fbe.png",
+      "dimensions": [
+        941,
+        1672
+      ],
+      "sha256": "7efe80019c557b350810eeb52e40f43d730ced926b90e414529795aeb3f1686d"
+    },
+    {
+      "location": "bazaar_ramadan",
+      "state": "revived",
+      "path": "assets/stalls/bazaar_ramadan/revived/background_v1.png",
+      "prompt": "Edit reference into BAZAAR_RAMADAN REVIVED renovation state for KUIH EMPIRE. Repair only the existing worn awning with fresh new fabric using exactly its existing colours, stripes, size, shape and location; repair the existing small far-upper-left blank wooden signboard frame; clean and repair supporting posts. Leave counter plain and shelves sparsely furnished. STRICT INVARIANTS: same portrait 9:16 composition, original camera viewpoint, framing posts, counter height, same OUTSIDE location environment, trees/buildings, sky, light direction and time of day. Change ONLY foreground renovation fixtures described. Preserve the reference's softly rendered outside scenery and cosy polished casual-game painterly style. CRITICAL: blank sign stays at far upper LEFT, do NOT move it into the central opening. Keep central sky/view and right-middle totally clear for the separately overlaid logo/puzzle board and left-middle suitable for separate character. Do not add any central furniture. Full bleed, crop-safe outer framing. NO people, characters, cats, animals, words, numbers, readable text, logos, game UI, food closeups, puzzle board, collage or border. ONE finished standalone background.",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-14a2e640-a392-4833-aad6-d7b550a1d7ac.png",
+      "dimensions": [
+        941,
+        1672
+      ],
+      "sha256": "9c3239ffeb8ab6e43fa3b3ecb4e573991af5d58a20bd4e51a952c13218e689ba"
+    },
+    {
+      "location": "bazaar_ramadan",
+      "state": "polished",
+      "path": "assets/stalls/bazaar_ramadan/polished/background_v1.png",
+      "prompt": "Edit reference into BAZAAR_RAMADAN POLISHED renovation state for KUIH EMPIRE. First repair the existing awning with pristine fresh fabric in the exact existing colours and stripes, and repair its small far-upper-left blank signboard frame. Additionally replace rough counters with polished warm timber and refined rounded edges; tidy left shelving and add modest EMPTY wooden display trays at the far left shelves and a small empty display rack at the FAR RIGHT edge of the side counter. Keep fixtures at their existing positions. STRICT INVARIANTS: same portrait 9:16 composition, original camera viewpoint, framing posts, counter height, same OUTSIDE location environment, trees/buildings, sky, light direction and time of day. Change ONLY foreground renovation fixtures described. Preserve the reference's softly rendered outside scenery and cosy polished casual-game painterly style. CRITICAL: blank sign stays at far upper LEFT, do NOT move it into the central opening. Keep central sky/view and right-middle totally clear for the separately overlaid logo/puzzle board and left-middle suitable for separate character. Do not add any central furniture. Full bleed, crop-safe outer framing. NO people, characters, cats, animals, words, numbers, readable text, logos, game UI, food closeups, puzzle board, collage or border. ONE finished standalone background.",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-da0f7029-57f7-4d37-8752-f4801c33641e.png",
+      "dimensions": [
+        941,
+        1672
+      ],
+      "sha256": "9e957e939f527e3e1c9bd3dc4fbcce520ac1a0eb76001dc8379d4bb7cfae8d1f"
+    },
+    {
+      "location": "bazaar_ramadan",
+      "state": "complete",
+      "path": "assets/stalls/bazaar_ramadan/complete/background_v1.png",
+      "prompt": "Edit reference into BAZAAR_RAMADAN COMPLETE renovation state for KUIH EMPIRE. Fully restore the existing awning in its EXACT original colours/stripes and position; refine the small existing far-upper-LEFT blank signboard frame, KEEP IT LEFT at the same location and size. Polish counters, tidy and refine left shelves and small empty far-right display rack. Add two SMALL elegant warm lanterns only at the outermost TOP corners, a few decorative tropical leaves and flowers only at FAR outer edges, attractive premium timber trim. Do not hang any central signboard. STRICT INVARIANTS: same portrait 9:16 composition, original camera viewpoint, framing posts, counter height, same OUTSIDE location environment, trees/buildings, sky, light direction and time of day. Change ONLY foreground renovation fixtures described. Preserve the reference's softly rendered outside scenery and cosy polished casual-game painterly style. CRITICAL: blank sign stays at far upper LEFT, do NOT move it into the central opening. Keep central sky/view and right-middle totally clear for the separately overlaid logo/puzzle board and left-middle suitable for separate character. Do not add any central furniture. Full bleed, crop-safe outer framing. NO people, characters, cats, animals, words, numbers, readable text, logos, game UI, food closeups, puzzle board, collage or border. ONE finished standalone background.",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-4ccde57b-2578-4d9c-9867-4c3a7c2d911d.png",
+      "dimensions": [
+        941,
+        1672
+      ],
+      "sha256": "c02205b5bcaa31a680fff56bb7cba95ff48200bc9f4b354dfb778899107a81e0"
+    },
+    {
+      "location": "school_canteen",
+      "state": "old",
+      "path": "assets/stalls/school_canteen/old/background_v2.png",
+      "prompt": "Create a single portrait 9:16 mobile casual-game environment background for KUIH EMPIRE, polished warm stylized illustration matching the supplied reference's rendering quality only. NO people, animals, text, logos, icons, game board or UI. Composition: viewer at food vendor service counter, large open calm center from x=.20 to .90 and y=.15 to .70, substantial empty counter in bottom quarter, fittings confined to outer edges. Institutional Malaysian canteen, NOT a rustic timber market booth, no fabric market awning, no wooden posts or tropical baskets. Hygienic even in starting tier; wear is cosmetic only, no rubbish, food contamination, cracks on food contact surfaces. SCHOOL CANTEEN OLD starting tier. Covered open-sided school cafeteria: painted cream concrete pillars, blue trim and plain fixed blue fascia across top, white tiled masonry service counter with light-grey polished cement top and rounded edge, small stainless steel prep table and sink at far right, simple stainless shelves on left, a small blank blue menu panel upper-left. Through opening show long stainless steel school dining tables with attached bench seats in shaded canteen, school classroom block and palms farther away. Smooth beige non-slip tiled floor. Modest faded wall paint, worn fascia, dated but clean fittings. Clearly school campus architecture. Keep warm friendly lighting and visual depth.",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-c7d289c2-35bf-4d32-8496-0b6d86238b52.png",
+      "dimensions": [
+        941,
+        1672
+      ],
+      "sha256": "bb1f201eabc4ea43ec03e9669b2da527468a6ac4e0319a7c1f41a74ef42fd58e"
+    },
+    {
+      "location": "school_canteen",
+      "state": "revived",
+      "path": "assets/stalls/school_canteen/revived/background_v2.png",
+      "prompt": "Edit this institutional Malaysian canteen reference to revived renovation state. Preserve EXACT portrait camera, architectural geometry, school/office identity, openings, background building, furniture positions, large calm central area and empty foreground counter surface. Match original warm stylized casual-game illustration quality. First renovation tier: repaint ALL flaking fascia and pillars pristine blue (school) or teal (office), refresh cream walls, restore blank menu panel, clean and regrout existing counter tile. Keep original cement/granite countertop. Keep furniture layout and fixtures simple, no advanced display improvements or plants yet. No people, animals, text, logos, icons, board or game UI. One full portrait background, no collage. Make progression changes clearly visible.",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-26a05d93-271e-4879-b5ab-67b2c6265d32.png",
+      "dimensions": [
+        941,
+        1672
+      ],
+      "sha256": "98f8922f1fc9a2ef4689a8795cbf7153fb52b9952f385faa6b93151182ba3dab"
+    },
+    {
+      "location": "school_canteen",
+      "state": "polished",
+      "path": "assets/stalls/school_canteen/polished/background_v2.png",
+      "prompt": "Edit this institutional Malaysian canteen reference to polished renovation state. Preserve EXACT portrait camera, architectural geometry, school/office identity, openings, background building, furniture positions, large calm central area and empty foreground counter surface. Match original warm stylized casual-game illustration quality. Second renovation tier: ALL first-tier work already done, pristine painted fascia and pillars, cream walls and blank panel. Upgrade foreground to a broad polished brushed STAINLESS STEEL countertop with rounded edges on clean tiled masonry base. Upgrade side prep tables/shelves to new matching stainless steel; add compact enclosed glass food display at far right edge, keeping center empty. New clean dining furniture same positions. Do not put props on central foreground counter. No plants yet. No people, animals, text, logos, icons, board or game UI. One full portrait background, no collage. Make progression changes clearly visible.",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-f8750967-9f67-4e44-a4b1-a5120d5d52ea.png",
+      "dimensions": [
+        941,
+        1672
+      ],
+      "sha256": "21ef6b74a0825f73b4d82ba4b0e25c439488a3a67218e28519a6c1716a0e5631"
+    },
+    {
+      "location": "school_canteen",
+      "state": "complete",
+      "path": "assets/stalls/school_canteen/complete/background_v2.png",
+      "prompt": "Edit this institutional Malaysian canteen reference to complete renovation state. Preserve EXACT portrait camera, architectural geometry, school/office identity, openings, background building, furniture positions, large calm central area and empty foreground counter surface. Match original warm stylized casual-game illustration quality. Final completed renovation: ALL previous work already done with spotless freshly painted fascia/pillars, cream wall tiles, broad new polished brushed STAINLESS STEEL service countertop and clean tiled base, new stainless prep tables and shelves, compact enclosed glass display far right. Modern recessed ceiling lighting along outer top edges, neatly organised service utensils at left edge and small decorative plant at far outer-right side. School remains functional school canteen with long steel bench tables and campus; office remains indoor government cafeteria with square tables/chairs/windowed office courtyard. No market lanterns/fabric awning/timber counters, no luxury restaurant redesign. No people, animals, text, logos, icons, board or game UI. One full portrait background, no collage. Make progression changes clearly visible.",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-0877b60a-3285-4179-a5ab-8c82c57f6441.png",
+      "dimensions": [
+        941,
+        1672
+      ],
+      "sha256": "6da1e8e34c8e7b123c0955df166c21aba02f09cf551739374fb25d21dd012dd6"
+    },
+    {
+      "location": "government_canteen",
+      "state": "old",
+      "path": "assets/stalls/government_canteen/old/background_v1.png",
+      "prompt": "Create a single portrait 9:16 mobile casual-game environment background for KUIH EMPIRE, polished warm stylized illustration matching the supplied reference's rendering quality only. NO people, animals, text, logos, icons, game board or UI. Composition: viewer at food vendor service counter, large open calm center from x=.20 to .90 and y=.15 to .70, substantial empty counter in bottom quarter, fittings confined to outer edges. Institutional Malaysian canteen, NOT a rustic timber market booth, no fabric market awning, no wooden posts or tropical baskets. Hygienic even in starting tier; wear is cosmetic only, no rubbish, food contamination, cracks on food contact surfaces. GOVERNMENT OFFICE CANTEEN OLD starting tier. An indoor Malaysian government-building cafeteria tenant food outlet: cream painted masonry walls and square columns, teal fixed fascia and simple blank menu panel upper-left, white tiled service counter base with matte light-grey solid cement/granite worktop across bottom quarter. Small clean enclosed glass serving cabinet at far-right edge, stainless steel prep table and shelving edges, warm ceiling strip lighting. Open central view toward quiet office cafeteria dining area: compact square laminate tables, individual chairs, tiled floor, large daylight windows showing administrative building facade and planted courtyard. No flags/emblems. Modest older paint and dated fixtures but clean and maintained. No school benches, no market tent. Calm bright center.",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-7a2a0a69-37b1-4677-ba15-ab38899a58f2.png",
+      "dimensions": [
+        941,
+        1672
+      ],
+      "sha256": "8ab4f4c15ba01e1b0e8c7e430d2a01f221580fbbd4092b9f4fd2974dc1559171"
+    },
+    {
+      "location": "government_canteen",
+      "state": "revived",
+      "path": "assets/stalls/government_canteen/revived/background_v1.png",
+      "prompt": "Edit this institutional Malaysian canteen reference to revived renovation state. Preserve EXACT portrait camera, architectural geometry, school/office identity, openings, background building, furniture positions, large calm central area and empty foreground counter surface. Match original warm stylized casual-game illustration quality. First renovation tier: repaint ALL flaking fascia and pillars pristine blue (school) or teal (office), refresh cream walls, restore blank menu panel, clean and regrout existing counter tile. Keep original cement/granite countertop. Keep furniture layout and fixtures simple, no advanced display improvements or plants yet. No people, animals, text, logos, icons, board or game UI. One full portrait background, no collage. Make progression changes clearly visible.",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-c6d6243b-bbed-4c64-a583-5cb0268baac8.png",
+      "dimensions": [
+        941,
+        1672
+      ],
+      "sha256": "4cabf0cff5d590a209333fcbc67a9c31b0e349e976527c48179b69a9870d5f2b"
+    },
+    {
+      "location": "government_canteen",
+      "state": "polished",
+      "path": "assets/stalls/government_canteen/polished/background_v1.png",
+      "prompt": "Edit this institutional Malaysian canteen reference to polished renovation state. Preserve EXACT portrait camera, architectural geometry, school/office identity, openings, background building, furniture positions, large calm central area and empty foreground counter surface. Match original warm stylized casual-game illustration quality. Second renovation tier: ALL first-tier work already done, pristine painted fascia and pillars, cream walls and blank panel. Upgrade foreground to a broad polished brushed STAINLESS STEEL countertop with rounded edges on clean tiled masonry base. Upgrade side prep tables/shelves to new matching stainless steel; add compact enclosed glass food display at far right edge, keeping center empty. New clean dining furniture same positions. Do not put props on central foreground counter. No plants yet. No people, animals, text, logos, icons, board or game UI. One full portrait background, no collage. Make progression changes clearly visible.",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-03d187a9-ba79-412a-adcc-95f550db3661.png",
+      "dimensions": [
+        941,
+        1672
+      ],
+      "sha256": "9b72b340e86b103e2691104a7fac17049414ee5a11db136b2fd24ec7ad318cee"
+    },
+    {
+      "location": "government_canteen",
+      "state": "complete",
+      "path": "assets/stalls/government_canteen/complete/background_v1.png",
+      "prompt": "Edit this institutional Malaysian canteen reference to complete renovation state. Preserve EXACT portrait camera, architectural geometry, school/office identity, openings, background building, furniture positions, large calm central area and empty foreground counter surface. Match original warm stylized casual-game illustration quality. Final completed renovation: ALL previous work already done with spotless freshly painted fascia/pillars, cream wall tiles, broad new polished brushed STAINLESS STEEL service countertop and clean tiled base, new stainless prep tables and shelves, compact enclosed glass display far right. Modern recessed ceiling lighting along outer top edges, neatly organised service utensils at left edge and small decorative plant at far outer-right side. School remains functional school canteen with long steel bench tables and campus; office remains indoor government cafeteria with square tables/chairs/windowed office courtyard. No market lanterns/fabric awning/timber counters, no luxury restaurant redesign. No people, animals, text, logos, icons, board or game UI. One full portrait background, no collage. Make progression changes clearly visible.",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-40ce9831-b23a-4a33-9f92-29d9afbb3eb9.png",
+      "dimensions": [
+        941,
+        1672
+      ],
+      "sha256": "c5bb79f646c565f4cdbdd3193845ebbd28796dca2b4aa7bf2bef71184fd7db0b"
+    }
+  ],
+  "superseded_school_masters": [
+    {
+      "location": "school_canteen",
+      "state": "old",
+      "path": "assets/stalls/school_canteen/old/background_v1.png",
+      "prompt": "Create ONE portrait 9:16 KUIH EMPIRE background for school_canteen, OLD unrenovated state. Use reference only for the polished warm casual-game painterly STYLE and exact overall COMPOSITION, but replace the location environment: a small Sarawak school canteen, a worn blue-and-cream striped fabric awning, view through the open serving window onto a sunny school courtyard with low cream school buildings and palms, plain timber canteen serving counter. View from INSIDE a stall toward the outdoor environment. Keep framing wooden posts and sparsely furnished EMPTY shelves along far left and outer right edges; a rough but safe counter across bottom 25%, small side counter at far right lower-middle, very broad calm open centre, softly rendered distant scene. A blank worn wooden signboard at the far upper left. Old state modest/weathered but inviting. Full-bleed warm light, strong depth, rounded appealing illustrated materials, no excessive saturation. Leave right middle clear for a separate logo, left middle clear for separate character, centre clear behind puzzle board. All major props edge-only, safe side crop for taller phones. Absolutely NO characters, people, cats, animals, readable text, logos, numerals, UI, puzzle board, close-up food, collage or border. One finished standalone background.",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-8626e3ee-cebd-43de-b9cf-005da2d76b74.png"
+    },
+    {
+      "location": "school_canteen",
+      "state": "revived",
+      "path": "assets/stalls/school_canteen/revived/background_v1.png",
+      "prompt": "Edit reference into SCHOOL_CANTEEN REVIVED renovation state for KUIH EMPIRE. Repair only the existing worn awning with fresh new fabric using exactly its existing colours, stripes, size, shape and location; repair the existing small far-upper-left blank wooden signboard frame; clean and repair supporting posts. Leave counter plain and shelves sparsely furnished. STRICT INVARIANTS: same portrait 9:16 composition, original camera viewpoint, framing posts, counter height, same OUTSIDE location environment, trees/buildings, sky, light direction and time of day. Change ONLY foreground renovation fixtures described. Preserve the reference's softly rendered outside scenery and cosy polished casual-game painterly style. CRITICAL: blank sign stays at far upper LEFT, do NOT move it into the central opening. Keep central sky/view and right-middle totally clear for the separately overlaid logo/puzzle board and left-middle suitable for separate character. Do not add any central furniture. Full bleed, crop-safe outer framing. NO people, characters, cats, animals, words, numbers, readable text, logos, game UI, food closeups, puzzle board, collage or border. ONE finished standalone background.",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-4eec257d-9af6-4c28-8481-5f8c279858ef.png"
+    },
+    {
+      "location": "school_canteen",
+      "state": "polished",
+      "path": "assets/stalls/school_canteen/polished/background_v1.png",
+      "prompt": "Edit reference into SCHOOL_CANTEEN POLISHED renovation state for KUIH EMPIRE. First repair the existing awning with pristine fresh fabric in the exact existing colours and stripes, and repair its small far-upper-left blank signboard frame. Additionally replace rough counters with polished warm timber and refined rounded edges; tidy left shelving and add modest EMPTY wooden display trays at the far left shelves and a small empty display rack at the FAR RIGHT edge of the side counter. Keep fixtures at their existing positions. STRICT INVARIANTS: same portrait 9:16 composition, original camera viewpoint, framing posts, counter height, same OUTSIDE location environment, trees/buildings, sky, light direction and time of day. Change ONLY foreground renovation fixtures described. Preserve the reference's softly rendered outside scenery and cosy polished casual-game painterly style. CRITICAL: blank sign stays at far upper LEFT, do NOT move it into the central opening. Keep central sky/view and right-middle totally clear for the separately overlaid logo/puzzle board and left-middle suitable for separate character. Do not add any central furniture. Full bleed, crop-safe outer framing. NO people, characters, cats, animals, words, numbers, readable text, logos, game UI, food closeups, puzzle board, collage or border. ONE finished standalone background.",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-15ab649a-214c-4aec-8d90-a40afe4f28d1.png"
+    },
+    {
+      "location": "school_canteen",
+      "state": "complete",
+      "path": "assets/stalls/school_canteen/complete/background_v1.png",
+      "prompt": "Edit reference into SCHOOL_CANTEEN COMPLETE renovation state for KUIH EMPIRE. Fully restore the existing awning in its EXACT original colours/stripes and position; refine the small existing far-upper-LEFT blank signboard frame, KEEP IT LEFT at the same location and size. Polish counters, tidy and refine left shelves and small empty far-right display rack. Add two SMALL elegant warm lanterns only at the outermost TOP corners, a few decorative tropical leaves and flowers only at FAR outer edges, attractive premium timber trim. Do not hang any central signboard. STRICT INVARIANTS: same portrait 9:16 composition, original camera viewpoint, framing posts, counter height, same OUTSIDE location environment, trees/buildings, sky, light direction and time of day. Change ONLY foreground renovation fixtures described. Preserve the reference's softly rendered outside scenery and cosy polished casual-game painterly style. CRITICAL: blank sign stays at far upper LEFT, do NOT move it into the central opening. Keep central sky/view and right-middle totally clear for the separately overlaid logo/puzzle board and left-middle suitable for separate character. Do not add any central furniture. Full bleed, crop-safe outer framing. NO people, characters, cats, animals, words, numbers, readable text, logos, game UI, food closeups, puzzle board, collage or border. ONE finished standalone background.",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-cf3ec33b-7b5a-4728-bfc0-ccfeb64c0955.png"
+    }
+  ]
+}

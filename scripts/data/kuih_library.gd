@@ -94,7 +94,7 @@ static func _build() -> void:
 			"accent": Color("f4e6cf"),
 			"detail": Color("d9954f"),
 			"chapter": 2,
-			"note": "A sweet banana and sugar cake baked in a pleated cup.",
+			"note": "A fried rice-flour cake with a crisp raised rim and a soft centre.",
 		},
 		{
 			"id": &"kuih_cina",
@@ -193,6 +193,18 @@ static func _build() -> void:
 				var framed := AtlasTexture.new()
 				framed.atlas = kuih.texture
 				framed.region = food_regions[kuih.id]
+				kuih.texture = framed
+		# Every registered kuih has authored artwork, including locked collection entries.
+		if kuih.texture == null:
+			var extra_ids := [&"penyaram", &"kuih_cina", &"acar", &"dodol", &"kuih_kukus", &"kuih_goreng"]
+			var index := extra_ids.find(kuih.id)
+			if index >= 0:
+				var sheet := load("res://assets/kuih/complete_v4/remaining_kuih.png") as Texture2D
+				var framed := AtlasTexture.new()
+				framed.atlas = sheet
+				var cell := sheet.get_size() / Vector2(3,2)
+				framed.region = Rect2(Vector2(index % 3, index / 3) * cell, cell)
+				framed.filter_clip = true
 				kuih.texture = framed
 		_by_id[kuih.id] = kuih
 		_order.append(kuih)

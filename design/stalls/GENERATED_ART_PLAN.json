@@ -1,0 +1,165 @@
+{
+  "strategy": "32 state masters across eight locations, shared by 128 context slots. Institutional school and government office canteens use appropriate masonry, tile and stainless steel.",
+  "assets": [
+    {
+      "location": "family_stall",
+      "state": "old",
+      "path": "assets/stalls/family_stall/old/background_v1.png"
+    },
+    {
+      "location": "family_stall",
+      "state": "revived",
+      "path": "assets/stalls/family_stall/revived/background_v1.png"
+    },
+    {
+      "location": "family_stall",
+      "state": "polished",
+      "path": "assets/stalls/family_stall/polished/background_v1.png"
+    },
+    {
+      "location": "family_stall",
+      "state": "complete",
+      "path": "assets/stalls/family_stall/complete/background_v2.png"
+    },
+    {
+      "location": "morning_market",
+      "state": "old",
+      "path": "assets/stalls/morning_market/old/background_v1.png"
+    },
+    {
+      "location": "morning_market",
+      "state": "revived",
+      "path": "assets/stalls/morning_market/revived/background_v1.png"
+    },
+    {
+      "location": "morning_market",
+      "state": "polished",
+      "path": "assets/stalls/morning_market/polished/background_v1.png"
+    },
+    {
+      "location": "morning_market",
+      "state": "complete",
+      "path": "assets/stalls/morning_market/complete/background_v1.png"
+    },
+    {
+      "location": "town",
+      "state": "old",
+      "path": "assets/stalls/town/old/background_v1.png"
+    },
+    {
+      "location": "town",
+      "state": "revived",
+      "path": "assets/stalls/town/revived/background_v1.png"
+    },
+    {
+      "location": "town",
+      "state": "polished",
+      "path": "assets/stalls/town/polished/background_v1.png"
+    },
+    {
+      "location": "town",
+      "state": "complete",
+      "path": "assets/stalls/town/complete/background_v1.png"
+    },
+    {
+      "location": "city",
+      "state": "old",
+      "path": "assets/stalls/city/old/background_v1.png"
+    },
+    {
+      "location": "city",
+      "state": "revived",
+      "path": "assets/stalls/city/revived/background_v1.png"
+    },
+    {
+      "location": "city",
+      "state": "polished",
+      "path": "assets/stalls/city/polished/background_v1.png"
+    },
+    {
+      "location": "city",
+      "state": "complete",
+      "path": "assets/stalls/city/complete/background_v1.png"
+    },
+    {
+      "location": "festival",
+      "state": "old",
+      "path": "assets/stalls/festival/old/background_v1.png"
+    },
+    {
+      "location": "festival",
+      "state": "revived",
+      "path": "assets/stalls/festival/revived/background_v1.png"
+    },
+    {
+      "location": "festival",
+      "state": "polished",
+      "path": "assets/stalls/festival/polished/background_v1.png"
+    },
+    {
+      "location": "festival",
+      "state": "complete",
+      "path": "assets/stalls/festival/complete/background_v1.png"
+    },
+    {
+      "location": "bazaar_ramadan",
+      "state": "old",
+      "path": "assets/stalls/bazaar_ramadan/old/background_v1.png"
+    },
+    {
+      "location": "bazaar_ramadan",
+      "state": "revived",
+      "path": "assets/stalls/bazaar_ramadan/revived/background_v1.png"
+    },
+    {
+      "location": "bazaar_ramadan",
+      "state": "polished",
+      "path": "assets/stalls/bazaar_ramadan/polished/background_v1.png"
+    },
+    {
+      "location": "bazaar_ramadan",
+      "state": "complete",
+      "path": "assets/stalls/bazaar_ramadan/complete/background_v1.png"
+    },
+    {
+      "location": "school_canteen",
+      "state": "old",
+      "path": "assets/stalls/school_canteen/old/background_v2.png"
+    },
+    {
+      "location": "school_canteen",
+      "state": "revived",
+      "path": "assets/stalls/school_canteen/revived/background_v2.png"
+    },
+    {
+      "location": "school_canteen",
+      "state": "polished",
+      "path": "assets/stalls/school_canteen/polished/background_v2.png"
+    },
+    {
+      "location": "school_canteen",
+      "state": "complete",
+      "path": "assets/stalls/school_canteen/complete/background_v2.png"
+    },
+    {
+      "location": "government_canteen",
+      "state": "old",
+      "path": "assets/stalls/government_canteen/old/background_v1.png"
+    },
+    {
+      "location": "government_canteen",
+      "state": "revived",
+      "path": "assets/stalls/government_canteen/revived/background_v1.png"
+    },
+    {
+      "location": "government_canteen",
+      "state": "polished",
+      "path": "assets/stalls/government_canteen/polished/background_v1.png"
+    },
+    {
+      "location": "government_canteen",
+      "state": "complete",
+      "path": "assets/stalls/government_canteen/complete/background_v1.png"
+    }
+  ]
+}

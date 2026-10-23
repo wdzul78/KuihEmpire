@@ -83,7 +83,7 @@ func _draw() -> void:
 	var rect := _unit()
 	if special_kind == BoardCell.Special.HANTAR:
 		var edge := minf(size.x,size.y)*.86
-		BoardArt.draw_delivery(self,Rect2((size-Vector2.ONE*edge)*.5,Vector2.ONE*edge),_rotor_time*1.4)
+		BoardArt.draw_delivery(self,Rect2((size-Vector2.ONE*edge)*.5,Vector2.ONE*edge),_rotor_time)
 		return
 	if special_kind in [BoardCell.Special.TAPAU,BoardCell.Special.TAPAU_VERTICAL]:
 		BoardArt.draw_directional(self,Rect2(Vector2.ZERO,size),special_kind == BoardCell.Special.TAPAU_VERTICAL,directional_spread,directional_alpha,_rotor_time)

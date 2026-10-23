@@ -31,6 +31,8 @@ static func all() -> Array[AchievementDefinition]:
 		AchievementDefinition.new("stars_90", "Star Collector III", "Earn 90 permanent stars.", "STARS", "stars", 90, 100, "GOLD"),
 		AchievementDefinition.new("perfect_server", "Perfect Server", "Earn three stars on 10 different stages.", "PUZZLE", "perfect", 10, 75),
 		AchievementDefinition.new("recipes_10", "Kuih Explorer", "Discover 10 recipes.", "RECIPES", "recipes", 10, 75, "BRONZE"),
+		# The data-driven 200-recipe milestone owns the completion payout.
+		AchievementDefinition.new("malaysian_kuih_master", "Master of Malaysian Kuih", "Discover all 200 cultural recipes.", "RECIPES", "cultural_recipes", 200, 0, "MASTER"),
 		AchievementDefinition.new("recipe_master", "Kuih Master", "Discover the complete recipe book.", "RECIPES", "recipes", KuihLibrary.count(), 100, "MASTER"),
 		AchievementDefinition.new("serve_100", "Busy Gerai", "Serve 100 customer orders.", "ORDERS", "orders_served", 100, 100),
 		AchievementDefinition.new("combo_25", "Combo Cook", "Activate 25 special combinations.", "SPECIALS", "special_combos", 25, 75),

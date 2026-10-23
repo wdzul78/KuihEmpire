@@ -1,7 +1,7 @@
 class_name ScoreProgress
 extends Control
 
-var number_font_size := 36
+var number_font_size := 48
 var score := 0
 var two_star := 800
 var three_star := 1400
@@ -17,6 +17,8 @@ var _fill_tween: Tween
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_number = JourneyArt.label(self, "0", Rect2(.08, .065, .84, .43), 36, Palette.WOOD_DARK)
+	_number.material = null
+	_number.add_theme_font_override("font", UIKit.counter_font())
 	_number.name = "ScoreValue"
 	_number.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_star_art = GameplaySkin.texture("star")
@@ -74,12 +76,13 @@ func _process(_delta: float) -> void:
 func _refresh() -> void:
 	if _number != null:
 		var art := illustration_rect()
+		_number.add_theme_font_size_override("font_size",16)
 		_number.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT)
-		_number.position = art.position+art.size*Vector2(.22,.66)
-		_number.size = art.size*Vector2(.56,.28)
+		_number.position = art.position+art.size*Vector2(.22,.67)
+		_number.size = art.size*Vector2(.56,.25)
 		_number.text = str(score)
 		var px := number_font_size
-		while px > 24 and _number.get_theme_font("font").get_string_size(_number.text, HORIZONTAL_ALIGNMENT_LEFT, -1, px).x > _number.size.x:
+		while px > 16 and (_number.get_theme_font("font").get_string_size(_number.text, HORIZONTAL_ALIGNMENT_LEFT, -1, px).x > _number.size.x - 8 or _number.get_theme_font("font").get_height(px) > _number.size.y):
 			px -= 1
 		_number.add_theme_font_size_override("font_size", px)
 	tooltip_text = "Complete orders to win. Targets: 2 stars %d; 3 stars %d." % [two_star, three_star]

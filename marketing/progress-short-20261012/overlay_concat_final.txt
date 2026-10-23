@@ -1,0 +1,17 @@
+file 'teaser.png'
+duration 3
+file 'gameplay.png'
+duration 6
+file 'combo.png'
+duration 6
+file 'special.png'
+duration 5
+file 'gerai.png'
+duration 6
+file 'recipe.png'
+duration 4
+file 'comingsoon.png'
+duration 3
+file 'outro_poster.png'
+duration 3
+file 'outro_poster.png'

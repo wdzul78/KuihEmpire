@@ -7,7 +7,7 @@ extends Node
 ## progress is never lost after a level.
 
 const DEFAULT_SAVE_PATH := "user://kuih_empire_save.json"
-const SAVE_VERSION := 5
+const SAVE_VERSION := 7
 const AUTOSAVE_DELAY := 1.5
 
 ## Tests and tools redirect this so they never touch a real player's save.
@@ -19,11 +19,18 @@ const DEFAULT_BOOSTERS := {
 	"shuffle": 3,
 	"gift": 1,
 	"extra_moves": 2,
+	"hand": 3,
+	"royal": 1,
+	"start_order": 0,
+	"start_delivery": 0,
 }
 
 const DEFAULT_SETTINGS := {
 	"sfx": true,
 	"music": true,
+	"music_volume": 0.8,
+	"bgm_gain_v2": true,
+	"sfx_volume": 1.0,
 	"haptics": true,
 	"show_hints": true,
 	"language": "en",
@@ -48,13 +55,27 @@ func _default_data() -> Dictionary:
 		"owned_decor": [],
 		"structural_upgrades": {},
 		"location_decor": {},
+		"decor_styles": {},
+		"renovation_tasks_completed": [],
+		"active_stall_id": "family_stall",
+		"stall_variants": {},
 		"coins": 250,
+		"stars_spent": 0,
 		"diamonds": 0,
 		"hearts": {"current_hearts": 5, "max_hearts": 5, "last_heart_refill_timestamp": 0, "free_play_end_timestamp": 0, "win_streak": 0, "rewarded_heart_ads_used_today": 0, "rewarded_heart_ads_reset_date": "", "milestones": [], "hearts_spent": 0, "coins_spent": 0},
 		"boosters": DEFAULT_BOOSTERS.duplicate(true),
 		"levels": {},            # Stage records; legacy stars and moves preserved.
 		"chapters": ["prologue"], # unlocked chapter ids
 		"recipes": [],           # unlocked recipe ids
+		"recipe_book_schema": 1,
+		"discovered_recipe_ids": [],
+		"recipe_discovery_count": 0,
+		"recipe_discovery_records": {},
+		"claimed_recipe_discovery_rewards": [],
+		"claimed_recipe_milestone_rewards": [],
+		"claimed_collection_rewards": [],
+		"recipe_star_credits": 0,
+		"pending_recipe_presentations": [],
 		"mastery": {},           # recipe id -> collected count
 		"gerai": {"level": 1, "cosmetics": []},
 		"story_seen": [],
@@ -189,6 +210,7 @@ func _normalize(loaded: Dictionary) -> Dictionary:
 					"unlocked_at": _number(record.get("unlocked_at"), 0),
 				}
 	clean["coins"] = _number(loaded.get("coins"), clean["coins"])
+	clean["stars_spent"] = _number(loaded.get("stars_spent"), 0)
 	clean["diamonds"] = _number(loaded.get("diamonds"), 0)
 	var hearts: Variant = loaded.get("hearts")
 	if hearts is Dictionary:
@@ -220,10 +242,17 @@ func _normalize(loaded: Dictionary) -> Dictionary:
 			if key == "settings":
 				if name == "language" and section[name] in ["ms", "en"]:
 					clean[key][name] = section[name]
+				elif name in ["music_volume", "sfx_volume"] and (section[name] is float or section[name] is int):
+					clean[key][name] = clampf(float(section[name]), 0.0, 1.0)
 				elif name != "language" and section[name] is bool:
 					clean[key][name] = section[name]
 			elif clean[key].has(name):
 				clean[key][name] = _number(section[name], clean[key][name])
+	# Apply the louder BGM's initial 80% once; later player adjustments persist.
+	var previous_settings: Variant = loaded.get("settings", {})
+	if not previous_settings is Dictionary or not bool(previous_settings.get("bgm_gain_v2", false)):
+		clean["settings"]["music_volume"] = 0.8
+		clean["settings"]["bgm_gain_v2"] = true
 	# Older MVP saves inherited Malay automatically. Adopt English once for
 	# this build, then preserve future explicit language selections.
 	if loaded.get("language_policy", 0) != 2:
@@ -264,6 +293,23 @@ func _normalize(loaded: Dictionary) -> Dictionary:
 				if clean["levels"].get(str(stage), {}).get("stars", 0) > 0:
 					bought = state
 		clean["structural_upgrades"][String(location.id)] = bought
+	var active: Variant = loaded.get("active_stall_id", "family_stall")
+	if active is String:
+		var active_location := LocationDefinition.find(StringName(active))
+		if String(active_location.id) == active and (active_location.stage_start == 1 or clean["levels"].get(str(active_location.stage_start - 1), {}).get("stars", 0) > 0):
+			clean["active_stall_id"] = active
+	var variants: Variant = loaded.get("stall_variants", {})
+	if variants is Dictionary:
+		for location in LocationDefinition.all():
+			var choices: Variant = variants.get(String(location.id), {})
+			if not choices is Dictionary:
+				continue
+			var valid_choices: Dictionary = {}
+			for index in range(4):
+				var choice: Variant = choices.get(str(index), "classic")
+				if choice is String and StallDefinition.find(location.id).state(index).variants.has(choice):
+					valid_choices[str(index)] = choice
+			clean["stall_variants"][String(location.id)] = valid_choices
 	var owned: Array = _strings(loaded.get("owned_decor"))
 	for item in DecorDefinition.all():
 		if owned.has(item.id):
@@ -281,11 +327,36 @@ func _normalize(loaded: Dictionary) -> Dictionary:
 					if item != null and item.slot == slot and location.decor_slots.has(slot) and clean["owned_decor"].has(item.id):
 						valid[slot] = item.id
 			clean["location_decor"][String(location.id)] = valid
+	var completed_tasks := _strings(loaded.get("renovation_tasks_completed"))
+	for location in LocationDefinition.all():
+		for index in range(1, int(clean["structural_upgrades"].get(String(location.id), 0)) + 1):
+			var key := "%s:structure:%d" % [location.id, index]
+			if not completed_tasks.has(key):
+				completed_tasks.append(key)
+		for decor_id in clean["location_decor"].get(String(location.id), {}).values():
+			var key := "%s:decor:%s" % [location.id, decor_id]
+			if not completed_tasks.has(key):
+				completed_tasks.append(key)
+	clean["renovation_tasks_completed"] = completed_tasks
+	var decor_styles: Variant = loaded.get("decor_styles", {})
+	if decor_styles is Dictionary:
+		for location in LocationDefinition.all():
+			var choices: Variant = decor_styles.get(String(location.id), {})
+			if not choices is Dictionary:
+				continue
+			var valid: Dictionary = {}
+			for slot in location.decor_slots:
+				var choice: Variant = choices.get(slot, "original")
+				if choice is String and choice in DecorDefinition.STYLES:
+					valid[slot] = choice
+			clean["decor_styles"][String(location.id)] = valid
 	var mastery: Variant = loaded.get("mastery")
 	if mastery is Dictionary:
 		for key in mastery:
 			if key is String and not key.is_empty():
 				clean["mastery"][key] = _number(mastery[key], 0)
+	# Capture original cultural identities before legacy board substitutions.
+	preload("res://scripts/core/recipe_book_manager.gd").normalize(loaded, clean)
 	# Preserve progression when the approved normal-food set changes.
 	var recipes: Array = clean["recipes"]
 	var counts: Dictionary = clean["mastery"]

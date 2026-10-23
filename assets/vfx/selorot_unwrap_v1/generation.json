@@ -1,0 +1,13 @@
+{
+  "tool": "image_gen.imagegen",
+  "sequence_prompt": "Game VFX sprite sheet, transparent background, 4 columns x 2 rows of exactly 8 equal square frames, chronological left to right then next row. No text, no grid lines. Each cell has centered same scale magical pale cream yellow coconut leaf wrapper from a Malaysian kuih selorot cone opening and unwinding into a long vertical corkscrew ribbon. Frame1 closed spiral cone caramel pudding top, frame2 loose leaf tip curls away, frame3 upper spiral unwinds upwards, frame4 half cone with tall curling leaf, frame5 long vertical S spiral ribbon cream yellow, frame6 fully extended vertical twisting leaf stream, frame7 ribbon separates into golden leaf flecks, frame8 tiny fading leaf flecks. Each frame entirely inside its equal square with 10% transparent margin. Rich polished casual puzzle game 3D illustration, readable silhouette, warm yellow leaf veins, restrained gold sparkles. Reference image only supplies pale yellow leaf material and cone identity. Use cream straw yellow, not green. Square overall canvas. Actual transparent alpha.",
+  "titles_prompt": "Transparent game typography asset sheet only, two separate word logos in equal upper and lower halves, no panels, no backgrounds, no icons. Upper half exact text \"Selorot!\" one line, large playful rounded bold lettering ivory cream to gold gradient glossy bevel, thick dark caramel outline, tiny golden leaf accent. Lower half exact text \"Pisang Goreng\" on one line and \"CRISPY!\" underneath, all within lower half. Crunchy golden orange gradient, rich dark brown outline, ivory highlight, a few crispy crumbs. Premium casual Malaysian match3 game style. Perfect spelling. Large readable letters occupying width with transparent margin, upper logo centered at 25% height, lower logo centered at 75% height, separated by transparent empty gap. Landscape 3:2 canvas. No other text.",
+  "sequence_layout": {
+    "columns": 4,
+    "rows": 2
+  },
+  "titles_layout": {
+    "upper": "Selorot!",
+    "lower": "Pisang Goreng CRISPY!"
+  }
+}

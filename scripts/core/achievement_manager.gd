@@ -25,6 +25,7 @@ func _ready() -> void:
 	)
 	ProgressionManager.stars_changed.connect(func(_id: int, _stars: int) -> void: refresh())
 	ProgressionManager.recipe_unlocked.connect(func(_id: StringName) -> void: refresh())
+	RecipeBookManager.changed.connect(refresh)
 	ProgressionManager.chapter_unlocked.connect(func(_id: StringName) -> void: refresh())
 	ProgressionManager.gerai_upgraded.connect(func() -> void: refresh())
 	refresh.call_deferred()
@@ -63,6 +64,7 @@ func metrics() -> Dictionary:
 		result["best_score"] = maxi(result["best_score"], ProgressionManager.best_score(id))
 	result["stars"] = ProgressionManager.total_stars()
 	result["recipes"] = 0
+	result["cultural_recipes"] = RecipeBookManager.get_discovered_count()
 	for kuih in KuihLibrary.all():
 		if ProgressionManager.is_recipe_unlocked(kuih.recipe_id):
 			result["recipes"] += 1

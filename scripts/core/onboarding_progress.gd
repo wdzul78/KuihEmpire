@@ -3,7 +3,7 @@ extends RefCounted
 
 const GIFT_COINS := 500
 const FREE_PLAY_SECONDS := 3600
-const RESTORE_COST := 300
+const RESTORE_COST := 1
 
 static func state() -> Dictionary:
 	return SaveManager.data.onboarding
@@ -24,7 +24,7 @@ static func claim_gift() -> bool:
 	return true
 
 static func restore_stall() -> bool:
-	if restored() or not EconomyManager.spend_coins(RESTORE_COST):
+	if restored() or not EconomyManager.spend_stars(RESTORE_COST):
 		return false
 	state().restored = true
 	SaveManager.save_game()

@@ -41,7 +41,9 @@ func run() -> void:
 	assert(target.position.distance_to(destination) == distance_before)
 	await shot("connected")
 	await get_tree().create_timer(.24).timeout
-	assert(target.position.distance_to(destination) < distance_before)
+	# Ordinary Order now overloads each kuih in its own slot; it no longer
+	# pulls targets inward. Keep this regression check aligned with that behaviour.
+	assert(target.position.distance_to(destination) == distance_before)
 	assert(target.scale.x < 1)
 	await shot("pull")
 	await get_tree().create_timer(1.3).timeout

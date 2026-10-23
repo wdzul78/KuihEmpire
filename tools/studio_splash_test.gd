@@ -2,6 +2,7 @@ extends Node
 
 func _ready() -> void:
 	var boot := preload("res://scenes/boot/boot.tscn").instantiate()
+	boot.auto_navigation = false
 	add_child(boot)
 	await get_tree().create_timer(1.1).timeout
 	var splash := boot.get_node("StudioSplash") as Control
@@ -18,6 +19,9 @@ func _ready() -> void:
 		get_viewport().get_texture().get_image().save_png("res://.shots/studio_splash.png")
 	await get_tree().create_timer(2.1).timeout
 	assert(not boot.has_node("StudioSplash"))
+	# Do not shut down the loader while the splash's background warm-up runs.
+	while SceneManager.warm_progress(SceneManager.LEVEL) < 1.0:
+		await get_tree().process_frame
 	print("Studio splash: PASS (logo, sizing and title transition)")
 	boot.queue_free()
 	await get_tree().process_frame

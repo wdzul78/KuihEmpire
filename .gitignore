@@ -7,6 +7,10 @@ export_presets.cfg
 
 # Build output
 build/
+release/
+android/
+*.jks
+*.keystore
 bin/
 *.apk
 *.aab

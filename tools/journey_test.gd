@@ -93,14 +93,19 @@ func run() -> void:
 	await get_tree().create_timer(.6).timeout
 	assert(not ProgressionManager.story_seen(&"milestone_scene_10"))
 	screen._on_result_continue()
+	# Recipe discovery now precedes the milestone popup; finish that real flow first.
+	while screen.has_node("RecipeDiscoveryOverlay"):
+		screen.get_node("RecipeDiscoveryOverlay")._close()
+		await get_tree().process_frame
 	var completion: JourneyMilestonePopup
 	for child in screen.get_children():
 		if child is JourneyMilestonePopup:
 			completion = child
 	assert(completion != null)
 	completion.dismissed.disconnect(screen._advance_campaign)
-	for button in completion.find_children("*", "Button", true, false):
-		button.pressed.emit()
+	# Exercise Continue only; Renovate intentionally changes scene and destroys this test.
+	var completion_buttons := completion.find_children("*", "Button", true, false)
+	completion_buttons.back().pressed.emit()
 	assert(ProgressionManager.story_seen(&"milestone_scene_10"))
 	await get_tree().process_frame
 	screen.free()
@@ -109,6 +114,7 @@ func run() -> void:
 	ProgressionManager.claim_journey_milestones()
 	assert(ProgressionManager.world_state() == 0 and LocationManager.available_level(&"family_stall") == 2)
 	EconomyManager.add_coins(2000)
+	SaveManager.data["recipe_star_credits"] = 20
 	assert(LocationManager.upgrade(&"family_stall") and LocationManager.upgrade(&"family_stall"))
 	assert(ProgressionManager.world_state() == 2)
 	assert(SaveManager.data["gerai"]["cosmetics"].size() == 2)

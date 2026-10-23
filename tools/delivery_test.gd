@@ -82,11 +82,13 @@ func run() -> void:
     targets.get_cell(blocked).blocker_hp = 2
     check(targets.select_delivery_target(Vector2i(0,0)) == blocked, "blocker is next priority")
     targets.get_cell(Vector2i.ZERO).special = BoardCell.Special.HANTAR
+    targets.get_cell(Vector2i.ZERO).order_kuish = &"unavailable_type"
     var hit := targets.activate_specials([Vector2i.ZERO])
     check(targets.get_cell(blocked).blocker_hp == 1 and hit.blockers.size() == 1, "delivery hits one blocker layer")
     check(hit.cleared.size() == 3 and targets.get_cell(blocked).has_kuish(), "corner cross clears three cells and covered kuih remains")
     var blank_blocker := board()
     blank_blocker.get_cell(Vector2i.ZERO).special = BoardCell.Special.HANTAR
+    blank_blocker.get_cell(Vector2i.ZERO).order_kuish = &"unavailable_type"
     blank_blocker.get_cell(blocked).clear_kuish()
     blank_blocker.get_cell(blocked).blocker_kind = BlockerSpec.Kind.STEAMER
     blank_blocker.get_cell(blocked).blocker_hp = 2

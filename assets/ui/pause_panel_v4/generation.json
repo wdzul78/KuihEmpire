@@ -1,0 +1,6 @@
+{
+  "tool": "built-in image_gen",
+  "mode": "edit",
+  "prompt": "Use case: precise-object-edit. Edit the supplied pause menu panel game sprite. Remove only the two circular audio buttons at the very bottom (music note and speaker, including their beige circular backgrounds) and the thin horizontal separator immediately above these audio buttons. Fill their former area seamlessly with the same cream paper texture. Preserve the bottom corner leaves. Preserve EXACT original canvas dimensions, transparent exterior, outer gold wood frame, all other buttons and their positions, star, green primary button, restart and stall icons, close X, empty title area and all colors. No new text or objects. Do not rearrange or resize anything.",
+  "asset": "panel.png"
+}

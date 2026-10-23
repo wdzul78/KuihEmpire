@@ -34,13 +34,15 @@ func _ready() -> void:
 func _draw() -> void:
 	if illustrated_style:
 		ResourceBarArt.draw_frame(self, "coin", show_plus, square_plus, pill_shape)
-		var font := UIKit.bold_font()
-		var font_size := ResourceBarArt.FONT_SIZE
+		var font := UIKit.counter_font()
+		var font_size := clampi(roundi(size.y*.50),24,48)
 		var text_rect := Rect2(size.y * .98, 0, size.x - size.y * (1.57 if show_plus else 1.10), size.y)
 		while font_size > 20 and font.get_string_size(str(amount), HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x > text_rect.size.x:
 			font_size -= 1
 		var baseline := (size.y - font.get_height(font_size)) * .5 + font.get_ascent(font_size)
-		draw_string(font, Vector2(text_rect.position.x, baseline), str(amount), HORIZONTAL_ALIGNMENT_CENTER, text_rect.size.x, font_size, Palette.WOOD_DARK)
+		if pill_shape:
+			draw_string_outline(font, Vector2(text_rect.position.x, baseline), str(amount), HORIZONTAL_ALIGNMENT_CENTER, text_rect.size.x, font_size, 3, Color("fffdf2"))
+		draw_string(font, Vector2(text_rect.position.x, baseline), str(amount), HORIZONTAL_ALIGNMENT_CENTER, text_rect.size.x, font_size, Color("54250f"))
 		return
 	var font := UIKit.bold_font()
 	var size_px := int(icon_size * 0.42)

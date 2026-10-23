@@ -39,16 +39,16 @@ func run() -> void:
 		await RenderingServer.frame_post_draw
 		get_viewport().get_texture().get_image().save_png("res://.shots/new_foods_and_specials.png")
 	fx.cross(Vector2(360,750),PackedVector2Array([Vector2(90,750),Vector2(630,750),Vector2(360,610),Vector2(360,890)]),80)
-	var roller_count := 0
+	var leaf_count := 0
 	for effect in fx.effects:
-		if effect.kind == "roller_lane":
-			roller_count += 1
-			check(effect.a == Vector2(360,750),"roller starts at combination origin")
-	check(roller_count == 4,"roller launches in four directions")
+		if effect.kind == "ketupat_lane":
+			leaf_count += 1
+			check(effect.a == Vector2(360,750),"leaf starts at combination origin")
+	check(leaf_count == 2,"two leaf lanes launch in four directions")
 	await get_tree().create_timer(.18).timeout
 	if DisplayServer.get_name() != "headless":
 		await RenderingServer.frame_post_draw
-		get_viewport().get_texture().get_image().save_png("res://.shots/roller_four_directions.png")
+		get_viewport().get_texture().get_image().save_png("res://.shots/ketupat_four_directions.png")
 	await get_tree().create_timer(.7).timeout
 	check(fx.effects.is_empty(),"combo effects finish without lingering")
 	var board := MatchBoard.new()
@@ -64,7 +64,7 @@ func run() -> void:
 	var result := board.logic.activate_specials(origins)
 	check(result.combo == &"sweet_cross","horizontal plus vertical creates cross")
 	await board._play_step(result,1)
-	check(board.get_node_or_null("CrossComboRoller") == null or board.get_node("CrossComboRoller").is_queued_for_deletion(),"roller combo graphic removed after activation")
+	check(board.get_node_or_null("CrossComboRoller") == null or board.get_node("CrossComboRoller").is_queued_for_deletion(),"legacy roller is absent after Ketupat activation")
 	board.free()
 	print("Illustrated specials: %s (%d problems)" % ["PASS" if problems == 0 else "FAIL",problems])
 	get_tree().quit(problems)
