@@ -121,7 +121,7 @@ func run() -> void:
 	check(map._nodes.size() == 31 and map.selected_stage == 1 and not ProgressionManager.is_level_unlocked(31), "30 stage map with future destination teaser")
 	GameManager.start_selected_stage()
 	check(has_node("HeartRefillDialog") and not SceneManager._busy, "zero-heart admission did not open refill")
-	check(not get_node("HeartRefillDialog")._ad.visible, "unconnected ad option displayed")
+	check(get_node("HeartRefillDialog")._ad.disabled, "unconnected ad option must not be actionable")
 	get_node("HeartRefillDialog").free()
 	map.free()
 	HeartManager.full_refill()

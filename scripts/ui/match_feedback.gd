@@ -1,6 +1,8 @@
 class_name MatchFeedback
 extends Control
 
+const ANIMATION_PACE = preload("res://scripts/gameplay/animation_pace.gd")
+
 ## Transient, input-transparent points and cascade feedback above the board.
 var _combo: TextureRect
 var _score: TextureRect
@@ -29,12 +31,12 @@ func reset() -> void:
 		_tween.kill()
 	hide()
 
-func show_clear(points: int, cascade: int, board_size: Vector2, multiplier: float = 1.0, origin: Vector2 = Vector2(-1, -1)) -> void:
+func show_clear(points: int, cascade: int, board_size: Vector2, multiplier: float = 1.0, origin: Vector2 = Vector2(-1, -1), above_board: bool = false) -> void:
 	reset()
 	size = Vector2(clampf(board_size.x * .48, 220, 440), minf(180, board_size.y * .20))
 	pivot_offset = size * .5
-	_combo.visible = cascade > 0
-	_multiplier.visible = cascade > 0
+	_combo.visible = cascade > 0 and not above_board
+	_multiplier.visible = cascade > 0 and not above_board
 	_multiplier.text = "x" + ("%.2f" % multiplier).trim_suffix("0").trim_suffix("0").trim_suffix(".")
 	var font_size := 62
 	while font_size > 32 and _multiplier.get_theme_font("font").get_string_size(_multiplier.text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x > size.x * .26:
@@ -48,12 +50,14 @@ func show_clear(points: int, cascade: int, board_size: Vector2, multiplier: floa
 	tooltip_text = "Score +%d" % points
 	var focus := origin if origin.x >= 0 else Vector2(board_size.x * .5, board_size.y * .28)
 	position = Vector2(clampf(focus.x - size.x * .5, 0, maxf(0, board_size.x - size.x)), clampf(focus.y - size.y, 12, maxf(12, board_size.y - size.y - 12)))
+	if above_board:
+		position = Vector2((board_size.x-size.x)*.5,-size.y-6)
 	modulate.a = 1
 	scale = Vector2.ONE * .75
 	show()
-	_tween = create_tween()
+	_tween = create_tween().set_speed_scale(ANIMATION_PACE.SPEED)
 	_tween.tween_property(self, "scale", Vector2.ONE, .18).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	_tween.tween_interval(.42)
-	_tween.tween_property(self, "position:y", position.y - 60, .30)
+	_tween.tween_property(self, "position:y", position.y - (18 if above_board else 60), .30)
 	_tween.parallel().tween_property(self, "modulate:a", 0.0, .30)
 	_tween.tween_callback(hide)

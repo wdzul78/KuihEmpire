@@ -1,0 +1,606 @@
+{
+  "collections": [
+    {
+      "completion_reward_id": "sample_collection",
+      "display_names": {
+        "ms": "Warisan Sarawak (contoh)",
+        "en": "Sarawak Heritage (sample)"
+      },
+      "recipe_ids": [
+        "tebaloi",
+        "penganan",
+        "kek_lapis_sarawak"
+      ],
+      "id": "sarawak_heritage"
+    }
+  ],
+  "milestones": [
+    {
+      "reward_id": "recipes_5",
+      "id": "recipes_5",
+      "threshold": 5
+    },
+    {
+      "reward_id": "recipes_10",
+      "id": "recipes_10",
+      "threshold": 10
+    },
+    {
+      "reward_id": "recipes_20",
+      "id": "recipes_20",
+      "threshold": 20
+    },
+    {
+      "reward_id": "recipes_25",
+      "id": "recipes_25",
+      "threshold": 25
+    },
+    {
+      "reward_id": "recipes_50",
+      "id": "recipes_50",
+      "threshold": 50
+    },
+    {
+      "reward_id": "recipes_75",
+      "id": "recipes_75",
+      "threshold": 75
+    },
+    {
+      "reward_id": "recipes_100",
+      "id": "recipes_100",
+      "threshold": 100
+    },
+    {
+      "reward_id": "recipes_150",
+      "id": "recipes_150",
+      "threshold": 150
+    },
+    {
+      "reward_id": "recipes_200",
+      "id": "recipes_200",
+      "threshold": 200
+    }
+  ],
+  "rewards": {
+    "discovery": {
+      "coins": 100
+    },
+    "recipes_20": {
+      "boosters": {
+        "shuffle": 1,
+        "spatula": 1
+      }
+    },
+    "recipes_75": {
+      "coins": 750
+    },
+    "recipes_25": {
+      "coins": 250
+    },
+    "recipes_10": {
+      "renovation_stars": 1
+    },
+    "recipes_150": {
+      "coins": 1500,
+      "renovation_stars": 3
+    },
+    "sample_collection": {
+      "coins": 150,
+      "renovation_stars": 1
+    },
+    "recipes_5": {
+      "coins": 150
+    },
+    "recipes_50": {
+      "coins": 500,
+      "renovation_stars": 2
+    },
+    "recipes_200": {
+      "coins": 2000,
+      "renovation_stars": 5
+    },
+    "recipes_100": {
+      "coins": 1000,
+      "renovation_stars": 3
+    }
+  },
+  "recipes": [
+    {
+      "collection_number": 1,
+      "rarity": 0,
+      "collection_tags": [],
+      "localized_fields": {
+        "ingredients_summary": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "alternative_names": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "state": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "name": {
+          "ms": "Onde-onde",
+          "en": "Onde-onde"
+        },
+        "region": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "community": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "category": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "short_description": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "interesting_fact": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        }
+      },
+      "image": "res://assets/recipes/shared/onde_onde.png",
+      "reward_id": "discovery",
+      "id": "onde_onde",
+      "gameplay_reference_id": "tile:onde_onde",
+      "discovery_stage": 10,
+      "gameplay_candidate": true
+    },
+    {
+      "collection_number": 2,
+      "rarity": 0,
+      "collection_tags": [],
+      "localized_fields": {
+        "ingredients_summary": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "alternative_names": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "state": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "name": {
+          "ms": "Kuih Cincin",
+          "en": "Kuih Cincin"
+        },
+        "region": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "community": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "category": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "short_description": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "interesting_fact": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        }
+      },
+      "image": "res://assets/recipes/sabah/kuih_cincin.png",
+      "reward_id": "discovery",
+      "id": "kuih_cincin",
+      "gameplay_reference_id": "",
+      "discovery_stage": 20,
+      "gameplay_candidate": false
+    },
+    {
+      "collection_number": 3,
+      "rarity": 0,
+      "collection_tags": [],
+      "localized_fields": {
+        "ingredients_summary": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "alternative_names": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "state": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "name": {
+          "ms": "Bahulu",
+          "en": "Bahulu"
+        },
+        "region": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "community": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "category": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "short_description": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "interesting_fact": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        }
+      },
+      "image": "res://assets/recipes/shared/bahulu.png",
+      "reward_id": "discovery",
+      "id": "bahulu",
+      "gameplay_reference_id": "",
+      "discovery_stage": 30,
+      "gameplay_candidate": true
+    },
+    {
+      "collection_number": 4,
+      "rarity": 0,
+      "collection_tags": [
+        "sarawak_heritage"
+      ],
+      "localized_fields": {
+        "ingredients_summary": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "alternative_names": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "state": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "name": {
+          "ms": "Tebaloi",
+          "en": "Tebaloi"
+        },
+        "region": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "community": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "category": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "short_description": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "interesting_fact": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        }
+      },
+      "image": "res://assets/recipes/sarawak/tebaloi.png",
+      "reward_id": "discovery",
+      "id": "tebaloi",
+      "gameplay_reference_id": "",
+      "discovery_stage": 40,
+      "gameplay_candidate": false
+    },
+    {
+      "collection_number": 5,
+      "rarity": 0,
+      "collection_tags": [],
+      "localized_fields": {
+        "ingredients_summary": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "alternative_names": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "state": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "name": {
+          "ms": "Putu Piring",
+          "en": "Putu Piring"
+        },
+        "region": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "community": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "category": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "short_description": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "interesting_fact": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        }
+      },
+      "image": "res://assets/recipes/shared/putu_piring.png",
+      "reward_id": "discovery",
+      "id": "putu_piring",
+      "gameplay_reference_id": "",
+      "discovery_stage": 50,
+      "gameplay_candidate": true
+    },
+    {
+      "collection_number": 6,
+      "rarity": 0,
+      "collection_tags": [],
+      "localized_fields": {
+        "ingredients_summary": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "alternative_names": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "state": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "name": {
+          "ms": "Ang Ku Kueh",
+          "en": "Ang Ku Kueh"
+        },
+        "region": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "community": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "category": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "short_description": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "interesting_fact": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        }
+      },
+      "image": "res://assets/recipes/shared/ang_ku_kueh.png",
+      "reward_id": "discovery",
+      "id": "ang_ku_kueh",
+      "gameplay_reference_id": "tile:ang_ku_kueh",
+      "discovery_stage": 60,
+      "gameplay_candidate": true
+    },
+    {
+      "collection_number": 7,
+      "rarity": 0,
+      "collection_tags": [],
+      "localized_fields": {
+        "ingredients_summary": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "alternative_names": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "state": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "name": {
+          "ms": "Vadai",
+          "en": "Vadai"
+        },
+        "region": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "community": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "category": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "short_description": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "interesting_fact": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        }
+      },
+      "image": "res://assets/recipes/indian_malaysian/vadai.png",
+      "reward_id": "discovery",
+      "id": "vadai",
+      "gameplay_reference_id": "",
+      "discovery_stage": 70,
+      "gameplay_candidate": true
+    },
+    {
+      "collection_number": 8,
+      "rarity": 0,
+      "collection_tags": [
+        "sarawak_heritage"
+      ],
+      "localized_fields": {
+        "ingredients_summary": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "alternative_names": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "state": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "name": {
+          "ms": "Penganan",
+          "en": "Penganan"
+        },
+        "region": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "community": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "category": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "short_description": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "interesting_fact": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        }
+      },
+      "image": "res://assets/recipes/sarawak/penganan.png",
+      "reward_id": "discovery",
+      "id": "penganan",
+      "gameplay_reference_id": "",
+      "discovery_stage": 80,
+      "gameplay_candidate": false
+    },
+    {
+      "collection_number": 9,
+      "rarity": 0,
+      "collection_tags": [],
+      "localized_fields": {
+        "ingredients_summary": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "alternative_names": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "state": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "name": {
+          "ms": "Kuih Cara",
+          "en": "Kuih Cara"
+        },
+        "region": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "community": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "category": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "short_description": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "interesting_fact": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        }
+      },
+      "image": "res://assets/recipes/shared/kuih_cara.png",
+      "reward_id": "discovery",
+      "id": "kuih_cara",
+      "gameplay_reference_id": "",
+      "discovery_stage": 90,
+      "gameplay_candidate": true
+    },
+    {
+      "collection_number": 10,
+      "rarity": 0,
+      "collection_tags": [
+        "sarawak_heritage"
+      ],
+      "localized_fields": {
+        "ingredients_summary": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "alternative_names": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "state": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "name": {
+          "ms": "Kek Lapis Sarawak",
+          "en": "Kek Lapis Sarawak"
+        },
+        "region": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "community": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "category": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "short_description": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        },
+        "interesting_fact": {
+          "ms": "KAJIAN_DIPERLUKAN",
+          "en": "RESEARCH_REQUIRED"
+        }
+      },
+      "image": "res://assets/recipes/sarawak/kek_lapis_sarawak.png",
+      "reward_id": "discovery",
+      "id": "kek_lapis_sarawak",
+      "gameplay_reference_id": "special:3",
+      "discovery_stage": 100,
+      "gameplay_candidate": true
+    }
+  ],
+  "schema_version": 1
+}

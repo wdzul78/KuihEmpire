@@ -34,7 +34,7 @@ func run() -> void:
 		var result := board.logic.activate_specials([origin,other] if combo else [origin])
 		assert((result.combo == &"rounded_dulang") == combo)
 		play(board,result)
-		await get_tree().create_timer(.33 if combo else .08).timeout
+		await get_tree().create_timer(.65 if combo else .08).timeout
 		var vocal: AudioStream = AudioManager._streams.get(AudioManager.Sfx.PUTERI_VOCAL)
 		assert(vocal != null)
 		var singing := AudioManager._voices.any(func(voice): return voice.playing and voice.stream == vocal)

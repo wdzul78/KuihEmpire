@@ -1,12 +1,140 @@
 class_name GameVfx
 extends Control
 
+const ANIMATION_PACE = preload("res://scripts/gameplay/animation_pace.gd")
+
 ## One bounded, input-transparent canvas. Inherits pause and dies with its owner.
 const MAX_PARTICLES := 240
 const MAX_EFFECTS := 48
 const SPARKLE := preload("res://assets/vfx/kenney/star_04.png")
 const GLOW := preload("res://assets/vfx/kenney/light_02.png")
 const COCONUT = preload("res://scripts/art/coconut_art.gd")
+const BLUE_SPLASH = preload("res://assets/vfx/badak_combine_v1/blue_splash.png")
+const SELOROT_UNWRAP = preload("res://assets/vfx/selorot_unwrap_v1/unwrap_sheet.png")
+const SELOROT_TRAVEL := .38
+const SELOROT_LIFE := .76
+const KETUPAT_ART = preload("res://assets/vfx/ketupat_raya_v1/ketupat.png")
+const KETUPAT_SEQUENCE = preload("res://assets/vfx/ketupat_raya_v2/unwrap_sheet.png")
+const KETUPAT_TRAVEL := .16
+const KETUPAT_RAYA_HOLD := 2.20
+const KETUPAT_COMBO_HOLD := .85
+const KETUPAT_COMBO_EDGE := 1.60
+const KETUPAT_RELEASE := .64
+static var _ketupat_body: AtlasTexture
+
+static func ketupat_body() -> Texture2D:
+	if _ketupat_body == null:
+		_ketupat_body = AtlasTexture.new()
+		_ketupat_body.atlas = KETUPAT_ART
+		_ketupat_body.region = Rect2(165,470,850,800)
+	return _ketupat_body
+
+const SOLAR_ENERGY = preload("res://assets/vfx/pisang_solar_v1/energy.png")
+const SOLAR_FLARE = preload("res://assets/vfx/pisang_solar_v1/flare.png")
+const SOLAR_FRITTERS = preload("res://assets/vfx/pisang_solar_v1/fritters.png")
+const SEPiT_GUST = preload("res://assets/vfx/sepit_gust_v1/gust_sheet.png")
+const ROYAL_CAKE = preload("res://assets/specials/kek_lapis_diraja_v1/kek_lapis_diraja.png")
+static var _gust_frames: SpriteFrames
+const ORDER_CHAIN_COLORS := [Color("ffda36"),Color("54dcff"),Color("fc79dc"),Color("9af46b"),Color("b692ff"),Color("ff9870"),Color("69f0d5"),Color("ec7474")]
+var _order_chain_index := 0
+var _order_origin_colors: Dictionary = {}
+const ROYAL_WAVE_TIME := .75
+
+static func royal_wave_radius(at: Vector2, bounds: Rect2, cell: float) -> float:
+	var radius := 0.0
+	for corner in [bounds.position,bounds.end,Vector2(bounds.end.x,bounds.position.y),Vector2(bounds.position.x,bounds.end.y)]:
+		radius = maxf(radius,at.distance_to(corner))
+	return radius + cell*.4
+
+func begin_order_chain() -> void:
+	_order_chain_index = 0
+	_order_origin_colors.clear()
+
+func order_origin_color(at: Vector2) -> Color:
+	return _order_origin_colors.get(at,ORDER_CHAIN_COLORS[0])
+
+func royal_cake_bomb(at: Vector2, cell: float, bounds: Rect2, direction: Vector2) -> void:
+	_effect("royal_cake_bomb",at,Vector2.ZERO,Color("ffe36c"),cell,2.30)
+	effects.back()["bounds"] = bounds
+	effects.back()["orbit_direction"] = direction
+
+func _draw_royal_cake_bomb(e: Dictionary) -> void:
+	var age: float = e.age
+	var cell: float = e.width
+	var direction: Vector2 = e.orbit_direction
+	if age < .86:
+		var front := 0 if COCONUT.orbit_position(e.a,cell,age,0,direction).y >= e.a.y else 1
+		for index in [1-front,front]:
+			var trail := PackedVector2Array()
+			for i in 16:
+				trail.append(COCONUT.orbit_position(e.a,cell,maxf(0,age-(15-i)*.008),index,direction))
+			draw_polyline(trail,Color(1,.78,.18,.55),cell*.09,true)
+			draw_polyline(trail,Color(1,.98,.75,.90),cell*.025,true)
+			var at := COCONUT.orbit_position(e.a,cell,age,index,direction)
+			COCONUT.sprite(self,BoardArt.ORDER_ART,at,cell*1.12,1.0-smoothstep(.72,.86,age))
+	if age >= .76:
+		var reveal := smoothstep(.76,1.00,age)
+		var fade := 1.0-smoothstep(1.40,1.65,age)
+		var pulse := 1.0+.04*sin(age*24.0)*smoothstep(1.00,1.36,age)
+		_glow(e.a,cell*4.0*reveal,Color(1,.84,.28,.40*fade))
+		COCONUT.sprite(self,ROYAL_CAKE,e.a,cell*2.8*lerpf(.20,1.0,reveal)*pulse,fade,sin(age*12)*.018)
+		for i in 6:
+			var phase := age*2.0+i*TAU/6.0
+			_star(e.a+Vector2(cos(phase),sin(phase))*cell*1.5,cell*.14,Color(1,1,.8,fade),phase)
+	if age >= 1.38:
+		var travel := clampf((age-1.38)/ROYAL_WAVE_TIME,0.0,1.0)
+		var fade := 1.0-smoothstep(2.10,2.30,age)
+		var bounds: Rect2 = e.bounds
+		var radius := royal_wave_radius(e.a,bounds,cell)*travel
+		for ring in 3:
+			var base := radius-ring*cell*.34
+			if base <= 0:
+				continue
+			var ripple := PackedVector2Array()
+			for point in 129:
+				var theta := float(point)*TAU/128.0
+				var wobble := cell*.065*sin(theta*10.0-age*18.0+ring*.7)*minf(1.0,travel*5)
+				ripple.append(e.a+Vector2.from_angle(theta)*(base+wobble))
+			var alpha := fade*(1.0-ring*.23)
+			draw_polyline(ripple,Color(1,.67,.10,alpha*.25),cell*.32,true)
+			draw_polyline(ripple,Color(1,.87,.35,alpha),cell*.10,true)
+			draw_polyline(ripple,Color(1,1,.88,alpha),cell*.025,true)
+		for i in 24:
+			var phase := i*TAU/24.0
+			_star(e.a+Vector2.from_angle(phase)*radius,cell*.16,Color(1,.9,.5,fade),phase)
+
+func pisang_solar(at: Vector2, cell: float, bounds: Rect2) -> void:
+	_effect("pisang_solar",at,Vector2.ZERO,Color.WHITE,cell,1.25)
+	effects.back()["bounds"] = bounds
+
+func _draw_pisang_solar(e: Dictionary) -> void:
+	var age: float = e.age*1.32
+	var cell: float = e.width
+	var fade := 1.0-smoothstep(1.15,1.65,age)
+	var grow := smoothstep(0,.3,age)
+	var slot := SOLAR_ENERGY.get_size()/Vector2(2,2)
+	var frame := int(age*18)%4
+	var extent := Vector2.ONE*cell*4.2*lerpf(.55,1.0,grow)
+	draw_texture_rect_region(SOLAR_ENERGY,Rect2(e.a-extent*.5,extent),Rect2(Vector2(frame%2,frame/2)*slot,slot),Color(1,1,1,fade))
+	for bolt in 6:
+		var angle := bolt*TAU/6.0+age*.7
+		var path := PackedVector2Array()
+		for step in 7:
+			var theta := angle+float(step)*.09
+			var radius := cell*(1.35+float(step)*.10+.12*sin(age*45+step*2+bolt))
+			path.append(e.a+Vector2.from_angle(theta)*radius)
+		draw_polyline(path,Color(1,.85,.10,fade),cell*.055,true)
+		draw_polyline(path,Color(1,1,.85,fade),cell*.018,true)
+	COCONUT.sprite(self,SOLAR_FRITTERS,e.a,cell*1.55*lerpf(.5,1,grow),fade,sin(age*45)*.018)
+	if age >= .65:
+		var travel := smoothstep(.65,1.10,age)
+		var bounds: Rect2 = e.bounds
+		var cover := bounds.size.length()*2.0
+		COCONUT.sprite(self,SOLAR_FLARE,e.a,lerpf(cell*.8,cover,travel),fade*.90)
+		var wave_radius := lerpf(cell*.4,cover*.5,travel)
+		draw_arc(e.a,wave_radius,0,TAU,72,Color(1,.82,.12,fade*(1-travel)),cell*.10,true)
+		draw_arc(e.a,wave_radius,0,TAU,72,Color(1,1,.85,fade*(1-travel)),cell*.025,true)
+	COCONUT.sprite(self,SOLAR_FRITTERS,e.a,cell*3.2*lerpf(.5,1,grow),fade,sin(age*45)*.018)
 var particles: Array[Dictionary] = []
 var effects: Array[Dictionary] = []
 var clock := 0.0
@@ -16,6 +144,10 @@ func _ready() -> void:
 	set_process(false)
 
 func reset() -> void:
+	begin_order_chain()
+	for child in get_children():
+		if child is SepitFlight or child.has_meta("sepit_gust") or child.has_meta("ketupat_effect") or child.has_meta("pisang_effect"):
+			child.queue_free()
 	particles.clear()
 	effects.clear()
 	set_process(false)
@@ -140,6 +272,9 @@ func shuffle(bounds: Rect2, cell: float) -> void:
 	burst(bounds.get_center(), Color("ffe7a0"), 18, cell * 1.4)
 
 func special(at: Vector2, kind: int, affected: PackedVector2Array, cell: float) -> void:
+	if kind == BoardCell.Special.TAPAU_VERTICAL:
+		column_sweep(at,affected,cell,false)
+		return
 	if kind == BoardCell.Special.DULANG:
 		dulang_burst(at, affected, cell)
 		return
@@ -153,7 +288,7 @@ func special(at: Vector2, kind: int, affected: PackedVector2Array, cell: float) 
 	_effect("flash", at, Vector2.ZERO, color, cell * 1.8, .35)
 	burst(at, color, 22, cell * 1.4)
 	if kind == BoardCell.Special.TAPAU or kind == BoardCell.Special.TAPAU_VERTICAL:
-		_effect("tapau_slots",at,Vector2.ZERO,color,cell,.42)
+		_effect("tapau_slots",at,Vector2.ZERO,color,cell,.64)
 		effects.back()["points"] = affected
 		effects.back()["vertical"] = kind == BoardCell.Special.TAPAU_VERTICAL
 		var low := at
@@ -174,45 +309,279 @@ func special(at: Vector2, kind: int, affected: PackedVector2Array, cell: float) 
 			_effect("tile", p, Vector2.ZERO, color, cell * .88, .55)
 			burst(p, color, 3, cell * .45)
 
+## Generated leaf frames are repeated along the actual cleared column.
+## Pisang uses the same bounded footprint with three luminous clearing lanes.
+func column_sweep(at: Vector2, affected: PackedVector2Array, cell: float, crispy: bool) -> void:
+	_effect("crispy_column" if crispy else "selorot_unwrap",at,Vector2.ZERO,Color("ffe6a3"),cell,SELOROT_LIFE)
+	effects.back()["points"] = affected
+	burst(at,Color("ffe6a3"),10,cell*.65)
+
+func pisang_crispy(at: Vector2, cell: float) -> void:
+	_effect("pisang_crispy",at,Vector2.ZERO,Color("ffd95c"),cell,.95)
+	var graphic := TextureRect.new()
+	graphic.name = "PisangCrispyForeground"
+	graphic.texture = BoardArt.PISANG_ART
+	graphic.z_index = 60
+	graphic.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	graphic.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	graphic.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	graphic.set_meta("pisang_effect",effects.back())
+	add_child(graphic)
+	_update_pisang_foregrounds()
+
+func _update_pisang_foregrounds() -> void:
+	for child in get_children():
+		if not child.has_meta("pisang_effect"):
+			continue
+		var effect: Dictionary = child.get_meta("pisang_effect")
+		var age: float = effect.age
+		if age >= float(effect.life) or not effects.has(effect):
+			child.queue_free()
+			continue
+		var reveal := lerpf(.35,1.0,smoothstep(0,.16,age))
+		var extent := Vector2.ONE*float(effect.width)*2.0*reveal
+		child.size = extent
+		child.pivot_offset = extent*.5
+		child.position = effect.a-extent*.5
+		child.rotation = sin(age*16)*.045
+		child.modulate.a = 1.0-smoothstep(.52,.95,age)
+
+func ketupat_appear(at: Vector2, cell: float, dramatic: bool = false, board_size: Vector2 = Vector2.ZERO) -> void:
+	var hold := KETUPAT_RAYA_HOLD if dramatic else KETUPAT_COMBO_HOLD
+	_effect("ketupat_appear",at,Vector2.ZERO,Color("d7f379"),cell,hold+KETUPAT_RELEASE)
+	var effect: Dictionary = effects.back()
+	effect["dramatic"] = dramatic
+	var margin := Vector2.ONE*cell*(1.65 if dramatic else .85)
+	effect["display_at"] = at.clamp(margin,board_size-margin) if board_size.x > margin.x*2 and board_size.y > margin.y*2 else at
+	var graphic := TextureRect.new()
+	graphic.name = "KetupatForeground"
+	graphic.z_index = 60
+	graphic.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	graphic.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	graphic.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	graphic.set_meta("ketupat_effect",effect)
+	graphic.texture = KETUPAT_ART
+	var sequence := TextureRect.new()
+	sequence.name = "UnwrapSequence"
+	sequence.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	sequence.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	sequence.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	sequence.modulate.a = 0
+	graphic.add_child(sequence)
+	add_child(graphic)
+	_update_ketupat_foregrounds()
+	burst(at,Color("ffec93"),16,cell*.8)
+
+func _update_ketupat_foregrounds() -> void:
+	for child in get_children():
+		if not child.has_meta("ketupat_effect"):
+			continue
+		var effect: Dictionary = child.get_meta("ketupat_effect")
+		var age: float = effect.age
+		if age >= float(effect.life) or not effects.has(effect):
+			child.queue_free()
+			continue
+		var cell: float = effect.width
+		var dramatic: bool = effect.dramatic
+		var hold := KETUPAT_RAYA_HOLD if dramatic else KETUPAT_COMBO_HOLD
+		var center: Vector2 = effect.display_at
+		var extent := Vector2.ONE*cell*(3.15 if dramatic else KETUPAT_COMBO_EDGE)
+		var sequence: TextureRect = child.get_node("UnwrapSequence")
+		if age < hold:
+			if dramatic:
+				var drop := clampf(age/.22,0,1)
+				var landing := maxf(0,age-.22)
+				var bounce := sin(landing*32)*exp(-landing*9)*.12 if age >= .22 else 0.0
+				extent *= lerpf(1.65,1.0,drop*drop)+bounce
+				center.y -= cell*.85*(1-drop)*(1-drop)
+				center.x += sin(landing*64)*cell*.11*exp(-landing*2.3) if age >= .22 else 0.0
+				child.rotation = sin(landing*48)*.18*exp(-landing*2.0) if age >= .22 else -.13*(1-drop)
+			else:
+				extent *= lerpf(.70,1.0,smoothstep(0,.10,age))
+		else:
+			var frame := clampi(int((age-hold)/KETUPAT_RELEASE*8),0,7)
+			var atlas := AtlasTexture.new()
+			atlas.atlas = KETUPAT_SEQUENCE
+			var slot := KETUPAT_SEQUENCE.get_size()/Vector2(4,2)
+			atlas.region = Rect2(Vector2(frame%4,frame/4)*slot,slot)
+			atlas.filter_clip = true
+			sequence.texture = atlas
+			child.rotation = 0
+		child.size = extent
+		child.pivot_offset = extent*.5
+		child.position = center-extent*.5
+		# Crossfade independent image layers; never swap/collapse the solid body.
+		child.self_modulate.a = 1.0-smoothstep(hold,hold+.20,age)
+		sequence.size = Vector2(cell*3.4,cell*4.2) if dramatic else Vector2(cell*1.75,cell*2.1)
+		sequence.position = (extent-sequence.size)*.5
+		sequence.modulate.a = smoothstep(hold,hold+.20,age)*(1.0-smoothstep(hold+.40,hold+KETUPAT_RELEASE,age))
+
+func ketupat_lane(at: Vector2, points: PackedVector2Array, cell: float, vertical: bool) -> void:
+	_effect("ketupat_lane",at,Vector2.DOWN if vertical else Vector2.RIGHT,Color("fff1a0"),cell,.40)
+	effects.back()["points"] = points
+
+static func ketupat_arrival(at: Vector2, point: Vector2, points: PackedVector2Array) -> float:
+	var reach := 1.0
+	for target in points:
+		reach = maxf(reach,at.distance_to(target))
+	return at.distance_to(point)/reach*KETUPAT_TRAVEL
+
+func _draw_ketupat_appear(e: Dictionary) -> void:
+	var cell: float = e.width
+	var age: float = e.age
+	var grow := lerpf(.25,1.0,smoothstep(0,.12,age))
+	var hold := KETUPAT_RAYA_HOLD if e.dramatic else KETUPAT_COMBO_HOLD
+	var fade := 1.0-smoothstep(hold+.40,hold+KETUPAT_RELEASE,age)
+	var at: Vector2 = e.display_at
+	_glow(at,cell*(4.4 if e.dramatic else 2.3)*grow,Color(.89,1,.37,fade*.5))
+	if e.dramatic and age >= .22:
+		for ring in 3:
+			var travel := clampf((age-.22-ring*.055)/.42,0,1)
+			if travel <= 0 or travel >= 1:
+				continue
+			var radius := cell*lerpf(.55,2.8,travel)
+			draw_arc(at,radius,0,TAU,64,Color(1,.89,.32,(1-travel)*.55),cell*.10*(1-travel),true)
+			draw_arc(at,radius,0,TAU,64,Color(1,1,.81,(1-travel)*.9),cell*.025,true)
+	for i in 8:
+		var axis := Vector2.from_angle(i*TAU/8+age*.8)
+		_star(at+axis*cell*1.12,cell*.12,Color(1,1,.68,fade),age*3)
+
+func _draw_ketupat_lane(e: Dictionary) -> void:
+	var cell: float = e.width
+	var axis: Vector2 = e.b
+	var normal := axis.orthogonal()
+	var points: PackedVector2Array = e.points
+	var fade := 1.0-smoothstep(.20,.40,e.age)
+	for side in [-1,1]:
+		var reach := 0.0
+		for point in points:
+			if (point-e.a).dot(axis)*side >= 0:
+				reach = maxf(reach,absf((point-e.a).dot(axis)))
+		var distance := reach*clampf(e.age/KETUPAT_TRAVEL,0,1)
+		var tip: Vector2 = e.a+axis*distance*side
+		draw_line(e.a,tip,Color(.85,1,.34,fade*.22),cell*.88,true)
+		for strip in 2:
+			var ribbon := PackedVector2Array()
+			for i in 33:
+				var progress := float(i)/32.0
+				var curl := sin(progress*distance/cell*TAU-e.age*18+strip*PI)*cell*.17
+				ribbon.append(e.a+axis*distance*progress*side+normal*curl)
+			draw_polyline(ribbon,Color(.24,.39,.035,fade),cell*.18,true)
+			draw_polyline(ribbon,Color("f5df72")*Color(1,1,1,fade) if strip == 0 else Color(.54,.84,.16,fade),cell*.12,true)
+			draw_polyline(ribbon,Color(1,1,.76,fade*.9),cell*.024,true)
+		_star(tip,cell*.25,Color(1,1,.68,fade),e.age*4)
+		_glow(tip,cell*.7,Color(.9,1,.35,fade*.6))
+
+func _draw_pisang_crispy(e: Dictionary) -> void:
+	var cell: float = e.width
+	var age: float = e.age
+	var reveal := lerpf(.35,1.0,smoothstep(0,.16,age))
+	var fade := 1.0-smoothstep(.52,.95,age)
+	_glow(e.a,cell*3.0*reveal,Color(1,.76,.10,fade*.65))
+	for i in 12:
+		var axis := Vector2.from_angle(i*TAU/12+age*.6)
+		draw_line(e.a+axis*cell*.5,e.a+axis*cell*(1.2+.18*sin(age*15+i)),Color(1,.88,.35,fade*.75),cell*.055,true)
+	for i in 6:
+		var theta := i*TAU/6-age
+		_star(e.a+Vector2.from_angle(theta)*cell*.96,cell*.13,Color(1,1,.76,fade),age*2)
+
+static func column_arrival(origin: Vector2, point: Vector2, points: PackedVector2Array) -> float:
+	var reach := 1.0
+	for target in points:
+		reach = maxf(reach,absf(target.y-origin.y))
+	return absf(point.y-origin.y)/reach*SELOROT_TRAVEL
+
+func _draw_column_sweep(e: Dictionary, crispy: bool) -> void:
+	var cell: float = e.width
+	var points: PackedVector2Array = e.points
+	var frame_size := SELOROT_UNWRAP.get_size()/Vector2(4,2)
+	for point in points:
+		var local_age: float = e.age-column_arrival(e.a,point,points)
+		if local_age < 0:
+			continue
+		var fade := 1.0-smoothstep(.22,.38,local_age)
+		if fade <= 0:
+			continue
+		_glow(point,cell*1.2,Color(1,.80,.23,fade*.35))
+		if crispy:
+			for crumb in 4:
+				var direction := Vector2.from_angle(crumb*TAU/4+local_age*3)
+				_star(point+direction*cell*local_age*2,cell*.09,Color(1,.77,.24,fade),local_age*5)
+		else:
+			var frame := clampi(int(local_age/.38*8),0,7)
+			var source := Rect2(Vector2(frame%4,frame/4)*frame_size,frame_size)
+			draw_texture_rect_region(SELOROT_UNWRAP,Rect2(point-Vector2(cell*.55,cell*.78),Vector2(cell*1.1,cell*1.56)),source,Color(1,1,1,fade))
+	if crispy:
+		# Three continuous luminous lanes clear the original kuih; no food replacements.
+		for side in [-1,1]:
+			var reach := cell*.5
+			for point in points:
+				if (point.y-e.a.y)*side >= 0:
+					reach = maxf(reach,absf(point.y-e.a.y)+cell*.45)
+			var tip: Vector2 = e.a+Vector2(0,side*reach*clampf(e.age/SELOROT_TRAVEL,0,1))
+			var alpha := 1.0-smoothstep(.39,SELOROT_LIFE,e.age)
+			draw_line(e.a,tip,Color(1,.49,.04,alpha*.18),cell*.94,true)
+			draw_line(e.a,tip,Color(1,.74,.10,alpha*.44),cell*.55,true)
+			draw_line(e.a,tip,Color(1,.92,.52,alpha*.85),cell*.20,true)
+			draw_line(e.a,tip,Color(1,1,.93,alpha),cell*.06,true)
+			_glow(tip,cell*.85,Color(1,.90,.42,alpha*.75))
+			_star(tip,cell*.26,Color(1,1,.87,alpha),e.age*3)
+	else:
+		# Continuous unfurled leaf stream visibly joins the per-slot frames.
+		for side in [-1,1]:
+			var reach := 0.0
+			for point in points:
+				if (point.y-e.a.y)*side >= 0:
+					reach = maxf(reach,absf(point.y-e.a.y))
+			var distance := reach*clampf(e.age/SELOROT_TRAVEL,0,1)
+			var ribbon := PackedVector2Array()
+			for i in 25:
+				var progress := float(i)/24.0
+				ribbon.append(e.a+Vector2(sin(progress*distance/cell*TAU-e.age*14)*cell*.16,side*distance*progress))
+			var alpha := 1.0-smoothstep(.40,SELOROT_LIFE,e.age)
+			draw_polyline(ribbon,Color(.69,.44,.12,alpha),cell*.16,true)
+			draw_polyline(ribbon,Color(1,.88,.58,alpha),cell*.11,true)
+			draw_polyline(ribbon,Color(1,.98,.80,alpha),cell*.025,true)
+
 func cross(at: Vector2, affected: PackedVector2Array, cell: float) -> void:
-	var low := at
-	var high := at
 	var row := PackedVector2Array()
 	var column := PackedVector2Array()
 	for point in affected:
-		low = low.min(point)
-		high = high.max(point)
 		if absf(point.y-at.y) < cell*.1:
 			row.append(point)
 		if absf(point.x-at.x) < cell*.1:
 			column.append(point)
-	# Grouped slot bolts stay on the combo's actual cross footprint.
-	for vertical in [false, true]:
-		_effect("tapau_slots",at,Vector2.ZERO,Color("55cfff") if vertical else Color("ffda36"),cell,.55)
-		effects.back()["points"] = column if vertical else row
-		effects.back()["vertical"] = vertical
-	_effect("flash", at, Vector2.ZERO, Color("fff0a2"), cell * 2.3, .40)
-	_effect("ring", at, Vector2.ZERO, Color("fff0a2"), cell * 1.8, .6)
-	for endpoint in [Vector2(low.x-cell*.45,at.y),Vector2(high.x+cell*.45,at.y),Vector2(at.x,low.y-cell*.45),Vector2(at.x,high.y+cell*.45)]:
-		tapau_lane(at,endpoint,cell,Color("ffe38a"))
-		effects.back()["hide_utensil"] = true
-		_effect("roller_lane",at,endpoint,Color("ffe38a"),cell,.55)
-	burst(at, Color("fff0a2"), 24, cell*1.5)
+	ketupat_lane(at,row,cell,false)
+	ketupat_lane(at,column,cell,true)
+	burst(at,Color("fff0a2"),16,cell*.8)
+
 
 func order_electric(at: Vector2, affected: PackedVector2Array, cell: float) -> void:
 	# One grouped effect covers the full board without exhausting the effect cap.
-	_effect("order_electric",at,Vector2.ZERO,Color("a9f4ff"),cell,.78)
+	var index := _order_chain_index
+	_order_chain_index += 1
+	var color: Color = ORDER_CHAIN_COLORS[index] if index < ORDER_CHAIN_COLORS.size() else Color.from_hsv(fposmod(.12+index*.61803398875,1),.65,1)
+	_order_origin_colors[at] = color
+	_effect("order_electric",at,Vector2.ZERO,color,cell,.75)
 	effects.back()["points"] = affected
-	burst(at,Color("fff1aa"),12,cell*.5)
+	effects.back()["chain_index"] = index
+	burst(at,color.lightened(.35),12,cell*.5)
 
-func dulang_charge(at: Vector2, affected: PackedVector2Array, cell: float, foods: Array[Dictionary] = [], double_blast: bool = false) -> void:
-	_effect("charge", at, Vector2.ZERO, Color("fff0a2"), cell, .72 if double_blast else .24)
+func dulang_charge(at: Vector2, affected: PackedVector2Array, cell: float, foods: Array[Dictionary] = [], double_blast: bool = false, orbit_direction: Vector2 = Vector2.RIGHT) -> void:
+	_effect("charge", at, Vector2.ZERO, Color("fff0a2"), cell, 1.10 if double_blast else .24)
 	effects.back()["foods"] = foods
 	effects.back()["points"] = affected
 	effects.back()["double_blast"] = double_blast
+	effects.back()["orbit_direction"] = orbit_direction
 
 
 func _draw_dulang_charge(effect: Dictionary) -> void:
+	if effect.get("double_blast",false):
+		COCONUT.orbit(self,effect.a,effect.width,effect.age,effect.get("orbit_direction",Vector2.RIGHT))
+		if effect.age >= .78:
+			COCONUT.blue_impact(self,effect.a,effect.width,effect.age-.78,BLUE_SPLASH)
+			COCONUT.sprite(self,COCONUT.PUTERI,effect.a-Vector2(0,effect.width*.70),effect.width*5.0,smoothstep(.82,.94,effect.age))
+		return
 	# Reuse the complete gathering motion within the short normal-bomb charge.
 	if not effect.get("double_blast",false):
 		effect = effect.duplicate()
@@ -224,6 +593,10 @@ func _draw_dulang_charge(effect: Dictionary) -> void:
 	var toward_screen := 1.0+.22*sin(toss*PI)+.12*toss
 	edge *= toward_screen
 	var tray_at: Vector2 = effect.a-Vector2(0,cell*.35*sin(toss*PI))
+	if effect.get("double_blast",false):
+		# Keep the princess at the same five-slot size and center as the impact.
+		edge = cell*5.0
+		tray_at = effect.a-Vector2(0,cell*.70)
 	_match_glow(tray_at, edge * 1.05, .65 * grow)
 	COCONUT.charge(self,tray_at,edge,effect.age,effect.get("double_blast",false))
 	var gather := smoothstep(.20, .53, effect.age)
@@ -243,12 +616,12 @@ func dulang_burst(at: Vector2, affected: PackedVector2Array, cell: float, double
 		if effects[index].kind == "charge" and effects[index].a.is_equal_approx(at):
 			effects.remove_at(index)
 	var spread := 1.8 if double_blast else 1.0
-	_effect("coconut_burst",at,Vector2.ZERO,Color.WHITE,cell,.90 if double_blast else .55)
+	_effect("coconut_burst",at,Vector2.ZERO,Color.WHITE,cell,1.25 if double_blast else 1.15)
 	effects.back()["points"] = affected
 	effects.back()["double_blast"] = double_blast
-	_effect("impact", at, Vector2.ZERO, Color("fff9d5"), cell * 1.6 * spread, .22)
-	_effect("flower_wave", at, Vector2.ZERO, Color("ffd25e"), cell*1.5*spread, .58)
-	_effect("dulang_radial", at, Vector2.ZERO, Color("ffe79a"), cell*1.5*spread, .52)
+	_effect("impact", at, Vector2.ZERO, Color.WHITE, cell * 1.9 * spread, .28)
+	_effect("flower_wave", at, Vector2.ZERO, Color.WHITE, cell*1.5*spread, .58)
+	_effect("dulang_radial", at, Vector2.ZERO, Color.WHITE, cell*1.5*spread, .52)
 	if double_blast:
 		# One logical hit; the delayed outer pulse is purely visual.
 		_effect("flower_wave", at, Vector2.ZERO, Color("fff2bd"), cell*2.75, .65, .15)
@@ -263,63 +636,65 @@ func dulang_burst(at: Vector2, affected: PackedVector2Array, cell: float, double
 	kuih_dissolve(fragments, cell * .35, 0)
 
 func delivery_cross(origin: Vector2, targets: PackedVector2Array, cell: float) -> void:
-	_effect("robot_cross",origin,Vector2.ZERO,Color("dce6ed"),cell,.58)
+	_effect("robot_cross",origin,Vector2.ZERO,Color("dce6ed"),cell,.64)
 	effects.back()["points"] = targets
+	if _gust_frames == null:
+		_gust_frames = SpriteFrames.new()
+		_gust_frames.set_animation_loop("default",false)
+		_gust_frames.set_animation_speed("default",25.0)
+		var slot := SEPiT_GUST.get_size()/Vector2(4,4)
+		for i in 16:
+			var frame := AtlasTexture.new()
+			frame.atlas = SEPiT_GUST
+			frame.region = Rect2(Vector2(i%4,i/4)*slot,slot)
+			_gust_frames.add_frame("default",frame)
+	for target in targets:
+		var direction := (target-origin).normalized()
+		var gust := AnimatedSprite2D.new()
+		gust.set_meta("sepit_gust",true)
+		gust.sprite_frames = _gust_frames
+		gust.speed_scale = ANIMATION_PACE.SPEED
+		gust.rotation = direction.angle()
+		gust.scale = Vector2.ONE*(cell*1.25/(SEPiT_GUST.get_width()/4.0))
+		gust.position = origin+direction*cell*.42
+		gust.z_index = 14
+		add_child(gust)
+		gust.animation_finished.connect(gust.queue_free)
+		gust.play()
+		var motion := gust.create_tween().set_speed_scale(ANIMATION_PACE.SPEED).set_parallel(true)
+		motion.tween_property(gust,"position",origin+direction*cell*.88,.48).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		motion.tween_property(gust,"modulate:a",0.0,.18).set_delay(.46)
 
 
-func _draw_robot_cross(effect: Dictionary) -> void:
-	var age: float = effect.age
-	var reach := smoothstep(0,.18,age)*(1-smoothstep(.25,.50,age))
-	var grip := smoothstep(.18,.25,age)
-	var edge: float = effect.width
-	for target in effect.points:
-		var direction: Vector2 = (target-effect.a).normalized()
-		var side := direction.orthogonal()
-		var start: Vector2 = effect.a+direction*edge*.16
-		var end: Vector2 = effect.a.lerp(target,reach)
-		var joint := start.lerp(end,.5)+side*edge*.09*reach
-		var arm := PackedVector2Array([start,joint,end])
-		draw_polyline(arm,Color("242c36"),edge*.14,true)
-		draw_polyline(arm,Color("a4b3c2"),edge*.085,true)
-		draw_polyline(arm,Color("f1f6f9"),edge*.025,true)
-		for point in [start,joint,end]:
-			draw_circle(point,edge*.075,Color("242c36"))
-			draw_circle(point,edge*.045,Color("ced9e1"))
-		var opening := lerpf(.23,.12,grip)
-		for sign_value in [-1,1]:
-			var finger := PackedVector2Array([end,end+side*sign_value*edge*opening-direction*edge*.08,end+side*sign_value*edge*opening+direction*edge*.12,end+side*sign_value*edge*opening*.6+direction*edge*.18])
-			draw_polyline(finger,Color("252e38"),edge*.09,true)
-			draw_polyline(finger,Color("d4dfe8"),edge*.035,true)
+func _draw_robot_cross(_effect: Dictionary) -> void:
+	# Generated animation frames are rendered by the four AnimatedSprite2D nodes.
+	pass
 
 
-func delivery(origin: Vector2, target: Vector2, cell: float, payload: Texture2D = null) -> void:
-	_effect("delivery", origin, target, Color("ff6155"), cell * 1.05, 1.10)
+func delivery(origin: Vector2, target: Vector2, cell: float, payload: Texture2D = null, carry_kind: int = BoardCell.Special.NONE) -> void:
+	_effect("delivery",origin,target,Color("ffd56b"),cell*1.05,SepitFlight.LIFE)
 	effects.back()["payload"] = payload
-	_effect("arrival", target, Vector2.ZERO, Color("fff0df"), cell * .8, .80)
-	burst(origin, Color("ffaaa0"), 5, cell * .3)
+	var sprite := SepitFlight.new()
+	sprite.configure(origin,target,cell*1.05,carry_kind)
+	effects.back()["carry_kind"] = carry_kind
+	add_child(sprite)
+	effects.back()["sprite"] = sprite
+	burst(origin,Color("fff0bc"),5,cell*.3)
 
 
 func _draw_delivery(effect: Dictionary) -> void:
-	var age: float = effect.age
-	var edge: float = effect.width
-	var pickup: Vector2 = effect.b-Vector2(0,edge*.39)
-	var outbound := smoothstep(.05,.45,age)
-	var leaving := smoothstep(.60,1.10,age)
-	var at := _curve(effect.a,pickup,edge*.65,outbound)
-	if age >= .60:
-		at = _curve(pickup,Vector2(effect.b.x,-edge*2),edge*.6,leaving)
+	var sprite = effect.get("sprite")
+	if not is_instance_valid(sprite):
+		return
 	var trail := PackedVector2Array()
-	for i in 12:
-		var earlier := maxf(0,age-(11-i)*.012)
-		if age >= .60:
-			trail.append(_curve(pickup,Vector2(effect.b.x,-edge*2),edge*.6,smoothstep(.60,1.10,earlier)))
-		else:
-			trail.append(_curve(effect.a,pickup,edge*.65,smoothstep(.05,.45,earlier)))
-	draw_polyline(trail,Color(1,.3,.25,.20),maxf(2,edge*.12),true)
-	draw_polyline(trail,Color(1,.93,.85,.65),maxf(1,edge*.035),true)
-	_glow(at,edge*.8,Color(1,.4,.3,.2))
-	var food: Texture2D = effect.get("payload",null) if age >= .45 else null
-	BoardArt.draw_delivery(self,Rect2(at-Vector2.ONE*edge*.5,Vector2.ONE*edge),age*36,true,food)
+	for i in 16:
+		trail.append(sprite.flight_position(maxf(0,effect.age-(15-i)*.015)))
+	var fade := 1.0-smoothstep(SepitFlight.LAND_TIME,SepitFlight.LIFE,effect.age)
+	draw_polyline(trail,Color(1,.86,.40,.28*fade),maxf(2,effect.width*.09),true)
+	draw_polyline(trail,Color(1,.98,.88,.7*fade),maxf(1,effect.width*.025),true)
+	if effect.age >= SepitFlight.LAND_TIME:
+		_glow(effect.b,effect.width*1.5,Color(1,.9,.5,.65*fade))
+
 
 func celebrate(bounds: Rect2) -> void:
 	reset()
@@ -330,6 +705,7 @@ func celebrate(bounds: Rect2) -> void:
 		_effect("flash", bounds.position + Vector2(bounds.size.x * side, bounds.size.y * .38), Vector2.ZERO, Color("ffd35b"), bounds.size.x * .30, .7)
 
 func _process(delta: float) -> void:
+	delta *= ANIMATION_PACE.SPEED
 	clock += delta
 	for i in range(particles.size() - 1, -1, -1):
 		var p := particles[i]
@@ -345,6 +721,8 @@ func _process(delta: float) -> void:
 		effects[i].age += delta
 		if effects[i].age >= effects[i].life:
 			effects.remove_at(i)
+	_update_ketupat_foregrounds()
+	_update_pisang_foregrounds()
 	queue_redraw()
 	if particles.is_empty() and effects.is_empty():
 		set_process(false)
@@ -439,6 +817,18 @@ func _draw() -> void:
 		var color: Color = e.color
 		color.a *= 1.0 - smoothstep(.18, 1.0, t)
 		match e.kind:
+			"ketupat_appear":
+				_draw_ketupat_appear(e)
+			"ketupat_lane":
+				_draw_ketupat_lane(e)
+			"pisang_crispy":
+				_draw_pisang_crispy(e)
+			"selorot_unwrap", "crispy_column":
+				_draw_column_sweep(e,e.kind == "crispy_column")
+			"pisang_solar":
+				_draw_pisang_solar(e)
+			"royal_cake_bomb":
+				_draw_royal_cake_bomb(e)
 			"special_formation":
 				_draw_special_formation(e)
 			"kuih_dissolve":
@@ -458,56 +848,7 @@ func _draw() -> void:
 			"tapau_slots":
 				_draw_tapau_slots(e)
 			"order_electric":
-				var pull := clampf((e.age-.32)/.42,0,1)
-				pull *= pull
-				var intensity := minf(1,e.age/.06)*(1-smoothstep(.62,.78,e.age))
-				var heartbeat := .65+.35*pow(sin(e.age*TAU*5),2)
-				_glow(e.a,e.width*(1.7+.18*heartbeat),Color("bceeff",intensity*.35*heartbeat))
-				for halo in 3:
-					var halo_color := [Color("55cfff"),Color("ffda36"),Color.WHITE][halo] as Color
-					draw_circle(e.a,e.width*(.72-float(halo)*.16)*(1+.10*heartbeat),Color(halo_color,intensity*heartbeat*(.08+halo*.025)))
-				_star(e.a,e.width*1.35,Color("fff9df",intensity*heartbeat*.40),e.age*2)
-				for index in e.points.size():
-					var endpoint: Vector2 = e.points[index].lerp(e.a,pull)
-					if endpoint.distance_to(e.a)<2:
-						continue
-					var normal: Vector2 = (endpoint-e.a).normalized().orthogonal()
-					# Separate living veins spread across the slot, joining at both ends.
-					for vein in 2:
-						var bolt := PackedVector2Array()
-						var vein_color := Color("55cfff") if vein%2 == 0 else Color("ffda36")
-						var core_color := Color("d9faff") if vein%2 == 0 else Color("fff6c9")
-						var phase: float = index*1.9+vein*1.7
-						for segment in 25:
-							var along := float(segment)/24.0
-							var envelope := sin(along*PI)*(1-pull*.65)
-							var spread := (float(vein)-.5)*.30
-							var wave := sin(along*TAU*2-clock*10+phase)*.095
-							var ripple := sin(along*TAU*5+clock*16+phase)*.025
-							bolt.append(e.a.lerp(endpoint,along)+normal*e.width*(spread+wave+ripple)*envelope)
-						var pulse := intensity*(.65+.35*pow(sin(clock*9+phase),2))
-						draw_polyline(bolt,Color(vein_color,pulse*.40),maxf(4.0,e.width*.10),true)
-						draw_polyline(bolt,Color(vein_color,pulse*.85),maxf(2.0,e.width*.055),true)
-						draw_polyline(bolt,Color(core_color,pulse*.95),maxf(1.5,e.width*.032),true)
-						draw_polyline(bolt,Color("ffffff",pulse),maxf(1.0,e.width*.014),true)
-						for split in [7, 15]:
-							var sign_value := -1.0 if vein%2 == 0 else 1.0
-							var branch := PackedVector2Array([bolt[split],bolt[split+2]+normal*e.width*.08*sign_value,bolt[split+4]+normal*e.width*.13*sign_value*(1-pull)])
-							draw_polyline(branch,Color(vein_color,pulse*.80),maxf(1.5,e.width*.04),true)
-							draw_polyline(branch,Color(core_color,pulse*.80),maxf(1.0,e.width*.022),true)
-						# A bright charge travels back along each vein toward the special.
-						var charge := (1-fposmod(clock*1.7+vein*.23+index*.11,1.0))*24
-						var head := mini(int(charge),23)
-						var spark: Vector2 = bolt[head].lerp(bolt[head+1],charge-head)
-						draw_circle(spark,maxf(1.2,e.width*.022),Color("ffffff",pulse))
-					draw_circle(endpoint,e.width*.45*(1-pull*.65),Color("a9f4ff",intensity*.08))
-					_star(endpoint,e.width*.22,Color("fff4b5",intensity),clock*.7)
-					for spark_index in 4:
-						var phase: float = fposmod(e.age*5+index*.17+spark_index*.25,1.0)
-						var angle: float = spark_index*TAU/4.0+index*.7+e.age*2
-						var spark_at: Vector2 = endpoint+Vector2.from_angle(angle)*e.width*(.12+phase*.34)*(1-pull*.65)
-						var spark_tint := Color("55cfff") if spark_index%2 == 0 else Color("ffda36")
-						_star(spark_at,e.width*.14*(1-phase*.5),Color(spark_tint,intensity*(1-phase)),angle)
+				_draw_premium_electric(e)
 			"gold_slot":
 				var travel := clampf(e.age / .22, 0.0, 1.0)
 				var front: Vector2 = e.a.lerp(e.b, smoothstep(0.0, 1.0, travel))
@@ -633,3 +974,41 @@ func _draw() -> void:
 		else:
 			draw_circle(Vector2.ZERO, p.radius*.3, Color("fff8d9",color.a))
 		draw_set_transform(Vector2.ZERO)
+
+
+## One lightweight renderer; cycle at most 18 arcs for large target sets.
+func _draw_premium_electric(e: Dictionary) -> void:
+	var accent: Color = e.color
+	var core := accent.lightened(.82)
+	var age: float = e.age/.75
+	var intensity := smoothstep(.08,.16,age)*(1-smoothstep(.82,1.0,age))
+	var pulse := .75+.25*sin(age*45.0)
+	_glow(e.a,e.width*1.65,Color(accent,intensity*.55*pulse))
+	var count: int = e.points.size()
+	var tick := int(age/.035)
+	for index in count:
+		var endpoint: Vector2 = e.points[index]
+		if endpoint.distance_to(e.a)<2:
+			continue
+		var target_alpha := intensity*(.6+.4*pow(sin(age*26+index),2))
+		_glow(endpoint,e.width*1.25,Color(accent.lightened(.25),target_alpha*.45))
+		_star(endpoint+Vector2.from_angle(age*8+index)*e.width*.40,e.width*.09,Color(core,target_alpha),age)
+		if (index-tick*18+count*100)%count >= mini(18,count):
+			continue
+		var start: Vector2 = e.a
+		var normal := (endpoint-start).normalized().orthogonal()
+		var bolt := PackedVector2Array([start])
+		for segment in range(1,7):
+			var along := segment/7.0
+			var jitter: float = sin(tick*7.3+index*3.7+segment*8.2)*e.width*.18
+			bolt.append(start.lerp(endpoint,along)+normal*jitter)
+		bolt.append(endpoint)
+		var thickness := 1.35 if age >= .55 else 1.0
+		draw_polyline(bolt,Color(accent,intensity*.16),e.width*.22*thickness,true)
+		draw_polyline(bolt,Color(accent,intensity),maxf(1.6,e.width*.085)*thickness,true)
+		draw_polyline(bolt,Color(core,intensity),maxf(1.0,e.width*.035)*thickness,true)
+
+		for split in [2,5]:
+			var branch := PackedVector2Array([bolt[split],bolt[split]+normal*e.width*.20,bolt[split]+normal*e.width*.32+(endpoint-start).normalized()*e.width*.15])
+			draw_polyline(branch,Color("ffdf3b",intensity*.8),e.width*.035,true)
+			draw_polyline(branch,Color("fffde4",intensity),e.width*.015,true)

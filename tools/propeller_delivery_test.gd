@@ -24,6 +24,7 @@ func run() -> void:
 	check(icon._rotor_time > initial,"idle rotor spins independently")
 	var result := board.logic.activate_specials([origin])
 	var target: Vector2i = result.activated[0].cells.back()
+	var target_tile: TileView = board._tiles[target]
 	var food := board._delivery_payload(result,target)
 	check(food != null,"payload is the selected kuih's actual texture")
 	board._play_step(result,0)
@@ -39,12 +40,14 @@ func run() -> void:
 	check(flights.size() == 1 and flights[0].payload == food,"flying propeller carries correct texture metadata")
 	check(not board._tiles[origin].visible and board._tiles[target].visible,"origin departs while target waits for pickup")
 	check(AudioManager._voices.any(func(voice): return voice.stream == AudioManager._streams[AudioManager.Sfx.HANTAR_LAUNCH]),"rotor launch plays with flight")
-	await get_tree().create_timer(.46).timeout
-	check(not board._tiles[target].visible,"target hides when claw picks it up")
+	await get_tree().create_timer(.95).timeout
+	# Refill may already replace the tile at this coordinate. Inspect the
+	# original target, not the newly spawned kuih that should be visible.
+	check(not is_instance_valid(target_tile) or not target_tile.visible,"original target disappears when delivery picks it up")
 	check(flights[0].life >= 1.1,"flight includes pickup and exit phases")
 	check(AudioManager._voices.any(func(voice): return voice.stream == AudioManager._streams[AudioManager.Sfx.HANTAR_HIT]),"claw click plays at pickup")
 	await get_tree().create_timer(.16).timeout
-	check(AudioManager._voices.any(func(voice): return voice.stream == AudioManager._streams[AudioManager.Sfx.HANTAR_EXIT]),"departure swoosh plays as the drone leaves")
+	check(not board._vfx.get_children().any(func(child): return child is SepitFlight),"sepit sprite disappears after landing")
 	await get_tree().create_timer(2.84).timeout
 	check(board._vfx.effects.is_empty(),"flight finishes before refill accepts input")
 	board.free()

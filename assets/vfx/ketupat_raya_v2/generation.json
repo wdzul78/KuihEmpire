@@ -1,0 +1,10 @@
+{
+  "tool": "image_gen.imagegen",
+  "prompt": "Edit this transparent 4 by 2 eight-frame Ketupat animation sprite sheet. Preserve the 8-frame layout, all green-yellow woven leaf ribbons, glows, sparkles, alpha transparency, and same illustration style. Correct the food inside: Ketupat contains a single compact solid cooked white rice cake in a square cuboid cushion / diamond shaped block, firm smooth ivory surface with softly rounded corners and faint compressed rice texture, NOT individual grains of rice. In frame 3 show a peek of the solid square white rice cake as leaves loosen; frame 4 and frame 5 prominently reveal ONE solid squared white ketupat rice cake in center with leaves opening outwards. Frame6 show the small solid square rice cake fading into golden light while ribbons sweep outwards. REMOVE ALL loose rice grains and grain-shaped white particles in EVERY frame. Only tiny gold sparkles and green leaf fragments may scatter. Frame7 and frame8 are fading leaf fragments and golden stars, no rice grains. Keep each frame within its equal grid cell with clear transparent gutters. Actual transparent background.",
+  "reference": "assets/vfx/ketupat_raya_v1/unwrap_sheet.png",
+  "layout": {
+    "columns": 4,
+    "rows": 2
+  },
+  "correction": "Solid cooked square rice cake; no scattered grains"
+}

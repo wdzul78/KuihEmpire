@@ -19,6 +19,13 @@ func _ready() -> void:
 	_count.add_theme_color_override("font_outline_color", Palette.WOOD_DARK)
 	_count.add_theme_constant_override("outline_size", 3)
 	_timer = JourneyArt.label(self, "", Rect2(.31, .16, .43, .66), ResourceBarArt.FONT_SIZE, Palette.WOOD_DARK)
+	for label_node in [_count, _timer]:
+		label_node.material = null
+		label_node.add_theme_font_override("font", UIKit.counter_font())
+	_timer.add_theme_color_override("font_color", Color("54250f"))
+	if pill_shape:
+		_timer.add_theme_color_override("font_outline_color", Color("fffdf2"))
+		_timer.add_theme_constant_override("outline_size", 3)
 	HeartManager.changed.connect(_refresh)
 	mouse_filter = Control.MOUSE_FILTER_STOP if refill_enabled else Control.MOUSE_FILTER_IGNORE
 	focus_mode = Control.FOCUS_ALL if refill_enabled else Control.FOCUS_NONE
@@ -34,13 +41,15 @@ func _layout_labels() -> void:
 		_count.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT)
 		_count.position = Vector2.ZERO
 		_count.size = Vector2(size.y * .96, size.y)
+		_count.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		_count.add_theme_font_size_override("font_size", clampi(roundi(size.y*.50),24,48))
 	if _timer != null:
 		_timer.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT)
 		_timer.position = Vector2(size.y * .98, 0)
 		_timer.size = Vector2(maxf(0, size.x - size.y * (1.57 if refill_enabled else 1.10)), size.y)
 	if compact_count and _count != null and _timer != null:
-		_count.hide()
-		_timer.add_theme_font_size_override("font_size", UIKit.fit_font_size(_timer.text, maxf(0, _timer.size.x-8), clampi(roundi(size.y*.36),10,26)))
+		_count.show()
+		_timer.add_theme_font_size_override("font_size", clampi(roundi(size.y*.50),24,48))
 	queue_redraw()
 
 func _draw() -> void:
@@ -50,7 +59,12 @@ func _refresh() -> void:
 	_count.text = "∞" if HeartManager.is_free_play_active() else str(HeartManager.current())
 	var seconds := HeartManager.get_free_play_remaining()
 	if compact_count:
-		_timer.text = "∞" if seconds > 0 else str(HeartManager.current())
+		if seconds > 0:
+			_timer.text = HeartManager.time_text(seconds)
+		elif HeartManager.current() == HeartManager.MAX_HEARTS:
+			_timer.text = JourneyArt.localized("Penuh", "Full")
+		else:
+			_timer.text = HeartManager.time_text(HeartManager.get_next_refill_remaining())
 		tooltip_text = "Free Play " + HeartManager.time_text(seconds) if seconds > 0 else "%d / 5 hearts" % HeartManager.current()
 		if seconds <= 0 and HeartManager.current() < HeartManager.MAX_HEARTS:
 			tooltip_text += " · +1 " + HeartManager.time_text(HeartManager.get_next_refill_remaining())

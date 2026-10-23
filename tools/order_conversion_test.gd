@@ -16,7 +16,8 @@ func _ready() -> void:
 
 func run() -> void:
 	var random_types: Dictionary = {}
-	for kind in [BoardCell.Special.DULANG,BoardCell.Special.TAPAU,BoardCell.Special.TAPAU_VERTICAL,BoardCell.Special.HANTAR]:
+	# Sepit+Order now follows delivery_transfer, covered by sepit_transfer_test.
+	for kind in [BoardCell.Special.DULANG,BoardCell.Special.TAPAU,BoardCell.Special.TAPAU_VERTICAL]:
 		for reverse in [false,true]:
 			for seed_value in range(20,28):
 				var board := make_board(seed_value)

@@ -35,6 +35,7 @@ static func get_level(level_id: int) -> LevelDefinition:
 	if _cache.has(level_id):
 		return _cache[level_id]
 	var level := _build(level_id)
+	level.recipe_unlock_id = RecipeCatalog.for_stage(level_id)
 	if level_id <= 10:
 		_apply_starter_board(level)
 	if level.base_coin_reward < 0:

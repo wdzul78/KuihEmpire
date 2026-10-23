@@ -1,0 +1,7 @@
+BGM new 001.wav -> gameplay_01.ogg
+BGM new 002.wav -> gameplay_02.ogg
+BGM new 003.wav -> gameplay_03.ogg
+BGM new 004.wav -> gameplay_04.ogg
+Sources: F:/WDzul78/Downloads/
+Converted with FFmpeg libvorbis quality 5. Original WAV files preserved.
+Gameplay playlist order: these four tracks, gameplay_v2 01-08, playlist gameplay 01-08.

@@ -1,0 +1,68 @@
+[gd_resource type="Resource" script_class="StallDefinition" load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/stall_definition.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/data/stall_state.gd" id="2"]
+
+[sub_resource type="Resource" id="State0"]
+script = ExtResource("2")
+id = "old"
+display_name = "Old School Canteen"
+milestone_required = 0
+star_cost = 0
+menu_background = "res://assets/stalls/school_canteen/old/background_v2.png"
+gameplay_background = "res://assets/stalls/school_canteen/old/background_v2.png"
+renovation_background = "res://assets/stalls/school_canteen/old/background_v2.png"
+journey_background = "res://assets/stalls/school_canteen/old/background_v2.png"
+task_name = ""
+hotspot = Vector2(0.90, 0.52)
+component = "counter"
+
+[sub_resource type="Resource" id="State1"]
+script = ExtResource("2")
+id = "revived"
+display_name = "Revived School Canteen"
+milestone_required = 1
+star_cost = 5
+menu_background = "res://assets/stalls/school_canteen/revived/background_v2.png"
+gameplay_background = "res://assets/stalls/school_canteen/revived/background_v2.png"
+renovation_background = "res://assets/stalls/school_canteen/revived/background_v2.png"
+journey_background = "res://assets/stalls/school_canteen/revived/background_v2.png"
+task_name = "Refresh fascia and wall tiles"
+hotspot = Vector2(0.10, 0.12)
+component = "sign"
+
+[sub_resource type="Resource" id="State2"]
+script = ExtResource("2")
+id = "polished"
+display_name = "Polished School Canteen"
+milestone_required = 2
+star_cost = 8
+menu_background = "res://assets/stalls/school_canteen/polished/background_v2.png"
+gameplay_background = "res://assets/stalls/school_canteen/polished/background_v2.png"
+renovation_background = "res://assets/stalls/school_canteen/polished/background_v2.png"
+journey_background = "res://assets/stalls/school_canteen/polished/background_v2.png"
+task_name = "Upgrade counter and display"
+hotspot = Vector2(0.90, 0.52)
+component = "counter"
+
+[sub_resource type="Resource" id="State3"]
+script = ExtResource("2")
+id = "complete"
+display_name = "Completed School Canteen"
+milestone_required = 3
+star_cost = 12
+menu_background = "res://assets/stalls/school_canteen/complete/background_v2.png"
+gameplay_background = "res://assets/stalls/school_canteen/complete/background_v2.png"
+renovation_background = "res://assets/stalls/school_canteen/complete/background_v2.png"
+journey_background = "res://assets/stalls/school_canteen/complete/background_v2.png"
+task_name = "Finish lighting and shelves"
+hotspot = Vector2(0.60, 0.14)
+component = "lamp"
+
+[resource]
+script = ExtResource("1")
+id = &"school_canteen"
+display_name = "School Canteen"
+stage_start = 31
+preset = &"school"
+states = Array[ExtResource("2")]([SubResource("State0"), SubResource("State1"), SubResource("State2"), SubResource("State3")])

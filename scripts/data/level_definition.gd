@@ -52,6 +52,8 @@ extends Resource
 ## Kuih unlocked once this level is cleared.
 @export var kuih_unlock: StringName = &""
 @export var recipe_unlock: StringName = &""
+## Cultural discovery, independent of legacy gameplay-knowledge unlocks.
+@export var recipe_unlock_id: StringName = &""
 
 @export_group("Difficulty")
 @export_range(1, 5, 1) var difficulty: int = 1

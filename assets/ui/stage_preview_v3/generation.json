@@ -1,0 +1,6 @@
+{
+  "tool": "built-in image_gen",
+  "mode": "edit",
+  "prompt": "Use case: precise-object-edit. Edit supplied transparent mobile game panel sprite. Remove ONLY all THREE large gold circular rings and their raised cream circular interiors in the middle row. Seamlessly fill their former locations with flat continuous cream paper texture matching surrounding panel. Keep the THREE small horizontal gold-bordered quantity pills directly below them unchanged. Preserve EXACT canvas size, outer gold frame and leaves, close X, empty wooden heading plaque, bottom green play button and triangle, all positions, colors, shading and transparent exterior. No new objects, no text, no circles in the middle row. Flat clear cream space where rings used to be.",
+  "asset": "panel.png"
+}

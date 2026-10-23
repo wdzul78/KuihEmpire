@@ -1,0 +1,7 @@
+{
+  "tool": "built-in image_gen",
+  "intent": "generate",
+  "prompt": "Use case: stylized-concept. Asset type: transparent game sprite atlas, landscape 1536x1024. Create THREE separate Malaysian cloth countertop runners in one horizontal row, each centered in an equal 512px-wide cell, same dimensions and front-facing perspective. Left pink batik floral, middle warm orange batik floral, right fresh pandan-green woven textile. Each runner is a single continuous piece of fabric laid across a counter: upper surface is a wide shallow trapezoid receding away from viewer, then a clear horizontal fold over the front counter edge at 40% of the cloth height, with remaining 60% hanging vertically down the front. Overall each cloth width approximately 440 and height 360 pixels, centered at y512. Top edge horizontal, front hanging hem horizontal, symmetrical straight-on view, no diagonal rotation. Subtle folds, gold border, polished hand-painted casual mobile game art. Actual transparent background. Only the fabric, no counter, no furniture, no food, no props, no shadows outside fabric, no text. All three sprites fully separated with transparent padding.",
+  "source": "exec-6c5ecbe6-9cc6-4b14-bf6c-8e3d44b2d246.png",
+  "asset": "runners.png"
+}

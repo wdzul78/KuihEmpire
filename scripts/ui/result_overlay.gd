@@ -7,7 +7,7 @@ signal home_pressed()
 signal watch_ad_for_moves()
 signal booster_pressed()
 
-const OFFER_COST := 900
+const OFFER_COST := EconomyManager.EXTRA_MOVES_COST
 # Keep results in the central reach area and leave room above Aina for notifications.
 const RESULT_CARD_RECT := Rect2(.07, .34, .86, .51)
 const SUCCESS_CHARACTER_RECT := Rect2(.05, .10, .90, .33)
@@ -33,6 +33,10 @@ var _score_value: Label
 var _new_best: Label
 var _breakdown: Label
 var _reward_box: Panel
+var _score_heading: Control
+var _coin_caption: Label
+var _score_caption: Label
+var _score_badge: TextureRect
 var _offer_available := false
 static var _art: Dictionary = {}
 const BOUNDS := {
@@ -105,6 +109,8 @@ static func portrait_artwork(id: String) -> Texture2D:
 
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	# Cover raised board blockers and VFX as one complete modal layer.
+	z_index = 200
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	UIKit.apply_root_theme(self)
 	_build()
@@ -116,6 +122,10 @@ func _place(node: Control, rect: Rect2, parent: Control = self) -> void:
 	node.anchor_top = rect.position.y
 	node.anchor_right = rect.end.x
 	node.anchor_bottom = rect.end.y
+	node.offset_left = 0
+	node.offset_top = 0
+	node.offset_right = 0
+	node.offset_bottom = 0
 
 func _set_character_rect(rect: Rect2) -> void:
 	_character.anchor_left = rect.position.x
@@ -168,10 +178,7 @@ func _build() -> void:
 	_title.add_theme_color_override("font_color", Palette.GOLD_PALE)
 	_title.add_theme_color_override("font_outline_color", Palette.WOOD_DARK)
 	_title.add_theme_constant_override("outline_size", 10)
-	var lettering := FontVariation.new()
-	lettering.base_font = ThemeDB.fallback_font
-	lettering.variation_embolden = 2.2
-	_title.add_theme_font_override("font", lettering)
+	_title.add_theme_font_override("font", UIKit.title_font())
 	_title_art = TitleArt.create("order_served", "Order served!")
 	_place(_title_art, Rect2(.10, .228, .80, .088), _card)
 	_subtitle = _label("", Rect2(.13, .316, .74, .048), 29, _card)
@@ -190,7 +197,16 @@ func _build() -> void:
 	_coins_label = _label("+0", Rect2(.34, .05, .59, .9), 66, reward)
 	_unlocks = _label("", Rect2(.15, .657, .7, .033), 20, _card)
 	_score_value = _label("", Rect2(.49, .636, .28, .064), 48, _card)
-	_place(TitleArt.create("score", "Score"), Rect2(.24, .638, .24, .055), _card)
+	_score_heading = TitleArt.create("score", "Score")
+	_place(_score_heading, Rect2(.24, .638, .24, .055), _card)
+	_coin_caption = _label(JourneyArt.localized("Syiling","Coins"),Rect2(.20,.51,.22,.035),24,_card)
+	_score_caption = _label(JourneyArt.localized("Skor","Score"),Rect2(.59,.51,.23,.035),24,_card)
+	_score_badge = TextureRect.new()
+	_score_badge.texture = GameplaySkin.texture("star")
+	_score_badge.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_score_badge.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	_score_badge.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_place(_score_badge,Rect2(.49,.25,.16,.55),reward)
 	_new_best = _label("", Rect2(.14, .522, .72, .048), 36, _card)
 	_breakdown = _label("", Rect2(.13, .573, .74, .183), 34, _card)
 	_primary = _button("button_green", Rect2(.095, .705, .81, .09))
@@ -198,6 +214,11 @@ func _build() -> void:
 	_home = GameButton.create("", "back", 42)
 	_home.custom_minimum_size = Vector2.ZERO
 	_place(_home, Rect2(.095, .899, .81, .09), _card)
+	for button in [_secondary,_home]:
+		var icon := preload("res://scripts/ui/pause_action_icon.gd").new()
+		icon.stall = button == _home
+		icon.set_meta("win_icon",true)
+		_place(icon,Rect2(.03,.04,.30,.92),button)
 	_primary.pressed.connect(func() -> void:
 		AudioManager.play(AudioManager.Sfx.TAP)
 		if is_win:
@@ -213,7 +234,57 @@ func _build() -> void:
 	)
 	_home.pressed.connect(func() -> void: home_pressed.emit())
 
+func _rect(node: Control, rect: Rect2) -> void:
+	node.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT)
+	node.anchor_left = rect.position.x
+	node.anchor_top = rect.position.y
+	node.anchor_right = rect.end.x
+	node.anchor_bottom = rect.end.y
+	node.offset_left = 0
+	node.offset_top = 0
+	node.offset_right = 0
+	node.offset_bottom = 0
+
+func _apply_result_layout() -> void:
+	_coin_caption.visible = is_win
+	_score_caption.visible = is_win
+	_score_heading.visible = not is_win
+	_score_badge.visible = is_win
+	_rect(_reward_box.get_child(0),Rect2(.035,.15,.16,.70) if is_win else Rect2(.08,.07,.24,.86))
+	_rect(_card,Rect2(.07,.34,.86,.57) if is_win else RESULT_CARD_RECT)
+	_rect(_title,Rect2(.10,.235,.80,.08) if is_win else Rect2(.10,.245,.80,.095))
+	_title.add_theme_color_override("font_color",Palette.WOOD_DARK if is_win else Palette.GOLD_PALE)
+	_title.add_theme_constant_override("outline_size",0 if is_win else 10)
+	_rect(_subtitle,Rect2(.13,.33,.74,.05) if is_win else Rect2(.13,.316,.74,.048))
+	_rect(_stars,Rect2(.20,.375,.60,.12) if is_win else Rect2(.23,.370,.54,.096))
+	_rect(_reward_box,Rect2(.13,.51,.74,.145) if is_win else Rect2(.27,.50,.46,.105))
+	_rect(_coins_label,Rect2(.17,.28,.33,.64) if is_win else Rect2(.34,.05,.59,.9))
+	_coins_label.add_theme_font_size_override("font_size",48 if is_win else 66)
+	_rect(_score_value,Rect2(.59,.555,.25,.085) if is_win else Rect2(.49,.636,.28,.064))
+	_rect(_primary,Rect2(.095,.690,.81,.11) if is_win else Rect2(.095,.705,.81,.09))
+	_rect(_secondary,Rect2(.16,.815,.33,.09) if is_win else Rect2(.095,.802,.81,.09))
+	_rect(_home,Rect2(.51,.815,.33,.09) if is_win else Rect2(.095,.899,.81,.09))
+	for button in [_secondary,_home]:
+		for child in button.get_children():
+			if child is ButtonArt:
+				child.visible = not is_win
+			elif child.has_meta("win_icon"):
+				child.visible = is_win
+		if is_win:
+			for state in ["normal","hover","pressed","focus"]:
+				button.add_theme_stylebox_override(state,UIKit.flat_box(Color("fff4dc"),Palette.WOOD_LIGHT,0,2,18))
+			button.add_theme_color_override("font_color",Palette.WOOD_DARK)
+			button.add_theme_color_override("font_hover_color",Palette.WOOD_DARK)
+			button.add_theme_color_override("font_pressed_color",Palette.WOOD_DARK)
+			button.add_theme_constant_override("outline_size",0)
+			button.add_theme_font_size_override("font_size",36)
+			button.alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		else:
+			button.add_theme_color_override("font_color",Palette.PAPER)
+			button.alignment = HORIZONTAL_ALIGNMENT_CENTER
+
 func _set_copy() -> void:
+	_apply_result_layout()
 	_stage_label.text = (MenuText.text("lesson_complete") if is_win and tutorial_stage else MenuText.text("stage_complete") if is_win else MenuText.text("stage_failed")) % stage_number
 	_title.text = MenuText.text("order_served" if is_win else "almost_there")
 	_title_art.visible = SaveManager.get_setting("language", "en") == "en"
@@ -231,6 +302,9 @@ func _set_copy() -> void:
 		_primary.text = MenuText.text("map") + "  ›"
 	_secondary.text = MenuText.text("play_again" if is_win else "use_booster")
 	_home.text = MenuText.text("back_stall")
+	if is_win:
+		_secondary.text = JourneyArt.localized("Main semula","Replay")
+		_home.text = JourneyArt.localized("Ke gerai","To stall")
 
 func show_win(_title_text: String, stars: int, coins: int, unlocks: Array, is_new_best: bool, details: StageResult = null, animate: bool = true) -> void:
 	visible = true
@@ -238,6 +312,10 @@ func show_win(_title_text: String, stars: int, coins: int, unlocks: Array, is_ne
 	_character.texture = success_portrait_artwork()
 	_set_character_rect(SUCCESS_CHARACTER_RECT)
 	_set_copy()
+	_title_art.show()
+	_title.hide()
+	_title.text = JourneyArt.localized("Pesanan siap!","Order served!")
+	_title.add_theme_font_size_override("font_size",62)
 	_subtitle.text = MenuText.text("served_perfectly")
 	_stars.filled = clampi(stars, 0, 3)
 	_stars.queue_redraw()
@@ -300,15 +378,9 @@ func _show_recovery() -> void:
 		booster_pressed.emit()
 	)
 	stack.add_child(extra)
-	var free := UIKit.button(MenuText.text("free_moves"), 28, Palette.LEAF)
-	free.name = "FreeMoves"
-	free.pressed.connect(func() -> void:
-		overlay.queue_free()
-		continue_pressed.emit()
-	)
-	stack.add_child(free)
-	if _offer_available and EconomyManager.can_afford(OFFER_COST):
+	if _offer_available:
 		var buy := UIKit.button(MenuText.text("coin_moves") % OFFER_COST, 26, Palette.GOLD)
+		buy.disabled = not EconomyManager.can_afford(OFFER_COST)
 		buy.pressed.connect(func() -> void:
 			if EconomyManager.spend_coins(OFFER_COST):
 				overlay.queue_free()

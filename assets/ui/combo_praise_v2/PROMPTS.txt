@@ -1,0 +1,6 @@
+Reference style: assets/ui/combo_praise_v1/terbaik.png
+Generate single transparent game praise text reading exactly "Bagus!" / "Steadey Bos!".
+Match bold rounded chunky glossy candy letters, cream inner outline, thick chocolate-brown beveled outer outline and shadow, small gold sparkle accents and tiny pandan leaf garnish.
+Bagus: lime-green to emerald gradient.
+Steadey Bos: warm gold to vivid orange gradient.
+One horizontal line, full text inside canvas with transparent padding, mobile-readable, no panel or background, no other text.

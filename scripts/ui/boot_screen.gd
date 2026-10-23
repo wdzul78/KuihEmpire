@@ -11,17 +11,30 @@ const STUDIO_BACKGROUND := Color("100b18")
 
 var _studio: Control
 var _studio_logo: TextureRect
+var _loading: ProgressBar
+var auto_navigation := true
 
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	UIKit.apply_root_theme(self)
 	_build()
 	_build_studio_splash()
+	if SceneManager.is_current(self):
+		SceneManager.warm_scene(SceneManager.LEVEL)
+	_warm_kuih.call_deferred()
 	_run()
+
+func _warm_kuih() -> void:
+	KuihLibrary.starter_set()
+
+func _process(_delta: float) -> void:
+	if is_instance_valid(_loading):
+		_loading.value = SceneManager.warm_progress(SceneManager.LEVEL)*100.0
 
 
 func _build() -> void:
 	var backdrop := GeraiBackdrop.new()
+	backdrop.background_context = "menu"
 	backdrop.background_id = &"stall_dawn"
 	backdrop.show_counter = false
 	backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -60,6 +73,10 @@ func _build_studio_splash() -> void:
 	_studio_logo.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	_studio_logo.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_studio.add_child(_studio_logo)
+	_loading = ProgressBar.new()
+	_loading.show_percentage = false
+	_loading.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_studio.add_child(_loading)
 	resized.connect(_layout_studio)
 	_layout_studio()
 
@@ -71,6 +88,8 @@ func _layout_studio() -> void:
 	_studio_logo.size = Vector2(width, width * STUDIO_LOGO.get_height() / STUDIO_LOGO.get_width())
 	_studio_logo.position = (size - _studio_logo.size) * 0.5
 	_studio_logo.pivot_offset = _studio_logo.size * 0.5
+	_loading.size = Vector2(size.x*.42,12)
+	_loading.position = Vector2(size.x*.29,size.y*.72)
 
 
 func _run() -> void:
@@ -91,7 +110,7 @@ func _run() -> void:
 	await get_tree().process_frame
 	AudioManager.play(AudioManager.Sfx.TAP, 0.8, -10.0)
 	# Only drive navigation when this really is the running scene.
-	if not SceneManager.is_current(self):
+	if not auto_navigation or not SceneManager.is_current(self):
 		return
 	await get_tree().create_timer(HOLD_TIME).timeout
 	if not SceneManager.is_current(self):

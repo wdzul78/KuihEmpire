@@ -8,17 +8,21 @@ extends RefCounted
 ## Dulang = round golden tray, Special Order = crowned kuih.
 
 const OUTLINE := Color("4a2c17")
-const TAPAU_ART = preload("res://assets/specials/utensils_v1/spatula.png")
-const TAPAU_VERTICAL_ART = preload("res://assets/specials/utensils_v1/fork.png")
+const TAPAU_ART = preload("res://assets/specials/pulut_panggang_v1/pulut_panggang.png")
+const PISANG_ART = preload("res://assets/specials/banana_fritter_v1/vertical.png")
+const TAPAU_VERTICAL_ART = preload("res://assets/specials/selorot_v3_pale_concept/selorot_vertical.png")
 const TAPAU_DIRECTION_ART = preload("res://assets/specials/directional_v8/direction_triangle.png")
 const DULANG_SPARKLE = preload("res://assets/vfx/kenney/star_04.png")
 const DULANG_RAYS = preload("res://assets/specials/gold_v3/rays.png")
 const DULANG_ART = preload("res://assets/specials/badak_berendam_v1/badak_berendam.png")
 const BADAK_IDLE_BOWL = preload("res://assets/specials/badak_idle_v1/bowl.png")
 const BADAK_IDLE_BALLS = preload("res://assets/vfx/coconut_v1/balls.png")
-const HANTAR_ART = preload("res://assets/specials/delivery_propeller_v3/rotor_red.png")
+const HANTAR_ART = preload("res://assets/specials/kuih_sepit_v1/kuih_sepit.png")
 const HANTAR_BODY = preload("res://assets/specials/delivery_propeller_v3/body_claw.png")
 static var _delivery_food_regions: Dictionary = {}
+static var _delivery_region := Rect2()
+static var _pulut_region := Rect2()
+static var _selorot_region := Rect2()
 const ROLLER_ART = preload("res://assets/specials/utensils_v1/roller.png")
 const ORDER_ART = preload("res://assets/specials/premium_sarawak_v1/kek_lapis_sarawak.png")
 const BLOCKER_ART = {
@@ -44,6 +48,8 @@ static func draw_item_texture(canvas: CanvasItem, rect: Rect2, art: Texture2D) -
 
 
 static func special_texture(special: int) -> Texture2D:
+	if special == 100: # Recipe-only combination illustration; never a board special ID.
+		return PISANG_ART
 	if special == BoardCell.Special.HANTAR:
 		return HANTAR_ART
 	if special == BoardCell.Special.TAPAU:
@@ -74,15 +80,19 @@ static func draw_directional(canvas: CanvasItem, rect: Rect2, vertical: bool, sp
 		canvas.draw_line(start,end,Color(tint,alpha*.22),edge*.12,true)
 		canvas.draw_line(start,end,Color(tint,alpha),edge*.055,true)
 		canvas.draw_line(start,end,Color("ffffe9",alpha),edge*.02,true)
-	draw_utensil(canvas,center,edge*(.94 if vertical else .86),vertical,(-PI*.5 if vertical else PI))
+	draw_utensil(canvas,center,edge*(.94 if vertical else .86),vertical,(-PI*.5 if vertical else 0.0))
 
 
 static func draw_utensil(canvas: CanvasItem, at: Vector2, cell: float, vertical: bool, direction_angle: float, alpha: float = 1.0) -> void:
-	var source := Rect2(880,789,468,1001) if vertical else Rect2(8,22,1240,1204)
 	var art: Texture2D = TAPAU_VERTICAL_ART if vertical else TAPAU_ART
+	if not vertical and _pulut_region.size == Vector2.ZERO:
+		_pulut_region = Rect2(TAPAU_ART.get_image().get_used_rect())
+	if vertical and _selorot_region.size == Vector2.ZERO:
+		_selorot_region = Rect2(TAPAU_VERTICAL_ART.get_image().get_used_rect())
+	var source := _selorot_region if vertical else _pulut_region
 	var extent := source.size*(cell/maxf(source.size.x,source.size.y))
-	# The upright fork and diagonal spatula each align with their travel axis.
-	var rotation := direction_angle+(PI*.5 if vertical else PI*.75)
+	# Fork points upward; pulut panggang points right in its original artwork.
+	var rotation := direction_angle+(PI*.5 if vertical else 0.0)
 	canvas.draw_set_transform(at,rotation)
 	canvas.draw_texture_rect_region(art,Rect2(-extent*.5,extent),source,Color(1,1,1,alpha))
 	canvas.draw_set_transform(Vector2.ZERO)
@@ -144,11 +154,6 @@ static func draw_order(canvas: CanvasItem, rect: Rect2, seconds: float, activati
 static func draw_dulang_animated(canvas: CanvasItem, rect: Rect2, seconds: float, charged: bool = false, flip_angle: float = 0.0) -> void:
 	var edge := minf(rect.size.x,rect.size.y)
 	var center := rect.get_center()
-	var pulse := .5+.5*sin(seconds*(12.0 if charged else 3.2))
-	var ray_edge := edge*(.98+.035*pulse)
-	if charged:
-		canvas.draw_set_transform(center,seconds*1.8)
-		canvas.draw_texture_rect_region(DULANG_RAYS,Rect2(Vector2.ONE*-ray_edge*.5,Vector2.ONE*ray_edge),Rect2(24,22,1207,1201),Color(1,1,1,.55+.4*pulse))
 	canvas.draw_set_transform(Vector2.ZERO)
 	var source := Rect2(14,47,1224,1160)
 	var extent := source.size*(edge*.90/maxf(source.size.x,source.size.y))
@@ -186,39 +191,32 @@ static func draw_dulang_animated(canvas: CanvasItem, rect: Rect2, seconds: float
 			canvas.draw_texture_rect_region(BADAK_IDLE_BALLS,Rect2(Vector2.ONE*-ball_edge*.5,Vector2.ONE*ball_edge),region,Color(1,1,1,visibility))
 
 	canvas.draw_set_transform(Vector2.ZERO)
-	# Moving rim glints brighten and fade independently of the rotating rays.
-	if not charged:
-		return
-	for index in 4:
-		var angle := seconds*.9+index*TAU/4.0
-		var at := center+Vector2(cos(angle)*edge*.36,sin(angle)*edge*.26*perspective)
-		var shine := .5+.5*sin(seconds*4.0+index*1.7)
-		var star_edge := edge*(.065+.07*shine)
-		canvas.draw_texture_rect(DULANG_SPARKLE,Rect2(at-Vector2.ONE*star_edge*.5,Vector2.ONE*star_edge),false,Color(1,1,.8,.35+.65*shine))
 
 
-static func draw_delivery(canvas: CanvasItem, rect: Rect2, angle: float = 0.0, flying: bool = false, payload: Texture2D = null) -> void:
+static func delivery_region() -> Rect2:
+	if _delivery_region.size == Vector2.ZERO:
+		_delivery_region = Rect2(HANTAR_ART.get_image().get_used_rect())
+	return _delivery_region
+
+static func draw_delivery(canvas: CanvasItem, rect: Rect2, angle: float = 0.0, flying: bool = false, _payload: Texture2D = null, bank: float = 0.0) -> void:
 	var edge := minf(rect.size.x,rect.size.y)
-	var center := rect.get_center()
-	if flying:
-		var body_source := Rect2(118,80,782,1330)
-		var body_size := Vector2(edge*.38,edge*.65)
-		var body_at := center+Vector2(-body_size.x*.5,-edge*.12)
-		if payload != null:
-			if not _delivery_food_regions.has(payload):
-				_delivery_food_regions[payload] = Rect2(payload.get_image().get_used_rect())
-			var source: Rect2 = _delivery_food_regions[payload]
-			var food_size := source.size * (edge*.29/maxf(source.size.x,source.size.y))
-			canvas.draw_texture_rect_region(payload,Rect2(center+Vector2(0,edge*.39)-food_size*.5,food_size),source)
-		canvas.draw_texture_rect_region(HANTAR_BODY,Rect2(body_at,body_size),body_source)
-		center.y -= edge*.18
-	# Rotate around the actual hub, rather than the PNG canvas centre.
-	var fit := edge/1220.0
-	var source := Rect2(38,88,1172,1046)
-	var hub := Vector2(625,680)
-	canvas.draw_set_transform(center,angle,Vector2(1,.42) if flying else Vector2.ONE)
-	canvas.draw_texture_rect_region(HANTAR_ART,Rect2((source.position-hub)*fit,source.size*fit),source)
+	var source := delivery_region()
+	var fit := edge/maxf(source.size.x,source.size.y)
+	var extent := source.size*fit
+	var at := rect.get_center()
+	var roll := bank
+	var stretch := Vector2.ONE
+	if not flying:
+		# Slow breathing/hover and a small bank: clearly idle, never spinning.
+		canvas.draw_set_transform(at+Vector2(0,edge*.35),0,Vector2(1,.25))
+		canvas.draw_circle(Vector2.ZERO,edge*.25,Color(.25,.15,.05,.15))
+		at += Vector2(sin(angle*1.1)*edge*.018,sin(angle*2.2)*edge*.045)
+		roll = sin(angle*1.7)*.085
+		stretch = Vector2(1+.015*sin(angle*2.2),.97+.03*cos(angle*2.2))
+	canvas.draw_set_transform(at,roll,stretch)
+	canvas.draw_texture_rect_region(HANTAR_ART,Rect2(-extent*.5,extent),source)
 	canvas.draw_set_transform(Vector2.ZERO)
+
 
 static func draw_blocker(canvas: CanvasItem, rect: Rect2, kind: int, hp: int, max_hp: int) -> void:
 	if kind == BlockerSpec.Kind.BANANA_LEAF:

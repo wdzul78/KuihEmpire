@@ -1,0 +1,8 @@
+{
+  "tool": "built-in image_gen",
+  "intent": "edit",
+  "asset": "selorot_vertical.png",
+  "source": "../selorot_v1_concept/selorot_vertical.png",
+  "status": "Concept only; not connected to gameplay",
+  "prompt": "Use case: precise-object-edit. Edit this single Kuih Selorot transparent game sprite. Change ONLY the coconut leaf wrapper color: make the leaf predominantly warm young-coconut-leaf YELLOW, light golden yellow and straw yellow, with subtle pale yellow-green undertones in shaded folds. Reduce dark green strongly; broad leaf faces must visibly read yellow, not green. Keep natural leaf veins, spiral overlaps, soft gloss and dimensional shading; not metallic gold. Preserve exact cone shape, upright orientation, top caramel-brown pudding color and texture, loose upper leaf tip, object placement and clean silhouette. Preserve transparent background and original canvas dimensions. No additional objects, no text, no glow, no ground shadow."
+}

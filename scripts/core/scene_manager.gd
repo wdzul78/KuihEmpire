@@ -8,6 +8,7 @@ const FADE_IN := 0.28
 const BOOT := "res://scenes/boot/boot.tscn"
 const WELCOME := "res://scenes/ui/onboarding_finish.tscn"
 const HOME := "res://scenes/menu/home.tscn"
+const ENDLESS := "res://scenes/game/endless_screen.tscn"
 const LEVEL := "res://scenes/game/level_screen.tscn"
 const STORY := "res://scenes/story/story_screen.tscn"
 const JOURNEY := "res://scenes/world/journey_map.tscn"
@@ -29,6 +30,26 @@ signal story_finished()
 
 var _veil: ColorRect
 var _busy: bool = false
+var _loading_box: VBoxContainer
+var _loading_bar: ProgressBar
+var _loading_caption: Label
+var _warmed: Dictionary = {}
+
+func warm_scene(path: String) -> void:
+	if _warmed.has(path):
+		return
+	if ResourceLoader.load_threaded_get_status(path) == ResourceLoader.THREAD_LOAD_INVALID_RESOURCE:
+		ResourceLoader.load_threaded_request(path,"PackedScene")
+
+func warm_progress(path: String) -> float:
+	if _warmed.has(path):
+		return 1.0
+	var progress: Array = []
+	var status := ResourceLoader.load_threaded_get_status(path,progress)
+	if status == ResourceLoader.THREAD_LOAD_LOADED:
+		_warmed[path] = ResourceLoader.load_threaded_get(path)
+		return 1.0
+	return float(progress[0]) if not progress.is_empty() else 0.0
 
 
 func _ready() -> void:
@@ -38,6 +59,21 @@ func _ready() -> void:
 	_veil.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_veil.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(_veil)
+	_loading_box = VBoxContainer.new()
+	_loading_box.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+	_loading_box.position = Vector2(-150,-25)
+	_loading_box.size = Vector2(300,65)
+	_veil.add_child(_loading_box)
+	_loading_caption = Label.new()
+	_loading_caption.text = "Loading…"
+	_loading_caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_loading_caption.add_theme_color_override("font_color",Color("4a2c17"))
+	_loading_box.add_child(_loading_caption)
+	_loading_bar = ProgressBar.new()
+	_loading_bar.custom_minimum_size = Vector2(300,14)
+	_loading_bar.show_percentage = false
+	_loading_box.add_child(_loading_bar)
+	_loading_box.hide()
 	process_mode = Node.PROCESS_MODE_ALWAYS
 
 
@@ -48,14 +84,32 @@ func goto(path: String, instant: bool = false) -> void:
 		push_error("SceneManager: missing scene %s" % path)
 		return
 	_busy = true
+	warm_scene(path)
 	if not instant:
 		await fade_out()
-	get_tree().change_scene_to_file(path)
-	AudioManager.play_music(AudioManager.GAMEPLAY_MUSIC if path == LEVEL else AudioManager.MENU_MUSIC)
+	_loading_bar.value = 0
+	_loading_caption.text = "Loading…"
+	_loading_box.show()
+	await get_tree().process_frame
+	while not _warmed.has(path):
+		_loading_bar.value = warm_progress(path)*100.0
+		if ResourceLoader.load_threaded_get_status(path) == ResourceLoader.THREAD_LOAD_FAILED:
+			push_error("SceneManager: loading failed %s" % path)
+			_loading_box.hide()
+			await fade_in()
+			_busy = false
+			return
+		await get_tree().process_frame
+	_loading_bar.value = 100
+	_loading_caption.text = "Preparing…"
+	await get_tree().process_frame
+	get_tree().change_scene_to_packed(_warmed[path])
+	AudioManager.play_music(AudioManager.GAMEPLAY_MUSIC if path in [LEVEL, ENDLESS] else AudioManager.MENU_MUSIC)
 	AudioManager.set_music_ducked(false)
 	# Let the new scene build before revealing it.
 	await get_tree().process_frame
 	await get_tree().process_frame
+	_loading_box.hide()
 	if not instant:
 		await fade_in()
 	_busy = false

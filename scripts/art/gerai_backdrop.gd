@@ -4,6 +4,13 @@ const MVP_BACKGROUND_PATH := "res://assets/backgrounds/gerai_mvp.png"
 const SOFT_GAMEPLAY_PATH := "res://assets/backgrounds/gameplay_market_v2/market_stall_portrait.png"
 const GAMEPLAY_BLUR := preload("res://shaders/gameplay_background_blur.gdshader")
 var gameplay_mode := false
+var background_context := "renovation"
+var follow_active_stall := false
+var _authored_background := false
+var _previous_background: Texture2D
+var _blend := 1.0
+var _fade: Tween
+
 
 var location_id: StringName = &"family_stall"
 var structural_state := 0
@@ -12,6 +19,80 @@ var _background: Texture2D
 var _decor: Dictionary = {}
 var _state_override := -1
 var _decor_override: Variant = null
+var _variant_override := ""
+var _decor_styles_override: Variant = null
+var renovation_focus := Vector2(.5, 0)
+var _style_accent: TextureRect
+var hidden_decor_slot := ""
+var renovation_showcase := false
+var hidden_structure := 0
+var component_preview: Dictionary = {}
+var showcase_focus := Rect2()
+var showcase_pan := Vector2.ZERO
+const SHOWCASE_BACKGROUND := "res://assets/stalls/kuching_v2/empty_stall.png"
+var _showcase_texture: Texture2D
+
+func showcase_active() -> bool:
+	return renovation_showcase and location_id == &"family_stall" and ResourceLoader.exists(SHOWCASE_BACKGROUND)
+
+func showcase_rect() -> Rect2:
+	if _showcase_texture == null:
+		_showcase_texture = load(SHOWCASE_BACKGROUND) as Texture2D
+	var extent := _showcase_texture.get_size() * maxf(size.x / _showcase_texture.get_width(), size.y / _showcase_texture.get_height())
+	return Rect2((size - extent) * .5 + showcase_pan,extent)
+
+func component_rect(stage: int) -> Rect2:
+	return [Rect2(.02,.245,.96,.13),Rect2(.20,.448,.24,.115),Rect2(.13,.34,.74,.105)][clampi(stage-1,0,2)]
+
+func lantern_rect(side: int) -> Rect2:
+	return Rect2(.15 if side == 0 else .73,.335,.12,.14)
+
+func decor_rect(item: DecorDefinition) -> Rect2:
+	if not showcase_active() and background_context == "menu" and not gameplay_mode and item.id == "pink_batik":
+		return Rect2(-.035,.605,1.07,.31)
+	if not showcase_active():
+		return item.art_rect(location_id)
+	return {"flower":Rect2(.015,.615,.16,.12),"lamp":Rect2(.77,.36,.10,.10),"cloth":Rect2(.115,.565,.77,.16),"food":Rect2(.15,.49,.70,.12),"sign":Rect2(.33,.35,.37,.055),"counter":Rect2(.13,.61,.74,.115)}[item.kind]
+
+func _draw_showcase() -> void:
+	var frame := showcase_rect()
+	draw_rect(Rect2(Vector2.ZERO,size), Color("435d32"))
+	if showcase_pan != Vector2.ZERO:
+		draw_texture_rect(_showcase_texture,Rect2(frame.position-showcase_pan,frame.size),false)
+	draw_texture_rect(_showcase_texture,frame,false)
+	var styles: Dictionary = _decor_styles_override if _decor_styles_override is Dictionary else LocationManager.decor_styles(location_id)
+	for stage in range(1, structural_state + 1):
+		if stage == hidden_structure:
+			continue
+		var uv := component_rect(stage)
+		var choice: String = component_preview.get(stage, _effective_variant() if stage == structural_state else LocationManager.variant_for(location_id,stage))
+		if stage == 3:
+			for side in 2:
+				var lamp_uv := lantern_rect(side)
+				var lamp_target := Rect2(art_point(lamp_uv.position),art_point(lamp_uv.end)-art_point(lamp_uv.position))
+				var lamp_texture := RenovationArt.lantern_side(choice,side)
+				var extent := lamp_texture.get_size() * minf(lamp_target.size.x / lamp_texture.get_width(),lamp_target.size.y / lamp_texture.get_height())
+				draw_texture_rect(lamp_texture,Rect2(lamp_target.get_center()-extent*.5,extent),false)
+			continue
+		draw_texture_rect(RenovationArt.component_texture(stage,choice),Rect2(art_point(uv.position),art_point(uv.end)-art_point(uv.position)),false)
+	if _decor.has("COUNTER_FRONT") and hidden_decor_slot != "COUNTER_FRONT":
+		_draw_decor_texture(DecorDefinition.find(str(_decor.COUNTER_FRONT)),Color.WHITE,str(styles.get("COUNTER_FRONT","original")))
+	# The runner rests on the counter, underneath every food display regardless of purchase order.
+	if _decor.has("COUNTER_DECOR") and hidden_decor_slot != "COUNTER_DECOR":
+		_draw_decor_texture(DecorDefinition.find(str(_decor.COUNTER_DECOR)),Color.WHITE,str(styles.get("COUNTER_DECOR","original")))
+	for slot in _decor:
+		if slot == hidden_decor_slot or slot in ["COUNTER_FRONT","COUNTER_DECOR"]:
+			continue
+		var item := DecorDefinition.find(str(_decor[slot]))
+		if item != null:
+			_draw_decor_texture(item,Color.WHITE,str(styles.get(slot,"original")))
+	if showcase_focus.size != Vector2.ZERO:
+		var target := Rect2(art_point(showcase_focus.position),art_point(showcase_focus.end)-art_point(showcase_focus.position))
+		draw_rect(target.grow(4),Color(1,.85,.24,.28),false,8,true)
+		draw_rect(target,Color("ffe680"),false,3,true)
+	var sign := Rect2(art_point(Vector2(.35,.357)),art_point(Vector2(.68,.395))-art_point(Vector2(.35,.357)))
+	draw_string(UIKit.bold_font(),sign.position + Vector2(0,sign.size.y*.72),JourneyArt.localized("Gerai Keluarga","Family Stall"),HORIZONTAL_ALIGNMENT_CENTER,sign.size.x,int(sign.size.y*.60),Palette.WOOD_DARK)
+const FABRIC_ACCENT := preload("res://shaders/stall_fabric_accent.gdshader")
 
 ## Painted market backdrop for the stall and gameplay screens.
 ##
@@ -20,6 +101,7 @@ var _decor_override: Variant = null
 ## sections 51 and 52).
 
 const PRESETS := {
+	&"government": {"sky_top": Color("bcdde0"), "sky_bottom": Color("fff6db"), "canopy": Color("35797f"), "canopy_alt": Color("f2ead7"), "skyline": Color("99aeb2"), "ground": Color("bcb6a6"), "accent": Color("55987c")},
 	&"ramadan": {"sky_top": Color("694e94"), "sky_bottom": Color("ffbd79"), "canopy": Color("427534"), "canopy_alt": Color("fff0ca"), "skyline": Color("94637f"), "ground": Color("cc965d"), "accent": Color("e5af38")},
 	&"school": {"sky_top": Color("c8e8f1"), "sky_bottom": Color("fff6db"), "canopy": Color("527ba4"), "canopy_alt": Color("fff0ca"), "skyline": Color("96b3c1"), "ground": Color("cbb695"), "accent": Color("6cad46")},
 	&"city": {"sky_top": Color("a1c9f3"), "sky_bottom": Color("fff6db"), "canopy": Color("423a58"), "canopy_alt": Color("ffd571"), "skyline": Color("8b91ad"), "ground": Color("bba391"), "accent": Color("efb935")},
@@ -71,6 +153,15 @@ const PRESETS := {
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_style_accent = TextureRect.new()
+	_style_accent.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_style_accent.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_style_accent.stretch_mode = TextureRect.STRETCH_SCALE
+	var fabric := ShaderMaterial.new()
+	fabric.shader = FABRIC_ACCENT
+	_style_accent.material = fabric
+	_style_accent.hide()
+	add_child(_style_accent)
 	if gameplay_mode:
 		# Smooth source pixels when the cover scale exceeds 1 on larger phones.
 		texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
@@ -79,7 +170,15 @@ func _ready() -> void:
 		material = blur
 	resized.connect(queue_redraw)
 	LocationManager.location_state_changed.connect(_location_changed)
+	LocationManager.active_stall_changed.connect(_active_changed)
+	if follow_active_stall:
+		location_id = LocationManager.active_stall_id()
 	_sync_environment()
+
+func _active_changed(id: StringName) -> void:
+	if follow_active_stall:
+		location_id = id
+		_sync_environment()
 
 
 func _col(key: String) -> Color:
@@ -87,17 +186,38 @@ func _col(key: String) -> Color:
 	return preset.get(key, Palette.CREAM)
 
 
+func cover_rect(texture_size: Vector2) -> Rect2:
+	var scaled := texture_size * maxf(size.x / texture_size.x, size.y / texture_size.y)
+	var focus := renovation_focus if background_context == "renovation" and not gameplay_mode else Vector2(.5, .5)
+	return Rect2((size - scaled) * focus, scaled)
+
+func art_point(uv: Vector2) -> Vector2:
+	if showcase_active():
+		var rect := showcase_rect()
+		return rect.position + uv * rect.size
+	if _background == null or size.x <= 0 or size.y <= 0:
+		return uv * size
+	var rectangle := cover_rect(_background.get_size())
+	return rectangle.position + uv * rectangle.size
+
 func _draw() -> void:
 	if size.x <= 0 or size.y <= 0:
 		return
+	if showcase_active():
+		if _style_accent != null:
+			_style_accent.hide()
+		_draw_showcase()
+		return
 	if not simple and _background != null:
 		var source_size := _background.get_size()
-		var scale_factor := maxf(size.x / source_size.x, size.y / source_size.y)
-		var drawn_size := source_size * scale_factor
-		draw_texture_rect(_background, Rect2((size - drawn_size) * 0.5, drawn_size), false, Color(.92,.92,.92) if gameplay_mode else Color.WHITE)
-		if not gameplay_mode:
+		draw_texture_rect(_background, cover_rect(source_size), false, Color(.92,.92,.92) if gameplay_mode else Color.WHITE)
+		if _previous_background != null and _blend < 1.0:
+			var old_size := _previous_background.get_size()
+			draw_texture_rect(_previous_background, cover_rect(old_size), false, Color(1, 1, 1, 1.0 - _blend))
+		if not _authored_background:
 			_draw_structure()
-			_draw_decor()
+		_draw_style_accent()
+		_draw_decor()
 		return
 	var w := size.x
 	var h := size.y
@@ -235,10 +355,24 @@ func _draw_props() -> void:
 
 
 func apply_environment(id: StringName, decor_preview: Variant = null, state_preview: int = -1) -> void:
+	_variant_override = ""
+	_decor_styles_override = null
 	location_id = id
 	_state_override = mini(state_preview, LocationManager.structural_level(id)) if state_preview >= 0 else -1
 	_decor_override = decor_preview
 	_sync_environment()
+
+## An uncommitted visual preview. Never changes progression or saved choices.
+func preview_design(id: StringName, state: int, variant: String, decor: Dictionary, styles: Dictionary) -> void:
+	location_id = id
+	_state_override = clampi(state, 0, 3)
+	_variant_override = variant
+	_decor_override = decor.duplicate()
+	_decor_styles_override = styles.duplicate()
+	_sync_environment()
+
+func _effective_variant() -> String:
+	return _variant_override if not _variant_override.is_empty() else LocationManager.variant_for(location_id, structural_state)
 
 func debug_preview(id: StringName, level: int, decor_preview: Variant = null) -> void:
 	if not OS.has_feature("debug"):
@@ -256,14 +390,30 @@ func _sync_environment() -> void:
 	var location := LocationDefinition.find(location_id)
 	structural_state = _state_override if _state_override >= 0 else LocationManager.structural_level(location.id)
 	background_id = location.preset
-	var path := LocationManager.effective_background(location, structural_state)
-	# The supplied complete stall artwork is the puzzle backdrop. Location and
-	# restoration artwork continue to be displayed on the stall/shop screens.
-	if gameplay_mode:
-		path = SOFT_GAMEPLAY_PATH
+	var context := "gameplay" if gameplay_mode else background_context
+	var visual := StallDefinition.find(location_id).state(structural_state)
+	var path := visual.background_path(context, _effective_variant())
+	_authored_background = ResourceLoader.exists(path)
+	if not _authored_background:
+		path = ""
+		# Existing Family artwork is a temporary base; structural layers remain visible.
+		if location_id == &"family_stall":
+			path = "res://assets/menu/v1/background.png" if context == "menu" else SOFT_GAMEPLAY_PATH if context == "gameplay" else MVP_BACKGROUND_PATH
+
 	if path != texture_path or (_background == null and not path.is_empty()):
+		_previous_background = _background
 		texture_path = path
 		_background = load(path) if not path.is_empty() else null
+		if is_inside_tree() and _previous_background != null and _background != null:
+			if _fade != null:
+				_fade.kill()
+			_blend = 0.0
+			_fade = create_tween()
+			_fade.tween_method(func(value: float) -> void: _blend = value; queue_redraw(), 0.0, 1.0, .28)
+			_fade.tween_callback(func() -> void: _previous_background = null)
+		else:
+			_previous_background = null
+
 	_decor = _decor_override if _decor_override is Dictionary else LocationManager.equipped(location_id)
 	queue_redraw()
 
@@ -279,6 +429,10 @@ func _draw_structure() -> void:
 			for side in [0.04,0.96]:
 				var at := Vector2(size.x*side,size.y*.18)
 				draw_polyline(PackedVector2Array([at,at+Vector2(-size.x*.012,size.y*.04),at+Vector2(size.x*.01,size.y*.07),at+Vector2(0,size.y*.11)]),Color(.17,.09,.04,.65),maxf(2,size.x*.004),true)
+	var variant := _effective_variant()
+	if structural_state > 0 and variant != "classic":
+		var accent := Color("e885a3") if variant == "batik" else Color("75b542")
+		draw_rect(Rect2(0, size.y * .125, size.x, size.y * .018), accent)
 	var location := LocationDefinition.find(location_id)
 	if location.background_mode == "full_texture":
 		return
@@ -295,9 +449,22 @@ func _draw_structure() -> void:
 func _draw_decor() -> void:
 	if simple:
 		return
+	var styles: Dictionary = _decor_styles_override if _decor_styles_override is Dictionary else LocationManager.decor_styles(location_id)
+	# Use existing fabric artwork as a visible accent for the three stall styles.
+	# Dedicated alternate background masters can replace these accents later.
+	var variant := _effective_variant()
+	if structural_state > 0 and variant != "classic" and not _decor.has("COUNTER_DECOR"):
+		var accent_id := "steel_organizer" if location_id in [&"school_canteen", &"government_canteen"] else "pink_batik"
+		var accent := DecorDefinition.find(accent_id)
+		_draw_decor_texture(accent, Color(.65, 1, .75) if variant == "pandan" else Color.WHITE)
 	for slot in _decor:
+		if slot == hidden_decor_slot:
+			continue
 		var item := DecorDefinition.find(str(_decor[slot]))
-		if item == null or not item.gameplay_safe:
+		if item == null or not item.gameplay_safe or not item.suitable_for(location_id):
+			continue
+		if RenovationArt.texture(item.id) != null:
+			_draw_decor_texture(item, Color.WHITE, str(styles.get(slot, "original")))
 			continue
 		match item.kind:
 			"flower":
@@ -309,6 +476,44 @@ func _draw_decor() -> void:
 				StallComponentArt.draw_component(self,"lamp",Rect2(size.x*.89,size.y*.19,size.x*.10,size.y*.12))
 			"cloth":
 				StallComponentArt.draw_component(self,"cloth",Rect2(size.x*.16,size.y*.88,size.x*.68,size.y*.075))
+
+func _draw_decor_texture(item: DecorDefinition, tint: Color, style: String = "original") -> void:
+	var texture := RenovationArt.design_texture(item.id, style)
+	if texture == null:
+		return
+	var uv := decor_rect(item)
+	var target := Rect2(art_point(uv.position), art_point(uv.end) - art_point(uv.position))
+	if item.kind in ["sign","counter"] or (item.id == "pink_batik" and (showcase_active() or (background_context == "menu" and not gameplay_mode))):
+		draw_texture_rect(texture,target,false,tint)
+		return
+	var extent := texture.get_size() * minf(target.size.x / texture.get_width(), target.size.y / texture.get_height())
+	draw_texture_rect(texture, Rect2(target.get_center() - extent * .5, extent), false, tint)
+
+func _draw_style_accent() -> void:
+	if _style_accent == null:
+		return
+	_style_accent.hide()
+	var variant := _effective_variant()
+	if _background == null or not _authored_background or structural_state == 0 or variant == "classic":
+		return
+	var context := "gameplay" if gameplay_mode else background_context
+	var visual := StallDefinition.find(location_id).state(structural_state)
+	if visual.background_path(context,variant) != visual.background_path(context,"classic"):
+		return # Dedicated future variants already contain their own style.
+	# Reuse the painted awning pixels so the accent keeps the original texture.
+	var uv := Rect2(.14,.018,.70,.14)
+	var pixels := _background.get_size()
+	var source := Rect2(uv.position * pixels, uv.size * pixels)
+	var target := Rect2(art_point(uv.position), art_point(uv.end) - art_point(uv.position))
+	var atlas := AtlasTexture.new()
+	atlas.atlas = _background
+	atlas.region = source
+	atlas.filter_clip = true
+	_style_accent.texture = atlas
+	_style_accent.position = target.position
+	_style_accent.size = target.size
+	(_style_accent.material as ShaderMaterial).set_shader_parameter("accent",Color(.35,.72,.32) if variant == "pandan" else Color(1,.33,.64))
+	_style_accent.show()
 
 func _draw_flower(at: Vector2, radius: float) -> void:
 	for petal in 5:

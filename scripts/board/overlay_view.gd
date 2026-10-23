@@ -52,8 +52,8 @@ func _draw() -> void:
 		return
 	# Show the actual requested kuih inside the open container.
 	if target_kuih != null and target_kuih.texture != null:
-		var edge := minf(size.x, size.y) * .36
-		var center := size * Vector2(.48, .63 if kind == BlockerSpec.Kind.PACKAGING_BOX else .5)
+		var edge := minf(size.x, size.y) * (.60 if kind == BlockerSpec.Kind.PACKAGING_BOX else .36)
+		var center := size * Vector2(.48, .56 if kind == BlockerSpec.Kind.PACKAGING_BOX else .5)
 		BoardArt.draw_item_texture(self, Rect2(center - Vector2.ONE * edge * .5, Vector2.ONE * edge), target_kuih.texture)
 	# progress pip strip along the bottom
 	var bar := Rect2(r.size.x * 0.16, r.size.y * 0.86, r.size.x * 0.52, r.size.y * 0.05)

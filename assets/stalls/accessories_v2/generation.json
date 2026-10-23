@@ -1,0 +1,15 @@
+{
+  "tool": "built-in image_gen.imagegen",
+  "assets": [
+    {
+      "file": "designs.png",
+      "prompt": "Production sprite atlas for Malaysian kuih stall decoration mobile game. EXACT grid 3 columns x 6 rows, equal cells, transparent background, each isolated object centered within its cell with 15 percent empty padding, never crosses cell. Polished hand painted glossy casual game art gold warm wood lush leaves, clear silhouettes. No text labels no UI no shadows outside object no scene. Columns represent distinct designs original / sunset / fresh, NOT simply recoloring same drawing. Row1: red hibiscus terracotta pot / pink bougainvillea cream ceramic pot / yellow flowers green glazed pot. Row2: woven rattan hanging lantern / round bamboo hanging lantern / green leaf patterned hanging lantern. Row3: flat horizontal pink batik table runner / orange floral batik table runner / green pandan woven table runner. Row4: office broadleaf plant brown pot / office fern white pot / office snake plant green pot. Row5: steel dome pendant light / copper bell pendant light / sage green industrial pendant light. Row6: stainless utensil organizer with spoons / copper utensil organizer with spatulas / green ceramic utensil organizer with wooden spoons. Each row objects equal visual size, consistent frontal 3/4 perspective appropriate for layered stall scenery. Single portrait sheet, 3 columns 6 rows exactly.",
+      "edit_prompt": "Edit this exact sprite sheet: REMOVE ALL colored background and glow between the objects. True transparent alpha background, no color wash, no shadows outside objects. Preserve all 18 objects, same grid 3 columns by 6 rows, same dimensions and positions, do not move resize or redraw objects. Isolated cutout sprites only. Each object must be separated from every other cell by transparent empty pixels. Keep lantern internal glow within lantern body only.",
+      "normalized_row_boundaries": [0, 0.188, 0.372, 0.474, 0.657, 0.812, 1]
+    },
+    {
+      "file": "task_panel.png",
+      "prompt": "Production mobile game UI asset: ONE EMPTY cream parchment panel with polished warm golden wood rounded border, subtle inset fine gold line, tasteful small pandan leaf sprigs confined to bottom left and bottom right corners, Malaysian kuih stall casual game polished hand painted style. Landscape panel aspect ratio 3:2. Large completely blank ivory center for dynamic task list. No text, no buttons, no icons, no object illustrations, no title tabs, no scene background. Outer background fully transparent alpha. Border stays narrow about 3 percent of width, corners rounded, elegant clean readable UX, premium cozy casual renovation game."
+    }
+  ]
+}

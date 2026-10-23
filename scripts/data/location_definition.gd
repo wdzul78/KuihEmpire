@@ -30,10 +30,10 @@ func _init(key: StringName, label: String, start: int, mood: StringName, release
 	preset = mood
 	playable = released
 	for state in range(1,4):
-		upgrade_requirements.append({"stage": stage_start + state*10 - 1, "stars": 0, "coins": [400,750,1100][state-1]})
+		upgrade_requirements.append({"stage": stage_start + state*10 - 1, "stars": StallDefinition.find(id).state(state).star_cost, "coins": 0})
 
 func requirement(level: int) -> Dictionary:
-	# Milestones unlock purchases. Stars are progress, never consumed.
+	# Milestones unlock purchases; the star wallet pays for renovations.
 	return upgrade_requirements[clampi(level,1,3)-1].duplicate()
 
 func state_name(level: int) -> String:
@@ -41,6 +41,8 @@ func state_name(level: int) -> String:
 
 static func all() -> Array[LocationDefinition]:
 	var family := LocationDefinition.new(&"family_stall", "Family Stall", 1, &"stall_dawn", true)
+	family.decor_slots.append("COUNTER_FOOD")
+	family.decor_slots.append_array(["SIGN_BOARD", "COUNTER_FRONT"])
 	family.state_names = ["Old Family Stall", "Revived Stall", "Polished Stall", "New Family Stall"]
 	family.backgrounds = ["res://assets/backgrounds/gerai_mvp.png"]
 	var bazaar := LocationDefinition.new(&"bazaar_ramadan", "Ramadan Bazaar", 181, &"ramadan")
@@ -51,7 +53,8 @@ static func all() -> Array[LocationDefinition]:
 		LocationDefinition.new(&"morning_market", "Morning Market", 61, &"kuching_market"),
 		LocationDefinition.new(&"town", "Town", 91, &"weekend_market"),
 		LocationDefinition.new(&"city", "City", 121, &"city"),
-		LocationDefinition.new(&"festival", "Kuih Festival", 151, &"festival"), bazaar]
+		LocationDefinition.new(&"festival", "Kuih Festival", 151, &"festival"), bazaar,
+		LocationDefinition.new(&"government_canteen", "Government Office Canteen", 211, &"government")]
 
 static func find(key: StringName) -> LocationDefinition:
 	for location in all():

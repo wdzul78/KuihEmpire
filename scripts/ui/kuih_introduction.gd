@@ -34,28 +34,45 @@ func _show_items(items: Array[KuihData], index: int, done: Callable) -> void:
 		done.call()
 		return
 	var item := items[index]
+	ProgressionManager.unlock_recipe(item.recipe_id)
 	var veil := ColorRect.new()
 	veil.name = "ModalDimmer"
 	veil.color = Color(0,0,0,.65)
 	JourneyArt.place(self,veil,Rect2(0,0,1,1))
 	var card := Panel.new()
 	card.name = "KuihIntroductionCard"
-	card.add_theme_stylebox_override("panel",UIKit.cream_box())
-	JourneyArt.place(self,card,Rect2(.08,.22,.84,.54))
-	JourneyArt.label(self,JourneyArt.localized("Kenali kuih kita", "Meet our kuih"),Rect2(.13,.25,.74,.05),38)
+	var frame := StyleBoxTexture.new()
+	frame.texture = load("res://assets/ui/introduction_v2/window.png")
+	card.add_theme_stylebox_override("panel", frame)
+	JourneyArt.place(self,card,Rect2(.035,.14,.93,.74))
+	var heading := JourneyArt.label(card,JourneyArt.localized("Kenali kuih kita", "Meet our kuih"),Rect2(.16,.055,.68,.085),56,Color("fffbe9"))
+	heading.add_theme_color_override("font_outline_color",Color("54250f"))
+	heading.add_theme_constant_override("outline_size",3)
 	var icon := KuihIcon.new()
 	icon.name = "KuihPortrait"
 	icon.kuih = item
-	JourneyArt.place(self,icon,Rect2(.34,.32,.32,.19))
-	JourneyArt.label(self,item.display_name,Rect2(.13,.53,.74,.05),40)
+	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	JourneyArt.place(card,icon,Rect2(.235,.20,.53,.30))
+	var title := JourneyArt.label(card,item.display_name,Rect2(.07,.505,.86,.09),66,Color("54250f"))
+	title.add_theme_font_override("font",UIKit.bold_font())
+	title.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	var note: Array = NOTES.get(String(item.id),[item.note,item.note])
-	var caption := JourneyArt.label(self,JourneyArt.localized(note[0],note[1]),Rect2(.15,.59,.70,.08),28)
+	var caption := JourneyArt.label(card,JourneyArt.localized(note[0],note[1]),Rect2(.10,.605,.80,.12),44,Color("744524"))
 	caption.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	var button := GameButton.create(JourneyArt.localized("Kenal!", "Got it!"),"primary",32)
+	caption.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	JourneyArt.label(card,JourneyArt.localized("Boleh dilihat semula dalam Koleksi Kuih", "View again in Kuih Collection"),Rect2(.10,.74,.80,.07),32,Color("426728"))
+	var button := GameButton.create(JourneyArt.localized("Kenal!", "Got it!"),"primary",52)
 	button.name = "AcknowledgeKuihButton"
 	button.custom_minimum_size = Vector2.ZERO
-	JourneyArt.place(self,button,Rect2(.22,.69,.56,.055))
+	JourneyArt.place(card,button,Rect2(.17,.825,.66,.10))
+	JourneyArt.label(card,"%d / %d" % [index+1,items.size()],Rect2(.40,.165,.20,.03),28,Color("744524"))
+	card.modulate.a = 0
+	var reveal := card.create_tween()
+	reveal.tween_property(card,"modulate:a",1.0,.18)
 	button.pressed.connect(func() -> void:
+		if button.disabled:
+			return
+		button.disabled = true
 		if not String(item.id) in SaveManager.data.kuih_seen:
 			SaveManager.data.kuih_seen.append(String(item.id))
 			SaveManager.mark_dirty()

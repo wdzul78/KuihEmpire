@@ -50,6 +50,7 @@ func _start_deck() -> void:
 
 func _build() -> void:
 	_backdrop = GeraiBackdrop.new()
+	_backdrop.follow_active_stall = true
 	_backdrop.show_counter = false
 	_backdrop.simple = false
 	JourneyArt.place(self, _backdrop, Rect2(0, 0, 1, 1))
@@ -143,7 +144,7 @@ func show_page(to_index: int, animate: bool = true) -> void:
 		return
 	index = clampi(to_index, 0, pages.size() - 1)
 	var page := pages[index]
-	_backdrop.background_id = page.mood
+	_backdrop.background_id = StallDefinition.find(LocationManager.active_stall_id()).preset
 	_heading.text = page.localized_heading()
 	_body.text = page.localized_body()
 	_speaker.visible = page.illustration == null
@@ -170,10 +171,10 @@ func show_page(to_index: int, animate: bool = true) -> void:
 		dot.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		_dots.add_child(dot)
 	_counter.text = "%d / %d" % [index + 1, pages.size()]
-	_next_button.text = JourneyArt.localized("Jom Mula", "Let’s Begin") if index == pages.size() - 1 else JourneyArt.localized("Teruskan", "Continue")
+	_next_button.text = JourneyArt.localized("Jom Mula", "Letâ€™s Begin") if index == pages.size() - 1 else JourneyArt.localized("Teruskan", "Continue")
 	if index == pages.size() - 1 and SceneManager.story_next == SceneManager.JOURNEY:
 		_next_button.text = JourneyArt.localized("Kembali ke Peta", "Back to Map")
-	_previous_button.text = JourneyArt.localized("‹ Sebelum", "‹ Previous")
+	_previous_button.text = JourneyArt.localized("â€¹ Sebelum", "â€¹ Previous")
 	_previous_button.visible = index > 0
 	_skip_button.text = JourneyArt.localized("Langkau", "Skip")
 	_prev_hint.text = JourneyArt.localized("Sentuh di mana-mana untuk teruskan", "Tap anywhere to continue")

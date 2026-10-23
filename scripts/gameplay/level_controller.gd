@@ -17,6 +17,7 @@ const EXTRA_MOVES := 5
 @export var campaign_layout: PackedScene = GameUILayout.CAMPAIGN
 @export var show_slot_background := false
 @export_group("Stage")
+@export var endless_mode := false
 @export var level_id: int = 0
 @export var tutorial_index: int = 0
 
@@ -46,11 +47,14 @@ var coach: TutorialCoach
 var _target_banner: PanelContainer
 var _victory_bonus: VictoryBonus
 var _victory_serial := 0
+var _hand_origin := Vector2i(-1,-1)
+var _blocker_intros: Array[int] = []
+var _active_blocker_intro := -1
+var _blocker_intro_prepared := false
 var _target_label: Label
 
 
 func _ready() -> void:
-	AudioManager.play_music(AudioManager.GAMEPLAY_MUSIC)
 	AudioManager.set_music_ducked(false)
 	process_mode = Node.PROCESS_MODE_PAUSABLE
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -63,21 +67,31 @@ func _build() -> void:
 	_root = self
 	UIKit.apply_root_theme(_root)
 
-	is_tutorial = tutorial_index > 0 or GameManager.pending_tutorial_index > 0
+	is_tutorial = not endless_mode and (tutorial_index > 0 or GameManager.pending_tutorial_index > 0)
 	var index := tutorial_index if tutorial_index > 0 else GameManager.pending_tutorial_index
 	if is_tutorial:
 		level = TutorialLibrary.get_stage(index)
 	else:
 		level = LevelLibrary.get_level(_resolve_level_id())
 
+	if endless_mode:
+		level = LevelDefinition.new()
+		level.title = "Endless Test"
+		level.tag = "8 Ã— 8 Â· Unlimited moves"
+		level.width = 8
+		level.height = 8
+		level.kuih = KuihLibrary.starter_set()
+		level.allow_fail = false
+
 	backdrop = GeraiBackdrop.new()
 	backdrop.gameplay_mode = true
 	backdrop.name = "StallBackground"
-	backdrop.location_id = LocationDefinition.for_stage(level.id).id
+	backdrop.follow_active_stall = true
+	backdrop.location_id = LocationManager.active_stall_id()
 	backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_root.add_child(backdrop)
 	LocationManager.stall_upgraded.connect(func(id: StringName, state: int) -> void:
-		if not is_tutorial and id == backdrop.location_id:
+		if not is_tutorial and not endless_mode and id == backdrop.location_id:
 			StallUpgradeCelebration.show_upgrade.call_deferred(self, id, state)
 	)
 
@@ -89,7 +103,7 @@ func _build() -> void:
 	_root.add_child(hud)
 	# Must be after add_child: the HUD builds its children in _ready.
 	hud.set_tutorial_mode(is_tutorial)
-	hud.booster_bar.practice_mode = false
+	hud.booster_bar.practice_mode = endless_mode
 	hud.booster_bar.set_available(not is_tutorial)
 	hud.set_stage(level.id, TutorialText.text(level.title) if is_tutorial else level.title)
 	hud.set_coins(EconomyManager.coins())
@@ -111,7 +125,7 @@ func _build() -> void:
 			if coach != null:
 				if cleared.combo != &"":
 					_tutorial_combo = cleared.combo
-			if not is_tutorial and not cleared.activated.is_empty():
+			if not is_tutorial and not endless_mode and not cleared.activated.is_empty():
 				GameplayEvents.specials_used.emit(cleared.activated.size(), cleared.activated.size() >= 2)
 	)
 	board.kuih_collected.connect(_on_kuih_collected)
@@ -122,11 +136,15 @@ func _build() -> void:
 	board.blocker_progress.connect(_on_blocker_progress)
 	board.special_created.connect(_on_special_created)
 	board.special_activated.connect(func(kind: int) -> void:
+		if not endless_mode:
+			PowerupRecipes.introduce(kind)
 		if coach != null:
 			coach.notify_special_activated(kind)
 	)
 
 	_build_target_banner()
+	if endless_mode:
+		_build_endless_controls()
 
 	if is_tutorial:
 		coach = TutorialCoach.new()
@@ -138,6 +156,7 @@ func _build() -> void:
 	story = StoryPopup.new()
 	story.name = "StoryDialogue"
 	story.inline_mode = true
+	story.dialogue_anchor = hud.order_panel._bubble
 	story.highlighted_character = hud.order_panel._aina
 	story.speaker_changed.connect(func(speaker: int) -> void: hud.order_panel.set_story_speaker(speaker); hud.order_panel.set_story_clearance(story._card))
 	story.finished.connect(_on_story_finished)
@@ -182,6 +201,10 @@ func _resolve_level_id() -> int:
 
 
 func _start_level() -> void:
+	_blocker_intros.clear()
+	_active_blocker_intro = -1
+	_blocker_intro_prepared = false
+	AudioManager.start_puzzle_music()
 	_victory_serial += 1
 	if is_instance_valid(_victory_bonus):
 		_victory_bonus.cancel()
@@ -206,17 +229,25 @@ func _start_level() -> void:
 		result.visible = false
 	_hide_target_prompt()
 
-	if not is_tutorial:
+	if not is_tutorial and not endless_mode:
 		ProgressionManager.record_attempt()
 	board.build(level)
-	if not is_tutorial:
+	if not is_tutorial and not endless_mode:
 		board.apply_start_specials(GameManager.pending_start_specials)
 		GameManager.pending_start_specials.clear()
 	hud.set_moves(moves_left, move_budget)
+	if endless_mode:
+		hud._moves_label.text = "âˆž"
+		hud._moves_cap.text = "MOVES"
+		_seed_test_specials()
 	hud.booster_bar.refresh()
 	_refresh_order_ui()
+	if endless_mode:
+		hud.order_panel.hide()
+		hud._stage_title.text = "Endless\nPower-up Test"
+		hud._fit_stage_text.call_deferred()
 
-	if scene_file_path == SceneManager.LEVEL and not KuihIntroduction.unseen(level.kuih).is_empty():
+	if not endless_mode and not KuihIntroduction.unseen(level.kuih).is_empty():
 		board.enabled = false
 		if coach != null:
 			coach.set_process_input(false)
@@ -232,7 +263,34 @@ func _begin_presentation() -> void:
 	if is_tutorial:
 		_start_coach()
 	elif level.story_before != &"" and not ProgressionManager.story_seen(level.story_before):
+		if _play_blocker_intro():
+			return
 		story.play(BeatLibrary.get_beat(level.story_before))
+	elif not endless_mode:
+		_play_blocker_intro()
+
+func _play_blocker_intro() -> bool:
+	if not _blocker_intro_prepared:
+		_blocker_intro_prepared = true
+		for blocker in level.blockers:
+			if not _blocker_intros.has(blocker.kind) and not ProgressionManager.story_seen(StringName("blocker_intro_%d" % blocker.kind)):
+				_blocker_intros.append(blocker.kind)
+	if _blocker_intros.is_empty():
+		board.enabled = true
+		return false
+	_active_blocker_intro = _blocker_intros.pop_front()
+	var lines := {
+		BlockerSpec.Kind.BANANA_LEAF: ["Kuih ini ditutup daun pisang! Padankan kuih di petak sebelah untuk membuka daun.","This kuih is covered by a banana leaf! Match kuih in an adjacent tile to uncover it."],
+		BlockerSpec.Kind.FOOD_COVER: ["Ada penutup berlapis! Setiap padanan di petak sebelah membuang satu lapisan. Ulang sehingga terbuka.","This cover has layers! Each adjacent match removes one layer. Keep matching until it opens."],
+		BlockerSpec.Kind.STEAMER: ["Kuih masih dalam pengukus! Padankan kuih di petak sebelah untuk membuka penutupnya.","The kuih is in a steamer! Match kuih in an adjacent tile to open its lid."],
+		BlockerSpec.Kind.STICKY_SYRUP: ["Alamak! Sirap tertumpah ke atas kuih! Kuih ini tak boleh di-swap. Padankan kuih di petak sebelah untuk bersihkan sirap.","Oh no! Syrup spilled onto the kuih! You cannot swap this tile. Match kuih in an adjacent tile to clean the syrup."],
+		BlockerSpec.Kind.PACKAGING_BOX: ["Kotak ini perlu diisi! Kumpulkan jenis kuih dan jumlah yang ditunjukkan pada kotak untuk menyiapkannya.","This box needs filling! Collect the kuih type and quantity shown on the box to complete it."],
+		BlockerSpec.Kind.EMPTY_TRAY: ["Dulang ini masih kosong! Kumpulkan jenis kuih dan jumlah yang ditunjukkan untuk memenuhi dulang.","This tray is empty! Collect the indicated kuih type and quantity to fill it."],
+	}
+	var beat := StoryBeat.make(StringName("blocker_intro_%d" % _active_blocker_intro),StoryBeat.Speaker.AINA,[JourneyArt.localized(lines[_active_blocker_intro][0],lines[_active_blocker_intro][1])])
+	board.enabled = false
+	story.play(beat)
+	return true
 
 
 func _start_coach() -> void:
@@ -251,6 +309,11 @@ func _start_coach() -> void:
 
 func _on_story_finished() -> void:
 	hud.order_panel.set_story_speaker(-1)
+	if _active_blocker_intro >= 0:
+		ProgressionManager.mark_story_seen(StringName("blocker_intro_%d" % _active_blocker_intro))
+		_active_blocker_intro = -1
+		_begin_presentation()
+		return
 	if level != null and level.story_before != &"":
 		ProgressionManager.mark_story_seen(level.story_before)
 
@@ -299,6 +362,8 @@ func _on_swap_attempted(a: Vector2i, b: Vector2i, accepted: bool) -> void:
 
 
 func _on_special_created(kind: int) -> void:
+	if not endless_mode:
+		PowerupRecipes.introduce(kind)
 	if coach != null:
 		coach.notify_special_created(kind)
 
@@ -346,16 +411,20 @@ func _process(_delta: float) -> void:
 # --- gameplay --------------------------------------------------------------
 
 func _on_move_committed() -> void:
+	if endless_mode:
+		return
 	moves_left -= 1
-	if not is_tutorial:
+	if not is_tutorial and not endless_mode:
 		ProgressionManager.record_moves(1)
 	hud.set_moves(moves_left, move_budget)
 
 
 func _on_kuih_collected(totals: Dictionary) -> void:
+	if endless_mode:
+		return
 	if finished or totals.is_empty():
 		return
-	if not is_tutorial:
+	if not is_tutorial and not endless_mode:
 		for id in totals:
 			ProgressionManager.add_mastery(id, int(totals[id]))
 
@@ -389,7 +458,7 @@ func _serve_pending() -> void:
 		# during their serving celebration before moving on to the next order.
 		hud.order_panel.bind(orders[_served_index])
 		orders[_served_index].served = true
-		if not is_tutorial:
+		if not is_tutorial and not endless_mode:
 			GameplayEvents.order_served.emit()
 		hud.order_panel.cheer()
 		AudioManager.play(AudioManager.Sfx.SERVE, 1.0, -3.0)
@@ -406,6 +475,8 @@ func _serve_pending() -> void:
 
 
 func _on_settled() -> void:
+	if endless_mode:
+		return
 	if finished or _serving or board.busy:
 		return
 	if coach != null and _tutorial_combo != &"":
@@ -418,7 +489,7 @@ func _on_settled() -> void:
 		if not _failure_recorded:
 			HeartManager.consume_on_failure(is_tutorial)
 			_failure_recorded = true
-			if not is_tutorial:
+			if not is_tutorial and not endless_mode:
 				GameplayEvents.stage_failed.emit(level.id)
 		finished = true
 		board.enabled = false
@@ -498,13 +569,17 @@ func _win() -> void:
 			unlocks.append(level.recipe_unlock)
 		if level.id == LevelLibrary.CHAPTER_FINALE:
 			ProgressionManager.unlock_chapter(&"map")
+		if not endless_mode and level.recipe_unlock_id != &"":
+			var discovery := RecipeBookManager.discover_recipe(level.recipe_unlock_id, "stage", level.id)
+			if not discovery.get("ok", false):
+				push_warning("Recipe discovery could not be saved: %s" % discovery.get("error", "unknown"))
 
 	GameManager.pending_score = stage_result.final_score
 	GameManager.pending_stars = stars
 	GameManager.pending_coins = coins
 	GameManager.pending_moves_left = moves_left
 	GameManager.pending_unlocks = unlocks
-	if not is_tutorial:
+	if not is_tutorial and not endless_mode:
 		GameplayEvents.stage_completed.emit(level.id, stars, stage_result.final_score, _used_booster)
 	GameManager.report_result(true)
 
@@ -513,7 +588,7 @@ func _win() -> void:
 	result.tutorial_final = is_tutorial and TutorialLibrary.is_last(level.tutorial_index)
 	result.tutorial_stage = is_tutorial
 	var free_bonus := HeartManager.reward_win(level.id, is_tutorial)
-	if not is_tutorial and moves_left > 0:
+	if not is_tutorial and not endless_mode and moves_left > 0:
 		var serial := _victory_serial
 		result.show_win(level.title, stars, coins, unlocks, is_new_best, stage_result, false)
 		board.clear_hints()
@@ -535,19 +610,23 @@ func _win() -> void:
 		_victory_bonus = null
 	result.show_win(level.title, stars, coins, unlocks, is_new_best, stage_result)
 	if free_bonus > 0:
-		var celebration := UIKit.label("Free Play · %d min!" % [free_bonus / 60], 30, Palette.PINK_DARK)
+		var celebration := UIKit.label("Free Play Â· %d min!" % [free_bonus / 60], 30, Palette.PINK_DARK)
 		celebration.name = "FreePlayReward"
 		JourneyArt.place(result, celebration, Rect2(.20, .20, .60, .04))
 
-	if not is_tutorial and JourneyLibrary.milestone(level.id).is_empty() and level.story_after != &"":
+	if not is_tutorial and not endless_mode and JourneyLibrary.milestone(level.id).is_empty() and level.story_after != &"":
 		if not ProgressionManager.story_seen(level.story_after):
 			ProgressionManager.mark_story_seen(level.story_after)
 			story.play(BeatLibrary.get_beat(level.story_after))
+	if not is_tutorial and not endless_mode:
+		RecipePresentation.present_pending(self)
 
 
 # --- boosters --------------------------------------------------------------
 
 func _consume_booster(booster: int) -> bool:
+	if endless_mode:
+		return true
 	if is_tutorial:
 		return false
 	return EconomyManager.use_booster(booster)
@@ -558,29 +637,22 @@ func _on_booster_requested(booster: int) -> void:
 	if _pause_overlay != null or finished or _serving or board == null or board.busy or not board.enabled:
 		return
 	board.cancel_targeting()
+	_hand_origin = Vector2i(-1,-1)
 	_hide_target_prompt()
 	match booster:
 		EconomyManager.Booster.SHUFFLE:
 			if not _consume_booster(booster):
 				return
 			await board.booster_shuffle()
-		EconomyManager.Booster.GIFT:
-			var order := active_order()
-			var wanted: Array = []
-			if order != null:
-				for id in order.item_ids():
-					if int(order.remaining.get(id, 0)) > 0:
-						wanted.append(id)
-			if wanted.is_empty():
-				return
+		EconomyManager.Booster.ROYAL:
 			if not _consume_booster(booster):
 				return
-			await board.booster_gift(wanted)
+			await board.booster_clear(Vector2i(board.logic.width/2,board.logic.height/2), &"royal")
 		EconomyManager.Booster.EXTRA_MOVES:
 			if not _consume_booster(booster):
 				return
 			_grant_moves(EXTRA_MOVES)
-		EconomyManager.Booster.SPATULA, EconomyManager.Booster.TRAY:
+		EconomyManager.Booster.SPATULA, EconomyManager.Booster.TRAY, EconomyManager.Booster.HAND, EconomyManager.Booster.GIFT:
 			if not hud.booster_bar.practice_mode and not EconomyManager.has_booster(booster):
 				return
 			_show_target_prompt(booster)
@@ -591,7 +663,7 @@ func _on_booster_requested(booster: int) -> void:
 
 
 func _show_target_prompt(booster: int) -> void:
-	_target_label.text = TutorialText.text("Tap a kuih to scoop it out" if booster == EconomyManager.Booster.SPATULA else "Tap the middle of the 3 x 3 area")
+	_target_label.text = TutorialText.text("Pilih kuih untuk swap percuma" if booster == EconomyManager.Booster.HAND else "Pilih pusat silang 3 baris dan 3 lajur" if booster == EconomyManager.Booster.GIFT else "Tap a kuih to scoop it out" if booster == EconomyManager.Booster.SPATULA else "Tap the middle of the 3 x 3 area")
 	_target_banner.visible = true
 	_target_banner.pivot_offset = Vector2(410, 42)
 	_target_banner.scale = Vector2(0.8, 0.8)
@@ -608,11 +680,31 @@ func _on_booster_targeted(booster: int, pos: Vector2i) -> void:
 		return
 	if _pause_overlay != null or finished or _serving or board == null or board.busy or not board.enabled:
 		return
-	if booster not in [EconomyManager.Booster.SPATULA, EconomyManager.Booster.TRAY]:
+	if booster not in [EconomyManager.Booster.SPATULA, EconomyManager.Booster.TRAY, EconomyManager.Booster.HAND, EconomyManager.Booster.GIFT]:
 		return
 	if not board.logic.is_inside(pos):
 		return
-	if booster == EconomyManager.Booster.SPATULA and not board.logic.is_playable(pos):
+	if booster == EconomyManager.Booster.SPATULA and not board.logic.get_cell(pos).has_kuish() and not board.logic.get_cell(pos).has_obstacle():
+		return
+	if booster == EconomyManager.Booster.HAND:
+		if not board.logic.is_playable(pos):
+			board.begin_targeting(booster)
+			return
+		if _hand_origin.x < 0 or absi(pos.x-_hand_origin.x)+absi(pos.y-_hand_origin.y) != 1:
+			_hand_origin = pos
+			board.begin_targeting(booster)
+			board._select(pos)
+			_target_label.text = JourneyArt.localized("Pilih kuih bersebelahan untuk swap percuma", "Choose an adjacent tile for a free swap")
+			return
+		if not _consume_booster(booster):
+			return
+		var first := _hand_origin
+		_hand_origin = Vector2i(-1,-1)
+		_hide_target_prompt()
+		board.cancel_targeting()
+		hud.booster_bar.cancel_selection()
+		await board.booster_hand(first,pos)
+		hud.booster_bar.refresh()
 		return
 	_hide_target_prompt()
 	board.cancel_targeting()
@@ -620,9 +712,9 @@ func _on_booster_targeted(booster: int, pos: Vector2i) -> void:
 	if not _consume_booster(booster):
 		return
 	if booster == EconomyManager.Booster.SPATULA:
-		if not board.logic.is_playable(pos):
-			return
-		await board.booster_scoop(pos)
+		await board.booster_clear(pos, &"sudip")
+	elif booster == EconomyManager.Booster.GIFT:
+		await board.booster_clear(pos, &"cross")
 	elif booster == EconomyManager.Booster.TRAY:
 		pos.x = clampi(pos.x, 1, board.logic.width - 2)
 		pos.y = clampi(pos.y, 1, board.logic.height - 2)
@@ -631,6 +723,8 @@ func _on_booster_targeted(booster: int, pos: Vector2i) -> void:
 
 
 func _grant_moves(amount: int) -> void:
+	if endless_mode:
+		return
 	moves_left += amount
 	hud.set_moves(moves_left, move_budget)
 	hud.pivot_offset = hud.size * 0.5
@@ -663,11 +757,12 @@ func _open_pause_menu() -> void:
 	AudioManager.play(AudioManager.Sfx.TAP)
 	var overlay := PauseOverlay.new()
 	_pause_overlay = overlay
-	overlay.stage_title = "%s · %s" % [level.title, JourneyArt.localized("Tutorial", "Tutorial") if is_tutorial else level.tag]
+	overlay.stage_title = "%s Â· %s" % [level.title, JourneyArt.localized("Tutorial", "Tutorial") if is_tutorial else level.tag]
 	overlay.tutorial = is_tutorial
 	overlay.restart_available = not (board.busy or _serving or finished)
 	overlay.extra_count = EconomyManager.booster_count(EconomyManager.Booster.EXTRA_MOVES)
-	overlay.extra_available = overlay.restart_available and EconomyManager.has_booster(EconomyManager.Booster.EXTRA_MOVES)
+	overlay.extra_coin_purchase = not endless_mode and overlay.extra_count == 0
+	overlay.extra_available = overlay.restart_available and (endless_mode or overlay.extra_count > 0 or EconomyManager.can_afford(EconomyManager.EXTRA_MOVES_COST))
 	overlay.resume_pressed.connect(func() -> void:
 		AudioManager.play(AudioManager.Sfx.TAP)
 		_resume_level()
@@ -678,19 +773,41 @@ func _open_pause_menu() -> void:
 	)
 	overlay.extra_moves_pressed.connect(func() -> void:
 		_resume_level()
-		_on_booster_requested(EconomyManager.Booster.EXTRA_MOVES)
+		if overlay.extra_coin_purchase:
+			if not finished and not _serving and board != null and not board.busy and board.enabled and EconomyManager.spend_coins(EconomyManager.EXTRA_MOVES_COST):
+				_grant_moves(EXTRA_MOVES)
+		else:
+			_on_booster_requested(EconomyManager.Booster.EXTRA_MOVES)
 	)
-	overlay.quit_pressed.connect(func() -> void:
-		AudioManager.play(AudioManager.Sfx.TAP)
-		_resume_level()
-		finished = true
-		board.enabled = false
-		GameManager.go_home()
-	)
+	overlay.quit_pressed.connect(_request_leave_stage)
 	_root.add_child(overlay)
 	get_tree().paused = true
 	SaveManager._flush()
 
+
+func _request_leave_stage() -> void:
+	if finished or _pause_overlay == null:
+		return
+	AudioManager.play(AudioManager.Sfx.TAP)
+	var message := JourneyArt.localized("Keluar akan menolak 1 hati. Kembali ke gerai?", "Leaving costs 1 heart. Return to the stall?")
+	if is_tutorial or endless_mode:
+		message = JourneyArt.localized("Kembali ke gerai?", "Return to the stall?")
+	elif HeartManager.is_free_play_active():
+		message = JourneyArt.localized("Keluar akan menamatkan mod hati tanpa had dan baki masanya, serta menolak 1 hati. Kembali ke gerai?", "Leaving ends unlimited hearts and its remaining time, and costs 1 heart. Return to the stall?")
+	_pause_overlay.leave_costs_heart = not is_tutorial and not endless_mode
+	_pause_overlay.confirm_leave(message, _confirm_leave_stage)
+
+func _confirm_leave_stage() -> void:
+	if finished:
+		return
+	finished = true
+	var hearts_before := HeartManager.current()
+	HeartManager.consume_on_abandon(is_tutorial or endless_mode)
+	SaveManager._flush()
+	await _pause_overlay.play_heart_loss(hearts_before,HeartManager.current())
+	_resume_level()
+	board.enabled = false
+	GameManager.go_home()
 
 func _resume_level() -> void:
 	if _pause_overlay == null:
@@ -725,6 +842,9 @@ func _pause_after_interruption() -> void:
 
 
 func _on_restart() -> void:
+	if endless_mode and not board.busy and _pause_overlay == null:
+		_start_level()
+		return
 	if _pause_overlay != null or finished or _serving or board.busy:
 		return
 	AudioManager.play(AudioManager.Sfx.TAP)
@@ -735,6 +855,13 @@ func _on_restart() -> void:
 
 
 func _on_result_continue() -> void:
+	if result != null and result.is_win and not is_tutorial and not endless_mode:
+		if RecipePresentation.present_pending(self, _continue_after_recipe):
+			return
+	_continue_after_recipe()
+
+
+func _continue_after_recipe() -> void:
 	if result == null:
 		return
 	if not result.is_win:
@@ -802,3 +929,51 @@ func _unhandled_input(event: InputEvent) -> void:
 		_on_restart()
 	elif event.is_action_pressed("show_hint"):
 		_on_hint()
+
+
+const TEST_SPECIALS := [BoardCell.Special.TAPAU, BoardCell.Special.TAPAU_VERTICAL, BoardCell.Special.DULANG, BoardCell.Special.ORDER, BoardCell.Special.HANTAR]
+
+func _seed_test_specials() -> void:
+	for entry in [[Vector2i(2,3),BoardCell.Special.ORDER],[Vector2i(3,3),BoardCell.Special.ORDER],[Vector2i(5,3),BoardCell.Special.DULANG],[Vector2i(6,3),BoardCell.Special.DULANG],[Vector2i(2,5),BoardCell.Special.TAPAU],[Vector2i(3,5),BoardCell.Special.TAPAU_VERTICAL],[Vector2i(5,5),BoardCell.Special.HANTAR]]:
+		var cell := board.logic.get_cell(entry[0])
+		cell.special = entry[1]
+		cell.order_kuish = &"onde_onde"
+	board._refresh_tiles()
+
+func _build_endless_controls() -> void:
+	hud.order_panel.hide()
+	var row := HBoxContainer.new()
+	row.name = "TestPowerControls"
+	row.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
+	row.anchor_left = .08
+	row.anchor_right = .92
+	row.anchor_top = .22
+	row.anchor_bottom = .265
+	add_child(row)
+	var choice := OptionButton.new()
+	choice.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	for caption in ["Horizontal", "Vertical", "Badak Berendam", "Kek Lapis Sarawak", "Drone"]:
+		choice.add_item(caption)
+	choice.add_theme_font_size_override("font_size",24)
+	row.add_child(choice)
+	var add := Button.new()
+	add.text = "+ Power-up"
+	add.add_theme_font_size_override("font_size",24)
+	row.add_child(add)
+	add.pressed.connect(func():
+		if board.busy or not board.enabled or _pause_overlay != null:
+			return
+		var candidates: Array[Vector2i] = []
+		for y in 8:
+			for x in 8:
+				var pos := Vector2i(x,y)
+				if board.logic.get_cell(pos).special == BoardCell.Special.NONE:
+					candidates.append(pos)
+		if candidates.is_empty():
+			return
+		var pos := candidates.pick_random() as Vector2i
+		var cell := board.logic.get_cell(pos)
+		cell.special = TEST_SPECIALS[choice.selected]
+		cell.order_kuish = &"onde_onde"
+		board._sync_tile(pos)
+	)

@@ -10,6 +10,30 @@ func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	UIKit.apply_root_theme(self)
 	_build()
+	_apply_readable_text(self)
+
+
+func _apply_readable_text(parent: Node) -> void:
+	for child in parent.get_children():
+		if child is Label:
+			child.material = null
+			child.add_theme_font_override("font", UIKit.counter_font())
+			child.add_theme_font_size_override("font_size", maxi(30, child.get_theme_font_size("font_size")))
+		elif child is Button and not child is SettingsToggle:
+			child.add_theme_font_override("font", UIKit.counter_font())
+			child.add_theme_font_size_override("font_size", 44)
+			child.add_theme_color_override("font_color", Color("fffdf2"))
+			child.add_theme_color_override("font_hover_color", Color.WHITE)
+			child.add_theme_color_override("font_pressed_color", Color("fffdf2"))
+			child.add_theme_color_override("font_outline_color", Color("54250f"))
+			child.add_theme_constant_override("outline_size", 3)
+			if child is OptionButton:
+				child.get_popup().add_theme_font_override("font", UIKit.counter_font())
+				child.get_popup().add_theme_font_size_override("font_size", 40)
+		elif child is LineEdit:
+			child.add_theme_font_override("font", UIKit.counter_font())
+			child.add_theme_font_size_override("font_size", 42)
+		_apply_readable_text(child)
 
 
 func _build() -> void:
@@ -91,7 +115,9 @@ func _build() -> void:
 	)
 	stack.add_child(language)
 	stack.add_child(_toggle_row(MenuText.text("music"), "music"))
+	stack.add_child(_volume_row("BGM", "music_volume"))
 	stack.add_child(_toggle_row(MenuText.text("sfx"), "sfx"))
+	stack.add_child(_volume_row("SFX", "sfx_volume"))
 	stack.add_child(_toggle_row(MenuText.text("haptics"), "haptics"))
 	stack.add_child(_toggle_row(MenuText.text("hints"), "show_hints"))
 
@@ -114,6 +140,39 @@ func _build() -> void:
 
 	_toast = UIKit.label("", 26, Palette.PINK_DARK)
 	column.add_child(_toast)
+
+
+func _volume_row(caption: String, key: String) -> Control:
+	var column := UIKit.vbox(8)
+	var heading := UIKit.hbox(16)
+	column.add_child(heading)
+	var label := UIKit.label(JourneyArt.localized("Volume ", "Volume ") + caption, 34, Palette.WOOD_DARK)
+	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	heading.add_child(label)
+	var percentage := UIKit.label("", 36, Palette.WOOD_DARK)
+	percentage.custom_minimum_size.x = 100
+	heading.add_child(percentage)
+	var slider := HSlider.new()
+	slider.name = "Volume_" + key
+	slider.accessibility_name = "Volume " + caption
+	slider.min_value = 0
+	slider.max_value = 100
+	slider.step = 1
+	slider.custom_minimum_size = Vector2(0, 72)
+	slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	slider.add_theme_stylebox_override("slider", UIKit.wood_box(Palette.CREAM_DEEP, Palette.WOOD, 12))
+	slider.add_theme_stylebox_override("grabber_area", UIKit.wood_box(Palette.LEAF, Palette.WOOD_DARK, 12))
+	slider.add_theme_stylebox_override("grabber_area_highlight", UIKit.wood_box(Palette.LEAF, Palette.WOOD_DARK, 12))
+	slider.value = clampf(float(GameManager.setting(key, 0.8 if key == "music_volume" else 1.0)), 0.0, 1.0) * 100.0
+	percentage.text = "%d%%" % int(slider.value)
+	slider.value_changed.connect(func(value: float) -> void:
+		percentage.text = "%d%%" % int(value)
+		GameManager.set_setting(key, value / 100.0)
+	)
+	if key == "sfx_volume":
+		slider.drag_ended.connect(func(_changed: bool) -> void: AudioManager.play(AudioManager.Sfx.TAP))
+	column.add_child(slider)
+	return column
 
 
 func _toggle_row(text: String, key: String) -> Control:
@@ -201,6 +260,7 @@ func _show_avatars() -> void:
 	var close := GameButton.create(MenuText.text("close"), "back")
 	close.pressed.connect(func() -> void: overlay.queue_free())
 	stack.add_child(close)
+	_apply_readable_text(overlay)
 
 
 func _paint_toggle(button: Button, value: bool) -> void:
@@ -253,6 +313,7 @@ func _on_reset() -> void:
 	buttons.add_child(confirm)
 	confirm.pressed.connect(_confirm_reset, CONNECT_DEFERRED)
 	cancel.grab_focus()
+	_apply_readable_text(overlay)
 
 
 func _confirm_reset() -> void:
@@ -277,3 +338,4 @@ func _rebuild() -> void:
 		remove_child(child)
 		child.queue_free()
 	_build()
+	_apply_readable_text(self)

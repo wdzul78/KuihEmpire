@@ -150,6 +150,17 @@ func _current() -> TutorialStepData:
 
 func _show_step() -> void:
 	var step := _current()
+	match step.gate:
+		TutorialStepData.Gate.CREATED_TAPAU:
+			PowerupRecipes.introduce(BoardCell.Special.TAPAU)
+		TutorialStepData.Gate.CREATED_VERTICAL:
+			PowerupRecipes.introduce(BoardCell.Special.TAPAU_VERTICAL)
+		TutorialStepData.Gate.CREATED_DULANG:
+			PowerupRecipes.introduce(BoardCell.Special.DULANG)
+		TutorialStepData.Gate.CREATED_HANTAR:
+			PowerupRecipes.introduce(BoardCell.Special.HANTAR)
+		TutorialStepData.Gate.ACTIVATED_SPECIAL:
+			PowerupRecipes.introduce(step.gate_value)
 	_progress_blockers = 0
 	_progress_collected = 0
 	_hint_timer = 0.0
@@ -203,7 +214,7 @@ func show_nudge() -> void:
 		TutorialStepData.Gate.CREATED_TAPAU:
 			_nudge.text = "Match four with a sideways swipe to make a horizontal Tapau."
 		TutorialStepData.Gate.CREATED_VERTICAL:
-			_nudge.text = "Match four with an up or down swipe to make a vertical Tapau."
+			_nudge.text = "Match four with an up or down swipe to make a Kuih Selorot."
 		TutorialStepData.Gate.ACTIVATED_CROSS:
 			_nudge.text = "Swap the two highlighted packages together."
 		TutorialStepData.Gate.CREATED_HANTAR:

@@ -97,7 +97,10 @@ func play_next() -> void:
 	elif target.has("welcome"):
 		SceneManager.goto(SceneManager.WELCOME)
 	else:
-		play_level(int(target["level"]))
+		pending_level_id = int(target["level"])
+		pending_start_specials.clear()
+		pending_tutorial_index = 0
+		start_selected_stage()
 
 
 func go_home() -> void:

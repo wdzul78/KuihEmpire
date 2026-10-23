@@ -52,19 +52,19 @@ func _build() -> void:
 			preview.name = "StarterStallPreview"
 			preview.clip_contents = true
 			JourneyArt.place(self,preview,Rect2(.30,.33,.40,.24))
-			_label("Gunakan coins untuk membaiki gerai lama. Upgrade besar dibuka selepas Stage 10, 20 dan 30.","Use coins to restore the old stall. Bigger upgrades unlock after Stages 10, 20 and 30.",Rect2(.13,.59,.74,.10),28)
+			_label("Gunakan bintang untuk membaiki gerai lama. Upgrade besar dibuka selepas Stage 10, 20 dan 30.","Use stars to restore the old stall. Bigger upgrades unlock after Stages 10, 20 and 30.",Rect2(.13,.59,.74,.10),28)
 			if OnboardingProgress.restored():
 				_button("Gerai dah cantik! Seterusnya","Stall restored! Next",Rect2(.15,.72,.7,.06),_next_page)
 			else:
-				var restore := _button("Baiki gerai • 300 coins","Restore stall • 300 coins",Rect2(.15,.71,.7,.06),func() -> void:
+				var restore := _button("Baiki gerai • 1 star","Restore stall • 1 star",Rect2(.15,.71,.7,.06),func() -> void:
 					if OnboardingProgress.restore_stall():
 						_build()
 				)
-				restore.disabled = not EconomyManager.can_afford(OnboardingProgress.RESTORE_COST)
+				restore.disabled = not EconomyManager.can_afford_stars(OnboardingProgress.RESTORE_COST)
 				_button("Nanti dahulu","Maybe later",Rect2(.23,.78,.54,.045),_next_page,"secondary")
 		2:
 			_label("Hias ikut citarasa anda","Make it your own",Rect2(.1,.18,.8,.07),40)
-			_label("Bunga, lampu dan kain batik boleh dibeli dengan coins di Shop → Decor. Beli, pakai atau tukar aksesori bila-bila masa.","Buy flowers, lamps and batik cloth with coins in Shop → Decor. Buy, equip or change accessories anytime.",Rect2(.14,.30,.72,.16),30)
+			_label("Bunga, lampu dan kain batik boleh dibeli dengan bintang di Shop → Decor. Beli, pakai atau tukar aksesori bila-bila masa.","Buy flowers, lamps and batik cloth with stars in Shop → Decor. Buy, equip or change accessories anytime.",Rect2(.14,.30,.72,.16),30)
 			var flower := Control.new()
 			JourneyArt.place(self,flower,Rect2(.65,.49,.21,.15))
 			flower.draw.connect(func() -> void:

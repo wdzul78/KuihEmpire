@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://tools/victory_redesign_preview.gd" id="1"]
+
+[node name="VictoryRedesignPreview" type="Node"]
+script = ExtResource("1")

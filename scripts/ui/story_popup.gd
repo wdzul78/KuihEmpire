@@ -29,6 +29,8 @@ const SPEAKER_CAST := {
 
 var inline_mode: bool = false
 var highlighted_character: Control
+var dialogue_anchor: Control
+var _stack: Control
 var customer_name: String = "Customer"
 
 var _card: PanelContainer
@@ -46,12 +48,14 @@ func _ready() -> void:
 	# Stays hidden until a beat is actually played.
 	visible = false
 	UIKit.apply_root_theme(self)
+	z_index = 90 if inline_mode else 0
 	_build()
 	gui_input.connect(_on_input)
 
 
 func _build() -> void:
 	var stack := UIKit.vbox(8)
+	_stack = stack
 	stack.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
 	stack.offset_left = 40
 	stack.offset_right = -40
@@ -115,6 +119,13 @@ func _build() -> void:
 		spotlight.characters.append(highlighted_character)
 	add_child(spotlight)
 	_card.gui_input.connect(_on_input)
+
+func _process(_delta: float) -> void:
+	if inline_mode and visible and is_instance_valid(dialogue_anchor) and is_instance_valid(_stack):
+		# Follow the current HUD dialogue slot, rather than pre-redesign anchors.
+		_stack.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT)
+		_stack.position = get_global_transform().affine_inverse() * dialogue_anchor.global_position
+		_stack.size = dialogue_anchor.size
 
 
 func play(beat: StoryBeat) -> void:
