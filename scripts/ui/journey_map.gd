@@ -394,6 +394,8 @@ func _show_stop(entry: Dictionary) -> void:
   return
  var overlay := Control.new()
  overlay.name = "StopPopup"
+ overlay.z_index = 100
+ overlay.mouse_filter = Control.MOUSE_FILTER_STOP
  overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
  add_child(overlay)
  var dim := ColorRect.new()
@@ -404,17 +406,21 @@ func _show_stop(entry: Dictionary) -> void:
  card.add_theme_stylebox_override("panel", UIKit.cream_box())
  card.anchor_left = .08
  card.anchor_right = .92
- card.anchor_top = .18
- card.anchor_bottom = .82
+ card.anchor_top = .12
+ card.anchor_bottom = .88
  overlay.add_child(card)
- var stack := UIKit.vbox(18)
- card.add_child(stack)
- stack.add_child(UIKit.title(String(entry["place"]), 38))
+ var margin := UIKit.margin(28)
+ card.add_child(margin)
+ var stack := UIKit.vbox(22)
+ margin.add_child(stack)
+ var titles := [JourneyArt.localized("Gerai Keluarga · Mula Bangkit","Family Stall · A New Beginning"),JourneyArt.localized("Gerai Keluarga · Kemas & Cantikkan","Family Stall · A Fresh Look"),JourneyArt.localized("Gerai Keluarga · Kembangkan Bisnes","Family Stall · Growing Together")]
+ var chapter := clampi((int(entry["id"])-1)/10,0,2)
+ stack.add_child(UIKit.wrap_label(titles[chapter],40,Palette.WOOD_DARK))
  var progress := stop_progress(entry)
  stack.add_child(UIKit.label(MenuText.text("stop_progress") % [progress["cleared"], progress["total"], progress["stars"], progress["total"] * 3], 26, Palette.WOOD_DARK))
  var next := clampi(ProgressionManager.current_level(), progress["first"], progress["last"])
  var caption := MenuText.text("play") if ProgressionManager.needs_tutorial() else "%s · %s %d" % [MenuText.text("play"), MenuText.text("stage"), next]
- var play := UIKit.button(caption, 30, Palette.LEAF)
+ var play := GameButton.create(caption,"primary",40)
  play.pressed.connect(func() -> void:
   if ProgressionManager.needs_tutorial():
    GameManager.play_next()
@@ -424,6 +430,9 @@ func _show_stop(entry: Dictionary) -> void:
  stack.add_child(play)
  stack.add_child(UIKit.label(MenuText.text("memories"), 30, Palette.WOOD_DARK))
  var scroll := ScrollContainer.new()
+ scroll.name = "MemoriesScroll"
+ scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+ scroll.custom_minimum_size.y = 160
  scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
  stack.add_child(scroll)
  var list := UIKit.vbox(16)
@@ -433,12 +442,15 @@ func _show_stop(entry: Dictionary) -> void:
  if memories.is_empty():
   list.add_child(UIKit.wrap_label(MenuText.text("no_memories"), 26))
  for memory in memories:
-  var button := UIKit.button(String(memory["label"]), 26, Palette.CREAM_DEEP)
+  var button := UIKit.button(String(memory["label"]), 32, Palette.CREAM_DEEP)
+  button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+  button.custom_minimum_size.y = 100
   button.add_theme_color_override("font_color", Palette.WOOD_DARK)
   button.add_theme_color_override("font_hover_color", Palette.WOOD_DARK)
   button.pressed.connect(func() -> void: _replay_memory(memory))
   list.add_child(button)
  var close := GameButton.create(MenuText.text("close"), "back")
+ close.name = "CloseMemoriesButton"
  close.pressed.connect(overlay.queue_free)
  stack.add_child(close)
 

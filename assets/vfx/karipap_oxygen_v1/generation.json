@@ -1,0 +1,16 @@
+{
+  "tool": "built-in image_gen",
+  "sprite_sheet": {
+    "file": "burst_sheet.png",
+    "columns": 4,
+    "rows": 2,
+    "frames": 8,
+    "prompt": "Golden cartoon karipap inflates, cracks into empty hollow halves and releases white cyan wind; eight equal transparent frames, no filling."
+  },
+  "title": {
+    "file": "title.png",
+    "text": "Karipap O²!",
+    "prompt": "Glossy golden rounded Karipap lettering, icy cyan O with raised superscript 2, transparent background and wind accents."
+  },
+  "behavior": "Horizontal + vertical combo; one row and one column. Ketupat Raya booster unchanged."
+}

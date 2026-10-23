@@ -212,15 +212,15 @@ func show_nudge() -> void:
 		TutorialStepData.Gate.SWAP_HORIZONTAL:
 			_nudge.text = "Try sliding one kuih left or right."
 		TutorialStepData.Gate.CREATED_TAPAU:
-			_nudge.text = "Match four with a sideways swipe to make a horizontal Tapau."
+			_nudge.text = "Match four with a sideways swipe to make a Pulut Panggang."
 		TutorialStepData.Gate.CREATED_VERTICAL:
 			_nudge.text = "Match four with an up or down swipe to make a Kuih Selorot."
 		TutorialStepData.Gate.ACTIVATED_CROSS:
-			_nudge.text = "Swap the two highlighted packages together."
+			_nudge.text = "Swap the highlighted Pulut Panggang and Kuih Selorot together."
 		TutorialStepData.Gate.CREATED_HANTAR:
-			_nudge.text = "Make a square of four matching kuih to create Pesanan Hantar."
+			_nudge.text = "Make a square of four matching kuih to create Kuih Sepit."
 		TutorialStepData.Gate.CREATED_DULANG:
-			_nudge.text = "An L or a T shape makes a Dulang."
+			_nudge.text = "An L or a T shape makes a Badak Berendam."
 		TutorialStepData.Gate.BLOCKER_OPENED:
 			_nudge.text = "Match right beside the cover to lift it."
 		TutorialStepData.Gate.COLLECTED:

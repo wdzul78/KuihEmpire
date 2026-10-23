@@ -15,6 +15,9 @@ const SELOROT_TRAVEL := .38
 const SELOROT_LIFE := .76
 const KETUPAT_ART = preload("res://assets/vfx/ketupat_raya_v1/ketupat.png")
 const KETUPAT_SEQUENCE = preload("res://assets/vfx/ketupat_raya_v2/unwrap_sheet.png")
+const KARIPAP_SEQUENCE = preload("res://assets/vfx/karipap_oxygen_v1/burst_sheet.png")
+const KARIPAP_HOLD := .48
+const KARIPAP_RELEASE := .58
 const KETUPAT_TRAVEL := .16
 const KETUPAT_RAYA_HOLD := 2.20
 const KETUPAT_COMBO_HOLD := .85
@@ -146,7 +149,7 @@ func _ready() -> void:
 func reset() -> void:
 	begin_order_chain()
 	for child in get_children():
-		if child is SepitFlight or child.has_meta("sepit_gust") or child.has_meta("ketupat_effect") or child.has_meta("pisang_effect"):
+		if child.has_meta("karipap_effect") or child is SepitFlight or child.has_meta("sepit_gust") or child.has_meta("ketupat_effect") or child.has_meta("pisang_effect"):
 			child.queue_free()
 	particles.clear()
 	effects.clear()
@@ -327,6 +330,7 @@ func pisang_crispy(at: Vector2, cell: float) -> void:
 	graphic.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	graphic.set_meta("pisang_effect",effects.back())
 	add_child(graphic)
+	_update_karipap_foregrounds()
 	_update_pisang_foregrounds()
 
 func _update_pisang_foregrounds() -> void:
@@ -543,6 +547,65 @@ func _draw_column_sweep(e: Dictionary, crispy: bool) -> void:
 			draw_polyline(ribbon,Color(1,.88,.58,alpha),cell*.11,true)
 			draw_polyline(ribbon,Color(1,.98,.80,alpha),cell*.025,true)
 
+func karipap_appear(at: Vector2, cell: float) -> void:
+	_effect("karipap",at,Vector2.ZERO,Color("b9f8ff"),cell,KARIPAP_HOLD+KARIPAP_RELEASE)
+	var graphic := TextureRect.new()
+	graphic.name = "KaripapForeground"
+	graphic.z_index = 70
+	graphic.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	graphic.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	graphic.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	graphic.set_meta("karipap_effect",effects.back())
+	add_child(graphic)
+	_update_karipap_foregrounds()
+
+func _update_karipap_foregrounds() -> void:
+	for child in get_children():
+		if not child.has_meta("karipap_effect"):
+			continue
+		var e: Dictionary = child.get_meta("karipap_effect")
+		if not effects.has(e):
+			child.queue_free()
+			continue
+		var frame := 0 if e.age < .16 else 1
+		if e.age >= KARIPAP_HOLD:
+			frame = clampi(2+int((e.age-KARIPAP_HOLD)/KARIPAP_RELEASE*6),2,7)
+		var slot := KARIPAP_SEQUENCE.get_size()/Vector2(4,2)
+		var atlas := AtlasTexture.new()
+		atlas.atlas = KARIPAP_SEQUENCE
+		atlas.region = Rect2(Vector2(frame%4,frame/4)*slot,slot)
+		atlas.filter_clip = true
+		child.texture = atlas
+		var edge: float = e.width*1.85*lerpf(.65,1.0,smoothstep(0,.12,e.age))
+		child.size = Vector2.ONE*edge
+		child.pivot_offset = child.size*.5
+		child.position = e.a-child.size*.5
+		child.rotation = sin(e.age*64)*.07 if e.age < KARIPAP_HOLD else 0.0
+		child.modulate.a = 1.0-smoothstep(KARIPAP_HOLD+.42,KARIPAP_HOLD+KARIPAP_RELEASE,e.age)
+
+func karipap_wind(at: Vector2, affected: PackedVector2Array, cell: float) -> void:
+	_effect("karipap_wind",at,Vector2.ZERO,Color("bcfaff"),cell,KARIPAP_RELEASE)
+	effects.back()["points"] = affected
+
+func _draw_karipap_wind(e: Dictionary) -> void:
+	var progress := clampf(e.age/.18,0,1)
+	var fade := 1.0-smoothstep(.22,KARIPAP_RELEASE,e.age)
+	for direction in [Vector2.LEFT,Vector2.RIGHT,Vector2.UP,Vector2.DOWN]:
+		var reach: float = e.width*.5
+		for point in e.points:
+			var offset: Vector2 = point-e.a
+			if offset.dot(direction) > 0 and absf(offset.cross(direction)) < e.width*.15:
+				reach = maxf(reach,offset.length()+e.width*.5)
+		var tip: Vector2 = e.a+direction*reach*progress
+		var normal: Vector2 = direction.orthogonal()
+		for strand in range(-2,3):
+			var points := PackedVector2Array()
+			for step in 13:
+				var t := float(step)/12.0
+				points.append(e.a.lerp(tip,t)+normal*(strand*e.width*.11+sin(t*TAU*1.5-e.age*25+strand)*e.width*.09))
+			draw_polyline(points,Color(.24,.85,1,.28*fade),e.width*.13,true)
+			draw_polyline(points,Color(.88,1,1,.92*fade),e.width*.035,true)
+
 func cross(at: Vector2, affected: PackedVector2Array, cell: float) -> void:
 	var row := PackedVector2Array()
 	var column := PackedVector2Array()
@@ -722,6 +785,7 @@ func _process(delta: float) -> void:
 		if effects[i].age >= effects[i].life:
 			effects.remove_at(i)
 	_update_ketupat_foregrounds()
+	_update_karipap_foregrounds()
 	_update_pisang_foregrounds()
 	queue_redraw()
 	if particles.is_empty() and effects.is_empty():
@@ -758,7 +822,7 @@ func _draw_tapau_lane(effect: Dictionary, t: float) -> void:
 	var flash := .40+.60*pow(sin(effect.age*PI*9),2)
 	var fade := (1-smoothstep(.72,1,t))*flash
 	var color := Color(effect.color,fade)
-	var normal := direction.orthogonal()
+	var normal: Vector2 = direction.orthogonal()
 	var points := PackedVector2Array()
 	var segments := clampi(int(origin.distance_to(front)/(cell*.18)),6,48)
 	for index in segments+1:
@@ -817,6 +881,8 @@ func _draw() -> void:
 		var color: Color = e.color
 		color.a *= 1.0 - smoothstep(.18, 1.0, t)
 		match e.kind:
+			"karipap_wind":
+				_draw_karipap_wind(e)
 			"ketupat_appear":
 				_draw_ketupat_appear(e)
 			"ketupat_lane":

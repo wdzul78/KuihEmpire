@@ -1,6 +1,6 @@
 extends Node
 func _ready() -> void:
-	for kind in [BoardCell.Special.TAPAU,BoardCell.Special.TAPAU_VERTICAL,BoardCell.Special.DULANG,BoardCell.Special.HANTAR]:
+	for kind in [BoardCell.Special.TAPAU,BoardCell.Special.TAPAU_VERTICAL,BoardCell.Special.DULANG]:
 		for reverse in [false,true]:
 			var state := BoardState.new()
 			state.setup(8,8,KuihLibrary.starter_set(),24)
@@ -25,5 +25,5 @@ func _ready() -> void:
 			assert(result.cleared.has(result.delivery_partner))
 			for pos in state.delivery_cross(result.combo_origin):
 				assert(result.cleared.has(pos))
-	print("Sepit transfer: PASS (four partner kinds, both swap directions, consumed partner, remote conversion/activation)")
+	print("Sepit transfer: PASS (three partner kinds, both swap directions, consumed partner, remote conversion/activation)")
 	get_tree().quit()

@@ -247,11 +247,17 @@ func _start_level() -> void:
 		hud._stage_title.text = "Endless\nPower-up Test"
 		hud._fit_stage_text.call_deferred()
 
-	if not endless_mode and not KuihIntroduction.unseen(level.kuih).is_empty():
+	var preplaced_specials: Array[int] = []
+	for row in board.logic.grid:
+		for cell in row:
+			if cell.special != BoardCell.Special.NONE and cell.special not in preplaced_specials:
+				preplaced_specials.append(cell.special)
+	var introductions := KuihIntroduction.for_level(level,board.logic.delivery_enabled,preplaced_specials) if not endless_mode else level.kuih
+	if not endless_mode and not KuihIntroduction.unseen(introductions).is_empty():
 		board.enabled = false
 		if coach != null:
 			coach.set_process_input(false)
-		KuihIntroduction.present(self, level.kuih, _begin_presentation)
+		KuihIntroduction.present(self, introductions, _begin_presentation)
 	else:
 		_begin_presentation()
 

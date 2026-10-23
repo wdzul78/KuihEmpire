@@ -104,7 +104,10 @@ func goto(path: String, instant: bool = false) -> void:
 	_loading_caption.text = "Preparing…"
 	await get_tree().process_frame
 	get_tree().change_scene_to_packed(_warmed[path])
-	AudioManager.play_music(AudioManager.GAMEPLAY_MUSIC if path in [LEVEL, ENDLESS] else AudioManager.MENU_MUSIC)
+	if path == STORY and story_group == StoryLibrary.PROLOGUE:
+		AudioManager.play_music(OpeningStory.SAD_MUSIC)
+	else:
+		AudioManager.play_music(AudioManager.GAMEPLAY_MUSIC if path in [LEVEL, ENDLESS] else AudioManager.MENU_MUSIC)
 	AudioManager.set_music_ducked(false)
 	# Let the new scene build before revealing it.
 	await get_tree().process_frame

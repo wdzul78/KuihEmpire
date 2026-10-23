@@ -851,13 +851,13 @@ func _play_step(result: BoardState.ClearResult, step: int) -> void:
 		await _wait(GameVfx.KETUPAT_RELEASE)
 	elif result.combo == &"sweet_cross":
 		await _merge_cross_specials(result)
-		_special_text.show_ketupat(size,cell_size,_cell_center(result.combo_origin),false)
-		_vfx.ketupat_appear(_cell_center(result.combo_origin),cell_size,false,size)
-		await _wait(GameVfx.KETUPAT_COMBO_HOLD)
+		_special_text.show_karipap(size,cell_size,_cell_center(result.combo_origin))
+		_vfx.karipap_appear(_cell_center(result.combo_origin),cell_size)
+		await _wait(GameVfx.KARIPAP_HOLD)
 		var cross_points := PackedVector2Array()
 		for pos in result.combo_cells:
 			cross_points.append(_cell_center(pos))
-		_vfx.cross(_cell_center(result.combo_origin), cross_points, cell_size)
+		_vfx.karipap_wind(_cell_center(result.combo_origin), cross_points, cell_size)
 		AudioManager.play(AudioManager.Sfx.CROSS_BLAST, 1.0, -4)
 		for pos in result.combo_cells:
 			var vertical := pos.x == result.combo_origin.x
@@ -869,7 +869,7 @@ func _play_step(result: BoardState.ClearResult, step: int) -> void:
 			var leaf := create_tween().set_speed_scale(ANIMATION_PACE.SPEED)
 			leaf.tween_interval(maxf(.01,arrival))
 			leaf.tween_callback(_hide_special_hits.bind(result,[pos]))
-		await _wait(GameVfx.KETUPAT_RELEASE)
+		await _wait(GameVfx.KARIPAP_RELEASE)
 	elif result.combo in [&"badak_vertical", &"badak_horizontal"]:
 		await _charge_dulang([result.combo_origin],result)
 		for member in result.combo_members:
@@ -1051,7 +1051,8 @@ func _play_activation_wave(result: BoardState.ClearResult, wave: Array, depth: i
 			if drone_tile != null:
 				drone_tile.visible = false
 		for target in result.delivery_targets:
-			_vfx.delivery(_cell_center(result.combo_origin), _cell_center(target), cell_size,_delivery_payload(result,target))
+			var fan := Vector2((launched-1)*cell_size*.38,-absf(launched-1)*cell_size*.16)
+			_vfx.delivery(_cell_center(result.combo_origin)+fan, _cell_center(target), cell_size,_delivery_payload(result,target))
 			pickup_cells.append(target)
 			launched += 1
 	var dulang_centers: Array[Vector2i] = []
@@ -1203,6 +1204,8 @@ func _formation_cells(result: BoardState.ClearResult, origin: Vector2i) -> Array
 
 
 func _animate_delivery_cross(result: BoardState.ClearResult, wave: Array) -> void:
+	if result.combo == &"triple_delivery":
+		return # Double Sepit launches three pickups, without a local gust clear.
 	var pickups: Dictionary = {}
 	for activation in wave:
 		if activation.kind != BoardCell.Special.HANTAR:

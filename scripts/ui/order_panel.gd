@@ -164,6 +164,7 @@ func set_coaching(value: bool, preserve_tutorial_layout: bool = false) -> void:
 
 func set_compact(value: bool) -> void:
 	compact_mode = value
+	(_bubble as SpeechBubble).tail_on_top = value
 	_portrait.framing = 0 if value else 1
 	_aina.framing = 0 if value else 1
 	_portrait.compact_portrait = value

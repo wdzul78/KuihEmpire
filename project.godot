@@ -16,7 +16,7 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 
 config/name="Kuih Empire"
 config/description="A cozy Malaysian food puzzle adventure where a small family stall grows into a beloved kuih business."
-config/version="0.1.3"
+config/version="0.1.4"
 run/main_scene="res://scenes/boot/boot.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 boot_splash/bg_color=Color(0.98, 0.9, 0.78, 1)
