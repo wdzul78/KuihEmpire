@@ -43,7 +43,7 @@ func _ready() -> void:
 func _build() -> void:
 	_locked_material = ShaderMaterial.new()
 	_locked_material.shader = preload("res://scripts/art/shaders/locked_booster.gdshader")
-	var row := UIKit.hbox(18)
+	var row := UIKit.hbox(12)
 	row.name = "SpecialItemsRow"
 	row.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -81,10 +81,10 @@ func _build() -> void:
 			art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 			art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 			art.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-			art.offset_left = 12
-			art.offset_top = 8
-			art.offset_right = -12
-			art.offset_bottom = -8
+			art.offset_left = 6
+			art.offset_top = 5
+			art.offset_right = -6
+			art.offset_bottom = -5
 			art.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			button.add_child(art)
 			var lock := BoosterLockIcon.new()
@@ -121,10 +121,11 @@ func _build() -> void:
 		row.add_child(holder)
 		_buttons[booster] = button
 	refresh()
+	_recenter.call_deferred()
 
 
 func _recenter() -> void:
-	var side := clampf(minf(size.y,(size.x-18*(BUTTONS.size()-1))/float(BUTTONS.size())),56,136)
+	var side := clampf(minf(size.y,(size.x-12*(BUTTONS.size()-1))/float(BUTTONS.size())),56,156)
 	for button in _buttons.values():
 		var holder := button.get_parent() as Control
 		holder.custom_minimum_size = Vector2.ONE*side

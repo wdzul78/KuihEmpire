@@ -54,26 +54,13 @@ enum Sfx {
 	PUTERI_VOCAL,
 }
 
-const MENU_MUSIC := "res://audio/music/menu_v2/main_menu_01.ogg"
+const MENU_MUSIC := "res://audio/music/replacement_20261024/menu_01.ogg"
 const MENU_PLAYLIST := [MENU_MUSIC,
-	"res://audio/music/menu_v2/main_menu_02.ogg",
-	"res://audio/music/playlist/menu_01.ogg",
-	"res://audio/music/playlist/menu_02.ogg"]
+	"res://audio/music/replacement_20261024/menu_02.ogg"]
 var _menu_track_index := 0
-const GAMEPLAY_MUSIC := "res://audio/music/gameplay_v3/gameplay_01.ogg"
+const GAMEPLAY_MUSIC := "res://audio/music/replacement_20261024/gameplay_01.ogg"
 const GAMEPLAY_PLAYLIST := [GAMEPLAY_MUSIC,
-	"res://audio/music/gameplay_v3/gameplay_02.ogg", "res://audio/music/gameplay_v3/gameplay_03.ogg",
-	"res://audio/music/gameplay_v3/gameplay_04.ogg",
-	"res://audio/music/gameplay_v2/gameplay_01.ogg",
-	"res://audio/music/gameplay_v2/gameplay_02.ogg", "res://audio/music/gameplay_v2/gameplay_03.ogg",
-	"res://audio/music/gameplay_v2/gameplay_04.ogg", "res://audio/music/gameplay_v2/gameplay_05.ogg",
-	"res://audio/music/gameplay_v2/gameplay_06.ogg", "res://audio/music/gameplay_v2/gameplay_07.ogg",
-	"res://audio/music/gameplay_v2/gameplay_08.ogg",
-	"res://audio/music/playlist/gameplay_01.ogg",
-	"res://audio/music/playlist/gameplay_02.ogg", "res://audio/music/playlist/gameplay_03.ogg",
-	"res://audio/music/playlist/gameplay_04.ogg", "res://audio/music/playlist/gameplay_05.ogg",
-	"res://audio/music/playlist/gameplay_06.ogg", "res://audio/music/playlist/gameplay_07.ogg",
-	"res://audio/music/playlist/gameplay_08.ogg"]
+	"res://audio/music/replacement_20261024/gameplay_02.ogg"]
 var _gameplay_track_index := 0
 var _gameplay_puzzle_started := false
 const FILE_SFX := {

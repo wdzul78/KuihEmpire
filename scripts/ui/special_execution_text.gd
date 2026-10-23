@@ -11,6 +11,12 @@ const TITLE_SHEET = preload("res://assets/vfx/selorot_unwrap_v1/titles.png")
 const KETUPAT_TITLE = preload("res://assets/vfx/ketupat_raya_v1/title.png")
 const KETUPAT_COMBO_TITLE = preload("res://assets/vfx/ketupat_combo_v1/title.png")
 
+func show_karipap(board_size: Vector2, cell: float, origin: Vector2) -> void:
+	show_ketupat(board_size,cell,origin,false)
+	var graphic: TextureRect = get_node("KetupatGraphic")
+	graphic.name = "KaripapOxygenGraphic"
+	graphic.texture = preload("res://assets/vfx/karipap_oxygen_v1/title.png")
+
 func show_ketupat(board_size: Vector2, cell: float, origin: Vector2, raya: bool = true) -> void:
 	show_pisang(board_size,cell,origin)
 	var graphic: TextureRect = get_node("PisangCrispyGraphic")
@@ -33,19 +39,17 @@ static func title_region(bottom: bool) -> Texture2D:
 
 func show_diraja(board_size: Vector2, cell: float, origin: Vector2) -> void:
 	reset()
-	size = Vector2(board_size.x*.96,cell*1.5)
-	position = Vector2(board_size.x*.02,board_size.y-cell*1.7 if origin.y < board_size.y*.5 else cell*.12)
+	size = Vector2(board_size.x*.92,cell*2.35)
+	position = Vector2(board_size.x*.04,board_size.y-size.y-cell*.12 if origin.y < board_size.y*.5 else cell*.12)
 	pivot_offset = size*.5
-	var label := Label.new()
-	label.text = "Kek Lapis Diraja!"
-	label.size = size
-	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	label.add_theme_font_size_override("font_size",int(minf(cell*.66,board_size.x*.072)))
-	label.add_theme_color_override("font_color",Color("fff5a8"))
-	label.add_theme_color_override("font_outline_color",Color("6b3317"))
-	label.add_theme_constant_override("outline_size",maxi(2,int(cell*.055)))
-	add_child(label)
+	var graphic := TextureRect.new()
+	graphic.name = "KekLapisDirajaGraphic"
+	graphic.texture = preload("res://assets/vfx/kek_lapis_diraja_v1/title.png")
+	graphic.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	graphic.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	graphic.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	graphic.size = size
+	add_child(graphic)
 	modulate.a = 1
 	scale = Vector2.ONE*.55
 	show()

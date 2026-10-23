@@ -26,13 +26,13 @@ func run() -> void:
 		var pair := [b,a] if reverse else [a,b]
 		check(board.try_swap(pair[0],pair[1]) == BoardState.SwapOutcome.ACTIVATED_SPECIAL, "delivery combo swap accepted in either direction")
 		var result := board.activate_specials(pair)
-		check(result.combo == &"delivery_transfer" and result.delivery_targets.size() == 1, "two sepit transfer one remote sepit activation")
+		check(result.combo == &"triple_delivery" and result.delivery_targets.size() == 3, "two sepit produce three flying pickups")
 		var unique: Dictionary = {}
 		for target in result.delivery_targets:
 			check(not unique.has(target), "each delivery has a distinct target")
 			unique[target] = true
-			check(target not in board.delivery_cross(result.combo_origin), "remote target is outside launch cross")
-		check(result.cleared.size() >= 6 and result.activated.size() == 2, "launch and converted sepit activate once")
+			check(not result.combo_members.has(target), "pickup target is another kuih, not a consumed special")
+		check(result.cleared.size() == 5 and result.activated.size() == 2, "consume two sepit and collect exactly three other kuih")
 		var view := MatchBoard.new()
 		view.size = Vector2(450,450)
 		add_child(view)
@@ -42,9 +42,9 @@ func run() -> void:
 		view._play_step(result,0)
 		await get_tree().create_timer(.68).timeout
 		var flights := view._vfx.effects.filter(func(effect): return effect.kind == "delivery")
-		check(flights.size() == 1, "combo first launches one sepit")
+		check(flights.size() == 3, "combo launches exactly three visible sepit")
 		for flight in flights:
-			check(flight.a == view._cell_center(result.combo_origin), "all three launch from combination origin")
+			check(flight.a.distance_to(view._cell_center(result.combo_origin)) < view.cell_size*.5, "three flyers fan out from combination origin")
 		await get_tree().create_timer(3).timeout
 		view.free()
 	var tiny := state(2,2)
@@ -55,7 +55,7 @@ func run() -> void:
 	tiny.get_cell(Vector2i.ZERO).special = BoardCell.Special.HANTAR
 	tiny.get_cell(Vector2i.RIGHT).special = BoardCell.Special.HANTAR
 	var clipped := tiny.activate_specials([Vector2i.ZERO,Vector2i.RIGHT])
-	check(clipped.delivery_targets.size() <= 1 and clipped.cleared.size() == 4, "small board safely clips the transferred sepit's follow-up flight")
+	check(clipped.delivery_targets.size() == 2 and clipped.cleared.size() == 4, "small board collects only the two available other kuih")
 	for reverse in [false,true]:
 		var board := state()
 		var a := Vector2i(2,2)

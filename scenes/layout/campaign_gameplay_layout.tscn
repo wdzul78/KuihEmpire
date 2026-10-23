@@ -447,10 +447,10 @@ vertical_alignment = 1
 
 [node name="SpecialItemsTray" type="TextureRect" parent="."]
 layout_mode = 0
-anchor_left = 0.18
-anchor_top = 0.885
-anchor_right = 0.9
-anchor_bottom = 0.975
+anchor_left = 0.145
+anchor_top = 0.867
+anchor_right = 0.99
+anchor_bottom = 0.987
 mouse_filter = 2
 metadata/_edit_use_anchors_ = true
 tooltip_text = "Layout: SpecialItemsTray; artwork: assets/ui/booster_tray_v1/wooden_tray.png"

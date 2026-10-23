@@ -201,7 +201,7 @@ func _build() -> void:
 
 	var tray := PanelContainer.new()
 	tray.add_theme_stylebox_override("panel", GameplaySkin.box("booster_tray", Vector4(30, 20, 30, 20)))
-	_place(tray, Rect2(0.12, 0.845, 0.76, 0.125))
+	_place(tray, Rect2(.145,.867,.845,.12))
 	_booster_row = tray
 	booster_bar = BoosterBar.new()
 	tray.add_child(booster_bar)

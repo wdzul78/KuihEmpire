@@ -6,6 +6,22 @@ signal restart_pressed()
 signal extra_moves_pressed()
 signal quit_pressed()
 
+class ExitIcon extends Control:
+	func _ready() -> void:
+		mouse_filter = Control.MOUSE_FILTER_IGNORE
+		resized.connect(queue_redraw)
+	func _draw() -> void:
+		var edge := minf(size.x,size.y)
+		var at := (size-Vector2.ONE*edge)*.5
+		var color := Palette.WOOD_DARK
+		var width := maxf(3.0,edge*.075)
+		var door := PackedVector2Array([Vector2(.52,.20),Vector2(.18,.20),Vector2(.18,.80),Vector2(.52,.80)])
+		for i in door.size():
+			door[i] = at+door[i]*edge
+		draw_polyline(door,color,width,true)
+		draw_line(at+Vector2(.40,.50)*edge,at+Vector2(.89,.50)*edge,color,width,true)
+		draw_polyline(PackedVector2Array([at+Vector2(.69,.31)*edge,at+Vector2(.89,.50)*edge,at+Vector2(.69,.69)*edge]),color,width,true)
+
 const HEART = preload("res://assets/ui/hearts_v2/heart_full.png")
 var stage_title := ""
 var tutorial := false
@@ -59,6 +75,8 @@ func _ready() -> void:
 	JourneyArt.label(_pause_panel,JourneyArt.localized("+5 langkah","+5 moves"),Rect2(.245,.669,.34,.055),46,Palette.WOOD_DARK)
 	JourneyArt.label(_pause_panel,"%d coins" % EconomyManager.EXTRA_MOVES_COST if extra_coin_purchase else JourneyArt.localized("Bekalan: %d","Supplies: %d") % extra_count,Rect2(.245,.727,.34,.045),34,Color("858578"))
 	var use := _art_action(_pause_panel,JourneyArt.localized("Guna","Use"),Rect2(.645,.652,.24,.089),46,Color("23682b"))
+	use.name = "UseExtraMovesButton"
+	use.add_theme_color_override("font_disabled_color",Color("56634d"))
 	use.disabled = tutorial or not extra_available
 	use.pressed.connect(func() -> void: extra_moves_pressed.emit())
 
@@ -118,32 +136,39 @@ func confirm_leave(message: String, confirmed: Callable) -> void:
 	JourneyArt.place(self,_leave_dialog,Rect2(.15,.18,.70,.55))
 	_leave_dialog.name = "LeaveStageConfirmation"
 	var art := TextureRect.new()
-	art.texture = load("res://assets/ui/leave_panel_v2/panel.png")
+	art.texture = load("res://assets/ui/leave_panel_v3/panel.png")
 	art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	art.stretch_mode = TextureRect.STRETCH_SCALE
 	art.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	JourneyArt.place(_leave_dialog,art,Rect2(0,0,1,1))
-	JourneyArt.label(_leave_dialog,JourneyArt.localized("Kembali ke gerai?","Return to stall?"),Rect2(.12,.31,.76,.06),40,Palette.WOOD_DARK)
+	JourneyArt.label(_leave_dialog,JourneyArt.localized("Kembali ke gerai?","Return to stall?"),Rect2(.12,.29,.76,.06),40,Palette.WOOD_DARK)
+	_heart = TextureRect.new()
+	_heart.texture = HEART
+	_heart.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_heart.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	JourneyArt.place(_leave_dialog,_heart,Rect2(.34,.37,.32,.20))
+	var heart_count := JourneyArt.label(_heart,str(HeartManager.current()),Rect2(.15,.18,.70,.58),64,Color.WHITE)
+	heart_count.name = "CurrentHeartCount"
+	heart_count.add_theme_color_override("font_outline_color",Color("a31a36"))
+	heart_count.add_theme_constant_override("outline_size",3)
 	if leave_costs_heart:
-		_heart = TextureRect.new()
-		_heart.texture = HEART
-		_heart.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		_heart.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		JourneyArt.place(_leave_dialog,_heart,Rect2(.34,.40,.32,.20))
-		var heart_count := JourneyArt.label(_heart,str(HeartManager.current()),Rect2(.15,.18,.70,.58),64,Color.WHITE)
-		heart_count.name = "CurrentHeartCount"
-		heart_count.add_theme_color_override("font_outline_color",Color("a31a36"))
-		heart_count.add_theme_constant_override("outline_size",3)
 		var badge := Panel.new()
 		badge.add_theme_stylebox_override("panel",UIKit.flat_box(Color("fff3d4"),Color("b27a2c"),0,3,50))
-		JourneyArt.place(_leave_dialog,badge,Rect2(.57,.51,.12,.08))
+		JourneyArt.place(_leave_dialog,badge,Rect2(.57,.48,.12,.08))
 		JourneyArt.label(badge,"−1",Rect2(0,0,1,1),36,Palette.WOOD_DARK)
-	var explanation := JourneyArt.label(_leave_dialog,message,Rect2(.11,.615,.78,.105),34,Palette.WOOD_DARK)
+
+	var leave_message := message if leave_costs_heart else JourneyArt.localized("Tiada nyawa ditolak. Kembali ke gerai?","No heart will be lost. Return to the stall?")
+	var explanation := JourneyArt.label(_leave_dialog,leave_message,Rect2(.11,.575,.78,.095),34,Palette.WOOD_DARK)
 	explanation.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	var keep := _art_action(_leave_dialog,JourneyArt.localized("Terus bermain","Keep playing"),Rect2(.17,.718,.66,.106),46,Color.WHITE)
+	var keep := GameButton.create(JourneyArt.localized("Terus bermain","Keep playing"),"primary",46)
+	keep.custom_minimum_size = Vector2.ZERO
+	JourneyArt.place(_leave_dialog,keep,Rect2(.17,.685,.66,.106))
 	keep.pressed.connect(_cancel_leave)
-	var leave := _art_action(_leave_dialog,"",Rect2(.23,.858,.50,.075))
-	JourneyArt.label(leave,JourneyArt.localized("Ya, keluar","Yes, leave"),Rect2(.16,-.10,.64,1),38,Palette.WOOD_DARK)
+	var leave := _art_action(_leave_dialog,"",Rect2(.23,.815,.54,.075))
+	JourneyArt.label(leave,JourneyArt.localized("Ya, keluar","Yes, leave"),Rect2(.02,0,.76,1),38,Palette.WOOD_DARK)
+	var exit_icon := ExitIcon.new()
+	exit_icon.name = "ExitIcon"
+	JourneyArt.place(leave,exit_icon,Rect2(.79,.05,.21,.90))
 	leave.pressed.connect(func() -> void:
 		if _confirming:
 			return

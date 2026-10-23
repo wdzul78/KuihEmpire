@@ -651,6 +651,26 @@ func activate_specials(positions: Array) -> ClearResult:
 			result.combo_origin = b
 			result.combo_members = {a: true, b: true}
 			result.combo_cells = area_mask_cells(b, DULANG_DOUBLE_MASK)
+		elif absi(a.x-b.x) + absi(a.y-b.y) == 1 and get_cell(a).special == BoardCell.Special.HANTAR and get_cell(b).special == BoardCell.Special.HANTAR:
+			result.combo = &"triple_delivery"
+			result.combo_origin = b
+			result.combo_members = {a: true,b: true}
+			result.combo_cells.assign([a,b])
+			var excluded := result.combo_members.duplicate()
+			# Each flyer collects a different ordinary kuih, never the two
+			# consumed specials or another special that would add extra flights.
+			for y in height:
+				for x in width:
+					var pos := Vector2i(x,y)
+					if not is_playable(pos) or get_cell(pos).special != BoardCell.Special.NONE:
+						excluded[pos] = true
+			for index in 3:
+				var target := select_delivery_target(b,excluded)
+				if target == Vector2i(-1,-1):
+					break
+				excluded[target] = true
+				result.delivery_targets.append(target)
+				result.combo_cells.append(target)
 		elif absi(a.x-b.x) + absi(a.y-b.y) == 1 and (get_cell(a).special == BoardCell.Special.HANTAR or get_cell(b).special == BoardCell.Special.HANTAR) and get_cell(a).special != BoardCell.Special.ORDER and get_cell(b).special != BoardCell.Special.ORDER:
 			var delivery := b if get_cell(b).special == BoardCell.Special.HANTAR else a
 			var partner := a if delivery == b else b

@@ -4,12 +4,12 @@ func _ready() -> void:
 	AudioManager._suspended = false
 	AudioManager._gameplay_track_index = 0
 	AudioManager._gameplay_puzzle_started = false
-	assert(AudioManager.GAMEPLAY_PLAYLIST.size() == 16)
+	assert(AudioManager.GAMEPLAY_PLAYLIST.size() == 2)
 	# Scene transitions may request gameplay music before the puzzle starts.
 	AudioManager.play_music(AudioManager.GAMEPLAY_MUSIC)
-	for index in 17:
+	for index in 5:
 		AudioManager.start_puzzle_music()
-		var expected: String = AudioManager.GAMEPLAY_PLAYLIST[index % 16]
+		var expected: String = AudioManager.GAMEPLAY_PLAYLIST[index % 2]
 		assert(AudioManager._music_path == expected)
 		assert(AudioManager._music_player.stream.get_length() > 0.0)
 		assert(not AudioManager._music_player.stream.loop)
@@ -21,7 +21,7 @@ func _ready() -> void:
 	AudioManager.play_music(AudioManager.MENU_MUSIC)
 	AudioManager.play_music(AudioManager.GAMEPLAY_MUSIC)
 	AudioManager.start_puzzle_music()
-	assert(AudioManager._music_path == AudioManager.GAMEPLAY_PLAYLIST[2])
+	assert(AudioManager._music_path == AudioManager.GAMEPLAY_PLAYLIST[0])
 	AudioManager.stop_music()
-	print("Gameplay playlist: PASS (eight priority tracks, eight old tracks, puzzle rotation, wrap, song end, menu return)")
+	print("Gameplay playlist: PASS (two replacement tracks, puzzle rotation, wrap, song end, menu return)")
 	get_tree().quit()

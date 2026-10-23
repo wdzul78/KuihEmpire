@@ -78,9 +78,9 @@ static func _build(id: StringName) -> StoryBeat:
 
 		&"beat_15_book":
 			return _lines(id, StoryBeat.Speaker.AINA, [
-				"There's an old recipe book under the counter.",
-				"Most of the pages are still empty.",
-				"Every kuih I serve writes a new line.",
+				"I found another note in Grandma's recipe book.",
+				"She wrote little tips beside each recipe.",
+				"With every batch, I understand her recipes a little better.",
 			])
 
 		&"beat_20_weekend":

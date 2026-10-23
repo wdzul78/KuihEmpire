@@ -5,9 +5,9 @@ func _ready() -> void:
 	AudioManager.music_enabled = true
 	AudioManager._menu_track_index = 0
 	AudioManager.play_music(AudioManager.MENU_MUSIC)
-	assert(AudioManager.MENU_PLAYLIST.size() == 4)
+	assert(AudioManager.MENU_PLAYLIST.size() == 2)
 	for index in 5:
-		var expected: String = AudioManager.MENU_PLAYLIST[index % 4]
+		var expected: String = AudioManager.MENU_PLAYLIST[index % 2]
 		assert(AudioManager._music_path == expected)
 		assert(AudioManager._music_player.stream.get_length() > 0.0)
 		assert(not AudioManager._music_player.stream.loop)
@@ -16,5 +16,5 @@ func _ready() -> void:
 		assert(AudioManager._music_player == current)
 		AudioManager._on_music_finished(current)
 	AudioManager.stop_music()
-	print("Menu playlist: PASS (primary, second, two previous tracks, wrap, navigation continuity)")
+	print("Menu playlist: PASS (two replacement tracks, wrap, navigation continuity)")
 	get_tree().quit()

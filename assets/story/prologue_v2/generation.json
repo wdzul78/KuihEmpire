@@ -1,0 +1,10 @@
+{
+  "tool": "built-in image_gen",
+  "assets": [
+    "panels_a.png",
+    "panels_b.png"
+  ],
+  "prompt_summary": "Text-free cartoon story panels matching established Aina pink floral hijab and mother teal hijab. A: sunset closing quiet stall, poor sales, mother coughing, sick mother asleep, medicine shelf book falls, recipe discovery. B: determination, repeated night cooking attempts, successful kuih dawn, open stall with Pak Ya greeting, order three onde-onde, delighted tasting. Each sheet two columns three rows.",
+  "localization": "English default; Malay UI headings and dialogue; images reused across both languages.",
+  "layout": "Twelve sequential StoryPage screens; explicit AtlasTexture regions preserve actual panel boundaries."
+}

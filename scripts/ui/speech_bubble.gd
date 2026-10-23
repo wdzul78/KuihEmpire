@@ -2,6 +2,12 @@ class_name SpeechBubble
 extends PanelContainer
 
 const ART_PATH := "res://assets/ui/dialogue_v1/speech_bubble.png"
+## Compact HUD portraits sit above the dialogue. Flip artwork only, never text.
+var tail_on_top := false:
+	set(value):
+		tail_on_top = value
+		queue_redraw()
+
 var _bubble_style: StyleBoxTexture
 
 ## Flip only the painted bubble; native dialogue text keeps its reading direction.
@@ -36,15 +42,11 @@ func _draw() -> void:
 	var rect := Rect2(Vector2.ZERO, size)
 	if _bubble_style == null or size.x <= 0 or size.y <= 0:
 		return
-	if not speaker_on_left:
-		draw_set_transform(Vector2(size.x, 0), 0, Vector2(-1, 1))
-	# Keep the corner radius proportionate in small tutorial bubbles and larger
-	# story cards. Nine-patch geometry remains constant as body height grows.
+	# Mirror independently towards the active speaker and its vertical position.
 	var scale_factor := minf(40.0,size.y*.18)/210.0
-	if not speaker_on_left:
-		draw_set_transform(Vector2(size.x,0),0,Vector2(-scale_factor,scale_factor))
-	else:
-		draw_set_transform(Vector2.ZERO,0,Vector2.ONE*scale_factor)
+	var origin := Vector2(0 if speaker_on_left else size.x,size.y if tail_on_top else 0.0)
+	var direction := Vector2(1 if speaker_on_left else -1,-1 if tail_on_top else 1)
+	draw_set_transform(origin,0,direction*scale_factor)
 	draw_style_box(_bubble_style,Rect2(rect.position/scale_factor,rect.size/scale_factor))
 	draw_set_transform(Vector2.ZERO, 0, Vector2.ONE)
 
