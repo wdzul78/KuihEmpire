@@ -14,13 +14,20 @@ var _presented_id := ""
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
-	if OS.has_feature("Android") and Engine.has_singleton("AdmobPlugin"):
+	# Feature tags are case-sensitive: "Android" is an OS name, not a feature tag.
+	if OS.has_feature("android") and Engine.has_singleton("AdmobPlugin"):
 		var sdk := Admob.new()
 		sdk.is_real = false
 		sdk.android_debug_application_id = TEST_APP_ID
 		sdk.android_debug_rewarded_id = TEST_REWARDED_ID
-		attach_sdk(sdk)
-		sdk.initialize()
+		initialize_sdk(sdk)
+	elif OS.has_feature("android"):
+		push_warning("RewardedAds: Android AdmobPlugin singleton is missing")
+
+func initialize_sdk(sdk: Node) -> void:
+	# Connect before initialize: native callbacks may arrive immediately.
+	attach_sdk(sdk)
+	sdk.initialize()
 
 func attach_sdk(sdk: Node) -> void:
 	_sdk = sdk
@@ -48,9 +55,11 @@ func _loaded(info: Variant, _response: Variant) -> void:
 	_ad_id = info.get_ad_id()
 	HeartManager.rewarded_ad_provider = watch
 	HeartManager.changed.emit()
+	print("RewardedAds: Google rewarded test ad ready")
 
 func _load_failed(_info: Variant, _error: Variant) -> void:
 	_loading = false
+	push_warning("RewardedAds: load failed or timed out; retrying in 30 seconds. %s" % str(_error))
 	HeartManager.changed.emit()
 	get_tree().create_timer(30.0).timeout.connect(_load)
 
