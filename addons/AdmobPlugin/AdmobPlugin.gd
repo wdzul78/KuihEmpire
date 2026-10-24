@@ -93,11 +93,18 @@ class AndroidExportPlugin extends EditorExportPlugin:
 		return __custom_repos
 
 
+	func _get_android_manifest_element_contents(_platform: EditorExportPlatform, _debug: bool) -> String:
+		# All users receive child-protected ads; do not request advertising-ID access.
+		return """
+<uses-permission xmlns:tools="http://schemas.android.com/tools" android:name="com.google.android.gms.permission.AD_ID" tools:node="remove" />
+<uses-permission xmlns:tools="http://schemas.android.com/tools" android:name="android.permission.AD_ID" tools:node="remove" />
+"""
+
 	func _get_android_manifest_application_element_contents(platform: EditorExportPlatform, debug: bool) -> String:
 		var __contents: String
 
 		if _export_config:
-			__contents = APP_ID_META_TAG % (_export_config.real_application_id if _export_config.is_real \
+			__contents = APP_ID_META_TAG % (_export_config.real_application_id if _export_config.is_real and not debug \
 				else _export_config.debug_application_id )
 		else:
 			GmpLogger.log_warn("Export config not found for %s!" % _plugin_name)

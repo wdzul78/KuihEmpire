@@ -121,6 +121,13 @@ func _build() -> void:
 	stack.add_child(_toggle_row(MenuText.text("haptics"), "haptics"))
 	stack.add_child(_toggle_row(MenuText.text("hints"), "show_hints"))
 
+	var privacy := GameButton.create(JourneyArt.localized("Dasar privasi", "Privacy policy"), "secondary")
+	privacy.name = "PrivacyPolicyButton"
+	privacy.pressed.connect(func() -> void:
+		OS.shell_open(JourneyArt.localized("https://www.keribang.com/karya/kuih-empire/privasi/", "https://www.keribang.com/work/kuih-empire/privacy/"))
+	)
+	stack.add_child(privacy)
+
 	var reset := GameButton.create(MenuText.text("reset"), "danger")
 	reset.pressed.connect(_on_reset)
 	stack.add_child(reset)
