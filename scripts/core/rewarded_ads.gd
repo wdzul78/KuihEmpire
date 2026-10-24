@@ -1,9 +1,11 @@
 extends Node
-## Test-only AdMob integration. Production IDs must be configured separately.
+## Release ads use the studio account; debug builds always use Google test ads.
 signal finished(earned: bool)
 
 const TEST_APP_ID := "ca-app-pub-3940256099942544~3347511713"
 const TEST_REWARDED_ID := "ca-app-pub-3940256099942544/5224354917"
+const REAL_APP_ID := "ca-app-pub-8772046181009763~4261825894"
+const REAL_REWARDED_ID := "ca-app-pub-8772046181009763/5710638930"
 var _sdk: Node
 var _ad_id := ""
 var _showing := false
@@ -16,13 +18,24 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	# Feature tags are case-sensitive: "Android" is an OS name, not a feature tag.
 	if OS.has_feature("android") and Engine.has_singleton("AdmobPlugin"):
-		var sdk := Admob.new()
-		sdk.is_real = false
-		sdk.android_debug_application_id = TEST_APP_ID
-		sdk.android_debug_rewarded_id = TEST_REWARDED_ID
+		var sdk := create_configured_sdk()
 		initialize_sdk(sdk)
 	elif OS.has_feature("android"):
 		push_warning("RewardedAds: Android AdmobPlugin singleton is missing")
+
+func create_configured_sdk() -> Admob:
+	var sdk := Admob.new()
+	sdk.is_real = not OS.is_debug_build()
+	sdk.android_debug_application_id = TEST_APP_ID
+	sdk.android_debug_rewarded_id = TEST_REWARDED_ID
+	sdk.android_real_application_id = REAL_APP_ID
+	sdk.android_real_rewarded_id = REAL_REWARDED_ID
+	# Apply family protections before native initialization or any ad request.
+	sdk.max_ad_content_rating = AdmobConfig.ContentRating.G
+	sdk.child_directed = AdmobConfig.TagForChildDirectedTreatment.TRUE
+	sdk.first_party_id_enabled = false
+	sdk.personalization_state = AdmobConfig.PersonalizationState.DISABLED
+	return sdk
 
 func initialize_sdk(sdk: Node) -> void:
 	# Connect before initialize: native callbacks may arrive immediately.
@@ -55,7 +68,7 @@ func _loaded(info: Variant, _response: Variant) -> void:
 	_ad_id = info.get_ad_id()
 	HeartManager.rewarded_ad_provider = watch
 	HeartManager.changed.emit()
-	print("RewardedAds: Google rewarded test ad ready")
+	print("RewardedAds: Google rewarded ad ready")
 
 func _load_failed(_info: Variant, _error: Variant) -> void:
 	_loading = false
