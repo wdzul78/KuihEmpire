@@ -15,6 +15,8 @@ var index: int = 0
 func _ready() -> void:
 	SaveManager.save_path = "user://kuih_shot_save.json"
 	SaveManager.reset()
+	if "--ms" in OS.get_cmdline_user_args():
+		SaveManager.data.settings.language = "ms"
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(OUT_DIR))
 	scene_root = Node.new()
 	scene_root.name = "ShotRoot"

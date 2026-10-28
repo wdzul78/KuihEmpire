@@ -27,6 +27,8 @@ var _moves_pulse: Tween
 var _moves_label: Label
 var _moves_cap: Label
 var _moves_card: Panel
+## Last value passed to set_moves; -1 at stage start so the first value animates nothing.
+var _shown_moves := -1
 var _stage_title: Label
 var _booster_row: Control
 var _lesson_badge: PanelContainer
@@ -292,15 +294,37 @@ func set_moves(left: int, total: int, bonus: bool = false) -> void:
 	if _moves_pulse != null and _moves_pulse.is_valid():
 		_moves_pulse.kill()
 	_moves_pulse = null
+	var previous := _shown_moves
+	_shown_moves = left
 	_moves_label.scale = Vector2.ONE
 	_moves_label.text = str(maxi(0, left))
-	_moves_cap.text = "BONUS" if bonus else ("MOVES" if left > 3 else "HURRY!")
+	_moves_cap.text = "BONUS" if bonus else (JourneyArt.localized("LANGKAH", "MOVES") if left > 3 else JourneyArt.localized("CEPAT!", "HURRY!"))
 	_fit_moves_text()
+	_moves_label.pivot_offset = _moves_label.size * .5
 	var style := GameplaySkin.box("moves_hanging")
 	if left <= 3 and not bonus:
 		style.modulate_color = Color(1, .7, .7)
 	_moves_card.add_theme_stylebox_override("panel", style)
+	if previous < 0 or bonus:
+		pass
+	elif left > previous:
+		# Extra moves from a customer or booster: a green flash says "gained".
+		_moves_label.modulate = Color(.55, 1.0, .55)
+		_moves_label.create_tween().tween_property(_moves_label, "modulate", Color.WHITE, .5)
+	elif left < previous and left > 3:
+		# A small tick so each used move registers without reading the number.
+		_moves_label.scale = Vector2(.84, .84)
+		_moves_pulse = _moves_label.create_tween()
+		_moves_pulse.tween_property(_moves_label, "scale", Vector2.ONE, .22).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		return
 	if left <= 3 and left > 0 and not bonus:
+		if previous > 3:
+			# Entering the last three moves: shake the card once and sound a low cue.
+			AudioManager.play(AudioManager.Sfx.TAP, .7, -2.0)
+			_moves_card.pivot_offset = _moves_card.size * .5
+			var shake := _moves_card.create_tween()
+			for angle in [.08, -.07, .05, -.03, 0.0]:
+				shake.tween_property(_moves_card, "rotation", angle, .06)
 		_moves_pulse = _moves_label.create_tween().set_loops()
 		_moves_pulse.tween_property(_moves_label, "scale", Vector2(1.15, 1.15), .42)
 		_moves_pulse.tween_property(_moves_label, "scale", Vector2.ONE, .42)

@@ -243,6 +243,8 @@ static func add_press_feedback(b: BaseButton) -> void:
 		b.set_meta("press_tween", tween)
 	b.button_down.connect(squish.bind(.94, false))
 	b.button_up.connect(squish.bind(1.0, true))
+	# Every menu button clicks; screens that already play TAP are de-duplicated.
+	b.pressed.connect(func() -> void: AudioManager.play(AudioManager.Sfx.TAP, 1.0, -4.0))
 
 
 static func primary_button(text: String, size_px: int = 44) -> Button:

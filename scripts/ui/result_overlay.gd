@@ -30,6 +30,9 @@ var _home: Button
 var _unlocks: Label
 var _celebration: GameVfx
 var _score_value: Label
+## Final score the win card counts up to; the label only shows it once the count finishes.
+var score_target := 0
+var _score_count: Tween
 var _new_best: Label
 var _breakdown: Label
 var _reward_box: Panel
@@ -77,6 +80,17 @@ class ResultStars extends Control:
 				var grey := ShaderMaterial.new()
 				grey.shader = load("res://scripts/art/shaders/locked_booster.gdshader")
 				icon.material = grey
+	## Earned stars pop in one by one with a rising chime once the card lands.
+	func reveal(delay: float) -> void:
+		for i in filled:
+			var icon: TextureRect = get_child(i)
+			icon.pivot_offset = icon.size * .5
+			icon.scale = Vector2.ZERO
+			var pop := icon.create_tween()
+			pop.tween_interval(delay + i * .28)
+			pop.tween_callback(func() -> void: AudioManager.play(AudioManager.Sfx.REWARD, 1.0 + i * .12, -6.0))
+			pop.tween_property(icon, "scale", Vector2.ONE * 1.25, .16).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+			pop.tween_property(icon, "scale", Vector2.ONE, .2).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 static func artwork(id: String) -> Texture2D:
 	if not _art.has(id):
@@ -331,6 +345,8 @@ func show_win(_title_text: String, stars: int, coins: int, unlocks: Array, is_ne
 		return
 	AudioManager.play_result_jingle(true)
 	_animate_in()
+	_stars.reveal(.45)
+	_count_score(.35)
 	if _celebration == null:
 		_celebration = GameVfx.new()
 		_celebration.z_index = 20
@@ -410,9 +426,24 @@ func _animate_in() -> void:
 
 func _show_score_details(details: StageResult, _is_new_best: bool) -> void:
 	_reward_box.show()
-	_score_value.text = str(details.final_score) if details != null else "0"
+	if _score_count != null and _score_count.is_valid():
+		_score_count.kill()
+	score_target = details.final_score if details != null else 0
+	_score_value.text = str(score_target)
 	_new_best.text = ""
 	_new_best.hide()
 	_breakdown.text = ""
 	_breakdown.hide()
 	_unlocks.hide()
+
+
+func _count_score(delay: float) -> void:
+	if score_target <= 0:
+		return
+	_score_value.text = "0"
+	_score_count = _score_value.create_tween()
+	_score_count.tween_interval(delay)
+	_score_count.tween_method(func(value: int) -> void: _score_value.text = str(value), 0, score_target, .9).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	_score_value.pivot_offset = _score_value.size * .5
+	_score_count.tween_property(_score_value, "scale", Vector2(1.15, 1.15), .1)
+	_score_count.tween_property(_score_value, "scale", Vector2.ONE, .18).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)

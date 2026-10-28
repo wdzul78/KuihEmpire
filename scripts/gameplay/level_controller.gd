@@ -235,10 +235,11 @@ func _start_level() -> void:
 	if not is_tutorial and not endless_mode:
 		board.apply_start_specials(GameManager.pending_start_specials)
 		GameManager.pending_start_specials.clear()
+	hud._shown_moves = -1
 	hud.set_moves(moves_left, move_budget)
 	if endless_mode:
 		hud._moves_label.text = "∞"
-		hud._moves_cap.text = "MOVES"
+		hud._moves_cap.text = JourneyArt.localized("LANGKAH", "MOVES")
 		_seed_test_specials()
 	hud.booster_bar.refresh()
 	_refresh_order_ui()

@@ -110,7 +110,7 @@ func _build() -> void:
 	_card.name = "OrderBoard"
 	_card.add_theme_stylebox_override("panel", GameplaySkin.box("order_board"))
 	_place(_card, Rect2(0.21, 0.78, 0.58, 0.50))
-	var order_title := UIKit.label("Order", 32, Palette.WOOD_DARK)
+	var order_title := UIKit.label(JourneyArt.localized("Pesanan", "Order"), 32, Palette.WOOD_DARK)
 	order_title.name = "OrderTitle"
 	_child_place(_card, order_title, Rect2(.25, .015, .5, .17))
 	order_title.vertical_alignment = VERTICAL_ALIGNMENT_CENTER

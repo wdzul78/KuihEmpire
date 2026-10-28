@@ -103,6 +103,8 @@ var _music_held := false
 var _jingle: AudioStreamPlayer
 var _jingle_fade: Tween
 var _suspended := false
+const TAP_DEDUPE_MS := 90
+var _last_tap_ms := -1000
 var _music_gain := -2.0
 var _cache: Dictionary = {}
 var sfx_enabled: bool = true
@@ -208,6 +210,13 @@ func play(which: Sfx, pitch: float = 1.0, volume_db: float = 0.0) -> void:
 	var stream: AudioStream = _streams.get(which, null)
 	if stream == null:
 		return
+	if which == Sfx.TAP:
+		# Buttons click on their own; a screen's explicit TAP in the same press
+		# must not double the sound.
+		var now := Time.get_ticks_msec()
+		if now - _last_tap_ms < TAP_DEDUPE_MS:
+			return
+		_last_tap_ms = now
 	var player := _take_voice()
 	player.stream = stream
 	player.pitch_scale = clampf(pitch + randf_range(-0.03, 0.03), 0.4, 2.4)
