@@ -11,6 +11,7 @@ extends Node
 const CASUAL_RANDOM := .4
 
 var runs := 40
+var _scores: Array[int] = []
 var first := 1
 var last := 30
 
@@ -22,26 +23,37 @@ func _ready() -> void:
 			var span := arg.trim_prefix("--stages=").split("-")
 			first = int(span[0])
 			last = int(span[-1])
-	print("stage | moves | careful win% left | casual win% left")
+	print("stage | moves | careful win% left 3star% | casual win% left 3star% | 2star/3star target | careful p40/p60 score")
 	for id in range(first, last + 1):
 		var level := LevelLibrary.get_level(id)
+		_scores.clear()
 		var careful := _play_many(level, false)
+		var careful_scores := _scores.duplicate()
 		var casual := _play_many(level, true)
-		print("%5d | %5d | %8.0f%% %5.1f | %7.0f%% %5.1f" % [id, level.move_budget(), careful.x * 100.0, careful.y, casual.x * 100.0, casual.y])
+		_scores = careful_scores
+		print("%5d | %5d | %8.0f%% %5.1f %5.0f%% | %7.0f%% %5.1f %5.0f%% | %d/%d | %d/%d" % [id, level.move_budget(), careful.x * 100.0, careful.y, careful.z * 100.0, casual.x * 100.0, casual.y, casual.z * 100.0, level.score_two_star, level.score_three_star, _percentile(.4), _percentile(.6)])
 	get_tree().quit()
 
-func _play_many(level: LevelDefinition, casual: bool) -> Vector2:
+## Win rate, average moves left on wins, and three-star rate over all runs.
+func _play_many(level: LevelDefinition, casual: bool) -> Vector3:
 	var wins := 0
 	var left_total := 0
+	var three := 0
 	for i in runs:
-		var left := _play(level, casual, 7919 * (i + 1) + level.id)
-		if left >= 0:
+		var outcome := _play(level, casual, 7919 * (i + 1) + level.id)
+		if outcome.x >= 0:
 			wins += 1
-			left_total += left
-	return Vector2(float(wins) / runs, float(left_total) / maxi(1, wins))
+			left_total += outcome.x
+			_scores.append(outcome.y)
+			if level.stars_for_score(outcome.y) >= 3:
+				three += 1
+	return Vector3(float(wins) / runs, float(left_total) / maxi(1, wins), float(three) / runs)
 
-## Returns moves left on a win, -1 on a loss.
-func _play(level: LevelDefinition, casual: bool, seed_value: int) -> int:
+## Returns (moves left, final score) on a win, (-1, 0) on a loss. The score is a
+## lower bound: the end-of-stage special fireworks are not simulated.
+func _play(level: LevelDefinition, casual: bool, seed_value: int) -> Vector2i:
+	var score := StageScoreController.new()
+	score.setup(level)
 	var logic := BoardState.new()
 	logic.delivery_enabled = true
 	logic.setup(level.width, level.height, level.kuih, seed_value)
@@ -82,17 +94,33 @@ func _play(level: LevelDefinition, casual: bool, seed_value: int) -> int:
 			preferred = []
 			if result.is_empty():
 				break
+			score.add_clear(result, step)
 			var leftover := result.collected_totals()
+			var served_before := _served(orders)
 			while active < orders.size() and not leftover.is_empty():
 				leftover = orders[active].collect(leftover)
 				if not orders[active].is_complete():
 					break
 				active += 1
+			score.add_collection(_served(orders) - served_before)
 			logic.apply_gravity()
 			logic.refill()
 		if active >= orders.size() and (not level.require_blockers_cleared or logic.remaining_blockers() == 0):
-			return moves
-	return -1
+			return Vector2i(moves, score.total + moves * level.scoring.remaining_move)
+	return Vector2i(-1, 0)
+
+func _percentile(at: float) -> int:
+	if _scores.is_empty():
+		return 0
+	var sorted := _scores.duplicate()
+	sorted.sort()
+	return sorted[clampi(int(at * sorted.size()), 0, sorted.size() - 1)]
+
+func _served(orders: Array[CustomerOrder]) -> int:
+	var total := 0
+	for order in orders:
+		total += order.total_collected
+	return total
 
 func _rate(logic: BoardState, a: Vector2i, b: Vector2i, needed: Dictionary) -> float:
 	var ca := logic.get_cell(a)

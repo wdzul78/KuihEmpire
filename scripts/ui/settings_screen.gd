@@ -308,7 +308,7 @@ func _on_reset() -> void:
 	), 38))
 	var buttons := UIKit.hbox(18)
 	stack.add_child(buttons)
-	var cancel := GameButton.create("Cancel", "back")
+	var cancel := GameButton.create(JourneyArt.localized("Batal", "Cancel"), "back")
 	cancel.name = "CancelReset"
 	cancel.focus_mode = Control.FOCUS_ALL
 	cancel.size_flags_horizontal = Control.SIZE_EXPAND_FILL

@@ -20,17 +20,17 @@ func _ready() -> void:
 	backdrop.show_counter = false
 	backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(backdrop)
-	var back := GameButton.create("Back", "back", 38)
+	var back := GameButton.create(JourneyArt.localized("Kembali", "Back"), "back", 38)
 	back.custom_minimum_size = Vector2.ZERO
 	JourneyArt.place(self, back, Rect2(.035, .015, .23, .055))
 	back.pressed.connect(func() -> void: SceneManager.goto(SceneManager.HOME))
-	var heading := JourneyArt.label(self, "Achievements", Rect2(.28, .015, .68, .055), 52, Palette.PAPER)
+	var heading := JourneyArt.label(self, JourneyArt.localized("Pencapaian", "Achievements"), Rect2(.28, .015, .68, .055), 52, Palette.PAPER)
 	heading.add_theme_color_override("font_outline_color", Palette.WOOD_DARK)
 	heading.add_theme_constant_override("outline_size", 8)
 	var panel := Panel.new()
 	panel.add_theme_stylebox_override("panel", UIKit.cream_box())
 	JourneyArt.place(self, panel, Rect2(.025, .085, .95, .89))
-	var personal := GameButton.create("Personal", "primary", 38)
+	var personal := GameButton.create(JourneyArt.localized("Peribadi", "Personal"), "primary", 38)
 	var ranking := GameButton.create("Ranking", "secondary", 38)
 	personal.name = "PersonalTab"
 	ranking.name = "RankingTab"
@@ -85,21 +85,23 @@ func _refresh_options() -> void:
 		_sample_toggle.visible = _ranking
 	_options.clear()
 	if _ranking:
-		for text in ["Current Story", "All Journey", "Current Milestone", "Friends (coming later)"]:
+		for text in [_t("Cerita Semasa", "Current Story"), _t("Semua Perjalanan", "All Journey"), _t("Pencapaian Semasa", "Current Milestone"), _t("Kawan (akan datang)", "Friends (coming later)")]:
 			_options.add_item(text)
 		_options.set_item_disabled(3, true)
 		_options.select(["current_story", "all", "current_milestone"].find(_filter))
 	else:
-		_options.add_item("ALL")
+		_options.add_item(_category_name("ALL"))
+		_options.set_item_metadata(0, "ALL")
 		for definition in AchievementManager.definitions:
 			var found := false
 			for i in _options.item_count:
-				if _options.get_item_text(i) == definition.category:
+				if _options.get_item_metadata(i) == definition.category:
 					found = true
 			if not found:
-				_options.add_item(definition.category)
+				_options.add_item(_category_name(definition.category))
+				_options.set_item_metadata(_options.item_count - 1, definition.category)
 		for i in _options.item_count:
-			if _options.get_item_text(i) == _category:
+			if _options.get_item_metadata(i) == _category:
 				_options.select(i)
 	refresh()
 
@@ -107,7 +109,7 @@ func _option_selected(index: int) -> void:
 	if _ranking:
 		_filter = ["current_story", "all", "current_milestone"][index]
 	else:
-		_category = _options.get_item_text(index)
+		_category = str(_options.get_item_metadata(index))
 	_scroll.scroll_vertical = 0
 	refresh()
 
@@ -125,9 +127,9 @@ func refresh() -> void:
 		return
 	_clear()
 	var metrics := AchievementManager.metrics()
-	_status.text = "%d / %d achievements completed\n★ %d  ·  Recipes %d  ·  Orders %d  ·  Stories %d" % [AchievementManager.completed_count(), AchievementManager.definitions.size(), metrics["stars"], metrics["recipes"], metrics.get("orders_served", 0), metrics["stories"]]
-	_sticky.text = "Celebrate every small step.\nRewards are added automatically once unlocked."
-	_notice.text = "Personal accomplishments · saved on this device"
+	_status.text = JourneyArt.localized("%d / %d pencapaian selesai\n★ %d  ·  Resipi %d  ·  Pesanan %d  ·  Cerita %d", "%d / %d achievements completed\n★ %d  ·  Recipes %d  ·  Orders %d  ·  Stories %d") % [AchievementManager.completed_count(), AchievementManager.definitions.size(), metrics["stars"], metrics["recipes"], metrics.get("orders_served", 0), metrics["stories"]]
+	_sticky.text = JourneyArt.localized("Raikan setiap langkah kecil.\nGanjaran ditambah automatik sebaik dibuka.", "Celebrate every small step.\nRewards are added automatically once unlocked.")
+	_notice.text = JourneyArt.localized("Pencapaian peribadi · disimpan dalam peranti ini", "Personal accomplishments · saved on this device")
 	var groups: Dictionary = {}
 	for definition in AchievementManager.definitions:
 		if _category != "ALL" and definition.category != _category:
@@ -142,7 +144,7 @@ func refresh() -> void:
 		for definition in groups[category]:
 			if AchievementManager.state(definition.id).get("unlocked", false):
 				complete += 1
-		_content.add_child(UIKit.label("%s  ·  %d / %d" % [category.capitalize(), complete, groups[category].size()], 38, Palette.WOOD_DARK))
+		_content.add_child(UIKit.label("%s  ·  %d / %d" % [_category_name(category), complete, groups[category].size()], 38, Palette.WOOD_DARK))
 		for definition in groups[category]:
 			var state := AchievementManager.state(definition.id)
 			var unlocked: bool = state.get("unlocked", false)
@@ -154,17 +156,17 @@ func refresh() -> void:
 			var column := UIKit.vbox(12)
 			column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 			line.add_child(column)
-			column.add_child(_text(definition.title, 40))
-			column.add_child(_text(definition.description, 32))
+			column.add_child(_text(_title(definition), 40))
+			column.add_child(_text(_description(definition), 32))
 			var progress := ProgressBar.new()
 			progress.max_value = definition.target
 			progress.value = state.get("progress", 0)
 			progress.show_percentage = false
 			progress.custom_minimum_size.y = 18
 			column.add_child(progress)
-			column.add_child(_text("%d / %d  ·  %s%d coins%s" % [state.get("progress", 0), definition.target, "+", definition.reward_coins, "  ·  Reward received" if unlocked else ""], 30))
+			column.add_child(_text("%d / %d  ·  +%d %s%s" % [state.get("progress", 0), definition.target, definition.reward_coins, JourneyArt.localized("syiling", "coins"), JourneyArt.localized("  ·  Ganjaran diterima", "  ·  Reward received") if unlocked else ""], 30))
 			if not definition.tier.is_empty():
-				column.add_child(_text(definition.tier.capitalize(), 28))
+				column.add_child(_text(_tier_name(definition.tier), 28))
 
 func _draw_rankings() -> void:
 	if _content == null:
@@ -175,10 +177,10 @@ func _draw_rankings() -> void:
 	var samples := false
 	for entry in rows:
 		samples = samples or entry.is_sample
-	_status.text = "Journey Ranking\nJourney → Story → Stage → Stars → Score"
-	_notice.text = "SAMPLE DATA · development only" if samples else "Local snapshot · online ranking is not connected"
+	_status.text = _t("Ranking Perjalanan\nPerjalanan → Cerita → Stage → Bintang → Skor", "Journey Ranking\nJourney → Story → Stage → Stars → Score")
+	_notice.text = "SAMPLE DATA · development only" if samples else _t("Rekod setempat · ranking dalam talian belum disambung", "Local snapshot · online ranking is not connected")
 	if own == null:
-		_sticky.text = "Your Journey snapshot is loading…"
+		_sticky.text = _t("Rekod perjalanan anda sedang dimuat…", "Your Journey snapshot is loading…")
 		return
 	var own_index := rows.find(own)
 	# Around-player window, with the full rank retained and a permanent own card.
@@ -197,18 +199,18 @@ func _draw_rankings() -> void:
 		var column := UIKit.vbox(8)
 		column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		line.add_child(column)
-		column.add_child(_text("#%d  %s%s" % [entry.rank, entry.nickname, " · YOU" if is_own else ""], 38))
+		column.add_child(_text("#%d  %s%s" % [entry.rank, entry.nickname, _t(" · ANDA", " · YOU") if is_own else ""], 38))
 		column.add_child(_text(entry.title, 28))
-		column.add_child(_text("Story %d  ·  Stage %d  ·  ★ %d" % [entry.story_index, entry.highest_stage_completed, entry.total_stars], 32))
-	_sticky.text = "YOUR RANK  #%d  ·  Story %d / Milestone %d\nStage %d  ·  ★ %d  ·  Best relevant score %d" % [own.rank, own.story_index, own.milestone_index, own.highest_stage_completed, own.total_stars, own.tie_break_score]
+		column.add_child(_text(_t("Cerita %d  ·  Stage %d  ·  ★ %d", "Story %d  ·  Stage %d  ·  ★ %d") % [entry.story_index, entry.highest_stage_completed, entry.total_stars], 32))
+	_sticky.text = _t("KEDUDUKAN ANDA  #%d  ·  Cerita %d / Pencapaian %d\nStage %d  ·  ★ %d  ·  Skor terbaik %d", "YOUR RANK  #%d  ·  Story %d / Milestone %d\nStage %d  ·  ★ %d  ·  Best relevant score %d") % [own.rank, own.story_index, own.milestone_index, own.highest_stage_completed, own.total_stars, own.tie_break_score]
 	if own_index > 0:
 		var next := rows[own_index - 1]
 		if next.highest_stage_completed > own.highest_stage_completed:
-			_sticky.text += "\n%d more stage(s) to reach the next position." % (next.highest_stage_completed - own.highest_stage_completed)
+			_sticky.text += _t("\n%d stage lagi untuk naik satu kedudukan.", "\n%d more stage(s) to reach the next position.") % (next.highest_stage_completed - own.highest_stage_completed)
 		elif next.total_stars > own.total_stars:
-			_sticky.text += "\n%d more stars to share the next position." % (next.total_stars - own.total_stars)
+			_sticky.text += _t("\n%d bintang lagi untuk berkongsi kedudukan seterusnya.", "\n%d more stars to share the next position.") % (next.total_stars - own.total_stars)
 		elif next.tie_break_score > own.tie_break_score:
-			_sticky.text += "\nTry for a new best on Stage %d." % own.highest_stage_completed
+			_sticky.text += _t("\nCuba skor terbaik baharu di Stage %d.", "\nTry for a new best on Stage %d.") % own.highest_stage_completed
 
 func _card(highlight: bool) -> PanelContainer:
 	var box := PanelContainer.new()
@@ -216,6 +218,47 @@ func _card(highlight: bool) -> PanelContainer:
 	box.add_theme_stylebox_override("panel", UIKit.flat_box(Color("f5dfaf") if highlight else Color("fff7e7"), Palette.WOOD_LIGHT, 22, 3, 20))
 	_content.add_child(box)
 	return box
+
+const MS_CATEGORIES := {"ALL": "SEMUA", "GERAI": "Gerai", "JOURNEY": "Perjalanan", "STARS": "Bintang", "PUZZLE": "Teka-teki", "RECIPES": "Resipi", "ORDERS": "Pesanan", "SPECIALS": "Istimewa", "STREAK": "Rentetan", "SCORE": "Skor"}
+const MS_TIERS := {"BRONZE": "Gangsa", "SILVER": "Perak", "GOLD": "Emas", "MASTER": "Pakar"}
+## id -> [Malay title, Malay description]
+const MS_TEXT := {
+	"first_renovation": ["Ubah Suai Pertama", "Beli naik taraf struktur gerai yang pertama."],
+	"first_steps": ["Langkah Pertama", "Selesaikan stage pertama anda."],
+	"stars_30": ["Pengumpul Bintang I", "Kumpul 30 bintang kekal."],
+	"stars_60": ["Pengumpul Bintang II", "Kumpul 60 bintang kekal."],
+	"stars_90": ["Pengumpul Bintang III", "Kumpul 90 bintang kekal."],
+	"perfect_server": ["Hidangan Sempurna", "Dapatkan tiga bintang di 10 stage berbeza."],
+	"recipes_10": ["Peneroka Kuih", "Temui 10 resipi."],
+	"malaysian_kuih_master": ["Pakar Kuih Malaysia", "Temui kesemua 200 resipi warisan."],
+	"recipe_master": ["Pakar Kuih", "Lengkapkan buku resipi."],
+	"serve_100": ["Gerai Sibuk", "Hidangkan 100 pesanan pelanggan."],
+	"combo_25": ["Tukang Kombo", "Aktifkan 25 gabungan istimewa."],
+	"no_help": ["Tak Perlu Bantuan", "Menang satu stage tanpa guna booster."],
+	"streak_5": ["Rentetan Manis", "Menang lima stage berturut-turut."],
+	"story_1": ["Gerai Keluarga Selesai", "Selesaikan kesemua 30 stage gerai keluarga."],
+	"next_story": ["Perjalanan Diteruskan", "Buka cerita kantin sekolah."],
+	"score_3000": ["Skor Manis", "Capai skor terbaik 3,000 dalam satu stage."],
+	"gerai_2": ["Gerai Berkembang", "Naik taraf gerai ke tahap dua."],
+}
+
+static func _is_ms() -> bool:
+	return SaveManager.get_setting("language", "en") != "en"
+
+static func _t(ms: String, en: String) -> String:
+	return ms if _is_ms() else en
+
+static func _category_name(category: String) -> String:
+	return MS_CATEGORIES.get(category, category.capitalize()) if _is_ms() else ("ALL" if category == "ALL" else category.capitalize())
+
+static func _tier_name(tier: String) -> String:
+	return MS_TIERS.get(tier, tier.capitalize()) if _is_ms() else tier.capitalize()
+
+static func _title(definition: AchievementDefinition) -> String:
+	return MS_TEXT[definition.id][0] if _is_ms() and MS_TEXT.has(definition.id) else definition.title
+
+static func _description(definition: AchievementDefinition) -> String:
+	return MS_TEXT[definition.id][1] if _is_ms() and MS_TEXT.has(definition.id) else definition.description
 
 ## Painted category art on a cream disc; locked goals stay muted until earned.
 func _badge(category: String, unlocked: bool) -> Control:

@@ -30,6 +30,28 @@ func _ready() -> void:
 	EconomyManager.coins_changed.connect(func(_a: int) -> void: _refresh())
 	# Resume saved discovery presentations after restart without paying again.
 	RecipePresentation.present_pending.call_deferred(self)
+	_play_intro.call_deferred()
+
+## Bottom buttons pop in one after another, then Play breathes to invite a tap.
+## Brightness (not scale) carries the pulse so press feedback keeps its squish.
+func _play_intro() -> void:
+	var delay := .12
+	for key in ["RecipesButton", "RecordsButton", "ShopButton", "AchievementsButton", "SettingsButton", "JourneyButton"]:
+		var button := get_node_or_null(key) as Control
+		if button == null:
+			continue
+		button.pivot_offset = button.size * .5
+		button.scale = Vector2.ONE * .6
+		button.modulate.a = 0.0
+		var pop := button.create_tween().set_parallel()
+		pop.tween_property(button, "scale", Vector2.ONE, .34).set_delay(delay).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		pop.tween_property(button, "modulate:a", 1.0, .2).set_delay(delay)
+		delay += .06
+	if is_instance_valid(_play_button):
+		var pulse := _play_button.create_tween().set_loops()
+		pulse.tween_interval(.8)
+		pulse.tween_property(_play_button, "modulate", Color(1.12, 1.12, 1.06), .55).set_trans(Tween.TRANS_SINE)
+		pulse.tween_property(_play_button, "modulate", Color.WHITE, .7).set_trans(Tween.TRANS_SINE)
 
 func _place(node: Control, rect: Rect2, parent: Control = self) -> Control:
 	parent.add_child(node)
@@ -193,7 +215,7 @@ func _build() -> void:
 	_progress.add_theme_stylebox_override("fill", UIKit.flat_box(Color("71d12b"), Color("4b9b17"), 0, 2, 12))
 	_place(_progress, Rect2(.367, .69, .568, .13), profile)
 	_progress.hide()
-	_label("Score", Rect2(.365, .53, .10, .19), 18, profile).add_theme_color_override("font_color", Color.WHITE)
+	_label(JourneyArt.localized("Skor", "Score"), Rect2(.365, .53, .10, .19), 18, profile).add_theme_color_override("font_color", Color.WHITE)
 	# The illustration already contains the score track; align text inside it.
 	_total_score_label = _label("", Rect2(.465, .505, .46, .245), 34, profile)
 	UIKit.set_text_color(_total_score_label, Color("fffdf2"))

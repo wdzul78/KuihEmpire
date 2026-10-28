@@ -97,7 +97,7 @@ func run() -> void:
 		await get_tree().process_frame
 	assert(live.finished and live.stage_result.success and live.stage_result.final_score == 1000)
 	assert(not live.hud._coin_pill.visible and live.hud.score_progress.anchor_right - live.hud.score_progress.anchor_left > .3)
-	assert(live.hud.score_progress.score == 1000 and live.result._score_value.text == "1000")
+	assert(live.hud.score_progress.score == 1000 and live.result.score_target == 1000)
 	assert(HeartManager.current() == hearts - 1)
 	assert(live.stage_result.first_clear_bonus == live.level.first_clear_bonus)
 	assert(EconomyManager.coins() == coins + live.stage_result.total_coins + 50) # First Steps + No Help Needed, each once.

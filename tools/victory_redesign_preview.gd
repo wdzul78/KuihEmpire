@@ -12,7 +12,7 @@ func run() -> void:
 	overlay.show_win("Crisp Corner",3,169,[],false,details)
 	await get_tree().create_timer(.6).timeout
 	assert(overlay._primary.visible and overlay._coins_label.text == "+169")
-	assert(overlay._score_value.text == "4991")
+	assert(overlay.score_target == 4991)
 	if DisplayServer.get_name() != "headless":
 		await RenderingServer.frame_post_draw
 		get_viewport().get_texture().get_image().save_png("res://.analysis/victory-redesign.png")
