@@ -41,6 +41,9 @@ enum Gate {
 @export var highlight: Array[Vector2i] = []
 ## The move the coach nudges towards once the player has been idle a while.
 @export var nudge_gesture: String = ""
+## Who says this line: Aina coaches, the customer at the counter asks.
+## Uses StoryBeat.Speaker values; only AINA and CUSTOMER are used in lessons.
+@export var speaker: int = StoryBeat.Speaker.AINA
 
 
 static func make(

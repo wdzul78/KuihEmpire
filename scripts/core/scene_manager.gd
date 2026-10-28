@@ -89,9 +89,13 @@ func goto(path: String, instant: bool = false) -> void:
 		await fade_out()
 	_loading_bar.value = 0
 	_loading_caption.text = "Loading…"
-	_loading_box.show()
+	# Only show the loading bar for slow loads; on warm scenes it just flashed
+	# for a frame mid-transition and read as a stutter.
+	var load_started := Time.get_ticks_msec()
 	await get_tree().process_frame
 	while not _warmed.has(path):
+		if Time.get_ticks_msec() - load_started > 180:
+			_loading_box.show()
 		_loading_bar.value = warm_progress(path)*100.0
 		if ResourceLoader.load_threaded_get_status(path) == ResourceLoader.THREAD_LOAD_FAILED:
 			push_error("SceneManager: loading failed %s" % path)
@@ -121,13 +125,13 @@ func goto(path: String, instant: bool = false) -> void:
 func fade_out(duration: float = FADE_OUT) -> void:
 	_veil.mouse_filter = Control.MOUSE_FILTER_STOP
 	var tw := create_tween()
-	tw.tween_property(_veil, "color:a", 1.0, duration)
+	tw.tween_property(_veil, "color:a", 1.0, duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
 	await tw.finished
 
 
 func fade_in(duration: float = FADE_IN) -> void:
 	var tw := create_tween()
-	tw.tween_property(_veil, "color:a", 0.0, duration)
+	tw.tween_property(_veil, "color:a", 0.0, duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	await tw.finished
 	_veil.mouse_filter = Control.MOUSE_FILTER_IGNORE
 

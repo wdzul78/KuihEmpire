@@ -78,8 +78,8 @@ func _build() -> void:
 		var space := StyleBoxEmpty.new()
 		space.content_margin_left = 28
 		space.content_margin_right = 28
-		space.content_margin_top = 18
-		space.content_margin_bottom = 58
+		space.content_margin_top = 34
+		space.content_margin_bottom = 26
 		_card.add_theme_stylebox_override("panel", space)
 	stack.add_child(_card)
 
@@ -102,10 +102,13 @@ func _build() -> void:
 	_line_label = UIKit.wrap_label("", 26, Palette.INK, HORIZONTAL_ALIGNMENT_LEFT)
 	_line_label.custom_minimum_size = Vector2(0, 140)
 	if inline_mode:
-		_line_label.custom_minimum_size.y = 60
-		_line_label.add_theme_font_size_override("font_size", 23)
-		_name_label.add_theme_font_size_override("font_size", 24)
-		col.add_theme_constant_override("separation", 4)
+		# Phone-readable: the inline card spans the order strip width (see
+		# _process), so it can afford real body text instead of 23px.
+		_line_label.custom_minimum_size.y = 84
+		_line_label.add_theme_font_size_override("font_size", 34)
+		_name_label.add_theme_font_size_override("font_size", 32)
+		col.add_theme_constant_override("separation", 2)
+		(_card as SpeechBubble).tail_on_top = true
 	_line_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	col.add_child(_line_label)
 
@@ -122,10 +125,12 @@ func _build() -> void:
 
 func _process(_delta: float) -> void:
 	if inline_mode and visible and is_instance_valid(dialogue_anchor) and is_instance_valid(_stack):
-		# Follow the current HUD dialogue slot, rather than pre-redesign anchors.
+		# Hang the card under the customer/Aina strip, nearly full width, with the
+		# tail pointing up at whoever is talking.
 		_stack.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT)
-		_stack.position = get_global_transform().affine_inverse() * dialogue_anchor.global_position
-		_stack.size = dialogue_anchor.size
+		var strip := dialogue_anchor.get_global_rect()
+		_stack.position = get_global_transform().affine_inverse() * (strip.position + Vector2(strip.size.x * .03, strip.size.y * .98))
+		_stack.size = Vector2(strip.size.x * .94, 0)
 
 
 func play(beat: StoryBeat) -> void:
@@ -161,11 +166,11 @@ func _show_line() -> void:
 	_line_label.text = TutorialText.text(String(_beat.lines[_line]))
 	if beat_is_final():
 		_portrait.expression = CharacterIcon.Mood.EXCITED
-		_line_label.modulate.a = 0.0
-		var tw := create_tween()
-		tw.tween_property(_line_label, "modulate:a", 1.0, 0.3)
-	else:
-		_line_label.modulate.a = 1.0
+	# Every new line eases in, so a speaker change reads as a turn in the
+	# conversation instead of the text snapping.
+	_line_label.modulate.a = 0.0
+	var tw := create_tween()
+	tw.tween_property(_line_label, "modulate:a", 1.0, 0.3 if beat_is_final() else 0.18).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 
 
 func beat_is_final() -> bool:

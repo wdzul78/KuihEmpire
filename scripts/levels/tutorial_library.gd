@@ -156,6 +156,12 @@ static func _step_here(
 	return step
 
 
+## Marks a line as spoken by the customer at the counter instead of Aina.
+static func _customer(step: TutorialStepData) -> TutorialStepData:
+	step.speaker = StoryBeat.Speaker.CUSTOMER
+	return step
+
+
 # --- the lessons ------------------------------------------------------
 
 static func _build(index: int) -> LevelDefinition:
@@ -172,7 +178,7 @@ static func _build(index: int) -> LevelDefinition:
 			[
 				_step_here(
 					"Let's start small",
-					"Slide one kuih up or down until three of a kind line up.",
+					"Hi, I'm Aina! Slide one kuih UP or DOWN so three of the same kind line up.",
 					TutorialStepData.Gate.SWAP_VERTICAL,
 					[Vector2i(0, 1), Vector2i(0, 2)]
 				),
@@ -188,7 +194,7 @@ static func _build(index: int) -> LevelDefinition:
 			[
 				_step_here(
 					"Now the other way",
-					"Easy peasy - slide one kuih left or right this time.",
+					"Great! Now slide one kuih LEFT or RIGHT to make three in a row.",
 					TutorialStepData.Gate.SWAP_HORIZONTAL,
 					[Vector2i(1, 2), Vector2i(2, 2)]
 				),
@@ -204,22 +210,22 @@ static func _build(index: int) -> LevelDefinition:
 			], 0,
 				[[&"pakyai", [[A, 3]]]], [],
 			[
-				_step(
+				_customer(_step(
 					"Someone is waiting",
-					"Pakyai wants 3 Onde-onde.\nMatch any three Onde-onde and they go on his tray.",
+					"Assalamualaikum, Aina! I'd like 3 Onde-onde, please.",
 					TutorialStepData.Gate.INTRO
-				),
+				)),
 				_step_here(
 					"Collect 3 Onde-onde",
-					"Tap a kuih then tap its neighbour if you prefer - either way works.",
+					"Coming right up! Match three green Onde-onde to fill his order.",
 					TutorialStepData.Gate.COLLECTED,
 					[Vector2i(2, 1), Vector2i(2, 2)], "", 3
 				),
-				_step(
+				_customer(_step(
 					"Serve!",
-					"The order is complete, so Pakyai gets his kuih.",
+					"Still warm! Thank you, Aina. See you tomorrow!",
 					TutorialStepData.Gate.INTRO
-				),
+				)),
 			])
 
 		4:
@@ -230,13 +236,13 @@ static func _build(index: int) -> LevelDefinition:
 			[
 				_step_here(
 					"Make Pulut Panggang",
-					"Slide the Ang Ku right to match FOUR. A sideways swipe makes a Pulut Panggang.",
+					"Four in a line makes something special! Slide the Ang Ku RIGHT to line up FOUR.",
 					TutorialStepData.Gate.CREATED_TAPAU,
 					[Vector2i(1, 2), Vector2i(2, 2)]
 				),
-				_step("Your Pulut Panggang is ready!", "Swap the Pulut Panggang with any neighbouring kuih to activate it.", TutorialStepData.Gate.INTRO),
-				_step("Use your Pulut Panggang", "Slide Pulut Panggang to clear one full row.", TutorialStepData.Gate.ACTIVATED_SPECIAL, BoardCell.Special.TAPAU),
-				_step("One whole row!", "Next, make Kuih Selorot to clear a column.", TutorialStepData.Gate.INTRO),
+				_step("Your Pulut Panggang is ready!", "That's a Pulut Panggang! It clears a whole ROW.", TutorialStepData.Gate.INTRO),
+				_step("Use your Pulut Panggang", "Swap the Pulut Panggang with the kuih next to it.", TutorialStepData.Gate.ACTIVATED_SPECIAL, BoardCell.Special.TAPAU),
+				_step("One whole row!", "A whole row in one go! Next, let's try a column.", TutorialStepData.Gate.INTRO),
 			])
 
 		5:
@@ -251,18 +257,18 @@ static func _build(index: int) -> LevelDefinition:
 			[
 				_step(
 					"Bend the line",
-					"Match an L or a T shape and you get a Badak Berendam instead.",
+					"Match kuih in an L or T shape and you get a Badak Berendam.",
 					TutorialStepData.Gate.INTRO
 				),
 				_step_here(
 					"Make a Badak Berendam",
-					"A Badak Berendam clears up a 3 x 3 patch of kuih.",
+					"Swap the two glowing kuih to make an L shape.",
 					TutorialStepData.Gate.CREATED_DULANG,
 					[Vector2i(3, 0), Vector2i(3, 1)]
 				),
-				_step("Your Badak Berendam is ready!", "Swap the Badak Berendam with any neighbouring kuih to activate it.", TutorialStepData.Gate.INTRO),
-				_step("Use your Badak Berendam", "Slide the highlighted Badak Berendam onto its neighbour. Watch the 3 × 3 area clear!", TutorialStepData.Gate.ACTIVATED_SPECIAL, BoardCell.Special.DULANG),
-				_step("Nine tiles at once!", "That was the Badak Berendam effect! Combine it with any kuih to clear a 3 × 3 area.", TutorialStepData.Gate.INTRO),
+				_step("Your Badak Berendam is ready!", "That's a Badak Berendam! It clears a 3 × 3 area.", TutorialStepData.Gate.INTRO),
+				_step("Use your Badak Berendam", "Swap the Badak Berendam with the glowing kuih next to it.", TutorialStepData.Gate.ACTIVATED_SPECIAL, BoardCell.Special.DULANG),
+				_step("Nine tiles at once!", "Nine kuih at once! Use it when the tray gets crowded.", TutorialStepData.Gate.INTRO),
 			])
 
 		6:
@@ -296,14 +302,14 @@ static func _build(index: int) -> LevelDefinition:
 				],
 				[],
 			[
-				_step(
+				_customer(_step(
 					"Two guests waiting",
-					"Finish this order and the next guest steps up to the counter.",
+					"Aina, 8 Onde-onde for me! Someone's waiting behind me too.",
 					TutorialStepData.Gate.INTRO
-				),
+				)),
 				_step(
 					"Serve the queue",
-					"Surplus kuih carries over, so a big match helps the next guest too.",
+					"Serve Pakyai first, then the next guest. Extra kuih go to them!",
 					TutorialStepData.Gate.SERVED
 				),
 			])
@@ -314,18 +320,18 @@ static func _build(index: int) -> LevelDefinition:
 			[
 				_step(
 					"Here is the whole stall",
-					"Eight by eight now, six kinds of kuih, and a proper order.",
+					"This is the real stall: a big 8 × 8 tray with six kinds of kuih!",
 					TutorialStepData.Gate.INTRO
 				),
-				_step(
+				_customer(_step(
 					"Makcik's regular order",
-					"8 Onde-onde and 8 Ang Ku. Match kuih to complete Makcik's order.",
+					"Aina, my usual please: 8 Onde-onde and 8 Ang Ku!",
 					TutorialStepData.Gate.INTRO
-				),
-				_step("Power-ups unlock after training", "Boosters stay locked during tutorials. You can use them in regular stages after training.", TutorialStepData.Gate.INTRO),
+				)),
+				_step("Power-ups unlock after training", "Power-ups unlock after training. For now, match carefully!", TutorialStepData.Gate.INTRO),
 				_step(
 					"Serve and you are ready",
-					"Fill the order. You are ready to start your journey!",
+					"Fill Makcik's order and you're ready to run the stall!",
 					TutorialStepData.Gate.SERVED
 				),
 			])
@@ -337,28 +343,28 @@ static func _build(index: int) -> LevelDefinition:
 				[C, D, A, C],
 				[D, C, D, B],
 			], 0, [], [], [
-				_step("Meet Kuih Sepit", "A 2 by 2 square makes Kuih Sepit.", TutorialStepData.Gate.INTRO),
-				_step_here("Make a square", "Slide the Onde-onde left to complete the square.", TutorialStepData.Gate.CREATED_HANTAR, [Vector2i(2,1), Vector2i(1,1)]),
-				_step("Activate Kuih Sepit", "Swap Kuih Sepit with its neighbour. It flies to collect a useful kuih.", TutorialStepData.Gate.ACTIVATED_SPECIAL, BoardCell.Special.HANTAR),
-				_step("Kuih Sepit unlocked!", "Make 2 by 2 squares to create Kuih Sepit in regular stages.", TutorialStepData.Gate.INTRO),
+				_step("Meet Kuih Sepit", "Four kuih in a 2 × 2 square make a Kuih Sepit.", TutorialStepData.Gate.INTRO),
+				_step_here("Make a square", "Slide the Onde-onde LEFT to finish the square.", TutorialStepData.Gate.CREATED_HANTAR, [Vector2i(2,1), Vector2i(1,1)]),
+				_step("Activate Kuih Sepit", "Now swap the Kuih Sepit. It flies off to grab a kuih you need!", TutorialStepData.Gate.ACTIVATED_SPECIAL, BoardCell.Special.HANTAR),
+				_step("Kuih Sepit unlocked!", "Kuih Sepit unlocked! Make 2 × 2 squares in any stage.", TutorialStepData.Gate.INTRO),
 			])
 
 		10:
 			return _make(10, "Kuih Selorot", 4, [A, B, C, D], [
 				[A, B, C, A], [B, A, C, B], [C, C, B, C], [A, B, A, B],
 			], 0, [], [], [
-				_step_here("Make a Kuih Selorot", "Slide the Ang Ku down to match FOUR. An up or down swipe makes a Kuih Selorot that clears a column.", TutorialStepData.Gate.CREATED_VERTICAL, [Vector2i(2,1), Vector2i(2,2)]),
-				_step("Use the Kuih Selorot", "Swap the highlighted Kuih Selorot with its neighbour. Its leaf unwraps to clear one full column.", TutorialStepData.Gate.ACTIVATED_SPECIAL, BoardCell.Special.TAPAU_VERTICAL),
-				_step("One whole column!", "Kuih Selorot clears a column; Pulut Panggang clears a row.", TutorialStepData.Gate.INTRO),
+				_step_here("Make a Kuih Selorot", "This time slide the Ang Ku DOWN to line up FOUR and make a Kuih Selorot.", TutorialStepData.Gate.CREATED_VERTICAL, [Vector2i(2,1), Vector2i(2,2)]),
+				_step("Use the Kuih Selorot", "Swap the glowing Kuih Selorot. It clears a whole COLUMN.", TutorialStepData.Gate.ACTIVATED_SPECIAL, BoardCell.Special.TAPAU_VERTICAL),
+				_step("One whole column!", "Remember: Pulut Panggang clears a row, Kuih Selorot clears a column.", TutorialStepData.Gate.INTRO),
 			])
 
 		11:
 			return _make(11, "Combine Two Directionals", 4, [A, B, C, D], [
 				[A,B,C,D], [B,C,D,A], [C,D,A,B], [D,A,B,C],
 			], 0, [], [], [
-				_step("Pulut Panggang + Kuih Selorot", "Pulut Panggang and Kuih Selorot are ready. Combine them to activate Karipap O²!", TutorialStepData.Gate.INTRO),
-				_step_here("Make Karipap O²!", "Swap the highlighted Pulut Panggang and Kuih Selorot. Karipap O²! sweeps one row and one column!", TutorialStepData.Gate.ACTIVATED_CROSS, [Vector2i(1,1), Vector2i(2,1)]),
-				_step("Karipap O²! Cross clear", "Karipap O²! bursts open and releases wind along one row and one column.", TutorialStepData.Gate.INTRO),
+				_step("Pulut Panggang + Kuih Selorot", "Grandma's trick: swap two special kuih together for a bigger blast!", TutorialStepData.Gate.INTRO),
+				_step_here("Make Karipap O²!", "Swap the glowing Pulut Panggang and Kuih Selorot to make Karipap O²!", TutorialStepData.Gate.ACTIVATED_CROSS, [Vector2i(1,1), Vector2i(2,1)]),
+				_step("Karipap O²! Cross clear", "Karipap O² clears a row AND a column at once!", TutorialStepData.Gate.INTRO),
 			])
 
 	return _make(maxi(1, index), "Tutorial", 3, [A, B], [], 0, [], [], [])

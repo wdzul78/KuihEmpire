@@ -654,11 +654,12 @@ func _play_invalid(a: Vector2i, b: Vector2i) -> void:
 	var pos_a := cell_to_pos(a)
 	var pos_b := cell_to_pos(b)
 	var tw_a := tile_a.create_tween().set_speed_scale(ANIMATION_PACE.SPEED)
-	tw_a.tween_property(tile_a, "position", pos_a.lerp(pos_b, 0.35), INVALID_TIME * 0.5)
-	tw_a.tween_property(tile_a, "position", pos_a, INVALID_TIME * 0.5)
+	# Ease out towards the neighbour, then settle back with a soft spring.
+	tw_a.tween_property(tile_a, "position", pos_a.lerp(pos_b, 0.35), INVALID_TIME * 0.45).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	tw_a.tween_property(tile_a, "position", pos_a, INVALID_TIME * 0.55).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	var tw_b := tile_b.create_tween().set_speed_scale(ANIMATION_PACE.SPEED)
-	tw_b.tween_property(tile_b, "position", pos_b.lerp(pos_a, 0.35), INVALID_TIME * 0.5)
-	tw_b.tween_property(tile_b, "position", pos_b, INVALID_TIME * 0.5)
+	tw_b.tween_property(tile_b, "position", pos_b.lerp(pos_a, 0.35), INVALID_TIME * 0.45).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	tw_b.tween_property(tile_b, "position", pos_b, INVALID_TIME * 0.55).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	await tw_a.finished
 	busy = false
 

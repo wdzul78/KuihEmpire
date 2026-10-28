@@ -181,7 +181,7 @@ func _build() -> void:
 	_title.add_theme_font_override("font", UIKit.title_font())
 	_title_art = TitleArt.create("order_served", "Order served!")
 	_place(_title_art, Rect2(.10, .228, .80, .088), _card)
-	_subtitle = _label("", Rect2(.13, .316, .74, .048), 29, _card)
+	_subtitle = _label("", Rect2(.10, .316, .80, .048), 34, _card)
 	_stars = ResultStars.new()
 	_place(_stars, Rect2(.23, .370, .54, .096), _card)
 	var reward := Panel.new()
@@ -195,12 +195,12 @@ func _build() -> void:
 	coin.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_place(coin, Rect2(.08, .07, .24, .86), reward)
 	_coins_label = _label("+0", Rect2(.34, .05, .59, .9), 66, reward)
-	_unlocks = _label("", Rect2(.15, .657, .7, .033), 20, _card)
+	_unlocks = _label("", Rect2(.15, .657, .7, .033), 28, _card)
 	_score_value = _label("", Rect2(.49, .636, .28, .064), 48, _card)
 	_score_heading = TitleArt.create("score", "Score")
 	_place(_score_heading, Rect2(.24, .638, .24, .055), _card)
-	_coin_caption = _label(JourneyArt.localized("Syiling","Coins"),Rect2(.20,.51,.22,.035),24,_card)
-	_score_caption = _label(JourneyArt.localized("Skor","Score"),Rect2(.59,.51,.23,.035),24,_card)
+	_coin_caption = _label(JourneyArt.localized("Syiling","Coins"),Rect2(.20,.508,.22,.04),30,_card)
+	_score_caption = _label(JourneyArt.localized("Skor","Score"),Rect2(.59,.508,.23,.04),30,_card)
 	_score_badge = TextureRect.new()
 	_score_badge.texture = GameplaySkin.texture("star")
 	_score_badge.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
@@ -255,7 +255,7 @@ func _apply_result_layout() -> void:
 	_rect(_title,Rect2(.10,.235,.80,.08) if is_win else Rect2(.10,.245,.80,.095))
 	_title.add_theme_color_override("font_color",Palette.WOOD_DARK if is_win else Palette.GOLD_PALE)
 	_title.add_theme_constant_override("outline_size",0 if is_win else 10)
-	_rect(_subtitle,Rect2(.13,.33,.74,.05) if is_win else Rect2(.13,.316,.74,.048))
+	_rect(_subtitle,Rect2(.10,.325,.80,.055) if is_win else Rect2(.10,.316,.80,.052))
 	_rect(_stars,Rect2(.20,.375,.60,.12) if is_win else Rect2(.23,.370,.54,.096))
 	_rect(_reward_box,Rect2(.13,.51,.74,.145) if is_win else Rect2(.27,.50,.46,.105))
 	_rect(_coins_label,Rect2(.17,.28,.33,.64) if is_win else Rect2(.34,.05,.59,.9))
@@ -312,8 +312,9 @@ func show_win(_title_text: String, stars: int, coins: int, unlocks: Array, is_ne
 	_character.texture = success_portrait_artwork()
 	_set_character_rect(SUCCESS_CHARACTER_RECT)
 	_set_copy()
-	_title_art.show()
-	_title.hide()
+	# The painted title is English artwork; Malay players get the live label.
+	_title_art.visible = SaveManager.get_setting("language", "en") == "en"
+	_title.visible = not _title_art.visible
 	_title.text = JourneyArt.localized("Pesanan siap!","Order served!")
 	_title.add_theme_font_size_override("font_size",62)
 	_subtitle.text = MenuText.text("served_perfectly")
@@ -328,7 +329,7 @@ func show_win(_title_text: String, stars: int, coins: int, unlocks: Array, is_ne
 	if not animate:
 		hide()
 		return
-	AudioManager.play(AudioManager.Sfx.SUCCESS, 1.0, -3)
+	AudioManager.play_result_jingle(true)
 	_animate_in()
 	if _celebration == null:
 		_celebration = GameVfx.new()
@@ -352,7 +353,7 @@ func show_fail(missing: String, can_afford_offer: bool, details: StageResult = n
 	_coins_label.text = "+0"
 	_unlocks.text = ""
 	_show_score_details(details, false)
-	AudioManager.play(AudioManager.Sfx.FAIL, 1, -4)
+	AudioManager.play_result_jingle(false)
 	_animate_in()
 
 func _show_recovery() -> void:
