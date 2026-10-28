@@ -140,9 +140,12 @@ func _build() -> void:
  welcome.add_theme_stylebox_override("panel", UIKit.cream_box())
  JourneyArt.place(speech,welcome,Rect2(0,0,1,1))
  JourneyArt.label(welcome, JourneyArt.localized("Jom sambung!", "Let's continue!"), Rect2(.04, .05, .92, .90), 36, Palette.WOOD_DARK)
- _unlock_note = JourneyArt.label(self, "", Rect2(.06, .685, .88, .03), 28, Palette.PAPER)
+ # A dark pill keeps the progress line readable over the busy map and nodes.
+ _unlock_note = JourneyArt.label(self, "", Rect2(.13, .681, .74, .036), 28, Palette.PAPER)
+ _unlock_note.add_theme_stylebox_override("normal", UIKit.flat_box(Color(Palette.WOOD_DARK, .86), Palette.GOLD, 0, 2, 30))
  _unlock_note.add_theme_color_override("font_outline_color", Palette.WOOD_DARK)
  _unlock_note.add_theme_constant_override("outline_size", 4)
+ _unlock_note.z_index = 5
  var footer := _painted_panel(Rect2(25,485,1490,445))
  footer.z_index = 10
  JourneyArt.place(self,footer,Rect2(.025,.72,.95,.175))
@@ -307,7 +310,7 @@ func _refresh() -> void:
    cleared += 1
  _unlock_note.text = (MenuText.text("route_progress") % [cleared, LevelLibrary.count(), ProgressionManager.total_stars()]) + " · " + JourneyArt.localized("Gerai", "Stall") + " %d/3" % ProgressionManager.world_state()
  _stage_label.text = "%s %d" % [MenuText.text("stage"), selected_stage]
- _stage_subtitle.text = LevelLibrary.get_level(selected_stage).title
+ _stage_subtitle.text = LevelLibrary.display_title(LevelLibrary.get_level(selected_stage))
  _start.disabled = not ProgressionManager.is_level_unlocked(selected_stage)
  for index in _chapters.size():
   _style_chapter(_chapters[index],index == (selected_stage-1)/10)
@@ -385,7 +388,7 @@ func memories_for(entry: Dictionary) -> Array[Dictionary]:
   var level := LevelLibrary.get_level(id)
   for beat_id in [level.story_before, level.story_after]:
    if beat_id != &"" and ProgressionManager.story_seen(beat_id) and BeatLibrary.get_beat(beat_id) != null:
-    memories.append({"beat": beat_id, "stage": id, "label": "%s %d · %s" % [MenuText.text("stage"), id, level.title]})
+    memories.append({"beat": beat_id, "stage": id, "label": "%s %d · %s" % [MenuText.text("stage"), id, LevelLibrary.display_title(level)]})
  return memories
 
 

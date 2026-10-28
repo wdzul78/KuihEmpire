@@ -76,8 +76,8 @@ func _build() -> void:
 
 	if endless_mode:
 		level = LevelDefinition.new()
-		level.title = "Endless Test"
-		level.tag = "8 Ã— 8 Â· Unlimited moves"
+		level.title = "Free Play"
+		level.tag = "8 × 8 · Unlimited moves"
 		level.width = 8
 		level.height = 8
 		level.kuih = KuihLibrary.starter_set()
@@ -105,7 +105,7 @@ func _build() -> void:
 	hud.set_tutorial_mode(is_tutorial)
 	hud.booster_bar.practice_mode = endless_mode
 	hud.booster_bar.set_available(not is_tutorial)
-	hud.set_stage(level.id, TutorialText.text(level.title) if is_tutorial else level.title)
+	hud.set_stage(level.id, _display_title())
 	hud.set_coins(EconomyManager.coins())
 	hud.settings_pressed.connect(_open_pause_menu)
 	hud.restart_pressed.connect(_on_restart)
@@ -354,6 +354,10 @@ func _refresh_order_ui() -> void:
 	hud.set_queue(waiting)
 
 
+func _display_title() -> String:
+	return TutorialText.text(level.title) if is_tutorial else LevelLibrary.display_title(level)
+
+
 func active_order() -> CustomerOrder:
 	if active_index < orders.size():
 		return orders[active_index]
@@ -387,7 +391,7 @@ func _on_blocker_progress(hits: Array) -> void:
 
 func _on_coach_finished() -> void:
 	# The lesson is taught; hand the player straight to the objective.
-	hud.set_stage(level.id, TutorialText.text(level.title) if is_tutorial else level.title)
+	hud.set_stage(level.id, _display_title())
 	if not board.busy:
 		_on_settled.call_deferred()
 
@@ -596,7 +600,7 @@ func _win() -> void:
 	var free_bonus := HeartManager.reward_win(level.id, is_tutorial)
 	if not is_tutorial and not endless_mode and moves_left > 0:
 		var serial := _victory_serial
-		result.show_win(level.title, stars, coins, unlocks, is_new_best, stage_result, false)
+		result.show_win(_display_title(), stars, coins, unlocks, is_new_best, stage_result, false)
 		board.clear_hints()
 		board._feedback.reset()
 		board._combo_praise.reset()
@@ -614,7 +618,7 @@ func _win() -> void:
 		if serial != _victory_serial:
 			return
 		_victory_bonus = null
-	result.show_win(level.title, stars, coins, unlocks, is_new_best, stage_result)
+	result.show_win(_display_title(), stars, coins, unlocks, is_new_best, stage_result)
 	if free_bonus > 0:
 		var celebration := UIKit.label("Free Play · %d min!" % [free_bonus / 60], 30, Palette.PINK_DARK)
 		celebration.name = "FreePlayReward"
@@ -763,7 +767,7 @@ func _open_pause_menu() -> void:
 	AudioManager.play(AudioManager.Sfx.TAP)
 	var overlay := PauseOverlay.new()
 	_pause_overlay = overlay
-	overlay.stage_title = "%s Â· %s" % [level.title, JourneyArt.localized("Tutorial", "Tutorial") if is_tutorial else level.tag]
+	overlay.stage_title = (TutorialText.text("Lesson %d") % TutorialLibrary.lesson_number(tutorial_index if tutorial_index > 0 else GameManager.pending_tutorial_index)) if is_tutorial else _display_title() if endless_mode else "%s %d · %s" % [MenuText.text("stage"), level.id, _display_title()]
 	overlay.tutorial = is_tutorial
 	overlay.restart_available = not (board.busy or _serving or finished)
 	overlay.extra_count = EconomyManager.booster_count(EconomyManager.Booster.EXTRA_MOVES)

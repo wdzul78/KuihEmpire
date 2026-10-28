@@ -147,9 +147,14 @@ func refresh() -> void:
 			var state := AchievementManager.state(definition.id)
 			var unlocked: bool = state.get("unlocked", false)
 			var box := _card(unlocked)
+			var line := HBoxContainer.new()
+			line.add_theme_constant_override("separation", 22)
+			box.add_child(line)
+			line.add_child(_badge(definition.category, unlocked))
 			var column := UIKit.vbox(12)
-			box.add_child(column)
-			column.add_child(_text(("✓  " if unlocked else "★  ") + definition.title, 40))
+			column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			line.add_child(column)
+			column.add_child(_text(definition.title, 40))
 			column.add_child(_text(definition.description, 32))
 			var progress := ProgressBar.new()
 			progress.max_value = definition.target
@@ -211,6 +216,57 @@ func _card(highlight: bool) -> PanelContainer:
 	box.add_theme_stylebox_override("panel", UIKit.flat_box(Color("f5dfaf") if highlight else Color("fff7e7"), Palette.WOOD_LIGHT, 22, 3, 20))
 	_content.add_child(box)
 	return box
+
+## Painted category art on a cream disc; locked goals stay muted until earned.
+func _badge(category: String, unlocked: bool) -> Control:
+	var disc := Panel.new()
+	disc.custom_minimum_size = Vector2(120, 120)
+	disc.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	disc.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	disc.add_theme_stylebox_override("panel", UIKit.flat_box(Color("fff3d6") if unlocked else Color("ece3d2"), Palette.GOLD if unlocked else Palette.WOOD_LIGHT, 0, 4, 60))
+	var art := TextureRect.new()
+	art.texture = _category_icon(category)
+	art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	art.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	art.modulate = Color.WHITE if unlocked else Color(.62, .6, .58, .8)
+	JourneyArt.place(disc, art, Rect2(.14, .14, .72, .72))
+	if unlocked:
+		var tick := JourneyStageDisc.CompletedBadge.new()
+		JourneyArt.place(disc, tick, Rect2(.64, .64, .42, .42))
+	return disc
+
+static func _category_icon(category: String) -> Texture2D:
+	match category:
+		"GERAI":
+			return _trimmed(load("res://assets/ui/journey_icons_v2/icons.png"), 0)
+		"RECIPES":
+			return _trimmed(load("res://assets/ui/journey_icons_v2/icons.png"), 1)
+		"JOURNEY":
+			return _trimmed(load("res://assets/ui/journey_icons_v2/icons.png"), 2)
+		"STARS":
+			return GameplaySkin.texture("star")
+		"STREAK":
+			return load("res://assets/ui/hearts_v2/heart_full.png")
+		"SPECIALS":
+			return _trimmed(load("res://assets/specials/kek_lapis_diraja_v1/kek_lapis_diraja.png"))
+		"SCORE":
+			return load("res://assets/menu/nav_v4/records.png")
+		"ORDERS":
+			return KuihLibrary.get_kuih(&"kuih_lapis").texture
+	return KuihLibrary.get_kuih(&"onde_onde").texture
+
+## Crops a 2x2 sheet quadrant (or the whole image when quadrant < 0) to its painted pixels.
+static func _trimmed(source: Texture2D, quadrant: int = -1) -> Texture2D:
+	var area := Rect2i(Vector2i.ZERO, source.get_size())
+	if quadrant >= 0:
+		area.size /= 2
+		area.position = Vector2i(quadrant % 2, quadrant / 2) * area.size
+	var used := source.get_image().get_region(area).get_used_rect()
+	var atlas := AtlasTexture.new()
+	atlas.atlas = source
+	atlas.region = Rect2(area.position + used.position, used.size)
+	return atlas
 
 func _text(value: String, font_size: int) -> Label:
 	var label := UIKit.label(value, font_size, Palette.WOOD_DARK)
