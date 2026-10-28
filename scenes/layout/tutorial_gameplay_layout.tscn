@@ -344,23 +344,23 @@ stretch_mode = 0
 [node name="SpeakerName" type="Label" parent="OrderArea/DialogueBubble"]
 layout_mode = 0
 anchor_left = 0.05
-anchor_top = 0.06
+anchor_top = 0.03
 anchor_right = 0.9500000000000001
-anchor_bottom = 0.26
+anchor_bottom = 0.27
 mouse_filter = 2
 metadata/_edit_use_anchors_ = true
 theme_override_colors/font_color = Color(0.29, 0.17, 0.09, 1)
-theme_override_font_sizes/font_size = 36
-text = "Serve and you are ready"
+theme_override_font_sizes/font_size = 34
+text = "Aina"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="InstructionText" type="Label" parent="OrderArea/DialogueBubble"]
 layout_mode = 0
-anchor_left = 0.05
-anchor_top = 0.28
-anchor_right = 0.9500000000000001
-anchor_bottom = 0.71
+anchor_left = 0.04
+anchor_top = 0.25
+anchor_right = 0.96
+anchor_bottom = 0.72
 mouse_filter = 2
 metadata/_edit_use_anchors_ = true
 theme_override_colors/font_color = Color(0.29, 0.17, 0.09, 1)

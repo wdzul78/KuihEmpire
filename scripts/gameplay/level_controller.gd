@@ -156,7 +156,7 @@ func _build() -> void:
 	story = StoryPopup.new()
 	story.name = "StoryDialogue"
 	story.inline_mode = true
-	story.dialogue_anchor = hud.order_panel._bubble
+	story.dialogue_anchor = hud.order_panel
 	story.highlighted_character = hud.order_panel._aina
 	story.speaker_changed.connect(func(speaker: int) -> void: hud.order_panel.set_story_speaker(speaker); hud.order_panel.set_story_clearance(story._card))
 	story.finished.connect(_on_story_finished)
@@ -237,7 +237,7 @@ func _start_level() -> void:
 		GameManager.pending_start_specials.clear()
 	hud.set_moves(moves_left, move_budget)
 	if endless_mode:
-		hud._moves_label.text = "âˆž"
+		hud._moves_label.text = "∞"
 		hud._moves_cap.text = "MOVES"
 		_seed_test_specials()
 	hud.booster_bar.refresh()
@@ -616,7 +616,7 @@ func _win() -> void:
 		_victory_bonus = null
 	result.show_win(level.title, stars, coins, unlocks, is_new_best, stage_result)
 	if free_bonus > 0:
-		var celebration := UIKit.label("Free Play Â· %d min!" % [free_bonus / 60], 30, Palette.PINK_DARK)
+		var celebration := UIKit.label("Free Play · %d min!" % [free_bonus / 60], 30, Palette.PINK_DARK)
 		celebration.name = "FreePlayReward"
 		JourneyArt.place(result, celebration, Rect2(.20, .20, .60, .04))
 

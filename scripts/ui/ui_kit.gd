@@ -223,7 +223,26 @@ static func button(
 	b.add_theme_color_override("font_pressed_color", Palette.CREAM_DEEP)
 	b.add_theme_font_override("font", bold_font())
 	b.focus_mode = Control.FOCUS_NONE
+	add_press_feedback(b)
 	return b
+
+
+## Tactile squish on touch: shrink while held, spring back on release.
+## Scale is safe inside containers, which only set position and size.
+static func add_press_feedback(b: BaseButton) -> void:
+	var squish := func(target: float, spring: bool) -> void:
+		if not b.is_inside_tree() or (b.disabled and not spring):
+			return
+		b.pivot_offset = b.size * .5
+		var previous: Tween = b.get_meta("press_tween") if b.has_meta("press_tween") else null
+		if previous != null and previous.is_valid():
+			previous.kill()
+		var tween := b.create_tween()
+		tween.tween_property(b, "scale", Vector2.ONE * target, .16 if spring else .07) \
+			.set_trans(Tween.TRANS_BACK if spring else Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		b.set_meta("press_tween", tween)
+	b.button_down.connect(squish.bind(.94, false))
+	b.button_up.connect(squish.bind(1.0, true))
 
 
 static func primary_button(text: String, size_px: int = 44) -> Button:

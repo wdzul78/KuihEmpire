@@ -259,7 +259,10 @@ func set_stage(stage_id: int, title: String) -> void:
 	var username := str(SaveManager.data.get("profile", {}).get("name", "Player")).strip_edges()
 	if username.is_empty():
 		username = "Player"
-	_stage_title.text = "%s\n%s" % [title if _is_tutorial else "Stage %d" % stage_id,username]
+	# Lesson titles are long and shrank to ~16px in this frame; the dialogue
+	# already says what the lesson teaches, so the frame shows a short label.
+	var heading := TutorialText.text("Lesson %d") % TutorialLibrary.lesson_number(-stage_id) if _is_tutorial and stage_id < 0 else (title if _is_tutorial else "Stage %d" % stage_id)
+	_stage_title.text = "%s\n%s" % [heading,username]
 	_stage_title.tooltip_text = "%s • %s" % [title,username]
 	_fit_stage_text()
 

@@ -39,4 +39,6 @@ static func apply_order(panel: Control, scene: PackedScene) -> void:
 		copy_control(source, target)
 		target.custom_minimum_size = Vector2.ZERO
 		(panel.get_node("DialogueBubble") as SpeechBubble).configure_text_fit(target, source.get_theme_font_size("font_size"))
+	# Seat the speaker name on its line, clear of the bubble's painted top rim.
+	(panel.get_node("DialogueBubble/DialogueContents/SpeakerName") as Label).vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
 	guide.free()

@@ -75,10 +75,10 @@ func run() -> void:
 	check(AudioManager._music_player.playing and not AudioManager._music_other.playing, "rapid transitions settle with exactly one music voice")
 	AudioManager.set_music_ducked(true)
 	await get_tree().create_timer(.35).timeout
-	check(is_equal_approx(AudioManager._music_player.volume_db, -28), "result reduces music beneath jingle")
+	check(is_equal_approx(AudioManager._music_player.volume_db, AudioManager.GAMEPLAY_MUSIC_GAIN - AudioManager.DUCK_DB), "result reduces music beneath jingle")
 	AudioManager.set_music_ducked(false)
 	await get_tree().create_timer(.35).timeout
-	check(is_equal_approx(AudioManager._music_player.volume_db, -20), "return to gameplay restores music level")
+	check(is_equal_approx(AudioManager._music_player.volume_db, AudioManager.GAMEPLAY_MUSIC_GAIN), "return to gameplay restores music level")
 	AudioManager._notification(NOTIFICATION_APPLICATION_PAUSED)
 	check(AudioManager._music_player.stream_paused, "phone background pauses music")
 	voice = AudioManager._next_voice

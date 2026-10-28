@@ -53,6 +53,8 @@ func _draw() -> void:
 
 # Text stays inside the authored safe area, above the painted bubble's tail.
 # Keep the scene font as the maximum, and refit when copy or geometry changes.
+## Phone floor: below this a 1080-wide design renders under ~10sp on a handset.
+const MIN_FONT := 26
 var _text_fit: Dictionary = {}
 
 func configure_text_fit(label: Label, maximum: int) -> void:
@@ -73,11 +75,11 @@ func _fit_text(label: Label) -> void:
 	if signature == record.signature or label.size.x <= 1 or label.size.y <= 1:
 		return
 	record.signature = signature
-	var font := label.get_theme_font("font")
+	# Measure with the label's own layout (line spacing, font ascent and the
+	# clip box), not a bare string size: the bare measurement accepted sizes at
+	# which the clipped label then showed zero lines, so names and second lines vanished.
 	var fitted: int = record.maximum
-	while fitted > 12:
-		var extent := font.get_multiline_string_size(label.text,HORIZONTAL_ALIGNMENT_CENTER,label.size.x-4,fitted,-1,TextServer.BREAK_MANDATORY | TextServer.BREAK_WORD_BOUND | TextServer.BREAK_ADAPTIVE)
-		if extent.y <= label.size.y-4:
-			break
-		fitted -= 1
 	label.add_theme_font_size_override("font_size", fitted)
+	while fitted > MIN_FONT and label.get_visible_line_count() < label.get_line_count():
+		fitted -= 1
+		label.add_theme_font_size_override("font_size", fitted)

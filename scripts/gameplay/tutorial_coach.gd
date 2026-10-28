@@ -169,8 +169,16 @@ func _show_step() -> void:
 	for cell in step.highlight:
 		_hint_cells.append(cell)
 
-	_title.text = TutorialText.text(step.title)
 	_body.text = TutorialText.text(step.body)
+	if dialogue_host != null:
+		# The bubble is a conversation: name who is talking and turn the tail and
+		# highlight towards them, instead of showing a lesson heading.
+		var customer_talking := step.speaker == StoryBeat.Speaker.CUSTOMER and dialogue_host.order_customer() != null
+		_title.text = dialogue_host.order_customer().display_name if customer_talking else "Aina"
+		_title.add_theme_color_override("font_color", Palette.LEAF_DEEP if customer_talking else Palette.PINK_DARK)
+		dialogue_host.set_coach_speaker(customer_talking)
+	else:
+		_title.text = TutorialText.text(step.title)
 	if _tap_indicator == null:
 		_tap_indicator = TapIndicator.new()
 		_tap_indicator.target = _card
@@ -183,6 +191,9 @@ func _show_step() -> void:
 		_spotlight.characters.append(_portrait)
 		if dialogue_host != null:
 			_spotlight.characters.append(dialogue_host._card)
+			# Raise the customer with the order strip, or the strip's painted
+			# empty ring covers their face while the dialogue is spotlit.
+			_spotlight.characters.append(dialogue_host._portrait)
 		add_child(_spotlight)
 	_spotlight.visible = step.gate == TutorialStepData.Gate.INTRO
 	_nudge.text = ""
@@ -200,6 +211,9 @@ func _show_step() -> void:
 	_card.scale = Vector2(1.0, 0.92)
 	var tw := create_tween()
 	tw.tween_property(_card, "scale", Vector2.ONE, 0.26).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	for label in [_title, _body]:
+		label.modulate.a = 0.0
+		tw.parallel().tween_property(label, "modulate:a", 1.0, 0.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	step_changed.emit(index, step)
 
 

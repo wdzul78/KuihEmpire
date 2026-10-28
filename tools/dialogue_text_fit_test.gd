@@ -25,6 +25,8 @@ func run() -> void:
 					smallest = mini(smallest,font_size)
 					var extent: Vector2 = label.get_theme_font("font").get_multiline_string_size(label.text,HORIZONTAL_ALIGNMENT_CENTER,label.size.x-4,font_size,-1,TextServer.BREAK_MANDATORY | TextServer.BREAK_WORD_BOUND | TextServer.BREAK_ADAPTIVE)
 					assert(extent.y <= label.size.y, "Dialogue text does not fit: "+label.text)
+					if label.get_global_rect().end.y > panel._bubble.get_global_rect().position.y+panel._bubble.size.y*.72:
+						print("tail overlap: ", label.name, " end=", label.get_global_rect().end.y, " bubble=", panel._bubble.get_global_rect(), " text=", label.text, " size=", label.size, " min=", label.get_combined_minimum_size(), " parent=", label.get_parent().get_global_rect(), " fs=", label.get_theme_font_size("font_size"))
 					assert(label.get_global_rect().end.y <= panel._bubble.get_global_rect().position.y+panel._bubble.size.y*.72, "Text enters bubble tail")
 					assert(not label.text.contains("Ã"), "Broken multiplication character")
 				checked += 1

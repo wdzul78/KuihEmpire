@@ -155,11 +155,27 @@ func set_coaching(value: bool, preserve_tutorial_layout: bool = false) -> void:
 	_coaching = value
 	(_bubble as SpeechBubble).speaker_on_left = not value and _order != null
 	if not value:
+		_portrait.self_modulate = Color.WHITE
+		_aina.self_modulate = Color.WHITE
 		bind(_order)
 	GameUILayout.apply_order(self, tutorial_layout if tutorial_presentation else campaign_layout)
 	set_compact(true)
 	_layout_chips()
 	_redraw_characters()
+
+
+func order_customer() -> CustomerData:
+	return _order.customer if _order != null else null
+
+
+## Tutorial dialogue: point the bubble at the speaker and soften the listener.
+## Uses self_modulate because the spotlight owns each portrait's modulate.
+func set_coach_speaker(customer_talking: bool) -> void:
+	(_bubble as SpeechBubble).speaker_on_left = customer_talking
+	var listening := Color(.74, .74, .74)
+	_portrait.self_modulate = Color.WHITE if customer_talking else listening
+	_aina.self_modulate = listening if customer_talking else Color.WHITE
+	_pop(_portrait if customer_talking else _aina, 1.06)
 
 
 func set_compact(value: bool) -> void:

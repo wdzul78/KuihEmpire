@@ -9,6 +9,13 @@ extends Node
 
 const SFX_VOICES := 10
 const MUSIC_FADE := 1.4
+## Track gain before the player's BGM slider. Gameplay sits lower so matches,
+## specials and voice praise stay in front of the music.
+const MENU_MUSIC_GAIN := -6.0
+const GAMEPLAY_MUSIC_GAIN := -11.0
+const DUCK_DB := 8.0
+const RESULT_HOLD_FADE := .35
+const RESULT_RESUME_FADE := 1.1
 const VICTORY_TRACKS := [
 	"res://audio/sfx/victory_v2/win01.wav",
 	"res://audio/sfx/victory_v2/win02.wav",
@@ -91,6 +98,10 @@ var _music_other: AudioStreamPlayer
 var _music_tween: Tween
 var _music_path := ""
 var _music_ducked := false
+## True while a win/lose jingle owns the soundtrack; the BGM is faded and paused.
+var _music_held := false
+var _jingle: AudioStreamPlayer
+var _jingle_fade: Tween
 var _suspended := false
 var _music_gain := -2.0
 var _cache: Dictionary = {}
@@ -171,6 +182,10 @@ func _ready() -> void:
 	add_child(_music_other)
 	_music_player.finished.connect(_on_music_finished.bind(_music_player))
 	_music_other.finished.connect(_on_music_finished.bind(_music_other))
+	_jingle = AudioStreamPlayer.new()
+	_jingle.name = "ResultJingle"
+	_jingle.bus = &"SFX"
+	add_child(_jingle)
 
 
 func apply_settings(settings: Dictionary) -> void:
@@ -190,12 +205,6 @@ func apply_settings(settings: Dictionary) -> void:
 func play(which: Sfx, pitch: float = 1.0, volume_db: float = 0.0) -> void:
 	if not sfx_enabled or _suspended:
 		return
-	if which == Sfx.SUCCESS:
-		var path: String = VICTORY_TRACKS[_victory_track_index]
-		if ResourceLoader.exists(path):
-			play_stream(load(path) as AudioStream, 1.0, volume_db)
-			_victory_track_index = (_victory_track_index + 1) % VICTORY_TRACKS.size()
-			return
 	var stream: AudioStream = _streams.get(which, null)
 	if stream == null:
 		return
@@ -304,8 +313,12 @@ func play_music(path: String, playlist_advance: bool = false) -> void:
 		path = _music_path if _music_path in MENU_PLAYLIST else MENU_PLAYLIST[_menu_track_index]
 	elif path == GAMEPLAY_MUSIC and not playlist_advance:
 		path = _music_path if _music_path in GAMEPLAY_PLAYLIST else GAMEPLAY_PLAYLIST[_gameplay_track_index]
-	if path == _music_path and _music_player.playing:
+	_stop_jingle()
+	if path == _music_path and (_music_player.playing or (_music_held and _music_player.stream != null)):
+		if _music_held:
+			_resume_held_music()
 		return
+	_music_held = false
 	if not ResourceLoader.exists(path):
 		return
 	var resource: Resource = load(path)
@@ -321,7 +334,7 @@ func play_music(path: String, playlist_advance: bool = false) -> void:
 		_music_player.stop()
 		_music_player.stream = stream
 		_music_path = path
-		_music_gain = -2.0
+		_music_gain = GAMEPLAY_MUSIC_GAIN if path in GAMEPLAY_PLAYLIST else MENU_MUSIC_GAIN
 		_music_ducked = false
 		_music_player.volume_db = -60.0
 		_music_player.play()
@@ -343,14 +356,76 @@ func _on_music_finished(player: AudioStreamPlayer) -> void:
 
 
 func set_music_ducked(ducked: bool) -> void:
-	if ducked == _music_ducked:
+	if not ducked and _music_held:
+		_stop_jingle()
+		_resume_held_music()
+		return
+	if ducked == _music_ducked or _music_held:
 		return
 	_music_ducked = ducked
+	_retarget_music(_music_gain - (DUCK_DB if ducked else 0.0), .3)
+
+
+## Win/lose jingles replace the soundtrack instead of playing over it. The BGM
+## fades out and pauses; leaving the result (or the next scene's music) resumes it.
+func play_result_jingle(win: bool) -> void:
+	if not _music_held:
+		_music_held = true
+		_retarget_music(-60.0, RESULT_HOLD_FADE)
+		_music_tween.chain().tween_callback(func() -> void:
+			if _music_held:
+				_music_player.stream_paused = true
+		)
+	if not sfx_enabled or _suspended:
+		return
+	var stream: AudioStream = null
+	var volume := -4.0
+	if win:
+		var path: String = VICTORY_TRACKS[_victory_track_index]
+		_victory_track_index = (_victory_track_index + 1) % VICTORY_TRACKS.size()
+		stream = load(path) if ResourceLoader.exists(path) else _streams.get(Sfx.SUCCESS, null)
+		volume = -3.0
+	else:
+		stream = _streams.get(Sfx.FAIL, null)
+	if stream == null:
+		return
+	if _jingle_fade != null and _jingle_fade.is_valid():
+		_jingle_fade.kill()
+	_jingle.stream = stream
+	_jingle.volume_db = volume
+	_jingle.play()
+
+
+func _resume_held_music() -> void:
+	_music_held = false
+	_music_ducked = false
+	_music_player.stream_paused = not music_enabled or _suspended
+	_retarget_music(_music_gain, RESULT_RESUME_FADE)
+
+
+func _stop_jingle() -> void:
+	if is_instance_valid(_jingle) and _jingle.playing:
+		if _jingle_fade != null and _jingle_fade.is_valid():
+			return
+		_jingle_fade = create_tween()
+		_jingle_fade.tween_property(_jingle, "volume_db", -40.0, .25)
+		_jingle_fade.tween_callback(_jingle.stop)
+
+
+## Moves the current track to a new level without cutting a crossfade short:
+## the outgoing voice keeps fading rather than being stopped mid-phrase.
+func _retarget_music(target_db: float, duration: float) -> void:
 	if _music_tween != null and _music_tween.is_valid():
 		_music_tween.kill()
-	_music_other.stop()
-	_music_tween = create_tween()
-	_music_tween.tween_property(_music_player, "volume_db", _music_gain - (8.0 if ducked else 0.0), .3)
+	_music_tween = create_tween().set_parallel(true)
+	_music_tween.tween_property(_music_player, "volume_db", target_db, duration)
+	if _music_other.playing:
+		var outgoing := _music_other
+		_music_tween.tween_property(outgoing, "volume_db", -60.0, minf(duration, .4))
+		_music_tween.chain().tween_callback(func() -> void:
+			if outgoing != _music_player:
+				outgoing.stop()
+		)
 
 
 func _notification(what: int) -> void:
@@ -362,10 +437,11 @@ func _notification(what: int) -> void:
 		return
 	if not is_instance_valid(_music_player):
 		return
-	_music_player.stream_paused = _suspended or not music_enabled
+	_music_player.stream_paused = _suspended or not music_enabled or _music_held
 	_music_other.stream_paused = _suspended or not music_enabled
 	if _suspended:
 		reset_combo_voice(true)
+		_jingle.stop()
 		for voice in _voices:
 			voice.stop()
 
@@ -373,6 +449,9 @@ func _notification(what: int) -> void:
 func stop_music() -> void:
 	if _music_tween != null and _music_tween.is_valid():
 		_music_tween.kill()
+	_music_held = false
+	if is_instance_valid(_jingle):
+		_jingle.stop()
 	_music_player.stop()
 	_music_other.stop()
 	_music_player.stream = null
