@@ -24,7 +24,32 @@ const SCORE_TARGETS := [
 	[1600, 2300], [2600, 3600], [2000, 3000], [2300, 3400], [2200, 3200],
 	[1900, 3300], [2300, 3500], [3000, 4400], [2000, 3200], [3000, 4300],
 ]
+const MS_TITLES := {
+	"First Order": "Pesanan Pertama", "Sweet Start": "Permulaan Manis",
+	"Two at Once": "Dua Sekali Gus", "Four in a Row": "Empat Sebaris",
+	"Full Order": "Pesanan Penuh", "New Flavour": "Perisa Baharu",
+	"Under the Leaf": "Di Bawah Daun", "Round Dulang": "Dulang Bulat",
+	"Morning Prep": "Persiapan Pagi", "Morning Rush": "Kesibukan Pagi",
+	"New Regular": "Pelanggan Baharu", "Two Regulars": "Dua Pelanggan Tetap",
+	"Crisp Corner": "Sudut Rangup", "Kitchen Rhythm": "Rentak Dapur",
+	"Recipe Book": "Buku Resipi", "Sticky Situation": "Situasi Melekit",
+	"Combo Night": "Malam Kombo", "Long Order": "Pesanan Panjang",
+	"Sweet Corner": "Sudut Manis", "Weekend Market": "Pasar Hujung Minggu",
+	"Steamed Fresh": "Segar Dikukus", "Order Sequence": "Giliran Pesanan",
+	"Office Order": "Pesanan Pejabat", "Big Basket": "Bakul Besar",
+	"Calm Corner": "Sudut Tenang", "Tray Packing": "Isi Dulang",
+	"Market Crush": "Pasar Sesak", "Old Friends": "Kawan Lama",
+	"Last Prep": "Persiapan Akhir", "Big Community Order": "Pesanan Besar Komuniti",
+	"Free Play": "Main Bebas",
+}
 static var _cache: Dictionary = {}
+
+
+## Player-facing stage name in the current language.
+static func display_title(level: LevelDefinition) -> String:
+	if SaveManager.get_setting("language", "en") == "en":
+		return level.title
+	return MS_TITLES.get(level.title, level.title)
 
 
 static func count() -> int:
@@ -278,10 +303,10 @@ static func _build(level_id: int) -> LevelDefinition:
 			var l := _make(18, "Long Order", "Denser board", 3,
 				[&"onde_onde", &"kuih_koci", &"ang_ku_kueh", &"kuih_ketayap", &"kuih_lapis", &"keria"],
 				[
-					[&"encik", [[&"kuih_lapis", 10]]],
-					[&"meiling", [[&"onde_onde", 10], [&"ang_ku_kueh", 10]]],
-					[&"meena", [[&"kuih_ketayap", 10]]],
-				], 28)
+					[&"encik", [[&"kuih_lapis", 9]]],
+					[&"meiling", [[&"onde_onde", 8], [&"ang_ku_kueh", 8]]],
+					[&"meena", [[&"kuih_ketayap", 9]]],
+				], 30)
 			l.require_blockers_cleared = true
 			return l
 
@@ -315,10 +340,10 @@ static func _build(level_id: int) -> LevelDefinition:
 			return _make(22, "Order Sequence", "Queue", 3,
 				[&"onde_onde", &"kuih_koci", &"ang_ku_kueh", &"kuih_ketayap", &"kuih_lapis", &"keria"],
 				[
-					[&"tourist", [[&"kuih_koci", 12]]],
-					[&"abang", [[&"ang_ku_kueh", 12]]],
-					[&"nenek", [[&"keria", 12]]],
-				], 28)
+					[&"tourist", [[&"kuih_koci", 11]]],
+					[&"abang", [[&"ang_ku_kueh", 11]]],
+					[&"nenek", [[&"keria", 11]]],
+				], 30)
 
 		23:
 			var l := _make(23, "Office Order", "Packaging", 4,
