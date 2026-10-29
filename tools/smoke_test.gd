@@ -46,6 +46,12 @@ func _ready() -> void:
 	# leftover boosters made every run start from a different inventory.
 	SaveManager.save_path = "user://kuih_test_save.json"
 	SaveManager.reset()
+	# The one-time "Meet our kuih" cards hold back the coach and board; they have
+	# their own coverage in kuih_intro_once_test.
+	for item in KuihLibrary.all():
+		SaveManager.data.kuih_seen.append(String(item.id))
+	for entry in PowerupRecipes.ENTRIES:
+		SaveManager.data.kuih_seen.append("special_intro_%d" % int(entry[0]))
 	scene_root = Node.new()
 	scene_root.name = "SmokeRoot"
 	add_child(scene_root)
@@ -241,7 +247,9 @@ func _walk_tutorial() -> void:
 					" moves=", moves_made,
 					" spins=", spins,
 					" orders=", screen.orders.size(),
-					" active=", screen.active_index)
+					" active=", screen.active_index,
+					" gate=", screen.coach._current().gate, " hint=", screen.coach._hint_cells,
+					" specials=", _specials(screen.board.logic))
 		else:
 			if not screen.result.visible or not screen.result.is_win:
 				problems.append("tutorial %d: win screen is hidden" % index)
@@ -260,10 +268,19 @@ func _walk_tutorial() -> void:
 func _pick_teaching_move(screen: LevelController) -> Dictionary:
 	var logic := screen.board.logic
 	var gate := TutorialStepData.Gate.SWAP_ANY
-	if screen.coach != null and not screen.coach.is_done():
-		for step in screen.level.tutorial_steps:
-			if step.gate != TutorialStepData.Gate.INTRO:
-				gate = step.gate
+	var coach := screen.coach
+	if coach != null and not coach.is_done():
+		# Teach to the step being shown now, not the lesson's last gate.
+		gate = coach._current().gate
+		# Demonstration steps accept only the highlighted swap; play exactly that.
+		var demonstrated := [TutorialStepData.Gate.ACTIVATED_SPECIAL, TutorialStepData.Gate.CREATED_TAPAU, TutorialStepData.Gate.CREATED_DULANG,
+			TutorialStepData.Gate.CREATED_HANTAR, TutorialStepData.Gate.CREATED_VERTICAL, TutorialStepData.Gate.ACTIVATED_CROSS]
+		if gate == TutorialStepData.Gate.ACTIVATED_SPECIAL:
+			# The screen points at the special on its next frame; ask for that hint now.
+			coach.guide_special_activation(logic)
+		var pair: Array = coach._hint_cells if gate == TutorialStepData.Gate.ACTIVATED_SPECIAL else coach._current().highlight
+		if gate in demonstrated and pair.size() == 2:
+			return {"a": pair[0], "b": pair[1]}
 	var wanted := &""
 	var order := screen.active_order()
 	if gate in [TutorialStepData.Gate.COLLECTED, TutorialStepData.Gate.SERVED] and order != null:
@@ -276,6 +293,8 @@ func _pick_teaching_move(screen: LevelController) -> Dictionary:
 	for pair in logic.find_possible_moves(4096):
 		var a: Vector2i = pair["a"]
 		var b: Vector2i = pair["b"]
+		if coach != null and not coach.is_done() and not coach.allows_swap(a, b):
+			continue
 		var snapshot := logic.snapshot()
 		if logic.try_swap(a, b) == BoardState.SwapOutcome.INVALID:
 			_restore(logic, snapshot)
@@ -364,9 +383,9 @@ func _check_tiles_fit(board: MatchBoard, tutorial_index: int) -> void:
 				"tutorial %d: tile is scaled to %s, which pushes it into its neighbour"
 				% [tutorial_index, str(tile.scale)]
 			)
-		if tile.icon.cell_ratio > 0.86:
+		if tile.icon.cell_ratio > 0.92: # 25f8ea4 enlarged kuih to fill 92% of the cell.
 			problems.append(
-				"tutorial %d: icon fills %.0f%% of the cell, the recess only reaches 91%%"
+				"tutorial %d: icon fills %.0f%% of the cell and spills into its neighbour"
 				% [tutorial_index, tile.icon.cell_ratio * 100.0]
 			)
 
@@ -402,6 +421,11 @@ func _play_level(level_id: int) -> void:
 	for _i in 4:
 		await get_tree().process_frame
 
+	# Campaign stages open with their story beat, which holds the board disabled.
+	for _beat in 3:
+		if level_screen.story.visible:
+			level_screen.story.close()
+			await get_tree().process_frame
 	var board: MatchBoard = level_screen.board
 	if board == null or board.logic == null:
 		problems.append("stage %d: board never built" % level_id)
@@ -433,9 +457,15 @@ func _play_level(level_id: int) -> void:
 		if level_screen.moves_left != before:
 			problems.append("stage %d: an invalid swap cost a move" % level_id)
 
+		# Stage 1 is short enough that the first swap can win it; reopen the board
+		# as the booster section below does so the hint has something to point at.
+		if level_screen.finished:
+			level_screen.finished = false
+			board.enabled = true
+			level_screen.result.visible = false
 		# Hints and targeting mode.
 		if not board.show_hint():
-			problems.append("stage %d: hint found no move" % level_id)
+			problems.append("stage %d: hint found no move (finished=%s enabled=%s busy=%s moves=%d)" % [level_id, level_screen.finished, board.enabled, board.busy, board.logic.find_possible_moves(64).size()])
 		board.clear_hints()
 		board.begin_targeting(0)
 		board.cancel_targeting()
@@ -460,7 +490,7 @@ func _play_level(level_id: int) -> void:
 
 			await _boost(level_screen, EconomyManager.Booster.SHUFFLE, Vector2i(-1, -1))
 			await _boost(level_screen, EconomyManager.Booster.EXTRA_MOVES, Vector2i(-1, -1))
-			await _boost(level_screen, EconomyManager.Booster.GIFT, Vector2i(-1, -1))
+			await _boost(level_screen, EconomyManager.Booster.GIFT, _centre(board)) # Gift now targets a cross centre.
 			await _boost(level_screen, EconomyManager.Booster.SPATULA, _first_playable(board))
 			await _boost(level_screen, EconomyManager.Booster.TRAY, _centre(board))
 		else:
@@ -472,7 +502,9 @@ func _play_level(level_id: int) -> void:
 	if not get_tree().paused:
 		problems.append("stage %d: pause menu did not pause gameplay" % level_id)
 	level_screen._resume_level()
-	level_screen._on_restart()
+	# Restarting a campaign stage navigates to the Journey preview, which would
+	# free this harness mid-run; the in-place restart is what remains to exercise.
+	level_screen._start_level()
 	for _i in 30:
 		await get_tree().process_frame
 	level_screen.result.show_win("Stage %d" % level_id, 3, 120, [&"onde_onde"], true)
@@ -515,3 +547,14 @@ func _first_playable(board: MatchBoard) -> Vector2i:
 
 func _centre(board: MatchBoard) -> Vector2i:
 	return Vector2i(board.logic.width / 2, board.logic.height / 2)
+
+
+## Special pieces currently on the board, for soft-lock diagnostics.
+func _specials(logic: BoardState) -> Dictionary:
+	var found := {}
+	for y in logic.height:
+		for x in logic.width:
+			var cell := logic.get_cell(Vector2i(x, y))
+			if cell.special != BoardCell.Special.NONE:
+				found[Vector2i(x, y)] = cell.special
+	return found

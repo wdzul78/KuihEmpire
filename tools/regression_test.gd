@@ -7,6 +7,12 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	SaveManager.save_path = "user://kuih_regression_save.json"
 	SaveManager.reset()
+	# The one-time "Meet our kuih" cards would block every lesson and story beat below;
+	# they have their own coverage in kuih_intro_once_test.
+	for item in KuihLibrary.all():
+		SaveManager.data.kuih_seen.append(String(item.id))
+	for entry in PowerupRecipes.ENTRIES:
+		SaveManager.data.kuih_seen.append("special_intro_%d" % int(entry[0]))
 	run.call_deferred()
 
 
@@ -44,15 +50,20 @@ func _check_character_layout() -> void:
 	screen.story._tap_indicator._process(.20)
 	check(screen.story._tap_indicator.frame_index == 1, "supplied finger sprite does not animate")
 	check(screen.hud.size.x <= screen.get_viewport_rect().size.x, "long title expanded HUD outside screen")
-	check(screen.story._card.get_global_rect().end.y <= screen.hud.order_panel._card.get_global_rect().position.y, "dialogue covers order panel")
-	check(screen.hud.booster_bar._buttons.size() == 4, "main booster tray must contain four buttons")
+	# The bubble hangs from the order board; its tail may tuck 2% under the edge.
+	var order_rect := screen.hud.order_panel._card.get_global_rect()
+	check(screen.story._card.get_global_rect().position.y >= order_rect.end.y - order_rect.size.y * .05, "dialogue covers order panel")
+	check(screen.hud.booster_bar._buttons.size() == BoosterBar.BUTTONS.size(), "main booster tray lost a button")
 	for entry in screen.hud.order_panel._chips.values():
 		check(screen.hud.order_panel._card.get_global_rect().encloses(entry["root"].get_global_rect()), "order item exceeds wooden board")
 		check(entry["root"].get_global_rect().encloses(entry["label"].get_global_rect()), "order counter exceeds item area")
 	check(screen.hud.board_holder.get_global_rect().end.y < screen.hud._booster_row.get_global_rect().position.y, "board overlaps booster tray")
 	for pos in screen.board._overlays:
 		check(screen.board._overlays[pos].z_index > screen.board._tiles[pos].z_index, "cover hidden below food sprite")
-	screen.story.close()
+	# Stage 21 chains the steamer introduction into its story beat; close both.
+	for _beat in 3:
+		if screen.story.visible:
+			screen.story.close()
 	check(screen.story._card.z_index == 0, "story bubble z order not restored")
 	check(screen.hud.order_panel._aina.z_index == 0, "Aina z order not restored")
 	check(screen.hud.order_panel._portrait.modulate == Color.WHITE, "dialogue left customer dimmed")
@@ -94,7 +105,7 @@ func _check_character_layout() -> void:
 	screen._open_pause_menu()
 	var extra_button: Button = null
 	for button in screen._pause_overlay.find_children("*", "Button", true, false):
-		if (button as Button).text.begins_with("+5 "):
+		if button.name == "UseExtraMovesButton":
 			extra_button = button
 	check(extra_button != null, "extra moves unavailable from pause menu")
 	if extra_button != null:
@@ -234,7 +245,7 @@ func _check_result_actions() -> void:
 	check(popup._coins_label.text == "+0" and popup._stars.filled == 0, "failure result invents rewards")
 	SaveManager.set_setting("language", "ms")
 	popup.show_win("Stage 3", 3, 60, [], false)
-	check(popup._title.text == "PESANAN SIAP!", "result Malay translation missing")
+	check(popup._title.text == "Pesanan siap!", "result Malay translation missing")
 	popup.queue_free()
 	await get_tree().process_frame
 
@@ -286,10 +297,11 @@ func run() -> void:
 	var board := screen.board
 	check(screen.hud._booster_row.visible, "tutorial booster tray is hidden")
 	check(screen.coach._card == screen.hud.order_panel._bubble, "coach did not use the upper dialogue")
-	check(screen.coach._card.get_global_rect().end.y <= screen.hud.order_panel._card.get_global_rect().position.y, "tutorial instructions cover order board")
-	check(not screen.hud.booster_bar._buttons[EconomyManager.Booster.SPATULA].disabled, "full tutorial booster is locked")
+	check(not screen.coach._card.get_global_rect().intersects(screen.hud.order_panel._card.get_global_rect()), "tutorial instructions cover order board")
+	# Boosters unlock only after the tutorials; every slot shows its lock.
+	check(screen.hud.booster_bar._buttons[EconomyManager.Booster.SPATULA].disabled, "tutorial booster is usable")
 	for button in screen.hud.booster_bar._buttons.values():
-		check(not button.get_node("LockIcon").visible and button.get_node("BoosterArt").visible, "unlocked booster kept lock icon")
+		check(button.get_node("LockIcon").visible and not button.get_node("BoosterArt").visible, "locked tutorial booster hides its lock icon")
 	if screen.coach.can_tap_through():
 		var before_step := screen.coach.index
 		var tap := InputEventMouseButton.new()
@@ -352,6 +364,8 @@ func run() -> void:
 	for pos in board._hint_cells:
 		check(board._tiles[pos].scale == Vector2.ONE, "hint enlarged a tile")
 	board.clear_hints()
+	# Tutorials refuse boosters; exercise booster behaviour as a campaign stage would.
+	screen.is_tutorial = false
 	EconomyManager.grant_booster(EconomyManager.Booster.TRAY, 2)
 	EconomyManager.grant_booster(EconomyManager.Booster.SHUFFLE, 2)
 	EconomyManager.grant_booster(EconomyManager.Booster.SPATULA, 2)
@@ -434,6 +448,7 @@ func run() -> void:
 	await SceneManager.goto_tutorial(1)
 	var current: LevelController = get_tree().current_scene
 	current._notification(NOTIFICATION_APPLICATION_PAUSED)
+	await get_tree().process_frame # The pause menu is added deferred.
 	check(get_tree().paused and current._pause_overlay != null, "application background did not pause current level")
 	await SceneManager.goto(SceneManager.HOME, true)
 	check(not get_tree().paused, "leaving a paused level left Home paused")

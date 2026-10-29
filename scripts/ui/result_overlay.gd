@@ -211,6 +211,8 @@ func _build() -> void:
 	_coins_label = _label("+0", Rect2(.34, .05, .59, .9), 66, reward)
 	_unlocks = _label("", Rect2(.15, .657, .7, .033), 28, _card)
 	_score_value = _label("", Rect2(.49, .636, .28, .064), 48, _card)
+	# Digits must never wrap: a wrapped "4991" grows four lines tall and drops behind the buttons.
+	_score_value.autowrap_mode = TextServer.AUTOWRAP_OFF
 	_score_heading = TitleArt.create("score", "Score")
 	_place(_score_heading, Rect2(.24, .638, .24, .055), _card)
 	_coin_caption = _label(JourneyArt.localized("Syiling","Coins"),Rect2(.20,.508,.22,.04),30,_card)
@@ -221,7 +223,11 @@ func _build() -> void:
 	_score_badge.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	_score_badge.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_place(_score_badge,Rect2(.49,.25,.16,.55),reward)
-	_new_best = _label("", Rect2(.14, .522, .72, .048), 36, _card)
+	_new_best = _label("", Rect2(.585, .62, .31, .052), 34, _card)
+	_new_best.autowrap_mode = TextServer.AUTOWRAP_OFF
+	_new_best.add_theme_stylebox_override("normal", UIKit.flat_box(Palette.GOLD, Palette.WOOD_DARK, 0, 3, 24))
+	_new_best.add_theme_color_override("font_color", Palette.WOOD_DARK)
+	_new_best.z_index = 2
 	_breakdown = _label("", Rect2(.13, .573, .74, .183), 34, _card)
 	_primary = _button("button_green", Rect2(.095, .705, .81, .09))
 	_secondary = _button("button_pink", Rect2(.095, .802, .81, .09))
@@ -424,14 +430,17 @@ func _animate_in() -> void:
 	tween.tween_property(_card, "scale", Vector2.ONE, .42).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 
-func _show_score_details(details: StageResult, _is_new_best: bool) -> void:
+func _show_score_details(details: StageResult, is_new_best: bool) -> void:
 	_reward_box.show()
 	if _score_count != null and _score_count.is_valid():
 		_score_count.kill()
 	score_target = details.final_score if details != null else 0
 	_score_value.text = str(score_target)
-	_new_best.text = ""
-	_new_best.hide()
+	# Only a replay that beats an earlier score earns the stamp; a first clear is always "best".
+	_new_best.text = MenuText.text("new_best")
+	_new_best.visible = is_win and is_new_best and details != null and details.previous_best > 0
+	_new_best.scale = Vector2.ONE
+	_new_best.rotation = -.12
 	_breakdown.text = ""
 	_breakdown.hide()
 	_unlocks.hide()
@@ -447,3 +456,9 @@ func _count_score(delay: float) -> void:
 	_score_value.pivot_offset = _score_value.size * .5
 	_score_count.tween_property(_score_value, "scale", Vector2(1.15, 1.15), .1)
 	_score_count.tween_property(_score_value, "scale", Vector2.ONE, .18).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	if _new_best.visible:
+		_new_best.pivot_offset = _new_best.size * .5
+		_new_best.scale = Vector2.ZERO
+		_score_count.tween_callback(func() -> void: AudioManager.play(AudioManager.Sfx.UNLOCK, 1.1, -4.0))
+		_score_count.tween_property(_new_best, "scale", Vector2(1.2, 1.2), .16).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		_score_count.tween_property(_new_best, "scale", Vector2.ONE, .12)
