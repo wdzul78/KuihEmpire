@@ -54,7 +54,7 @@ static func _build(id: StringName) -> StoryBeat:
 
 		&"beat_04_tapau":
 			return _lines(id, StoryBeat.Speaker.AINA, [
-				"Four in a row... and a Tapau Pack appeared!",
+				"Four in a row... and a Pulut Panggang appeared!",
 				"Send it across the whole row and everything flies.",
 			])
 
@@ -72,7 +72,7 @@ static func _build(id: StringName) -> StoryBeat:
 
 		&"beat_12_special_order":
 			return _lines(id, StoryBeat.Speaker.AINA, [
-				"Match five in a straight line to make a Special Order.",
+				"Match five in a straight line to make a Kek Lapis Sarawak Premium.",
 				"Swap it with a kuih to collect every kuih of that kind on the board!",
 			])
 

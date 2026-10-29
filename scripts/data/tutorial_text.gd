@@ -130,6 +130,27 @@ const MALAY := {
   "Power-ups unlock after training. For now, match carefully!": "Power-up dibuka selepas latihan. Buat masa ini, padan dengan teliti!",
   "Fill Makcik's order and you're ready to run the stall!": "Siapkan pesanan Makcik dan anda sudah bersedia menjaga gerai!",
   "Lesson %d": "Pelajaran %d",
+  # Journey story beats (scripts/story/beat_library.gd).
+  "Morning, Aina! One kuih for the ride home, please.": "Selamat pagi, Aina! Satu kuih untuk dibawa balik, ya.",
+  "Morning! Let's make your kuih fresh. Match three of the same kind to fill the order.": "Selamat pagi! Jom siapkan kuih segar. Padankan tiga kuih yang sama untuk lengkapkan pesanan.",
+  "Four in a row... and a Pulut Panggang appeared!": "Empat sebaris... dan Pulut Panggang pun muncul!",
+  "Send it across the whole row and everything flies.": "Lancarkan ke seluruh baris dan semuanya terbang.",
+  "Daun pisang, Aina. Cover the kuih so they stay fresh.": "Daun pisang, Aina. Tutup kuih supaya kekal segar.",
+  "Match right beside the leaf and the wind will lift it off.": "Padankan betul-betul di sebelah daun, nanti angin akan menerbangkannya.",
+  "Morning rush! Every table wants something sweet.": "Waktu pagi sibuk! Setiap meja mahukan sesuatu yang manis.",
+  "Take a breath. One tray at a time.": "Tarik nafas. Satu dulang pada satu masa.",
+  "Aina! The weekend market crowd is already queueing.": "Aina! Orang ramai pasar hujung minggu dah mula beratur.",
+  "I put the poster up on my phone. You are going viral, sort of.": "Aku dah kongsi poster dalam telefon. Kau dah tular, lebih kurang la.",
+  "We cleared the whole morning.": "Habis semua pesanan pagi ini.",
+  "Nenek Halimah said the onde-onde was the softest she has had.": "Nenek Halimah kata onde-onde ni paling lembut pernah dia rasa.",
+  "These kuih are still covered by steamer lids. Match beside a basket to open it.": "Kuih ni masih ditutup penutup pengukus. Padankan di sebelah bakul untuk membukanya.",
+  "Once the lid lifts, you can move and match the kuih inside. Later, stronger lids need two hits.": "Bila penutup terangkat, kuih di dalam boleh digerak dan dipadankan. Nanti, penutup yang lebih kuat perlu dua kali padanan.",
+  "So this is the famous stall. Hmm. Not bad, I suppose.": "Jadi inilah gerai yang terkenal tu. Hmm. Boleh tahan juga.",
+  "I am opening a kuih counter next month. May the best one win.": "Bulan depan aku buka kaunter kuih. Siapa terbaik, dia menang.",
+  "Our neighbours have ordered kuih for the whole community!": "Jiran-jiran kita tempah kuih untuk seluruh kampung!",
+  "Let's serve them together and bring our family stall to life.": "Jom hidangkan bersama dan meriahkan gerai keluarga kita.",
+  "You did it. The stall is full and the queue is still here.": "Kau berjaya. Gerai penuh dan barisan masih panjang.",
+  "Our next destination is the school canteen. A new story awaits!": "Destinasi seterusnya ialah kantin sekolah. Cerita baharu menanti!",
 }
 
 static func text(value: String) -> String:
