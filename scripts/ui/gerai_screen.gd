@@ -338,15 +338,13 @@ func _close_panel() -> void:
 
 func _open_panel(title: String, top: float = .55, bottom: float = .89, celebration: bool = false) -> VBoxContainer:
 	_close_panel()
-	_panel = PanelContainer.new()
-	_panel.name = "StallUpgradePanel"
-	_panel.z_index = 200
 	# The celebration frame keeps its painted aspect so the ribbon never stretches;
 	# the list frame stretches freely because its title plaque is a fixed overlay.
 	var width := .84 if celebration else .95
-	var scale := width * 1080.0 / 1280.0 if celebration else .72
-	var content_top := 150.0 if celebration else 212.0
-	_panel.add_theme_stylebox_override("panel", GeraiSkin.box("complete_panel" if celebration else "list_panel", scale, [58, content_top, 58, 56 if celebration else 60]))
+	var dialog := GeraiSkin.dialog(title, celebration, width)
+	_panel = dialog.panel
+	_panel.name = "StallUpgradePanel"
+	_panel.z_index = 200
 	JourneyArt.place(self, _panel, Rect2((1.0-width)*.5,top,width,bottom-top))
 	_panel.modulate.a = 0
 	_panel.create_tween().tween_property(_panel,"modulate:a",1.0,.16)
@@ -358,47 +356,9 @@ func _open_panel(title: String, top: float = .55, bottom: float = .89, celebrati
 	_panel.offset_top += inset.y
 	_panel.offset_right += inset.z
 	_panel.offset_bottom += inset.w
-	var margin := UIKit.margin(10)
-	_panel.add_child(margin)
-	var stack := UIKit.vbox(10)
-	margin.add_child(stack)
-	# Chrome is fitted to the content rect; its children reach back up over the frame.
-	var chrome := Control.new()
-	chrome.name = "PanelChrome"
-	chrome.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_panel.add_child(chrome)
-	var title_rect: Rect2
-	if celebration:
-		# Title rides on the painted red ribbon.
-		title_rect = Rect2(330 * scale, 88 * scale, 620 * scale, 92 * scale)
-	else:
-		var plaque := TextureRect.new()
-		plaque.texture = GeraiSkin.plaque(.85)
-		plaque.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		plaque.set_anchors_preset(Control.PRESET_CENTER_TOP)
-		plaque.offset_left = -plaque.texture.get_width() * .5
-		plaque.offset_right = plaque.texture.get_width() * .5
-		plaque.offset_top = 13 - content_top
-		plaque.offset_bottom = plaque.offset_top + plaque.texture.get_height()
-		chrome.add_child(plaque)
-		title_rect = Rect2(48, 58, plaque.texture.get_width() - 96, 92)
-	var label := UIKit.label(title, 40 if celebration else 36, Palette.PAPER)
-	label.add_theme_color_override("font_outline_color", Color("7a1f12") if celebration else Palette.WOOD_DARK)
-	label.add_theme_constant_override("outline_size", 10)
-	label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	label.clip_text = true
-	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	label.name = "PanelTitle"
-	if celebration:
-		label.position = title_rect.position - Vector2(58, content_top)
-		label.size = title_rect.size
-		chrome.add_child(label)
-	else:
-		label.position = title_rect.position
-		label.size = title_rect.size
-		chrome.get_child(0).add_child(label)
+	var stack: VBoxContainer = dialog.stack
+	var chrome: Control = dialog.chrome
+	var content_top: float = dialog.content_top
 	var close := UIKit.close_button()
 	close.set_anchors_preset(Control.PRESET_TOP_RIGHT)
 	close.offset_left = -36

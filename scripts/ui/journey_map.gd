@@ -79,17 +79,17 @@ func _build() -> void:
  header.add_theme_stylebox_override("panel",StyleBoxEmpty.new())
  JourneyArt.place(self,header,Rect2(0,0,1,.105))
  var logo := UIKit.brand_logo(Vector2.ZERO)
- JourneyArt.place(self, logo, Rect2(.015, .008, .28, .115))
- JourneyArt.place(self, HeartDisplay.new(), Rect2(.30, .030, .275, .045))
+ JourneyArt.place(self, logo, Rect2(.008, .0, .215, .088))
+ JourneyArt.place(self, HeartDisplay.new(), Rect2(.225, .020, .36, .0625))
  _coins = CoinDisplay.new()
  _coins.illustrated_style = true
  _coins.uniform_bar_height = true
  _coins.amount = EconomyManager.coins()
- JourneyArt.place(self, _coins, Rect2(.595, .030, .275, .045))
+ JourneyArt.place(self, _coins, Rect2(.595, .020, .285, .0625))
  var settings := UIKit.button("", 30)
  settings.custom_minimum_size = Vector2.ZERO
  GameplaySkin.button(settings, "settings")
- JourneyArt.place(self, settings, Rect2(.895, .033, .085, .048))
+ JourneyArt.place(self, settings, Rect2(.895, .026, .085, .05))
  settings.pressed.connect(func() -> void: SceneManager.goto(SceneManager.SETTINGS))
  var sign := _painted_panel(Rect2(20,60,1495,355))
  JourneyArt.place(self,sign,Rect2(.17,.095,.66,.065))
@@ -125,15 +125,16 @@ func _build() -> void:
  character.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
  character.mouse_filter = Control.MOUSE_FILTER_IGNORE
  JourneyArt.place(self, character, Rect2(.57, .45, .42, .32))
- # The painted dialogue bubble, the same art as story dialogue, with its tail
- # pointing down at Aina.
+ # The painted dialogue bubble, the same art as story dialogue. Its right end sits
+ # over Aina so the tail lands on her head.
  var speech := SpeechBubble.new()
  speech.name = "AinaSpeechBubble"
  speech.speaker_on_left = false
+ speech.art_scale = .2
  speech.z_index = 9
  speech.mouse_filter = Control.MOUSE_FILTER_IGNORE
- JourneyArt.place(self,speech,Rect2(.50,.375,.48,.075))
- var welcome := UIKit.label(JourneyArt.localized("Jom sambung!", "Let's continue!"), 38, Palette.WOOD_DARK)
+ JourneyArt.place(self,speech,Rect2(.65,.388,.20,.09))
+ var welcome := UIKit.label(JourneyArt.localized("Jom\nsambung!", "Let's\ncontinue!"), 38, Palette.WOOD_DARK)
  welcome.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
  speech.add_child(welcome)
  # A dark pill keeps the progress line readable over the busy map and nodes.
@@ -326,7 +327,7 @@ func _refresh() -> void:
   icon.kuih = KuihLibrary.get_kuih(id)
   icon.custom_minimum_size = Vector2(96,96)
   column.add_child(icon)
-  column.add_child(UIKit.label("×"+str(totals[id]),34,Palette.WOOD_DARK))
+  column.add_child(UIKit.label("×"+str(totals[id]),46,Palette.WOOD_DARK))
 
 func _position_world_backgrounds() -> void:
  if _scroll == null:

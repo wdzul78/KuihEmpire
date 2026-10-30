@@ -73,7 +73,7 @@ func _ready() -> void:
 	var close := _art_action(_pause_panel,"",Rect2(.82,.07,.12,.09))
 	close.pressed.connect(func() -> void: resume_pressed.emit())
 	JourneyArt.label(_pause_panel,JourneyArt.localized("+5 langkah","+5 moves"),Rect2(.245,.669,.34,.055),46,Palette.WOOD_DARK)
-	JourneyArt.label(_pause_panel,"%d coins" % EconomyManager.EXTRA_MOVES_COST if extra_coin_purchase else JourneyArt.localized("Bekalan: %d","Supplies: %d") % extra_count,Rect2(.245,.727,.34,.045),34,Color("858578"))
+	JourneyArt.label(_pause_panel,"%d coins" % EconomyManager.EXTRA_MOVES_COST if extra_coin_purchase else JourneyArt.localized("Stok: %d","Stock: %d") % extra_count,Rect2(.245,.727,.34,.045),34,Color("858578"))
 	var use := _art_action(_pause_panel,JourneyArt.localized("Guna","Use"),Rect2(.645,.652,.24,.089),46,Color("23682b"))
 	use.name = "UseExtraMovesButton"
 	use.add_theme_color_override("font_disabled_color",Color("56634d"))

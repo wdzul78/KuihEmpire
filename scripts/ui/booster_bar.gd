@@ -110,10 +110,10 @@ func _build() -> void:
 		badge.size = Vector2(56, 56)
 		badge.position = Vector2(112, -6)
 		badge.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		var badge_label := UIKit.label("0", 34, Palette.WHITE)
+		var badge_label := UIKit.label("0", 42, Palette.WHITE)
 		badge_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		badge_label.add_theme_color_override("font_outline_color", Color("8b190b"))
-		badge_label.add_theme_constant_override("outline_size", 5)
+		badge_label.add_theme_constant_override("outline_size", 7)
 		badge_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		badge.add_child(badge_label)
 		holder.add_child(badge)
@@ -133,9 +133,9 @@ func _recenter() -> void:
 		button.offset_bottom = side
 		var badge := holder.get_node_or_null("Badge") as Control
 		if badge != null:
-			badge.position = Vector2(side-50,side-48)
-			badge.custom_minimum_size = Vector2(52,52)
-			badge.size = Vector2(52,52)
+			badge.position = Vector2(side-58,side-56)
+			badge.custom_minimum_size = Vector2(62,62)
+			badge.size = Vector2(62,62)
 	queue_redraw()
 
 

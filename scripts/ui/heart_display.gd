@@ -42,7 +42,11 @@ func _layout_labels() -> void:
 		_count.position = Vector2.ZERO
 		_count.size = Vector2(size.y * .96, size.y)
 		_count.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		_count.add_theme_font_size_override("font_size", clampi(roundi(size.y*.50),24,48))
+		# The infinity sign draws thin, so it gets a bigger size and a heavier outline.
+		var infinite := HeartManager.is_free_play_active()
+		_count.add_theme_font_size_override("font_size", clampi(roundi(size.y*(.64 if infinite else .50)),24,72))
+		_count.add_theme_constant_override("outline_size", 8 if infinite else 3)
+		_count.add_theme_font_override("font", UIKit.title_font() if infinite else UIKit.counter_font())
 	if _timer != null:
 		_timer.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT)
 		_timer.position = Vector2(size.y * .98, 0)
@@ -58,6 +62,7 @@ func _draw() -> void:
 func _refresh() -> void:
 	_count.text = "∞" if HeartManager.is_free_play_active() else str(HeartManager.current())
 	var seconds := HeartManager.get_free_play_remaining()
+	_layout_labels()
 	if compact_count:
 		if seconds > 0:
 			_timer.text = HeartManager.time_text(seconds)
@@ -72,11 +77,14 @@ func _refresh() -> void:
 		_layout_labels()
 		return
 	if seconds > 0:
-		_timer.add_theme_font_size_override("font_size", 24)
+		_timer.add_theme_font_size_override("font_size", clampi(roundi(size.y*.27),24,34))
+		_timer.add_theme_constant_override("line_spacing", -4)
+		_timer.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		_timer.text = "Free Play\n" + HeartManager.time_text(seconds)
 	elif HeartManager.current() == HeartManager.MAX_HEARTS:
 		_timer.add_theme_font_size_override("font_size", ResourceBarArt.FONT_SIZE)
 		_timer.text = JourneyArt.localized("Penuh", "Full")
 	else:
-		_timer.add_theme_font_size_override("font_size", 26)
-		_timer.text = "+1  " + HeartManager.time_text(HeartManager.get_next_refill_remaining())
+		_timer.add_theme_font_size_override("font_size", clampi(roundi(size.y*.33),26,40))
+		_timer.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		_timer.text = "+1 " + HeartManager.time_text(HeartManager.get_next_refill_remaining())

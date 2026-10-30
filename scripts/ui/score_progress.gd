@@ -6,8 +6,9 @@ var score := 0
 var two_star := 800
 var three_star := 1400
 var _number: Label
+var _caption: Label
 var _star_art: Texture2D
-const METER_PATH := "res://assets/ui/score_meter_v1/score_meter_empty.png"
+const METER_PATH := "res://assets/ui/score_meter_v2/score_meter_empty.png"
 const ART_REGION := Rect2(18,180,1500,640)
 var _meter_art: Texture2D
 var fill_ratio := 0.0
@@ -21,6 +22,13 @@ func _ready() -> void:
 	_number.add_theme_font_override("font", UIKit.counter_font())
 	_number.name = "ScoreValue"
 	_number.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	# Caption is live text (not painted) so it stays readable and translated.
+	_caption = UIKit.graphic_label(JourneyArt.localized("Skor","Score"), 36, UIKit.GraphicText.WHITE)
+	_caption.name = "ScoreCaption"
+	_caption.material = null
+	_caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_caption.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	add_child(_caption)
 	_star_art = GameplaySkin.texture("star")
 	var atlas := AtlasTexture.new()
 	atlas.atlas = load(METER_PATH)
@@ -78,8 +86,11 @@ func _refresh() -> void:
 		var art := illustration_rect()
 		_number.add_theme_font_size_override("font_size",16)
 		_number.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT)
-		_number.position = art.position+art.size*Vector2(.22,.67)
-		_number.size = art.size*Vector2(.56,.25)
+		_number.position = art.position+art.size*Vector2(.22,.63)
+		_number.size = art.size*Vector2(.56,.32)
+		_caption.position = art.position+art.size*Vector2(.25,.43)
+		_caption.size = art.size*Vector2(.50,.21)
+		_caption.add_theme_font_size_override("font_size",clampi(roundi(art.size.y*.20),18,40))
 		_number.text = str(score)
 		var px := number_font_size
 		while px > 16 and (_number.get_theme_font("font").get_string_size(_number.text, HORIZONTAL_ALIGNMENT_LEFT, -1, px).x > _number.size.x - 8 or _number.get_theme_font("font").get_height(px) > _number.size.y):

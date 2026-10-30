@@ -9,6 +9,8 @@ var tail_on_top := false:
 		queue_redraw()
 
 var _bubble_style: StyleBoxTexture
+## Overrides the size-derived art scale when the tail must read at a small height.
+var art_scale := 0.0
 
 ## Flip only the painted bubble; native dialogue text keeps its reading direction.
 var speaker_on_left := false:
@@ -43,7 +45,7 @@ func _draw() -> void:
 	if _bubble_style == null or size.x <= 0 or size.y <= 0:
 		return
 	# Mirror independently towards the active speaker and its vertical position.
-	var scale_factor := minf(40.0,size.y*.18)/210.0
+	var scale_factor := art_scale if art_scale > 0.0 else minf(40.0,size.y*.18)/210.0
 	var origin := Vector2(0 if speaker_on_left else size.x,size.y if tail_on_top else 0.0)
 	var direction := Vector2(1 if speaker_on_left else -1,-1 if tail_on_top else 1)
 	draw_set_transform(origin,0,direction*scale_factor)

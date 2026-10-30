@@ -16,7 +16,7 @@
 [ext_resource type="Texture2D" path="res://assets/boosters/tapau.png" id="Art_Tapau"]
 [ext_resource type="Script" path="res://scripts/ui/editor_layout_character.gd" id="LayoutCharacterPreview"]
 [ext_resource type="Texture2D" path="res://assets/ui/stage_profile_v1/stage_profile_board.png" id="Art_StageProfile"]
-[ext_resource type="Texture2D" path="res://assets/ui/score_meter_v1/score_meter_empty.png" id="Art_ScoreMeter"]
+[ext_resource type="Texture2D" path="res://assets/ui/score_meter_v2/score_meter_empty.png" id="Art_ScoreMeter"]
 
 
 
