@@ -228,7 +228,7 @@ func _layout_compact_board() -> void:
 	title.anchor_right = .605
 	title.anchor_top = .028
 	title.anchor_bottom = .19
-	title.add_theme_font_size_override("font_size",clampi(roundi(extent.y*.13),18,32))
+	title.add_theme_font_size_override("font_size",clampi(roundi(extent.y*.165),18,38))
 	for character in [_portrait,_aina]:
 		character.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT)
 		character.position = rect.position + extent*Vector2(.018 if character == _portrait else .821,.196)
@@ -315,15 +315,15 @@ func _layout_chips() -> void:
 		var top := (_chips_row.size.y - height) * .5
 		entry["icon"].position = Vector2(backing_left + backing_width * .06, top + height * .04)
 		entry["icon"].size = Vector2(backing_width * .88, height * .88)
-		var badge_edge := clampf(height * .40, 28, 64)
-		var badge_position := Vector2(backing_left + backing_width * .82 - badge_edge, top + height * .88 - badge_edge)
+		var badge_edge := clampf(height * .60, 28, 72)
+		var badge_position := Vector2(minf(backing_left + backing_width - badge_edge * .95, width - badge_edge), minf(top + height * 1.04 - badge_edge, _chips_row.size.y - badge_edge * 1.2))
 		entry["badge"].position = badge_position
 		entry["badge"].size = Vector2.ONE * badge_edge
-		entry["tick"].position = badge_position - Vector2.ONE * badge_edge * .20
-		entry["tick"].size = Vector2.ONE * badge_edge * 1.45
-		var number_size := int(badge_edge * .95)
+		entry["tick"].position = badge_position - Vector2.ONE * badge_edge * .10
+		entry["tick"].size = Vector2.ONE * badge_edge * 1.2
+		var number_size := int(badge_edge * .80)
 		entry["label"].add_theme_font_size_override("font_size", number_size)
-		entry["label"].add_theme_constant_override("outline_size", maxi(3, roundi(number_size*.15)))
+		entry["label"].add_theme_constant_override("outline_size", maxi(4, roundi(number_size*.22)))
 		entry["label"].add_theme_color_override("font_outline_color", Color("674229"))
 		entry["label"].add_theme_color_override("font_shadow_color", Color(.20, .10, .04, .85))
 		entry["label"].add_theme_constant_override("shadow_offset_x", maxi(1, roundi(number_size*.04)))

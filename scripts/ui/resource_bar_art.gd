@@ -52,6 +52,11 @@ static func draw_frame(canvas: Control, kind: String, plus: bool = false, square
 			canvas.draw_circle(center, radius + 3, Color("ffdb79"))
 			canvas.draw_circle(center, radius + 2, Palette.WOOD_DARK)
 			canvas.draw_circle(center, radius, Color("35be38"))
-			canvas.draw_circle(center+Vector2(-radius*.25,-radius*.32), radius*.18, Color("b8ff86"))
-		canvas.draw_line(center - Vector2(radius * .48, 0), center + Vector2(radius * .48, 0), Palette.PAPER, 5, true)
-		canvas.draw_line(center - Vector2(0, radius * .48), center + Vector2(0, radius * .48), Palette.PAPER, 5, true)
+			# Soft top sheen, kept clear of the plus arms so nothing crowds the sign.
+			canvas.draw_arc(center, radius*.80, deg_to_rad(205), deg_to_rad(335), 16, Color("b8ff86"), radius*.12, true)
+		var arm := radius * .50
+		var stroke := maxf(5.0, radius * .30)
+		for axis in [Vector2.RIGHT, Vector2.DOWN]:
+			canvas.draw_line(center - axis * arm, center + axis * arm, Palette.PAPER, stroke, true)
+			canvas.draw_circle(center - axis * arm, stroke * .5, Palette.PAPER)
+			canvas.draw_circle(center + axis * arm, stroke * .5, Palette.PAPER)

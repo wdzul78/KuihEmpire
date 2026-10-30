@@ -273,7 +273,7 @@ func _fit_stage_text() -> void:
 	if not is_instance_valid(_title_label) or _title_label.size.x <= 0:
 		return
 	var font := _title_label.get_theme_font("font")
-	var font_size := 38
+	var font_size := 48
 	while font_size > 16:
 		var widest := 0.0
 		for line in _title_label.text.split("\n"):
@@ -338,7 +338,7 @@ func _fit_moves_text() -> void:
 		label.offset_right = 0
 		label.offset_bottom = 0
 		var available: Vector2 = label.get_parent().size * Vector2(label.anchor_right-label.anchor_left,label.anchor_bottom-label.anchor_top)
-		var px := 48 if label == _moves_label else 30
+		var px := 68 if label == _moves_label else 36
 		var font: Font = label.get_theme_font("font")
 		while px > 16 and (font.get_height(px) > available.y-4 or font.get_string_size(label.text,HORIZONTAL_ALIGNMENT_LEFT,-1,px).x > available.x-8):
 			px -= 1

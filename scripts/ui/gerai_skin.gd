@@ -78,6 +78,52 @@ static func icon(key: String) -> TextureRect:
 	view.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return view
 
+## Framed dialog with its title on the painted plaque, or on the red ribbon when
+## celebrating. Returns panel, stack (content column), chrome and content_top; the
+## caller places the panel. A celebration dialog must span screen_width so its
+## ribbon keeps the painted proportions; extra height only grows the plain middle.
+static func dialog(title: String, celebration: bool = false, screen_width: float = .95) -> Dictionary:
+	var scale := screen_width * 1080.0 / 1280.0 if celebration else .72
+	var content_top := 228.0 * scale if celebration else 212.0
+	var side := 82.0 * scale if celebration else 58.0
+	var panel := PanelContainer.new()
+	panel.add_theme_stylebox_override("panel", box("complete_panel" if celebration else "list_panel", scale, [side, content_top, side, 79.0 * scale if celebration else 60.0]))
+	var margin := UIKit.margin(10)
+	panel.add_child(margin)
+	var stack := UIKit.vbox(10)
+	margin.add_child(stack)
+	# Chrome is fitted to the content rect; its children reach back up over the frame.
+	var chrome := Control.new()
+	chrome.name = "PanelChrome"
+	chrome.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	panel.add_child(chrome)
+	var label := UIKit.label(title, 40 if celebration else 36, Palette.PAPER)
+	label.name = "PanelTitle"
+	label.add_theme_color_override("font_outline_color", Color("7a1f12") if celebration else Palette.WOOD_DARK)
+	label.add_theme_constant_override("outline_size", 10)
+	label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.clip_text = true
+	if celebration:
+		# Title rides on the painted red ribbon.
+		label.position = Vector2(330 * scale - side, 88 * scale - content_top)
+		label.size = Vector2(620, 92) * scale
+		chrome.add_child(label)
+	else:
+		var board := TextureRect.new()
+		board.texture = plaque(.85)
+		board.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		board.set_anchors_preset(Control.PRESET_CENTER_TOP)
+		board.offset_left = -board.texture.get_width() * .5
+		board.offset_right = board.texture.get_width() * .5
+		board.offset_top = 13 - content_top
+		board.offset_bottom = board.offset_top + board.texture.get_height()
+		chrome.add_child(board)
+		label.position = Vector2(48, 58)
+		label.size = Vector2(board.texture.get_width() - 96, 92)
+		board.add_child(label)
+	return {"panel": panel, "stack": stack, "chrome": chrome, "content_top": content_top}
+
 static func style_progress(bar: ProgressBar, height: float) -> void:
 	var scale := height / 64.0
 	bar.custom_minimum_size.y = height

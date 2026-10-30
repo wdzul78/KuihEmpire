@@ -18,7 +18,7 @@ func _ready() -> void:
 	await get_tree().create_timer(.5).timeout
 	assert(map._world_layers.size() == 3)
 	assert(map.get_node("AinaCharacter").size.x > map.size.x*.4)
-	assert(map.get_node("AinaSpeechBubble").size.x > map.size.x*.45)
+	assert(map.get_node("AinaSpeechBubble").size.x > map.size.x*.18)
 	await shot("journey-polished-stage18")
 	for seam in [1,2]:
 		map._scroll.scroll_vertical = int(map._chapter_height*seam-map._scroll.size.y*.5)

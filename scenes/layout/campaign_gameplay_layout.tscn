@@ -15,7 +15,7 @@
 [ext_resource type="Texture2D" path="res://assets/boosters/tapau.png" id="Art_Tapau"]
 [ext_resource type="Script" path="res://scripts/ui/editor_layout_character.gd" id="LayoutCharacterPreview"]
 [ext_resource type="Texture2D" path="res://assets/ui/stage_profile_v1/stage_profile_board.png" id="Art_StageProfile"]
-[ext_resource type="Texture2D" path="res://assets/ui/score_meter_v1/score_meter_empty.png" id="Art_ScoreMeter"]
+[ext_resource type="Texture2D" path="res://assets/ui/score_meter_v2/score_meter_empty.png" id="Art_ScoreMeter"]
 
 
 
@@ -145,10 +145,10 @@ vertical_alignment = 1
 
 [node name="ScoreMeter" type="Panel" parent="."]
 layout_mode = 0
-anchor_left = 0.37
-anchor_top = 0.018
-anchor_right = 0.73
-anchor_bottom = 0.105
+anchor_left = 0.355
+anchor_top = 0.01
+anchor_right = 0.785
+anchor_bottom = 0.112
 mouse_filter = 2
 metadata/_edit_use_anchors_ = true
 theme_override_styles/panel = SubResource("ScoreMeterStyle")
@@ -162,7 +162,7 @@ anchor_bottom = 0.94
 mouse_filter = 2
 metadata/_edit_use_anchors_ = true
 theme_override_colors/font_color = Color(0.29, 0.17, 0.09, 1)
-theme_override_font_sizes/font_size = 48
+theme_override_font_sizes/font_size = 56
 text = "0"
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -182,10 +182,10 @@ stretch_mode = 5
 
 [node name="StageTitleFrame" type="Panel" parent="."]
 layout_mode = 0
-anchor_left = 0.025
-anchor_top = 0.025
-anchor_right = 0.335
-anchor_bottom = 0.11
+anchor_left = 0.012
+anchor_top = 0.016
+anchor_right = 0.352
+anchor_bottom = 0.114
 mouse_filter = 2
 metadata/_edit_use_anchors_ = true
 theme_override_styles/panel = SubResource("StageProfileStyle")
@@ -193,10 +193,10 @@ visible = false
 
 [node name="StageTitle" type="Label" parent="."]
 layout_mode = 0
-anchor_left = 0.095
-anchor_top = 0.043
-anchor_right = 0.29
-anchor_bottom = 0.094
+anchor_left = 0.08
+anchor_top = 0.035
+anchor_right = 0.318
+anchor_bottom = 0.098
 mouse_filter = 2
 metadata/_edit_use_anchors_ = true
 theme_override_colors/font_color = Color(0.29, 0.17, 0.09, 1)
@@ -208,10 +208,10 @@ autowrap_mode = 0
 
 [node name="MovesPanel" type="TextureRect" parent="."]
 layout_mode = 0
-anchor_left = 0.8
-anchor_top = 0.018
-anchor_right = 0.98
-anchor_bottom = 0.115
+anchor_left = 0.785
+anchor_top = 0.0
+anchor_right = 0.995
+anchor_bottom = 0.118
 mouse_filter = 2
 metadata/_edit_use_anchors_ = true
 tooltip_text = "Layout: MovesPanel; artwork: assets/ui/moves_board_v1/hanging_moves_board.png"
@@ -225,7 +225,7 @@ layout_mode = 0
 anchor_left = 0.15
 anchor_top = 0.59
 anchor_right = 0.85
-anchor_bottom = 0.86
+anchor_bottom = 0.91
 mouse_filter = 2
 metadata/_edit_use_anchors_ = true
 theme_override_colors/font_color = Color(0.29, 0.17, 0.09, 1)
@@ -237,7 +237,7 @@ vertical_alignment = 1
 [node name="MovesCaption" type="Label" parent="MovesPanel"]
 layout_mode = 0
 anchor_left = 0.13
-anchor_top = 0.37
+anchor_top = 0.36
 anchor_right = 0.87
 anchor_bottom = 0.59
 mouse_filter = 2

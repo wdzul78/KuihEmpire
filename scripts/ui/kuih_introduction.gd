@@ -78,6 +78,7 @@ func _show_items(items: Array[KuihData], index: int, done: Callable) -> void:
 		return
 	var item := items[index]
 	ProgressionManager.unlock_recipe(item.recipe_id)
+	RecipeBookManager.record_introduced(item.recipe_id)
 	var veil := ColorRect.new()
 	veil.name = "ModalDimmer"
 	veil.color = Color(0,0,0,.65)

@@ -57,6 +57,19 @@ func discover_recipe(id: StringName, source: String = "stage", completed_stage: 
 	recipe_discovered.emit(id)
 	return {"ok": true, "newly_discovered": true, "reward": reward}
 
+## A kuih the player has met is in the book from then on, so no later stage
+## announces it as new. Silent: the introduction card is the announcement.
+func record_introduced(id: StringName) -> void:
+	if _transaction_busy or RecipeCatalog.find(id) == null or is_recipe_discovered(id):
+		return
+	var before := SaveManager.data.duplicate(true)
+	SaveManager.data["discovered_recipe_ids"].append(String(id))
+	SaveManager.data["recipe_discovery_count"] = SaveManager.data["discovered_recipe_ids"].size()
+	SaveManager.data["claimed_recipe_discovery_rewards"].append(String(id))
+	SaveManager.data["recipe_discovery_records"][String(id)] = {"source": "introduction", "stage": 0, "coins": 0}
+	if _commit(before):
+		recipe_discovered.emit(id)
+
 func claim_milestone_reward(id: String) -> Dictionary:
 	RecipeCatalog.all()
 	for milestone in RecipeCatalog.milestones:
@@ -136,6 +149,11 @@ static func normalize(loaded: Dictionary, clean: Dictionary) -> void:
 				if not discovered.has(String(recipe.id)):
 					discovered.append(String(recipe.id))
 				records[String(recipe.id)] = {"source": "migration", "stage": 0, "coins": 0}
+	# Saves from before introductions fed the book: kuih already met are owned.
+	for id in SaveManager._strings(loaded.get("kuih_seen")):
+		if not discovered.has(id) and RecipeCatalog.find(StringName(id)) != null:
+			discovered.append(id)
+			records[id] = {"source": "migration", "stage": 0, "coins": 0}
 	# A malformed/partial claim ledger never makes an owned recipe payable again.
 	for id in discovered:
 		if not claims.has(id):
