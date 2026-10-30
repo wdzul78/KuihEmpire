@@ -52,7 +52,7 @@ func decor_rect(item: DecorDefinition) -> Rect2:
 		return Rect2(-.035,.605,1.07,.31)
 	if not showcase_active():
 		return item.art_rect(location_id)
-	return {"flower":Rect2(.015,.615,.16,.12),"lamp":Rect2(.77,.36,.10,.10),"cloth":Rect2(.115,.565,.77,.16),"food":Rect2(.15,.49,.70,.12),"sign":Rect2(.33,.35,.37,.055),"counter":Rect2(.13,.61,.74,.115)}[item.kind]
+	return {"flower":Rect2(.77,.485,.15,.13),"lamp":Rect2(.77,.36,.10,.10),"cloth":Rect2(.115,.565,.77,.16),"food":Rect2(.15,.49,.70,.12),"sign":Rect2(.33,.35,.37,.055),"counter":Rect2(.13,.61,.74,.115)}[item.kind]
 
 func _draw_showcase() -> void:
 	var frame := showcase_rect()

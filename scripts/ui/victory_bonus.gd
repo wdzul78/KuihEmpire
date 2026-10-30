@@ -112,6 +112,7 @@ func play(board: MatchBoard, moves: int, points_per_move: int) -> void:
 		var pop := tile.create_tween()
 		pop.tween_property(tile, "scale", Vector2.ONE, .16).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 		_vfx.special_formation(board._cell_center(pos), PackedVector2Array(), board.cell_size, tile.cell.special)
+		AudioManager.play_special_conversion(index)
 		if not queue.has(pos):
 			queue.append(pos)
 		await _wait(.12)

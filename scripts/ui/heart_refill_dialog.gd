@@ -75,7 +75,7 @@ func _ready() -> void:
 	_image(_home,preload("res://assets/menu/v2/nav_shop.png"),Rect2(.08,.12,.17,.76))
 	JourneyArt.label(_home,JourneyArt.localized("Kembali ke gerai","Back to stall"),Rect2(.27,.10,.66,.80),42,Color.WHITE)
 	_home.pressed.connect(func() -> void: queue_free(); GameManager.go_home())
-	var close := GameButton.create("×","back",60)
+	var close := UIKit.close_button()
 	close.name = "CloseRestDialog"
 	close.custom_minimum_size = Vector2.ZERO
 	close.focus_mode = Control.FOCUS_ALL
