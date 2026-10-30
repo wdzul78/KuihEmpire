@@ -1,0 +1,620 @@
+{
+  "date": "2026-10-30",
+  "tool": "built-in imagegen",
+  "request": "design/ChatGPT_Asset_Requests_2026-10-30_Gerai_UI.md",
+  "asset_count": 20,
+  "runtime_integration": "Reserved for Claude per request file; no production scripts/scenes changed.",
+  "export": "Original generated PNGs separately backed up before native Godot export sizing. Final PNGs have exact requested dimensions and transparent padding.",
+  "assets": [
+    {
+      "final_size": [
+        1536,
+        300
+      ],
+      "height": 300.0,
+      "id": "header_bar",
+      "item": "Wide horizontal top header plate for a mobile screen: cream parchment face inside a golden rim and honey wood frame, softly rounded corners (radius about 60px), two tiny banana-leaf sprigs tucked at the far left and far right corners only, plain flat centre for text. 9-slice friendly.",
+      "path": "assets/ui/gerai_v1/header_bar.png",
+      "prompt": "Polished 2D casual mobile game UI asset, cozy Malaysian kampung kuih stall theme, matching ONE consistent set. Warm cream parchment face with a very soft paper texture, glossy golden inner rim, slim polished honey-brown wood outer frame, bold clean dark-brown cartoon outline, soft warm top highlight, gentle drop shadow under the piece. Small green banana-leaf accents only where stated. Front-on flat view, perfectly symmetric. TRUE TRANSPARENT background (real alpha, no checkerboard, no white box). NO text, letters or numbers anywhere.\nReference images are STYLE REFERENCES ONLY, not layouts to copy. Produce ONE separate deliverable, not a screenshot or collection. Requested canvas exactly 1536 by 300 pixels, aspect ratio 5.12:1. Fill canvas with only 2–3% transparent safety padding and never clip frame, shadow or leaves. Asset: Wide horizontal top header plate for a mobile screen: cream parchment face inside a golden rim and honey wood frame, softly rounded corners (radius about 60px), two tiny banana-leaf sprigs tucked at the far left and far right corners only, plain flat centre for text. 9-slice friendly. Keep equal border thickness on all four edges. Ornament only in corners. Straight middle sections of each edge must be plain and repeatable for 9-patch stretching; no center-side protrusions.\nNo baked text. Keep any requested icon a clean simple readable symbol. Match the gold, warm honey wood and cream palette of the reference set.",
+      "recommended_slice_margins_left_right_top_bottom": [
+        200,
+        200,
+        90,
+        100
+      ],
+      "sha256": "b1ff19b3f32047ca0f2c16b1beab584cd368a60db7c9eef0a2ec42a3e69cc316",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-27a5a514-a500-4d7b-b640-4f114dea9036.png",
+      "source_size": [
+        2172,
+        724
+      ],
+      "source_used_rect": [
+        27,
+        120,
+        2118,
+        483
+      ],
+      "stretch": "nine_patch",
+      "transparent_padding": 6,
+      "width": 1536.0
+    },
+    {
+      "final_size": [
+        1024,
+        220
+      ],
+      "height": 220.0,
+      "id": "name_plate",
+      "item": "Carved wooden name plaque for the stall name: warm honey wood with visible soft grain, golden beaded edge, gently scalloped ends like a shop signboard, recessed flat centre for a title. Symmetric. Horizontally 9-slice friendly (the middle section must be plain and repeatable).",
+      "path": "assets/ui/gerai_v1/name_plate.png",
+      "prompt": "Polished 2D casual mobile game UI asset, cozy Malaysian kampung kuih stall theme, matching ONE consistent set. Warm cream parchment face with a very soft paper texture, glossy golden inner rim, slim polished honey-brown wood outer frame, bold clean dark-brown cartoon outline, soft warm top highlight, gentle drop shadow under the piece. Small green banana-leaf accents only where stated. Front-on flat view, perfectly symmetric. TRUE TRANSPARENT background (real alpha, no checkerboard, no white box). NO text, letters or numbers anywhere.\nReference images are STYLE REFERENCES ONLY, not layouts to copy. Produce ONE separate deliverable, not a screenshot or collection. Requested canvas exactly 1024 by 220 pixels, aspect ratio 4.654545454545454:1. Fill canvas with only 2–3% transparent safety padding and never clip frame, shadow or leaves. Asset: Carved wooden name plaque for the stall name: warm honey wood with visible soft grain, golden beaded edge, gently scalloped ends like a shop signboard, recessed flat centre for a title. Symmetric. Horizontally 9-slice friendly (the middle section must be plain and repeatable). Keep equal border thickness on all four edges. Ornament only in corners. Straight middle sections of each edge must be plain and repeatable for 9-patch stretching; no center-side protrusions.\nNo baked text. Keep any requested icon a clean simple readable symbol. Match the gold, warm honey wood and cream palette of the reference set.",
+      "recommended_slice_margins_left_right_top_bottom": [
+        240,
+        240,
+        60,
+        60
+      ],
+      "sha256": "5fd760cb01b231734d979971c9a4d132f0ba5a5bdcc0bb6be90fbb62b321cef7",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-7b1817fd-7859-4605-a241-14b5a8873175.png",
+      "source_size": [
+        2068,
+        760
+      ],
+      "source_used_rect": [
+        1,
+        97,
+        2067,
+        518
+      ],
+      "stretch": "horizontal_preferred",
+      "transparent_padding": 4,
+      "width": 1024.0
+    },
+    {
+      "final_size": [
+        640,
+        220
+      ],
+      "height": 220.0,
+      "id": "star_counter",
+      "item": "Resource counter pill: rounded cream-to-honey pill with a golden rim and dark-brown outline. At the left end a big glossy golden five-point star medallion overlaps the pill edge. The rest of the pill is plain and recessed, for the number. Optional small round green \"+\" bubble at the right end, kept separate from the number area.",
+      "path": "assets/ui/gerai_v1/star_counter.png",
+      "prompt": "Polished 2D casual mobile game UI asset, cozy Malaysian kampung kuih stall theme, matching ONE consistent set. Warm cream parchment face with a very soft paper texture, glossy golden inner rim, slim polished honey-brown wood outer frame, bold clean dark-brown cartoon outline, soft warm top highlight, gentle drop shadow under the piece. Small green banana-leaf accents only where stated. Front-on flat view, perfectly symmetric. TRUE TRANSPARENT background (real alpha, no checkerboard, no white box). NO text, letters or numbers anywhere.\nReference images are STYLE REFERENCES ONLY, not layouts to copy. Produce ONE separate deliverable, not a screenshot or collection. Requested canvas exactly 640 by 220 pixels, aspect ratio 2.909090909090909:1. Fill canvas with only 2–3% transparent safety padding and never clip frame, shadow or leaves. Asset: Resource counter pill: rounded cream-to-honey pill with a golden rim and dark-brown outline. At the left end a big glossy golden five-point star medallion overlaps the pill edge. The rest of the pill is plain and recessed, for the number. Optional small round green \"+\" bubble at the right end, kept separate from the number area. Omit the optional plus bubble. Star at left, all remaining number space completely blank.\nNo baked text. Keep any requested icon a clean simple readable symbol. Match the gold, warm honey wood and cream palette of the reference set.",
+      "recommended_slice_margins_left_right_top_bottom": [
+        230,
+        90,
+        70,
+        70
+      ],
+      "sha256": "afd3014648785d611f232889d2c9418c09b5bca2e66ecd40ffd5675ccc7d0e90",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-450aec3c-bd37-4b8c-841e-330f3f266eda.png",
+      "source_size": [
+        2140,
+        735
+      ],
+      "source_used_rect": [
+        72,
+        14,
+        1994,
+        660
+      ],
+      "stretch": "horizontal_preferred",
+      "transparent_padding": 4,
+      "width": 640.0
+    },
+    {
+      "final_size": [
+        256,
+        256
+      ],
+      "height": 256.0,
+      "id": "hotspot_ready",
+      "item": "Round tappable medallion for an available upgrade: glossy golden coin-like disc with a thick cream ring and brown outline, a plump shiny golden star in the centre, small sparkle glints, soft glow ring around it. Slight downward pointer tab at the bottom like a map pin.",
+      "path": "assets/ui/gerai_v1/hotspot_ready.png",
+      "prompt": "Polished 2D casual mobile game UI asset, cozy Malaysian kampung kuih stall theme, matching ONE consistent set. Warm cream parchment face with a very soft paper texture, glossy golden inner rim, slim polished honey-brown wood outer frame, bold clean dark-brown cartoon outline, soft warm top highlight, gentle drop shadow under the piece. Small green banana-leaf accents only where stated. Front-on flat view, perfectly symmetric. TRUE TRANSPARENT background (real alpha, no checkerboard, no white box). NO text, letters or numbers anywhere.\nReference images are STYLE REFERENCES ONLY, not layouts to copy. Produce ONE separate deliverable, not a screenshot or collection. Requested canvas exactly 256 by 256 pixels, aspect ratio 1:1. Fill canvas with only 2–3% transparent safety padding and never clip frame, shadow or leaves. Asset: Round tappable medallion for an available upgrade: glossy golden coin-like disc with a thick cream ring and brown outline, a plump shiny golden star in the centre, small sparkle glints, soft glow ring around it. Slight downward pointer tab at the bottom like a map pin.\nNo baked text. Keep any requested icon a clean simple readable symbol. Match the gold, warm honey wood and cream palette of the reference set.",
+      "recommended_slice_margins_left_right_top_bottom": null,
+      "sha256": "2b28ac874058699ae6ffb91bfd83b168b04a14386f9dba20b59736e0e914f8b4",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-bc6c507e-c272-4909-940b-7b26634a02e1.png",
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source_used_rect": [
+        51,
+        20,
+        1152,
+        1202
+      ],
+      "stretch": "keep_aspect",
+      "transparent_padding": 5,
+      "width": 256.0
+    },
+    {
+      "final_size": [
+        256,
+        256
+      ],
+      "height": 256.0,
+      "id": "hotspot_locked",
+      "item": "Same medallion shape and pin tab as the ready version but muted: pale beige disc, dusty brown ring, a chunky brown padlock in the centre, no glow.",
+      "path": "assets/ui/gerai_v1/hotspot_locked.png",
+      "prompt": "Edit reference to LOCKED state. Preserve EXACT same round medallion outer silhouette, dimensions, downward triangle pointer tab, ring thickness, positions and ornament arrangement. Replace only center star/glints with ONE chunky dusty brown padlock; mute golden ring to dusty brown and center to pale beige. No glow. No extra plaque. True transparent exterior, square 256 by 256 pixels, no text.",
+      "recommended_slice_margins_left_right_top_bottom": null,
+      "sha256": "de440549dc26869a1320f399ad56787b9fecb8dbd5579063469a72506b08c51a",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-2a414b00-70a7-4c5e-a505-38afc48b356d.png",
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source_used_rect": [
+        69,
+        35,
+        1116,
+        1175
+      ],
+      "stretch": "keep_aspect",
+      "transparent_padding": 5,
+      "width": 256.0
+    },
+    {
+      "final_size": [
+        256,
+        256
+      ],
+      "height": 256.0,
+      "id": "hotspot_done",
+      "item": "Same medallion shape and pin tab, fresh leaf-green disc with a cream ring and a bold white check mark, a small sparkle.",
+      "path": "assets/ui/gerai_v1/hotspot_done.png",
+      "prompt": "Edit reference to DONE state. Preserve EXACT same round medallion outer silhouette, dimensions, downward triangle pointer tab, ring thickness, positions and ornament arrangement. Replace only center star/glints with ONE bold WHITE check mark in a fresh leaf-green center disc with cream ring and one small sparkle. No added title plaque. True transparent exterior, square 256 by 256 pixels, no text.",
+      "recommended_slice_margins_left_right_top_bottom": null,
+      "sha256": "58746ea1187ca8a861e19e0bd73664ecd8a26984345e0bec615480903cd288f6",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-9161c435-b74f-4115-9d6c-0ee0395ec42f.png",
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source_used_rect": [
+        67,
+        40,
+        1128,
+        1173
+      ],
+      "stretch": "keep_aspect",
+      "transparent_padding": 5,
+      "width": 256.0
+    },
+    {
+      "final_size": [
+        1280,
+        260
+      ],
+      "height": 260.0,
+      "id": "next_hint",
+      "item": "Wide rounded speech-banner card for an \"up next\" tip: cream parchment face, golden rim, honey wood frame. On the left end a round inset badge with a tiny clipboard-with-tick icon. Plain flat area to the right for two lines of text. 9-slice friendly horizontally.",
+      "path": "assets/ui/gerai_v1/next_hint.png",
+      "prompt": "Polished 2D casual mobile game UI asset, cozy Malaysian kampung kuih stall theme, matching ONE consistent set. Warm cream parchment face with a very soft paper texture, glossy golden inner rim, slim polished honey-brown wood outer frame, bold clean dark-brown cartoon outline, soft warm top highlight, gentle drop shadow under the piece. Small green banana-leaf accents only where stated. Front-on flat view, perfectly symmetric. TRUE TRANSPARENT background (real alpha, no checkerboard, no white box). NO text, letters or numbers anywhere.\nReference images are STYLE REFERENCES ONLY, not layouts to copy. Produce ONE separate deliverable, not a screenshot or collection. Requested canvas exactly 1280 by 260 pixels, aspect ratio 4.923076923076923:1. Fill canvas with only 2–3% transparent safety padding and never clip frame, shadow or leaves. Asset: Wide rounded speech-banner card for an \"up next\" tip: cream parchment face, golden rim, honey wood frame. On the left end a round inset badge with a tiny clipboard-with-tick icon. Plain flat area to the right for two lines of text. 9-slice friendly horizontally. Keep equal border thickness on all four edges. Ornament only in corners. Straight middle sections of each edge must be plain and repeatable for 9-patch stretching; no center-side protrusions.\nNo baked text. Keep any requested icon a clean simple readable symbol. Match the gold, warm honey wood and cream palette of the reference set.",
+      "recommended_slice_margins_left_right_top_bottom": [
+        330,
+        140,
+        75,
+        75
+      ],
+      "sha256": "028a6e61468f93be444f458dbcad425e9dd4a2d7c154c8b31dcb18b8c5422368",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-c131f742-c050-45a9-b9d2-c31d6f8bde8f.png",
+      "source_size": [
+        2172,
+        724
+      ],
+      "source_used_rect": [
+        25,
+        106,
+        2125,
+        493
+      ],
+      "stretch": "horizontal_preferred",
+      "transparent_padding": 5,
+      "width": 1280.0
+    },
+    {
+      "final_size": [
+        1024,
+        1400
+      ],
+      "height": 1400.0,
+      "id": "list_panel",
+      "item": "Tall dialog panel matching the stage booster panel style: cream parchment face, golden inner rim, honey wood frame, banana-leaf clusters at the two bottom corners only, a small carved wooden title plaque centred on the top edge (empty, no text). Even straight sides for 9-slice.",
+      "path": "assets/ui/gerai_v1/list_panel.png",
+      "prompt": "Polished 2D casual mobile game UI asset, cozy Malaysian kampung kuih stall theme, matching ONE consistent set. Warm cream parchment face with a very soft paper texture, glossy golden inner rim, slim polished honey-brown wood outer frame, bold clean dark-brown cartoon outline, soft warm top highlight, gentle drop shadow under the piece. Small green banana-leaf accents only where stated. Front-on flat view, perfectly symmetric. TRUE TRANSPARENT background (real alpha, no checkerboard, no white box). NO text, letters or numbers anywhere.\nReference images are STYLE REFERENCES ONLY, not layouts to copy. Produce ONE separate deliverable, not a screenshot or collection. Requested canvas exactly 1024 by 1400 pixels, aspect ratio 0.7314285714285714:1. Fill canvas with only 2–3% transparent safety padding and never clip frame, shadow or leaves. Asset: Tall dialog panel matching the stage booster panel style: cream parchment face, golden inner rim, honey wood frame, banana-leaf clusters at the two bottom corners only, a small carved wooden title plaque centred on the top edge (empty, no text). Even straight sides for 9-slice. Empty panel only: do not copy the reference's inset buttons, close button or play button.\nNo baked text. Keep any requested icon a clean simple readable symbol. Match the gold, warm honey wood and cream palette of the reference set.",
+      "recommended_slice_margins_left_right_top_bottom": [
+        300,
+        300,
+        260,
+        360
+      ],
+      "sha256": "8b0266de0deef61dd492d1536ea39c8c4bd6d19302d90c1130a80b15ba5c5199",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-93f695a5-e2da-4fed-ad40-74083df8af7b.png",
+      "source_size": [
+        1073,
+        1466
+      ],
+      "source_used_rect": [
+        6,
+        7,
+        1061,
+        1438
+      ],
+      "stretch": "nine_patch",
+      "transparent_padding": 20,
+      "width": 1024.0
+    },
+    {
+      "final_size": [
+        1024,
+        220
+      ],
+      "height": 220.0,
+      "id": "task_row",
+      "item": "List row card: slightly lighter cream inset card with a thin golden rim and soft inner shadow, rounded corners, a round recessed icon socket on the left. Plain centre. 9-slice friendly horizontally.",
+      "path": "assets/ui/gerai_v1/task_row.png",
+      "prompt": "Polished 2D casual mobile game UI asset, cozy Malaysian kampung kuih stall theme, matching ONE consistent set. Warm cream parchment face with a very soft paper texture, glossy golden inner rim, slim polished honey-brown wood outer frame, bold clean dark-brown cartoon outline, soft warm top highlight, gentle drop shadow under the piece. Small green banana-leaf accents only where stated. Front-on flat view, perfectly symmetric. TRUE TRANSPARENT background (real alpha, no checkerboard, no white box). NO text, letters or numbers anywhere.\nReference images are STYLE REFERENCES ONLY, not layouts to copy. Produce ONE separate deliverable, not a screenshot or collection. Requested canvas exactly 1024 by 220 pixels, aspect ratio 4.654545454545454:1. Fill canvas with only 2–3% transparent safety padding and never clip frame, shadow or leaves. Asset: List row card: slightly lighter cream inset card with a thin golden rim and soft inner shadow, rounded corners, a round recessed icon socket on the left. Plain centre. 9-slice friendly horizontally. Keep equal border thickness on all four edges. Ornament only in corners. Straight middle sections of each edge must be plain and repeatable for 9-patch stretching; no center-side protrusions.\nNo baked text. Keep any requested icon a clean simple readable symbol. Match the gold, warm honey wood and cream palette of the reference set.",
+      "recommended_slice_margins_left_right_top_bottom": [
+        300,
+        110,
+        60,
+        60
+      ],
+      "sha256": "85a4add93962e1041b301a379b265b11f45dd9a21e26bc15a4229ff5dc3f869c",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-fbabc6f2-8ce8-4a68-baec-823df9a511c1.png",
+      "source_size": [
+        1916,
+        821
+      ],
+      "source_used_rect": [
+        21,
+        106,
+        1874,
+        573
+      ],
+      "stretch": "horizontal_preferred",
+      "transparent_padding": 4,
+      "width": 1024.0
+    },
+    {
+      "final_size": [
+        384,
+        120
+      ],
+      "height": 120.0,
+      "id": "tab_active",
+      "item": "Selected tab chip: glossy leaf-green rounded pill, golden rim, soft highlight. Plain centre.",
+      "path": "assets/ui/gerai_v1/tab_active.png",
+      "prompt": "Polished 2D casual mobile game UI asset, cozy Malaysian kampung kuih stall theme, matching ONE consistent set. Warm cream parchment face with a very soft paper texture, glossy golden inner rim, slim polished honey-brown wood outer frame, bold clean dark-brown cartoon outline, soft warm top highlight, gentle drop shadow under the piece. Small green banana-leaf accents only where stated. Front-on flat view, perfectly symmetric. TRUE TRANSPARENT background (real alpha, no checkerboard, no white box). NO text, letters or numbers anywhere.\nReference images are STYLE REFERENCES ONLY, not layouts to copy. Produce ONE separate deliverable, not a screenshot or collection. Requested canvas exactly 384 by 120 pixels, aspect ratio 3.2:1. Fill canvas with only 2–3% transparent safety padding and never clip frame, shadow or leaves. Asset: Selected tab chip: glossy leaf-green rounded pill, golden rim, soft highlight. Plain centre. Keep equal border thickness on all four edges. Ornament only in corners. Straight middle sections of each edge must be plain and repeatable for 9-patch stretching; no center-side protrusions.\nNo baked text. Keep any requested icon a clean simple readable symbol. Match the gold, warm honey wood and cream palette of the reference set.",
+      "recommended_slice_margins_left_right_top_bottom": [
+        80,
+        80,
+        32,
+        32
+      ],
+      "sha256": "3738bae4c225aee2cb5d93ad293d18fc7a731464f11ea0cea5631e94f303cf14",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-536b5a3c-38e6-4415-95b6-4d5d36c2e150.png",
+      "source_size": [
+        2172,
+        724
+      ],
+      "source_used_rect": [
+        38,
+        77,
+        2096,
+        566
+      ],
+      "stretch": "horizontal_preferred",
+      "transparent_padding": 2,
+      "width": 384.0
+    },
+    {
+      "final_size": [
+        384,
+        120
+      ],
+      "height": 120.0,
+      "id": "tab_idle",
+      "item": "Unselected tab chip: same shape, cream face, light golden rim, flat.",
+      "path": "assets/ui/gerai_v1/tab_idle.png",
+      "prompt": "Polished 2D casual mobile game UI asset, cozy Malaysian kampung kuih stall theme, matching ONE consistent set. Warm cream parchment face with a very soft paper texture, glossy golden inner rim, slim polished honey-brown wood outer frame, bold clean dark-brown cartoon outline, soft warm top highlight, gentle drop shadow under the piece. Small green banana-leaf accents only where stated. Front-on flat view, perfectly symmetric. TRUE TRANSPARENT background (real alpha, no checkerboard, no white box). NO text, letters or numbers anywhere.\nReference images are STYLE REFERENCES ONLY, not layouts to copy. Produce ONE separate deliverable, not a screenshot or collection. Requested canvas exactly 384 by 120 pixels, aspect ratio 3.2:1. Fill canvas with only 2–3% transparent safety padding and never clip frame, shadow or leaves. Asset: Unselected tab chip: same shape, cream face, light golden rim, flat. Keep equal border thickness on all four edges. Ornament only in corners. Straight middle sections of each edge must be plain and repeatable for 9-patch stretching; no center-side protrusions.\nNo baked text. Keep any requested icon a clean simple readable symbol. Match the gold, warm honey wood and cream palette of the reference set.",
+      "recommended_slice_margins_left_right_top_bottom": [
+        80,
+        80,
+        32,
+        32
+      ],
+      "sha256": "a22c5f11a88e57fde837811eac3ad4bdc69a918b884c12c6651f08c7cb61cc2a",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-d0e473c7-7763-4c18-9fbf-830e4743e72c.png",
+      "source_size": [
+        2172,
+        724
+      ],
+      "source_used_rect": [
+        4,
+        92,
+        2164,
+        540
+      ],
+      "stretch": "horizontal_preferred",
+      "transparent_padding": 2,
+      "width": 384.0
+    },
+    {
+      "final_size": [
+        384,
+        150
+      ],
+      "height": 150.0,
+      "id": "price_button",
+      "item": "Small glossy leaf-green pill button for a star price, golden rim and dark-green outline, a small golden star badge on its left end, plain area for the number.",
+      "path": "assets/ui/gerai_v1/price_button.png",
+      "prompt": "Polished 2D casual mobile game UI asset, cozy Malaysian kampung kuih stall theme, matching ONE consistent set. Warm cream parchment face with a very soft paper texture, glossy golden inner rim, slim polished honey-brown wood outer frame, bold clean dark-brown cartoon outline, soft warm top highlight, gentle drop shadow under the piece. Small green banana-leaf accents only where stated. Front-on flat view, perfectly symmetric. TRUE TRANSPARENT background (real alpha, no checkerboard, no white box). NO text, letters or numbers anywhere.\nReference images are STYLE REFERENCES ONLY, not layouts to copy. Produce ONE separate deliverable, not a screenshot or collection. Requested canvas exactly 384 by 150 pixels, aspect ratio 2.56:1. Fill canvas with only 2–3% transparent safety padding and never clip frame, shadow or leaves. Asset: Small glossy leaf-green pill button for a star price, golden rim and dark-green outline, a small golden star badge on its left end, plain area for the number. Keep equal border thickness on all four edges. Ornament only in corners. Straight middle sections of each edge must be plain and repeatable for 9-patch stretching; no center-side protrusions.\nNo baked text. Keep any requested icon a clean simple readable symbol. Match the gold, warm honey wood and cream palette of the reference set.",
+      "recommended_slice_margins_left_right_top_bottom": [
+        150,
+        70,
+        44,
+        44
+      ],
+      "sha256": "6a8ca34c0306fe6bcf11b0fbc70529fb9d173fe761a97104305b720a3c3e745a",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-bb1536f6-cba8-4df1-9690-1a95b02e3c6c.png",
+      "source_size": [
+        2006,
+        784
+      ],
+      "source_used_rect": [
+        87,
+        88,
+        1834,
+        563
+      ],
+      "stretch": "horizontal_preferred",
+      "transparent_padding": 3,
+      "width": 384.0
+    },
+    {
+      "final_size": [
+        1024,
+        64
+      ],
+      "height": 64.0,
+      "id": "progress_track",
+      "item": "Rounded progress bar groove: recessed cream channel inside a golden rim and thin brown outline. 9-slice horizontally.",
+      "path": "assets/ui/gerai_v1/progress_track.png",
+      "prompt": "Single isolated UI PROGRESS TRACK texture, 1024 by 64 pixels, aspect 16:1. One thick continuous horizontal pill-shaped recessed CREAM channel with slim glossy GOLD rim and thin dark BROWN outline. Track occupies almost entire canvas width AND height, only 2 pixel clear exterior padding. No foliage, no leaves, no corner ornaments, no stars, no wood plaque, no baked progress fill. Equal smooth rounded end caps, straight repeatable middle for horizontal nine-slice stretching. True transparent outside pill. Cozy Malaysian casual game style, polished soft shading. This is a functional empty progress groove only.",
+      "recommended_slice_margins_left_right_top_bottom": [
+        32,
+        32,
+        16,
+        16
+      ],
+      "sha256": "88866b8758b589b7a60bf1cac24bed6efc609c89654ec2bc50fda521c9a34b1b",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-67a02508-133f-43f1-ad0a-f13881206985.png",
+      "source_size": [
+        1586,
+        992
+      ],
+      "source_used_rect": [
+        8,
+        407,
+        1570,
+        176
+      ],
+      "stretch": "horizontal_preferred",
+      "transparent_padding": 1,
+      "width": 1024.0
+    },
+    {
+      "final_size": [
+        1024,
+        64
+      ],
+      "height": 64.0,
+      "id": "progress_fill",
+      "item": "Progress bar fill matching the track: glossy pink-to-rose candy fill with a white top shine and subtle diagonal stripes. 9-slice horizontally.",
+      "path": "assets/ui/gerai_v1/progress_fill.png",
+      "prompt": "Single isolated UI PROGRESS FILL texture, 1024 by 64 pixels, aspect 16:1. One continuous FULLY PINK-TO-ROSE glossy candy horizontal capsule with white top shine and subtle diagonal pink stripes. Pink must occupy full interior from LEFT cap to RIGHT cap, 100% filled; no cream or empty track area anywhere, no baked percentage. Almost entire canvas width AND height, only 2px transparent exterior padding. Equal rounded end caps, straight repeatable middle for horizontal nine-slice. No foliage, leaves, ornaments, gold frame, wooden border, icons, text or numbers. TRUE transparent outside capsule. Polished casual mobile game texture, not an image of a partially filled progress bar.",
+      "recommended_slice_margins_left_right_top_bottom": [
+        32,
+        32,
+        16,
+        16
+      ],
+      "sha256": "4d4ed7d7d8e5fe3acab9af4913b46d8a80c8bbc0af7b2e7090f8d2c2668fd7f1",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-e775c571-2e24-4837-91b2-5e56ed933e64.png",
+      "source_size": [
+        1586,
+        992
+      ],
+      "source_used_rect": [
+        4,
+        395,
+        1579,
+        202
+      ],
+      "stretch": "horizontal_preferred",
+      "transparent_padding": 1,
+      "width": 1024.0
+    },
+    {
+      "final_size": [
+        1280,
+        900
+      ],
+      "height": 900.0,
+      "id": "complete_panel",
+      "item": "Celebration dialog: same frame as list_panel (cream face, golden rim, honey wood, banana-leaf corners), plus a curved festive red-and-gold ribbon banner across the top edge (empty, no text) and a few small confetti sparkles and golden stars around the ribbon only. Plain centre.",
+      "path": "assets/ui/gerai_v1/complete_panel.png",
+      "prompt": "Polished 2D casual mobile game UI asset, cozy Malaysian kampung kuih stall theme, matching ONE consistent set. Warm cream parchment face with a very soft paper texture, glossy golden inner rim, slim polished honey-brown wood outer frame, bold clean dark-brown cartoon outline, soft warm top highlight, gentle drop shadow under the piece. Small green banana-leaf accents only where stated. Front-on flat view, perfectly symmetric. TRUE TRANSPARENT background (real alpha, no checkerboard, no white box). NO text, letters or numbers anywhere.\nReference images are STYLE REFERENCES ONLY, not layouts to copy. Produce ONE separate deliverable, not a screenshot or collection. Requested canvas exactly 1280 by 900 pixels, aspect ratio 1.4222222222222223:1. Fill canvas with only 2–3% transparent safety padding and never clip frame, shadow or leaves. Asset: Celebration dialog: same frame as list_panel (cream face, golden rim, honey wood, banana-leaf corners), plus a curved festive red-and-gold ribbon banner across the top edge (empty, no text) and a few small confetti sparkles and golden stars around the ribbon only. Plain centre. Keep equal border thickness on all four edges. Ornament only in corners. Straight middle sections of each edge must be plain and repeatable for 9-patch stretching; no center-side protrusions.\nNo baked text. Keep any requested icon a clean simple readable symbol. Match the gold, warm honey wood and cream palette of the reference set.",
+      "recommended_slice_margins_left_right_top_bottom": [
+        330,
+        330,
+        300,
+        250
+      ],
+      "sha256": "52878ea830d4df511f39d4a1d3d298e4e022a2a28b88b9d38266f5e78445a16e",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-97320757-f61b-46e9-bcac-ee9cd302abfb.png",
+      "source_size": [
+        1496,
+        1051
+      ],
+      "source_used_rect": [
+        1,
+        3,
+        1494,
+        1005
+      ],
+      "stretch": "nine_patch",
+      "transparent_padding": 18,
+      "width": 1280.0
+    },
+    {
+      "final_size": [
+        1536,
+        260
+      ],
+      "height": 260.0,
+      "id": "footer_bar",
+      "item": "Bottom dock plate: honey wood frame with a golden rim and a cream recessed inner tray, rounded top corners, flat bottom edge. 9-slice friendly.",
+      "path": "assets/ui/gerai_v1/footer_bar.png",
+      "prompt": "Polished 2D casual mobile game UI asset, cozy Malaysian kampung kuih stall theme, matching ONE consistent set. Warm cream parchment face with a very soft paper texture, glossy golden inner rim, slim polished honey-brown wood outer frame, bold clean dark-brown cartoon outline, soft warm top highlight, gentle drop shadow under the piece. Small green banana-leaf accents only where stated. Front-on flat view, perfectly symmetric. TRUE TRANSPARENT background (real alpha, no checkerboard, no white box). NO text, letters or numbers anywhere.\nReference images are STYLE REFERENCES ONLY, not layouts to copy. Produce ONE separate deliverable, not a screenshot or collection. Requested canvas exactly 1536 by 260 pixels, aspect ratio 5.907692307692308:1. Fill canvas with only 2–3% transparent safety padding and never clip frame, shadow or leaves. Asset: Bottom dock plate: honey wood frame with a golden rim and a cream recessed inner tray, rounded top corners, flat bottom edge. 9-slice friendly. Keep equal border thickness on all four edges. Ornament only in corners. Straight middle sections of each edge must be plain and repeatable for 9-patch stretching; no center-side protrusions.\nNo baked text. Keep any requested icon a clean simple readable symbol. Match the gold, warm honey wood and cream palette of the reference set.",
+      "recommended_slice_margins_left_right_top_bottom": [
+        250,
+        250,
+        90,
+        80
+      ],
+      "sha256": "428bcda90bf0e8d4232057dee4f9afa9d39805705121c340e05d68a9f74864ca",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-cba854b5-bf6e-4367-beed-ecb543aa87ac.png",
+      "source_size": [
+        2172,
+        724
+      ],
+      "source_used_rect": [
+        20,
+        85,
+        2132,
+        547
+      ],
+      "stretch": "nine_patch",
+      "transparent_padding": 5,
+      "width": 1536.0
+    },
+    {
+      "final_size": [
+        512,
+        200
+      ],
+      "height": 200.0,
+      "id": "nav_button",
+      "item": "Secondary dock button: cream glossy rounded button, golden rim, brown outline, soft top shine, round recessed icon socket on the left, plain area for a label. 9-slice horizontally.",
+      "path": "assets/ui/gerai_v1/nav_button.png",
+      "prompt": "Polished 2D casual mobile game UI asset, cozy Malaysian kampung kuih stall theme, matching ONE consistent set. Warm cream parchment face with a very soft paper texture, glossy golden inner rim, slim polished honey-brown wood outer frame, bold clean dark-brown cartoon outline, soft warm top highlight, gentle drop shadow under the piece. Small green banana-leaf accents only where stated. Front-on flat view, perfectly symmetric. TRUE TRANSPARENT background (real alpha, no checkerboard, no white box). NO text, letters or numbers anywhere.\nReference images are STYLE REFERENCES ONLY, not layouts to copy. Produce ONE separate deliverable, not a screenshot or collection. Requested canvas exactly 512 by 200 pixels, aspect ratio 2.56:1. Fill canvas with only 2–3% transparent safety padding and never clip frame, shadow or leaves. Asset: Secondary dock button: cream glossy rounded button, golden rim, brown outline, soft top shine, round recessed icon socket on the left, plain area for a label. 9-slice horizontally. Keep equal border thickness on all four edges. Ornament only in corners. Straight middle sections of each edge must be plain and repeatable for 9-patch stretching; no center-side protrusions.\nNo baked text. Keep any requested icon a clean simple readable symbol. Match the gold, warm honey wood and cream palette of the reference set.",
+      "recommended_slice_margins_left_right_top_bottom": [
+        200,
+        90,
+        60,
+        60
+      ],
+      "sha256": "561c4a9646a38bb8c73c912e3eb13f072cd789d75dbcf88a76c8beb80cbc8562",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-ce63251a-95a2-4e08-8942-6dbaa0a3d072.png",
+      "source_size": [
+        2006,
+        784
+      ],
+      "source_used_rect": [
+        35,
+        77,
+        1938,
+        617
+      ],
+      "stretch": "horizontal_preferred",
+      "transparent_padding": 4,
+      "width": 512.0
+    },
+    {
+      "final_size": [
+        256,
+        256
+      ],
+      "height": 256.0,
+      "id": "icon_tasks",
+      "item": "Cute clipboard with a checklist and a green tick, brown outline.",
+      "path": "assets/ui/gerai_v1/icon_tasks.png",
+      "prompt": "Extract/recreate ONLY the cute clipboard object: wooden clipboard with cream checklist sheet and green ticks, bold clean brown cartoon outline. Remove the entire outer rounded wooden/gold button frame, background plaque, leaves and gold flourishes. Single standalone object silhouette on true transparent background. No lettering, no numbers, no frame or square tile behind it. 256 by 256 pixels. Retain warm polished casual-game shading.",
+      "recommended_slice_margins_left_right_top_bottom": null,
+      "sha256": "13a24e0a2aaabac574e63e33241e1a7bde72fd2357bb0f2c26773cc2d9a82b9a",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-420c6cc4-23cc-424a-988c-561c2e0745eb.png",
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source_used_rect": [
+        171,
+        33,
+        911,
+        1172
+      ],
+      "stretch": "keep_aspect",
+      "transparent_padding": 5,
+      "width": 256.0
+    },
+    {
+      "final_size": [
+        256,
+        256
+      ],
+      "height": 256.0,
+      "id": "icon_design",
+      "item": "Cute painter's palette with a small brush and a pink hibiscus accent, brown outline.",
+      "path": "assets/ui/gerai_v1/icon_design.png",
+      "prompt": "Extract/recreate ONLY the cute painter palette object with small brush and pink hibiscus accent, bold clean brown cartoon outline. Remove the entire outer rounded wooden/gold button frame and cream background plaque. Single standalone object silhouette on true transparent background. No lettering, no numbers, no frame or square tile behind it. 256 by 256 pixels. Retain warm polished casual-game shading.",
+      "recommended_slice_margins_left_right_top_bottom": null,
+      "sha256": "7759b0058d150400b0216e70c076ab28ccd02363607bd5c26cee78286300fff4",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-1e7f9b8e-a82d-4f62-aebe-ea0f010978a7.png",
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source_used_rect": [
+        97,
+        68,
+        1117,
+        1106
+      ],
+      "stretch": "keep_aspect",
+      "transparent_padding": 5,
+      "width": 256.0
+    },
+    {
+      "final_size": [
+        512,
+        512
+      ],
+      "height": 512.0,
+      "id": "hibiscus_counter",
+      "item": "Small terracotta pot with a lush red hibiscus bush, sized to sit on a wooden stall counter top, three-quarter front view, soft contact shadow at the pot base only. Food-stall cartoon style matching polished 2D casual-game art.",
+      "path": "assets/stalls/accessories_v3/hibiscus_counter.png",
+      "prompt": "Polished 2D casual mobile game UI asset, cozy Malaysian kampung kuih stall theme, matching ONE consistent set. Warm cream parchment face with a very soft paper texture, glossy golden inner rim, slim polished honey-brown wood outer frame, bold clean dark-brown cartoon outline, soft warm top highlight, gentle drop shadow under the piece. Small green banana-leaf accents only where stated. Front-on flat view, perfectly symmetric. TRUE TRANSPARENT background (real alpha, no checkerboard, no white box). NO text, letters or numbers anywhere.\nReference images are STYLE REFERENCES ONLY, not layouts to copy. Produce ONE separate deliverable, not a screenshot or collection. Requested canvas exactly 512 by 512 pixels, aspect ratio 1:1. Fill canvas with only 2–3% transparent safety padding and never clip frame, shadow or leaves. Asset: Small terracotta pot with a lush red hibiscus bush, sized to sit on a wooden stall counter top, three-quarter front view, soft contact shadow at the pot base only. Food-stall cartoon style matching polished 2D casual-game art.\nNo baked text. Keep any requested icon a clean simple readable symbol. Match the gold, warm honey wood and cream palette of the reference set.",
+      "recommended_slice_margins_left_right_top_bottom": null,
+      "sha256": "8a9e2fea779a2fa24d6733dc0f6c4fa17dbf803c91cc85ced18b49aaeb5264c2",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-749b8678-05d1-415a-a7ce-0c8fe9db0dd9.png",
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source_used_rect": [
+        104,
+        56,
+        1075,
+        1147
+      ],
+      "stretch": "keep_aspect",
+      "transparent_padding": 10,
+      "width": 512.0
+    }
+  ]
+}

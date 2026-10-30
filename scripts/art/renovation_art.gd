@@ -11,6 +11,7 @@ const FOOD_IDS := ["kuih_display", "kuih_feast"]
 const FINISH_IDS := ["shop_sign", "counter_finish"]
 const FINISH_SHEET := "res://assets/stalls/shop_complete_v1/finishes.png"
 const RUNNER_SHEET := "res://assets/stalls/counter_runner_v1/runners.png"
+const HIBISCUS_COUNTER := "res://assets/stalls/accessories_v3/hibiscus_counter.png"
 
 static func component_texture(stage: int, variant: String) -> Texture2D:
 	var key := "component:%d:%s" % [stage,variant]
@@ -82,6 +83,9 @@ static func design_texture(key: String, style: String = "original") -> Texture2D
 		atlas.filter_clip = true
 		_textures[food_key] = atlas
 		return atlas
+	if key == "hibiscus" and style == "original" and ResourceLoader.exists(HIBISCUS_COUNTER):
+		# Counter-top pot with its own contact shadow.
+		return texture_from(HIBISCUS_COUNTER)
 	var row := DESIGN_ROWS.find(key)
 	if row < 0 or not ResourceLoader.exists(DESIGN_SHEET):
 		return texture(key)
@@ -109,6 +113,14 @@ static func texture(key: String) -> Texture2D:
 	var path := ROOT + key + ".png"
 	if not ResourceLoader.exists(path):
 		return null
+	return texture_from(path, key)
+
+## Texture cropped to its painted pixels, cached by key (the path by default).
+static func texture_from(path: String, key: String = "") -> Texture2D:
+	if key.is_empty():
+		key = path
+	if _textures.has(key):
+		return _textures[key]
 	var source := load(path) as Texture2D
 	var pixels := source.get_image()
 	if pixels.is_compressed():
