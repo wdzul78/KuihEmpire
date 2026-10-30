@@ -499,10 +499,18 @@ func haptic(duration_ms: int = 18, amplitude: float = 0.4) -> void:
 
 
 func play_special(kind: int) -> void:
-	var sound := Sfx.TAPAU_BLAST
+	# The tapau and order blasts are mastered ~15 dB quieter than the tray
+	# bomb, so they need extra gain to sit above the gameplay music.
 	if kind == BoardCell.Special.DULANG:
-		sound = Sfx.TRAY_BLAST
+		play(Sfx.TRAY_BLAST, 1.0, -4)
 	elif kind == BoardCell.Special.ORDER:
-		sound = Sfx.ORDER_BURST
 		play(Sfx.ORDER_ZAP, 1.0, -7)
-	play(sound, 1.0, -4)
+		play(Sfx.ORDER_BURST, 1.0, 1)
+	else:
+		play(Sfx.TAPAU_BLAST, 1.0, 3)
+		play(Sfx.LINE_CLEAR, 1.1 if kind == BoardCell.Special.TAPAU_VERTICAL else 1.0, -6)
+
+
+## Leftover moves turning into specials: each conversion rises a step.
+func play_special_conversion(step: int) -> void:
+	play(Sfx.SPECIAL, pow(2.0, float(CASCADE_NOTES[clampi(step, 0, 7)]) / 12.0), 0)

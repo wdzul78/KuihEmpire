@@ -247,6 +247,18 @@ static func add_press_feedback(b: BaseButton) -> void:
 	b.pressed.connect(func() -> void: AudioManager.play(AudioManager.Sfx.TAP, 1.0, -4.0))
 
 
+## The painted gold-and-wood X used on every dialog, matching the stage panel.
+static func close_button() -> TextureButton:
+	var b := TextureButton.new()
+	b.texture_normal = preload("res://assets/ui/close_v1/close_button.png")
+	b.ignore_texture_size = true
+	b.stretch_mode = TextureButton.STRETCH_KEEP_ASPECT_CENTERED
+	b.custom_minimum_size = Vector2.ZERO
+	b.tooltip_text = MenuText.text("close")
+	add_press_feedback(b)
+	return b
+
+
 static func primary_button(text: String, size_px: int = 44) -> Button:
 	var b := button(text, size_px, Palette.PINK, Palette.PINK_DARK)
 	b.custom_minimum_size = Vector2(420, 112)

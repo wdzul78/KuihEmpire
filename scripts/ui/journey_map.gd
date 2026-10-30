@@ -125,21 +125,17 @@ func _build() -> void:
  character.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
  character.mouse_filter = Control.MOUSE_FILTER_IGNORE
  JourneyArt.place(self, character, Rect2(.57, .45, .42, .32))
- var speech := Control.new()
+ # The painted dialogue bubble, the same art as story dialogue, with its tail
+ # pointing down at Aina.
+ var speech := SpeechBubble.new()
  speech.name = "AinaSpeechBubble"
+ speech.speaker_on_left = false
  speech.z_index = 9
  speech.mouse_filter = Control.MOUSE_FILTER_IGNORE
- JourneyArt.place(self,speech,Rect2(.52,.39,.46,.065))
- speech.draw.connect(func() -> void:
-  var extent := speech.size
-  speech.draw_colored_polygon(PackedVector2Array([extent*Vector2(.56,.85),extent*Vector2(.76,.85),extent*Vector2(.69,1.70)]),Color("c18a37"))
-  speech.draw_colored_polygon(PackedVector2Array([extent*Vector2(.59,.88),extent*Vector2(.73,.88),extent*Vector2(.69,1.55)]),Palette.PAPER)
- )
- var welcome := Panel.new()
- welcome.mouse_filter = Control.MOUSE_FILTER_IGNORE
- welcome.add_theme_stylebox_override("panel", UIKit.cream_box())
- JourneyArt.place(speech,welcome,Rect2(0,0,1,1))
- JourneyArt.label(welcome, JourneyArt.localized("Jom sambung!", "Let's continue!"), Rect2(.04, .05, .92, .90), 36, Palette.WOOD_DARK)
+ JourneyArt.place(self,speech,Rect2(.50,.375,.48,.075))
+ var welcome := UIKit.label(JourneyArt.localized("Jom sambung!", "Let's continue!"), 38, Palette.WOOD_DARK)
+ welcome.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+ speech.add_child(welcome)
  # A dark pill keeps the progress line readable over the busy map and nodes.
  _unlock_note = JourneyArt.label(self, "", Rect2(.13, .681, .74, .036), 28, Palette.PAPER)
  _unlock_note.add_theme_stylebox_override("normal", UIKit.flat_box(Color(Palette.WOOD_DARK, .86), Palette.GOLD, 0, 2, 30))
@@ -149,8 +145,9 @@ func _build() -> void:
  var footer := _painted_panel(Rect2(25,485,1490,445))
  footer.z_index = 10
  JourneyArt.place(self,footer,Rect2(.025,.72,.95,.175))
- _stage_label = JourneyArt.label(footer,"",Rect2(.04,.025,.92,.20),52,Palette.LEAF_DEEP)
- _stage_subtitle = JourneyArt.label(footer,"",Rect2(.04,.23,.92,.12),28,Palette.WOOD_DARK)
+ # Keep the title clear of the painted frame's top rail.
+ _stage_label = JourneyArt.label(footer,"",Rect2(.04,.075,.92,.18),52,Palette.LEAF_DEEP)
+ _stage_subtitle = JourneyArt.label(footer,"",Rect2(.04,.255,.92,.11),28,Palette.WOOD_DARK)
  _targets = UIKit.hbox(12)
  JourneyArt.place(footer,_targets,Rect2(.045,.35,.47,.60))
  _start = GameButton.create(JourneyArt.localized("▶ Main","▶ Play"),"primary",62)
@@ -253,12 +250,12 @@ func _layout_nodes() -> void:
   button.pressed.connect(func() -> void: _select_stage(id))
   if milestone:
    var landmark := TextureRect.new()
-   landmark.texture = load("res://assets/menu/v2/nav_shop.png")
+   landmark.texture = load("res://assets/menu/nav_v4/shop.png")
    landmark.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
    landmark.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
    landmark.mouse_filter = Control.MOUSE_FILTER_IGNORE
    landmark.modulate = Color.WHITE if stars > 0 else Color(.65, .65, .65)
-   JourneyArt.place(button, landmark, Rect2(-.75 if i % 2 == 0 else 1.05, .0, .7, .85))
+   JourneyArt.place(button, landmark, Rect2(-1.12 if i % 2 == 0 else 1.06, -.08, 1.06, 1.06))
   if stars > 0:
    for s in 3:
     var star := TextureRect.new()

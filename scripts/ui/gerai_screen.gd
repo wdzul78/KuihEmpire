@@ -66,7 +66,10 @@ func _build() -> void:
 			GameManager.go_home()
 	)
 	_selector = OptionButton.new()
-	_selector.add_theme_font_size_override("font_size", 30)
+	_selector.add_theme_font_size_override("font_size", 38)
+	# Size to the selected stall, not the longest locked name, so it never covers the stars.
+	_selector.fit_to_longest_item = false
+	_selector.clip_text = true
 	for location in LocationDefinition.all():
 		var title := JourneyArt.localized("Gerai Keluarga",location.display_name) if location.id == &"family_stall" else location.display_name
 		_selector.add_item(title + ("" if LocationManager.stall_unlocked(location.id) else " · " + RenovationText.text("locked")))
@@ -85,8 +88,8 @@ func _build() -> void:
 	star.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	star.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	JourneyArt.place(self, star, Rect2(.755,.025,.06,.05))
-	_coins = JourneyArt.label(self, "", Rect2(.82,.025,.15,.05), 36, Palette.WOOD_DARK)
-	_progress = JourneyArt.label(self, "", Rect2(.05,.079,.90,.028), 26, Palette.WOOD_DARK)
+	_coins = JourneyArt.label(self, "", Rect2(.82,.025,.15,.05), 46, Palette.WOOD_DARK)
+	_progress = JourneyArt.label(self, "", Rect2(.05,.079,.90,.028), 32, Palette.WOOD_DARK)
 	_guide = Control.new()
 	_guide.hide()
 	_guide.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -102,11 +105,11 @@ func _build() -> void:
 	JourneyArt.place(self, _hotspots, Rect2(0,0,1,1))
 	_next_hint = Button.new()
 	_next_hint.name = "NextObjective"
-	_next_hint.add_theme_font_size_override("font_size",28)
+	_next_hint.add_theme_font_size_override("font_size",36)
 	_next_hint.add_theme_color_override("font_color",Palette.WOOD_DARK)
 	_next_hint.add_theme_stylebox_override("normal",UIKit.cream_box())
 	JourneyArt.place(self,_next_hint,Rect2(.12,.78,.76,.075))
-	var hint_label := UIKit.wrap_label("",28,Palette.WOOD_DARK)
+	var hint_label := UIKit.wrap_label("",36,Palette.WOOD_DARK)
 	hint_label.name = "NextText"
 	hint_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	hint_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -126,7 +129,7 @@ func _build() -> void:
 	JourneyArt.place(self, navigation, Rect2(.045,.900,.91,.067))
 	_tasks_button = _navigation_action(RenovationText.text("tasks"), 0)
 	_design_button = _navigation_action(RenovationText.text("design"), 1)
-	var play := GameButton.create("▶ " + RenovationText.text("play"), "primary", 40)
+	var play := GameButton.create("▶ " + RenovationText.text("play"), "primary", 46)
 	play.size_flags_stretch_ratio = 1.25
 	for button in [_tasks_button, _design_button, play]:
 		button.custom_minimum_size = Vector2.ZERO
@@ -138,13 +141,13 @@ func _build() -> void:
 		if not _busy:
 			GameManager.play_next()
 	)
-	_notice = JourneyArt.label(self, "", Rect2(.03,.975,.94,.021), 23, Palette.WOOD_DARK)
+	_notice = JourneyArt.label(self, "", Rect2(.03,.975,.94,.021), 28, Palette.WOOD_DARK)
 	_notice.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 
 func _navigation_action(caption: String, icon_index: int) -> Button:
 	var button := Button.new()
 	button.text = caption
-	button.add_theme_font_size_override("font_size",34)
+	button.add_theme_font_size_override("font_size",38)
 	button.add_theme_color_override("font_color",Palette.WOOD_DARK)
 	button.add_theme_stylebox_override("normal", UIKit.wood_box(Color("fff5d9"),Color("c5a567"),18))
 	button.add_theme_stylebox_override("hover", UIKit.wood_box(Color("e4f2cc"),Palette.LEAF_DEEP,18))
@@ -357,11 +360,11 @@ func _open_panel(title: String, top: float = .55, bottom: float = .89) -> VBoxCo
 	margin.add_child(stack)
 	var heading := HBoxContainer.new()
 	stack.add_child(heading)
-	var label := UIKit.wrap_label(title, 40, Palette.WOOD_DARK, HORIZONTAL_ALIGNMENT_LEFT)
+	var label := UIKit.wrap_label(title, 46, Palette.WOOD_DARK, HORIZONTAL_ALIGNMENT_LEFT)
 	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	heading.add_child(label)
-	var close := GameButton.create("×", "secondary", 30)
-	close.custom_minimum_size = Vector2(58,58)
+	var close := UIKit.close_button()
+	close.custom_minimum_size = Vector2(92,92)
 	heading.add_child(close)
 	close.pressed.connect(func() -> void:
 		if not _busy:
@@ -404,7 +407,7 @@ func _rebuild_tasks(design: bool) -> void:
 			tab.text = RenovationText.text(key + "_tab")
 			tab.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 			tab.custom_minimum_size.y = 58
-			tab.add_theme_font_size_override("font_size",30)
+			tab.add_theme_font_size_override("font_size",34)
 			for state in ["font_color","font_hover_color","font_pressed_color","font_focus_color"]:
 				tab.add_theme_color_override(state,Palette.WOOD_DARK)
 			tab.add_theme_stylebox_override("normal",UIKit.flat_box(Color("d9edc3") if _task_filter == key else Color("fff7df"),Palette.LEAF_DEEP if _task_filter == key else Color("cdb88c"),12,2,10))
@@ -417,7 +420,7 @@ func _rebuild_tasks(design: bool) -> void:
 		stack.add_child(UIKit.wrap_label(RenovationText.text("locked_stall"), 30, Palette.WOOD_DARK))
 		return
 	if done == _tasks().size() and not design:
-		stack.add_child(UIKit.wrap_label(RenovationText.text("all_done"), 26, Palette.WOOD_DARK))
+		stack.add_child(UIKit.wrap_label(RenovationText.text("all_done"), 32, Palette.WOOD_DARK))
 	var scroll := ScrollContainer.new()
 	scroll.name = "TaskList"
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -500,7 +503,7 @@ func _add_task_card(list: VBoxContainer, task: RenovationTaskDefinition, design:
 		status = RenovationText.text("installed" if str(LocationManager.equipped(_location).get(item.slot,"")) == item.id else "stored")
 	elif available and not complete and not EconomyManager.can_afford_stars(task.cost()):
 		status = RenovationText.text("need_stars") % (task.cost() - EconomyManager.stars())
-	text.add_child(UIKit.wrap_label(status, 30, Palette.WOOD_DARK, HORIZONTAL_ALIGNMENT_LEFT))
+	text.add_child(UIKit.wrap_label(status, 34, Palette.WOOD_DARK, HORIZONTAL_ALIGNMENT_LEFT))
 	var can_change := task.kind != RenovationTaskDefinition.Kind.STRUCTURE or (complete and _location == &"family_stall")
 	var caption := RenovationText.text("redesign") if complete or task.kind == RenovationTaskDefinition.Kind.STYLE else "★ %d" % task.cost() if available else RenovationText.text("inspect")
 	var button := GameButton.create(caption, "primary" if available or complete else "back", 32)
@@ -538,8 +541,8 @@ func _open_choices(task: RenovationTaskDefinition) -> void:
 		_variant = str(LocationManager.decor_styles(_location).get(item.slot,"original"))
 	_selector.disabled = true
 	_preview.renovation_focus = Vector2(.5,.65) if task.kind == RenovationTaskDefinition.Kind.DECOR and DecorDefinition.find(task.decor_id).slot == "COUNTER_DECOR" else Vector2(.5,0)
-	stack.add_child(UIKit.wrap_label(task.title(), 30, Palette.WOOD_DARK))
-	stack.add_child(UIKit.wrap_label(task.description(),26,Palette.WOOD_DARK))
+	stack.add_child(UIKit.wrap_label(task.title(), 38, Palette.WOOD_DARK))
+	stack.add_child(UIKit.wrap_label(task.description(),32,Palette.WOOD_DARK))
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 14)
 	stack.add_child(row)
@@ -581,7 +584,7 @@ func _open_choices(task: RenovationTaskDefinition) -> void:
 		var name_label := UIKit.wrap_label(task.choice_label(choice), 36, Palette.WOOD_DARK)
 		name_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		content.add_child(name_label)
-		var mark := UIKit.label("", 24, Palette.LEAF_DEEP)
+		var mark := UIKit.label("", 30, Palette.LEAF_DEEP)
 		mark.name = "SelectedMark"
 		mark.hide() # Selection is shown by the clear green outline, without an overflowing caption.
 		mark.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -752,7 +755,7 @@ func _renovate() -> void:
 func _show_completion(task: RenovationTaskDefinition, redesign: bool = false) -> void:
 	var stack := _open_panel(RenovationText.text("design_saved" if redesign else "complete"), .60, .88)
 	_panel_mode = "complete"
-	stack.add_child(UIKit.wrap_label(task.title(),34,Palette.WOOD_DARK))
+	stack.add_child(UIKit.wrap_label(task.title(),42,Palette.WOOD_DARK))
 	var done := 0
 	for entry in _tasks():
 		if entry.complete():
@@ -765,7 +768,7 @@ func _show_completion(task: RenovationTaskDefinition, redesign: bool = false) ->
 	progress.custom_minimum_size.y = 28
 	stack.add_child(progress)
 	progress.create_tween().tween_property(progress,"value",float(done),.55).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	stack.add_child(UIKit.wrap_label(RenovationText.text("progress") % [done,_tasks().size()],30,Palette.LEAF_DEEP))
+	stack.add_child(UIKit.wrap_label(RenovationText.text("progress") % [done,_tasks().size()],36,Palette.LEAF_DEEP))
 	_action(stack,RenovationText.text("next_task"),_show_tasks)
 	_refresh()
 
@@ -793,7 +796,7 @@ func _show_supplies() -> void:
 		button.disabled = not EconomyManager.can_afford(price)
 
 func _action(stack: VBoxContainer, text: String, action: Callable) -> Button:
-	var button := GameButton.create(text,"primary",30)
+	var button := GameButton.create(text,"primary",36)
 	button.custom_minimum_size = Vector2(0,94)
 	stack.add_child(button)
 	button.pressed.connect(action)

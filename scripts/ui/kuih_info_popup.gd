@@ -69,7 +69,7 @@ func _ready() -> void:
 	close.custom_minimum_size = Vector2(0,100)
 	column.add_child(close)
 	close.pressed.connect(_close)
-	var cross := GameButton.create("×","back",38)
+	var cross := UIKit.close_button()
 	cross.custom_minimum_size = Vector2.ZERO
 	JourneyArt.place(self,cross,Rect2(.855,.137,.09,.05))
 	cross.pressed.connect(_close)

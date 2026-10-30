@@ -23,6 +23,8 @@ func _ready() -> void:
 	for seam in [1,2]:
 		map._scroll.scroll_vertical = int(map._chapter_height*seam-map._scroll.size.y*.5)
 		await shot("journey-polished-seam%d" % seam)
+	map._scroll.scroll_vertical = int(map._point(9).y-map._scroll.size.y*.5)
+	await shot("journey-polished-milestone10")
 	SaveManager.data.settings.language = "ms"
 	map.free()
 	map = JourneyMap.new()
