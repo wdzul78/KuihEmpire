@@ -52,11 +52,11 @@ func _build() -> void:
 	JourneyArt.place(self, _preview, Rect2(0,0,1,1))
 	var header := Panel.new()
 	header.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	header.add_theme_stylebox_override("panel", UIKit.cream_box())
-	JourneyArt.place(self, header, Rect2(.015,.012,.97,.103))
+	header.add_theme_stylebox_override("panel", GeraiSkin.box("header_bar", .78))
+	JourneyArt.place(self, header, Rect2(.012,.006,.976,.124))
 	var back := GameButton.create(MenuText.text("back"), "back", 30)
 	back.custom_minimum_size = Vector2.ZERO
-	JourneyArt.place(self, back, Rect2(.025,.025,.18,.05))
+	JourneyArt.place(self, back, Rect2(.045,.028,.165,.048))
 	back.pressed.connect(func() -> void:
 		if _busy:
 			return
@@ -65,15 +65,29 @@ func _build() -> void:
 		else:
 			GameManager.go_home()
 	)
+	var plate := TextureRect.new()
+	plate.texture = GeraiSkin.texture("name_plate")
+	plate.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	plate.stretch_mode = TextureRect.STRETCH_SCALE
+	plate.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	JourneyArt.place(self, plate, Rect2(.22,.022,.50,.058))
 	_selector = OptionButton.new()
 	_selector.add_theme_font_size_override("font_size", 38)
+	# The carved name plate is the backdrop; the selector itself stays flat.
+	for state in ["normal", "hover", "pressed", "focus", "disabled"]:
+		_selector.add_theme_stylebox_override(state, StyleBoxEmpty.new())
+	for state in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
+		_selector.add_theme_color_override(state, Palette.PAPER)
+	_selector.add_theme_color_override("font_outline_color", Palette.WOOD_DARK)
+	_selector.add_theme_constant_override("outline_size", 8)
+	_selector.alignment = HORIZONTAL_ALIGNMENT_CENTER
 	# Size to the selected stall, not the longest locked name, so it never covers the stars.
 	_selector.fit_to_longest_item = false
 	_selector.clip_text = true
 	for location in LocationDefinition.all():
 		var title := JourneyArt.localized("Gerai Keluarga",location.display_name) if location.id == &"family_stall" else location.display_name
 		_selector.add_item(title + ("" if LocationManager.stall_unlocked(location.id) else " · " + RenovationText.text("locked")))
-	JourneyArt.place(self, _selector, Rect2(.22,.022,.52,.055))
+	JourneyArt.place(self, _selector, Rect2(.27,.026,.40,.05))
 	_selector.item_selected.connect(func(index: int) -> void:
 		if _busy:
 			return
@@ -82,14 +96,11 @@ func _build() -> void:
 		_refresh()
 		_show_tasks()
 	)
-	var star := TextureRect.new()
-	star.texture = load("res://assets/ui/resources_v1/star.png")
-	star.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	star.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	star.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	JourneyArt.place(self, star, Rect2(.755,.025,.06,.05))
-	_coins = JourneyArt.label(self, "", Rect2(.82,.025,.15,.05), 46, Palette.WOOD_DARK)
-	_progress = JourneyArt.label(self, "", Rect2(.05,.079,.90,.028), 32, Palette.WOOD_DARK)
+	# Star medallion pill; the number sits in its plain right-hand groove.
+	var counter := GeraiSkin.icon("star_counter")
+	JourneyArt.place(self, counter, Rect2(.73,.026,.245,.046))
+	_coins = JourneyArt.label(self, "", Rect2(.82,.028,.145,.042), 46, Palette.WOOD_DARK)
+	_progress = JourneyArt.label(self, "", Rect2(.06,.084,.88,.03), 32, Palette.WOOD_DARK)
 	_guide = Control.new()
 	_guide.hide()
 	_guide.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -107,13 +118,15 @@ func _build() -> void:
 	_next_hint.name = "NextObjective"
 	_next_hint.add_theme_font_size_override("font_size",36)
 	_next_hint.add_theme_color_override("font_color",Palette.WOOD_DARK)
-	_next_hint.add_theme_stylebox_override("normal",UIKit.cream_box())
-	JourneyArt.place(self,_next_hint,Rect2(.12,.78,.76,.075))
-	var hint_label := UIKit.wrap_label("",36,Palette.WOOD_DARK)
+	GeraiSkin.skin_button(_next_hint, "next_hint", .56)
+	UIKit.add_press_feedback(_next_hint)
+	JourneyArt.place(self,_next_hint,Rect2(.08,.775,.84,.076))
+	var hint_label := UIKit.wrap_label("",36,Palette.WOOD_DARK,HORIZONTAL_ALIGNMENT_LEFT)
 	hint_label.name = "NextText"
 	hint_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	hint_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	JourneyArt.place(_next_hint,hint_label,Rect2(.04,.08,.92,.84))
+	# Text starts right of the painted clipboard badge.
+	JourneyArt.place(_next_hint,hint_label,Rect2(.235,.12,.72,.76))
 	_next_hint.pressed.connect(func() -> void:
 		var task := _next_task()
 		if task != null:
@@ -122,15 +135,15 @@ func _build() -> void:
 			_show_design()
 	)
 	var footer := Panel.new()
-	footer.add_theme_stylebox_override("panel", UIKit.cream_box())
-	JourneyArt.place(self, footer, Rect2(.025,.887,.95,.095))
+	footer.add_theme_stylebox_override("panel", GeraiSkin.box("footer_bar", .7))
+	JourneyArt.place(self, footer, Rect2(.015,.884,.97,.098))
 	var navigation := HBoxContainer.new()
-	navigation.add_theme_constant_override("separation", 16)
-	JourneyArt.place(self, navigation, Rect2(.045,.900,.91,.067))
+	navigation.add_theme_constant_override("separation", 14)
+	JourneyArt.place(self, navigation, Rect2(.05,.898,.90,.07))
 	_tasks_button = _navigation_action(RenovationText.text("tasks"), 0)
 	_design_button = _navigation_action(RenovationText.text("design"), 1)
 	var play := GameButton.create("▶ " + RenovationText.text("play"), "primary", 46)
-	play.size_flags_stretch_ratio = 1.25
+	play.size_flags_stretch_ratio = .85
 	for button in [_tasks_button, _design_button, play]:
 		button.custom_minimum_size = Vector2.ZERO
 		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -149,20 +162,23 @@ func _navigation_action(caption: String, icon_index: int) -> Button:
 	button.text = caption
 	button.add_theme_font_size_override("font_size",38)
 	button.add_theme_color_override("font_color",Palette.WOOD_DARK)
-	button.add_theme_stylebox_override("normal", UIKit.wood_box(Color("fff5d9"),Color("c5a567"),18))
-	button.add_theme_stylebox_override("hover", UIKit.wood_box(Color("e4f2cc"),Palette.LEAF_DEEP,18))
-	button.add_theme_stylebox_override("pressed", UIKit.wood_box(Color("d4eeb6"),Palette.LEAF_DEEP,18))
+	for state in ["font_hover_color","font_pressed_color","font_focus_color"]:
+		button.add_theme_color_override(state,Palette.WOOD_DARK)
+	# Painted dock button: the icon fills its round socket, the label sits right of it.
+	GeraiSkin.skin_button(button, "nav_button", .67, [118, 0, 14, 0])
+	UIKit.add_press_feedback(button)
 	button.add_theme_constant_override("outline_size",0)
 	button.clip_text = true
-	# Existing illustrated icons; labels remain readable and translated.
-	if icon_index == 0:
-		var icon := BookTabIcon.new()
-		icon.notebook = true
-		JourneyArt.place(button,icon,Rect2(.04,.24,.17,.52))
-	else:
-		var icon := RenovationArt.icon("style",0)
-		JourneyArt.place(button,icon,Rect2(.04,.24,.17,.52))
-	button.alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	var icon := GeraiSkin.icon("icon_tasks" if icon_index == 0 else "icon_design")
+	icon.set_anchors_preset(Control.PRESET_LEFT_WIDE)
+	icon.anchor_top = .5
+	icon.anchor_bottom = .5
+	icon.offset_left = 16
+	icon.offset_right = 108
+	icon.offset_top = -46
+	icon.offset_bottom = 46
+	button.add_child(icon)
+	button.alignment = HORIZONTAL_ALIGNMENT_CENTER
 	return button
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -193,8 +209,9 @@ func _sync_navigation() -> void:
 	for task in _tasks():
 		if not task.complete():
 			remaining += 1
-	_tasks_button.text = "%s %d %s" % [RenovationText.text("tasks"), remaining, "▾" if _panel_mode == "tasks" else "▴"]
-	_design_button.text = RenovationText.text("design") + (" ▾" if _panel_mode == "design" else " ▴")
+	# The open panel already shows which tab is active, so the labels skip arrows to fit.
+	_tasks_button.text = "%s %d" % [RenovationText.text("tasks"), remaining]
+	_design_button.text = RenovationText.text("design")
 	_refresh_markers()
 
 func _next_task() -> RenovationTaskDefinition:
@@ -248,25 +265,15 @@ func _refresh_markers() -> void:
 		var uv := _preview.component_rect(task.state_index) if task.kind == RenovationTaskDefinition.Kind.STRUCTURE else _preview.decor_rect(DecorDefinition.find(task.decor_id))
 		var marker := Button.new()
 		marker.name = "Marker_" + task.id.replace(":","_")
-		marker.text = "✓" if task.complete() else "+" if task.available() else "…"
-		marker.add_theme_font_size_override("font_size",36)
-		marker.add_theme_color_override("font_color",Palette.WOOD_DARK)
-		marker.add_theme_stylebox_override("normal",UIKit.flat_box(Color("e7f5d5") if task.complete() else Color("fff3c3"),Palette.LEAF_DEEP if task.complete() else Palette.WOOD_DARK,0,3,38))
+		for state in ["normal","hover","pressed","focus"]:
+			marker.add_theme_stylebox_override(state,StyleBoxEmpty.new())
+		UIKit.add_press_feedback(marker)
 		_hotspots.add_child(marker)
-		var star_icon := RenovationArt.icon("renovate",0)
-		star_icon.name = "HotspotIcon"
-		star_icon.texture = load("res://assets/ui/resources_v1/star.png")
-		star_icon.visible = not task.complete()
-		if not task.available() and not task.complete():
-			var source: Texture2D = load("res://assets/ui/journey_icons_v2/icons.png")
-			var lock_icon := AtlasTexture.new()
-			lock_icon.atlas = source
-			lock_icon.region = Rect2(source.get_size() * .5,source.get_size() * .5)
-			star_icon.texture = lock_icon
-		JourneyArt.place(marker,star_icon,Rect2(.16,.16,.68,.68))
-		if star_icon.visible:
-			marker.text = ""
-		marker.size = Vector2(76,76)
+		# Painted map-pin medallion: star when affordable work is ready, padlock otherwise.
+		var pin := GeraiSkin.icon("hotspot_done" if task.complete() else "hotspot_ready" if task.available() else "hotspot_locked")
+		pin.name = "HotspotIcon"
+		JourneyArt.place(marker,pin,Rect2(0,0,1,1))
+		marker.size = Vector2(104,104)
 		var point := _preview.art_point(uv.get_center())
 		if task.kind == RenovationTaskDefinition.Kind.STRUCTURE and task.state_index == 3:
 			point = _preview.art_point(Vector2(.18,.38))
@@ -274,7 +281,7 @@ func _refresh_markers() -> void:
 			point = _preview.art_point(Vector2(.84,.69))
 		elif task.kind == RenovationTaskDefinition.Kind.DECOR and DecorDefinition.find(task.decor_id).slot == "SIGN_BOARD":
 			point = _preview.art_point(Vector2(.69,.37))
-		marker.position = Vector2(clampf(point.x-38,8,size.x-84),clampf(point.y-38,size.y*.12,size.y*.76))
+		marker.position = Vector2(clampf(point.x-52,8,size.x-112),clampf(point.y-52,size.y*.135,size.y*.70))
 		marker.tooltip_text = task.title() + ("\n" + task.lock_reason() if not task.available() and not task.complete() else "")
 		marker.pressed.connect(_inspect_task.bind(task))
 
@@ -329,21 +336,18 @@ func _close_panel() -> void:
 	_selector.disabled = false
 	_sync_navigation()
 
-func _open_panel(title: String, top: float = .55, bottom: float = .89) -> VBoxContainer:
+func _open_panel(title: String, top: float = .55, bottom: float = .89, celebration: bool = false) -> VBoxContainer:
 	_close_panel()
 	_panel = PanelContainer.new()
 	_panel.name = "StallUpgradePanel"
 	_panel.z_index = 200
-	var frame := StyleBoxTexture.new()
-	var paper := AtlasTexture.new()
-	paper.atlas = load("res://assets/stalls/accessories_v2/task_panel.png")
-	paper.region = Rect2(0,40,1536,910)
-	frame.texture = paper
-	for side in [SIDE_LEFT,SIDE_TOP,SIDE_RIGHT,SIDE_BOTTOM]:
-		frame.set_texture_margin(side, 180)
-		frame.set_content_margin(side, 64 if side != SIDE_BOTTOM else 85)
-	_panel.add_theme_stylebox_override("panel", frame)
-	JourneyArt.place(self, _panel, Rect2(.025,top,.95,bottom-top))
+	# The celebration frame keeps its painted aspect so the ribbon never stretches;
+	# the list frame stretches freely because its title plaque is a fixed overlay.
+	var width := .84 if celebration else .95
+	var scale := width * 1080.0 / 1280.0 if celebration else .72
+	var content_top := 150.0 if celebration else 212.0
+	_panel.add_theme_stylebox_override("panel", GeraiSkin.box("complete_panel" if celebration else "list_panel", scale, [58, content_top, 58, 56 if celebration else 60]))
+	JourneyArt.place(self, _panel, Rect2((1.0-width)*.5,top,width,bottom-top))
 	_panel.modulate.a = 0
 	_panel.create_tween().tween_property(_panel,"modulate:a",1.0,.16)
 	_hotspots.hide()
@@ -354,18 +358,54 @@ func _open_panel(title: String, top: float = .55, bottom: float = .89) -> VBoxCo
 	_panel.offset_top += inset.y
 	_panel.offset_right += inset.z
 	_panel.offset_bottom += inset.w
-	var margin := UIKit.margin(16)
+	var margin := UIKit.margin(10)
 	_panel.add_child(margin)
 	var stack := UIKit.vbox(10)
 	margin.add_child(stack)
-	var heading := HBoxContainer.new()
-	stack.add_child(heading)
-	var label := UIKit.wrap_label(title, 46, Palette.WOOD_DARK, HORIZONTAL_ALIGNMENT_LEFT)
-	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	heading.add_child(label)
+	# Chrome is fitted to the content rect; its children reach back up over the frame.
+	var chrome := Control.new()
+	chrome.name = "PanelChrome"
+	chrome.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_panel.add_child(chrome)
+	var title_rect: Rect2
+	if celebration:
+		# Title rides on the painted red ribbon.
+		title_rect = Rect2(330 * scale, 88 * scale, 620 * scale, 92 * scale)
+	else:
+		var plaque := TextureRect.new()
+		plaque.texture = GeraiSkin.plaque(.85)
+		plaque.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		plaque.set_anchors_preset(Control.PRESET_CENTER_TOP)
+		plaque.offset_left = -plaque.texture.get_width() * .5
+		plaque.offset_right = plaque.texture.get_width() * .5
+		plaque.offset_top = 13 - content_top
+		plaque.offset_bottom = plaque.offset_top + plaque.texture.get_height()
+		chrome.add_child(plaque)
+		title_rect = Rect2(48, 58, plaque.texture.get_width() - 96, 92)
+	var label := UIKit.label(title, 40 if celebration else 36, Palette.PAPER)
+	label.add_theme_color_override("font_outline_color", Color("7a1f12") if celebration else Palette.WOOD_DARK)
+	label.add_theme_constant_override("outline_size", 10)
+	label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.clip_text = true
+	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	label.name = "PanelTitle"
+	if celebration:
+		label.position = title_rect.position - Vector2(58, content_top)
+		label.size = title_rect.size
+		chrome.add_child(label)
+	else:
+		label.position = title_rect.position
+		label.size = title_rect.size
+		chrome.get_child(0).add_child(label)
 	var close := UIKit.close_button()
-	close.custom_minimum_size = Vector2(92,92)
-	heading.add_child(close)
+	close.set_anchors_preset(Control.PRESET_TOP_RIGHT)
+	close.offset_left = -36
+	close.offset_right = 64
+	close.offset_top = (110 if celebration else 70) - content_top
+	close.offset_bottom = close.offset_top + 100
+	chrome.add_child(close)
 	close.pressed.connect(func() -> void:
 		if not _busy:
 			_close_panel()
@@ -395,7 +435,7 @@ func _rebuild_tasks(design: bool) -> void:
 	meter.max_value = _tasks().size()
 	meter.value = done
 	meter.show_percentage = false
-	meter.custom_minimum_size.y = 20
+	GeraiSkin.style_progress(meter, 40)
 	stack.add_child(meter)
 	stack.add_child(UIKit.wrap_label(RenovationText.text("progress") % [done,_tasks().size()], 34, Palette.WOOD_DARK))
 	if not design:
@@ -406,11 +446,15 @@ func _rebuild_tasks(design: bool) -> void:
 			var tab := Button.new()
 			tab.text = RenovationText.text(key + "_tab")
 			tab.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-			tab.custom_minimum_size.y = 58
+			tab.custom_minimum_size.y = 78
 			tab.add_theme_font_size_override("font_size",34)
+			var selected: bool = _task_filter == key
 			for state in ["font_color","font_hover_color","font_pressed_color","font_focus_color"]:
-				tab.add_theme_color_override(state,Palette.WOOD_DARK)
-			tab.add_theme_stylebox_override("normal",UIKit.flat_box(Color("d9edc3") if _task_filter == key else Color("fff7df"),Palette.LEAF_DEEP if _task_filter == key else Color("cdb88c"),12,2,10))
+				tab.add_theme_color_override(state,Palette.PAPER if selected else Palette.WOOD_DARK)
+			tab.add_theme_color_override("font_outline_color",Palette.LEAF_DEEP)
+			tab.add_theme_constant_override("outline_size",8 if selected else 0)
+			GeraiSkin.skin_button(tab, "tab_active" if selected else "tab_idle", .65)
+			UIKit.add_press_feedback(tab)
 			filters.add_child(tab)
 			tab.pressed.connect(func() -> void:
 				_task_filter = key
@@ -472,14 +516,15 @@ func _add_task_card(list: VBoxContainer, task: RenovationTaskDefinition, design:
 	var card := PanelContainer.new()
 	card.name = "Task_" + task.id.replace(":", "_")
 	card.custom_minimum_size.y = 180
-	card.add_theme_stylebox_override("panel", UIKit.wood_box(Color("fff7dc"), Color("d8b779"), 12))
+	# The row's round socket sits at the left; the icon is centred inside it.
+	card.add_theme_stylebox_override("panel", GeraiSkin.box("task_row", .82, [58, 18, 34, 18]))
 	list.add_child(card)
 	var margin := UIKit.margin(14)
 	card.add_child(margin)
 	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", 16)
+	row.add_theme_constant_override("separation", 30)
 	margin.add_child(row)
-	var task_icon := RenovationArt.icon(task.icon_key, 124)
+	var task_icon := RenovationArt.icon(task.icon_key, 112)
 	if task.kind == RenovationTaskDefinition.Kind.DECOR:
 		task_icon.texture = RenovationArt.design_texture(task.decor_id, str(LocationManager.decor_styles(_location).get(DecorDefinition.find(task.decor_id).slot, "original")))
 	elif _location == &"family_stall":
@@ -505,9 +550,20 @@ func _add_task_card(list: VBoxContainer, task: RenovationTaskDefinition, design:
 		status = RenovationText.text("need_stars") % (task.cost() - EconomyManager.stars())
 	text.add_child(UIKit.wrap_label(status, 34, Palette.WOOD_DARK, HORIZONTAL_ALIGNMENT_LEFT))
 	var can_change := task.kind != RenovationTaskDefinition.Kind.STRUCTURE or (complete and _location == &"family_stall")
+	var priced := available and not complete and task.kind != RenovationTaskDefinition.Kind.STYLE
 	var caption := RenovationText.text("redesign") if complete or task.kind == RenovationTaskDefinition.Kind.STYLE else "★ %d" % task.cost() if available else RenovationText.text("inspect")
 	var button := GameButton.create(caption, "primary" if available or complete else "back", 32)
 	button.custom_minimum_size = Vector2(190,96)
+	if priced:
+		# Painted star-price pill; its gold star badge replaces the ★ glyph.
+		button.text = str(task.cost())
+		button.custom_minimum_size = Vector2(236,96)
+		GeraiSkin.skin_button(button, "price_button", .64, [96, 0, 30, 6])
+		button.add_theme_font_size_override("font_size", 40)
+		for state in ["font_color","font_hover_color","font_pressed_color","font_focus_color"]:
+			button.add_theme_color_override(state, Palette.PAPER)
+		button.add_theme_color_override("font_outline_color", Palette.LEAF_DEEP)
+		button.add_theme_constant_override("outline_size", 10)
 	button.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	button.disabled = complete and not can_change
 	row.add_child(button)
@@ -753,7 +809,8 @@ func _renovate() -> void:
 	await _confirm_selection()
 
 func _show_completion(task: RenovationTaskDefinition, redesign: bool = false) -> void:
-	var stack := _open_panel(RenovationText.text("design_saved" if redesign else "complete"), .60, .88)
+	# Height matches the celebration frame's painted aspect at .84 screen width.
+	var stack := _open_panel(RenovationText.text("design_saved" if redesign else "complete"), .548, .548 + .84 * 1080.0 / 1920.0 * 900.0 / 1280.0, true)
 	_panel_mode = "complete"
 	stack.add_child(UIKit.wrap_label(task.title(),42,Palette.WOOD_DARK))
 	var done := 0
@@ -765,7 +822,7 @@ func _show_completion(task: RenovationTaskDefinition, redesign: bool = false) ->
 	progress.max_value = _tasks().size()
 	progress.value = _progress_before
 	progress.show_percentage = false
-	progress.custom_minimum_size.y = 28
+	GeraiSkin.style_progress(progress, 44)
 	stack.add_child(progress)
 	progress.create_tween().tween_property(progress,"value",float(done),.55).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	stack.add_child(UIKit.wrap_label(RenovationText.text("progress") % [done,_tasks().size()],36,Palette.LEAF_DEEP))
