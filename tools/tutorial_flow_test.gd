@@ -10,6 +10,12 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	SaveManager.save_path = "user://kuih_tutorial_flow_test.json"
 	SaveManager.reset()
+	# The one-time "Meet our kuih" cards would hold back the coach in every lesson.
+	for stage in TutorialLibrary.all():
+		for item in stage.kuih:
+			SaveManager.data.kuih_seen.append(String(item.id))
+	for entry in PowerupRecipes.ENTRIES:
+		SaveManager.data.kuih_seen.append("special_intro_%d" % int(entry[0]))
 	run.call_deferred()
 
 func settle(screen: LevelController) -> void:
@@ -43,7 +49,8 @@ func run() -> void:
 	# Every active piece of authored copy must have a Malay translation.
 	SaveManager.data.settings.language = "ms"
 	for stage in TutorialLibrary.all():
-		check(TutorialText.text(stage.title) != stage.title, "translated lesson title: "+stage.title)
+		# Kuih names read the same in both languages.
+		check(stage.title in ["Pulut Panggang", "Kuih Selorot"] or TutorialText.text(stage.title) != stage.title, "translated lesson title: "+stage.title)
 		for step in stage.tutorial_steps:
 			check(TutorialText.text(step.title) != step.title, "translated step title: "+step.title)
 			check(TutorialText.text(step.body) != step.body, "translated dialogue: "+step.body)
@@ -136,9 +143,9 @@ func run() -> void:
 	SaveManager.load_game()
 	check(not OnboardingProgress.claim_gift(), "gift survives reload without duplication")
 	welcome._next_page()
-	var before_restore := EconomyManager.coins()
+	SaveManager.data["recipe_star_credits"] = OnboardingProgress.RESTORE_COST
 	check(OnboardingProgress.restore_stall(), "starter restoration can be bought")
-	check(EconomyManager.coins() == before_restore-300 and OnboardingProgress.restored(), "restoration saves and spends 300")
+	check(EconomyManager.stars() == 0 and OnboardingProgress.restored(), "restoration saves and spends its star cost")
 	check(not OnboardingProgress.restore_stall(), "restoration cannot charge twice")
 	check(LocationManager.structural_level(&"family_stall") == 0, "restoration preserves milestone upgrades")
 	welcome._next_page()
@@ -150,13 +157,11 @@ func run() -> void:
 	add_child(host)
 	var known: Array[KuihData] = [KuihLibrary.get_kuih(&"onde_onde"),KuihLibrary.get_kuih(&"keria")]
 	var completed := [false]
+	SaveManager.data.kuih_seen = []
 	KuihIntroduction.present(host,known,func() -> void: completed[0] = true)
 	var intro := host.get_child(0) as KuihIntroduction
 	for i in 2:
-		for child in intro.get_children():
-			if child is Button:
-				child.pressed.emit()
-				break
+		intro.find_child("AcknowledgeKuihButton",true,false).pressed.emit()
 	check(completed[0] and KuihIntroduction.unseen(known).is_empty(), "kuih cards acknowledge each type once")
 	host.queue_free()
 	for id in range(1,11):

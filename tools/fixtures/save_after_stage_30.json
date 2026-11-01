@@ -1,0 +1,412 @@
+{
+  "achievements": {
+    "combo_25": {
+      "progress": 0
+    },
+    "first_renovation": {
+      "progress": 1,
+      "reward_claimed": true,
+      "unlocked": true,
+      "unlocked_at": 1793523119
+    },
+    "first_steps": {
+      "progress": 1,
+      "reward_claimed": true,
+      "unlocked": true,
+      "unlocked_at": 1793523110
+    },
+    "gerai_2": {
+      "progress": 2,
+      "reward_claimed": true,
+      "unlocked": true,
+      "unlocked_at": 1793523118
+    },
+    "malaysian_kuih_master": {
+      "progress": 0
+    },
+    "next_story": {
+      "progress": 1,
+      "reward_claimed": true,
+      "unlocked": true,
+      "unlocked_at": 1793523118
+    },
+    "no_help": {
+      "progress": 0
+    },
+    "perfect_server": {
+      "progress": 10,
+      "reward_claimed": true,
+      "unlocked": true,
+      "unlocked_at": 1793523114
+    },
+    "recipe_master": {
+      "progress": 3
+    },
+    "recipes_10": {
+      "progress": 3
+    },
+    "score_3000": {
+      "progress": 2500
+    },
+    "serve_100": {
+      "progress": 0
+    },
+    "stars_30": {
+      "progress": 30,
+      "reward_claimed": true,
+      "unlocked": true,
+      "unlocked_at": 1793523113
+    },
+    "stars_60": {
+      "progress": 60,
+      "reward_claimed": true,
+      "unlocked": true,
+      "unlocked_at": 1793523116
+    },
+    "stars_90": {
+      "progress": 80
+    },
+    "story_1": {
+      "progress": 1,
+      "reward_claimed": true,
+      "unlocked": true,
+      "unlocked_at": 1793523118
+    },
+    "streak_5": {
+      "progress": 0
+    }
+  },
+  "active_stall_id": "family_stall",
+  "boosters": {
+    "extra_moves": 2,
+    "gift": 1,
+    "hand": 3,
+    "royal": 1,
+    "shuffle": 3,
+    "spatula": 3,
+    "start_delivery": 0,
+    "start_order": 0,
+    "tray": 2
+  },
+  "chapters": [
+    "prologue",
+    "school_canteen"
+  ],
+  "claimed_collection_rewards": [],
+  "claimed_recipe_discovery_rewards": [],
+  "claimed_recipe_milestone_rewards": [],
+  "coins": 5021,
+  "decor_styles": {},
+  "diamonds": 0,
+  "discovered_recipe_ids": [],
+  "gerai": {
+    "cosmetics": [
+      "family_signboard",
+      "family_awning_counter",
+      "family_stall_complete"
+    ],
+    "level": 4
+  },
+  "hearts": {
+    "coins_spent": 0,
+    "current_hearts": 5,
+    "free_play_end_timestamp": 0,
+    "hearts_spent": 0,
+    "last_heart_refill_timestamp": 0,
+    "max_hearts": 5,
+    "milestones": [],
+    "rewarded_heart_ads_reset_date": "",
+    "rewarded_heart_ads_used_today": 0,
+    "win_streak": 0
+  },
+  "kuih_seen": [],
+  "language_policy": 2,
+  "levels": {
+    "1": {
+      "best_moves_left": 4,
+      "best_score": 1050,
+      "completed": true,
+      "first_clear_claimed": true,
+      "stars": 3
+    },
+    "10": {
+      "best_moves_left": 4,
+      "best_score": 1500,
+      "completed": true,
+      "first_clear_claimed": true,
+      "stars": 3
+    },
+    "11": {
+      "best_moves_left": 4,
+      "best_score": 1550,
+      "completed": true,
+      "first_clear_claimed": true,
+      "stars": 3
+    },
+    "12": {
+      "best_moves_left": 4,
+      "best_score": 1600,
+      "completed": true,
+      "first_clear_claimed": true,
+      "stars": 2
+    },
+    "13": {
+      "best_moves_left": 4,
+      "best_score": 1650,
+      "completed": true,
+      "first_clear_claimed": true,
+      "stars": 3
+    },
+    "14": {
+      "best_moves_left": 4,
+      "best_score": 1700,
+      "completed": true,
+      "first_clear_claimed": true,
+      "stars": 3
+    },
+    "15": {
+      "best_moves_left": 4,
+      "best_score": 1750,
+      "completed": true,
+      "first_clear_claimed": true,
+      "stars": 2
+    },
+    "16": {
+      "best_moves_left": 4,
+      "best_score": 1800,
+      "completed": true,
+      "first_clear_claimed": true,
+      "stars": 3
+    },
+    "17": {
+      "best_moves_left": 4,
+      "best_score": 1850,
+      "completed": true,
+      "first_clear_claimed": true,
+      "stars": 3
+    },
+    "18": {
+      "best_moves_left": 4,
+      "best_score": 1900,
+      "completed": true,
+      "first_clear_claimed": true,
+      "stars": 2
+    },
+    "19": {
+      "best_moves_left": 4,
+      "best_score": 1950,
+      "completed": true,
+      "first_clear_claimed": true,
+      "stars": 3
+    },
+    "2": {
+      "best_moves_left": 4,
+      "best_score": 1100,
+      "completed": true,
+      "first_clear_claimed": true,
+      "stars": 3
+    },
+    "20": {
+      "best_moves_left": 4,
+      "best_score": 2000,
+      "completed": true,
+      "first_clear_claimed": true,
+      "stars": 3
+    },
+    "21": {
+      "best_moves_left": 4,
+      "best_score": 2050,
+      "completed": true,
+      "first_clear_claimed": true,
+      "stars": 2
+    },
+    "22": {
+      "best_moves_left": 4,
+      "best_score": 2100,
+      "completed": true,
+      "first_clear_claimed": true,
+      "stars": 3
+    },
+    "23": {
+      "best_moves_left": 4,
+      "best_score": 2150,
+      "completed": true,
+      "first_clear_claimed": true,
+      "stars": 3
+    },
+    "24": {
+      "best_moves_left": 4,
+      "best_score": 2200,
+      "completed": true,
+      "first_clear_claimed": true,
+      "stars": 2
+    },
+    "25": {
+      "best_moves_left": 4,
+      "best_score": 2250,
+      "completed": true,
+      "first_clear_claimed": true,
+      "stars": 3
+    },
+    "26": {
+      "best_moves_left": 4,
+      "best_score": 2300,
+      "completed": true,
+      "first_clear_claimed": true,
+      "stars": 3
+    },
+    "27": {
+      "best_moves_left": 4,
+      "best_score": 2350,
+      "completed": true,
+      "first_clear_claimed": true,
+      "stars": 2
+    },
+    "28": {
+      "best_moves_left": 4,
+      "best_score": 2400,
+      "completed": true,
+      "first_clear_claimed": true,
+      "stars": 3
+    },
+    "29": {
+      "best_moves_left": 4,
+      "best_score": 2450,
+      "completed": true,
+      "first_clear_claimed": true,
+      "stars": 3
+    },
+    "3": {
+      "best_moves_left": 4,
+      "best_score": 1150,
+      "completed": true,
+      "first_clear_claimed": true,
+      "stars": 2
+    },
+    "30": {
+      "best_moves_left": 4,
+      "best_score": 2500,
+      "completed": true,
+      "first_clear_claimed": true,
+      "stars": 2
+    },
+    "4": {
+      "best_moves_left": 4,
+      "best_score": 1200,
+      "completed": true,
+      "first_clear_claimed": true,
+      "stars": 3
+    },
+    "5": {
+      "best_moves_left": 4,
+      "best_score": 1250,
+      "completed": true,
+      "first_clear_claimed": true,
+      "stars": 3
+    },
+    "6": {
+      "best_moves_left": 4,
+      "best_score": 1300,
+      "completed": true,
+      "first_clear_claimed": true,
+      "stars": 2
+    },
+    "7": {
+      "best_moves_left": 4,
+      "best_score": 1350,
+      "completed": true,
+      "first_clear_claimed": true,
+      "stars": 3
+    },
+    "8": {
+      "best_moves_left": 4,
+      "best_score": 1400,
+      "completed": true,
+      "first_clear_claimed": true,
+      "stars": 3
+    },
+    "9": {
+      "best_moves_left": 4,
+      "best_score": 1450,
+      "completed": true,
+      "first_clear_claimed": true,
+      "stars": 2
+    }
+  },
+  "location_decor": {
+    "family_stall": {
+      "PLANT_1": "hibiscus"
+    }
+  },
+  "mastery": {},
+  "onboarding": {
+    "gift_claimed": false,
+    "restored": false,
+    "shop_intro_done": false
+  },
+  "owned_decor": [
+    "hibiscus"
+  ],
+  "pending_recipe_presentations": [],
+  "profile": {
+    "avatar": "aina",
+    "name": "Fixture",
+    "player_id": "ba70d32008067c0db8450dbf99faa213",
+    "title_id": "Kuih Maker"
+  },
+  "recipe_book_schema": 1,
+  "recipe_discovery_count": 0,
+  "recipe_discovery_records": {},
+  "recipe_star_credits": 0,
+  "recipes": [
+    "kuih_ketayap",
+    "keria",
+    "penyaram"
+  ],
+  "renovation_tasks_completed": [],
+  "settings": {
+    "bgm_gain_v2": true,
+    "haptics": true,
+    "language": "ms",
+    "music": true,
+    "music_volume": 0.8,
+    "sfx": true,
+    "sfx_volume": 1.0,
+    "show_hints": true
+  },
+  "special_unlocks": {
+    "hantar": true
+  },
+  "stall_variants": {
+    "family_stall": {
+      "1": "classic",
+      "2": "classic",
+      "3": "classic"
+    }
+  },
+  "stars_spent": 27,
+  "stats": {
+    "achievement_win_streak": 0,
+    "best_win_streak": 0,
+    "levels_played": 0,
+    "levels_won": 0,
+    "moves_played": 0,
+    "orders_served": 0,
+    "special_combos": 0,
+    "specials_used": 0,
+    "unassisted_wins": 0
+  },
+  "story_read": [],
+  "story_seen": [
+    "milestone_claim_10",
+    "milestone_claim_20",
+    "milestone_claim_30"
+  ],
+  "structural_upgrades": {
+    "family_stall": 3
+  },
+  "tutorial_done": true,
+  "tutorial_index": 8,
+  "tutorial_rewarded": [],
+  "version": 7
+}
