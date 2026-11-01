@@ -8,6 +8,10 @@ const NOTES := {
 	"kuih_ketayap": ["Gulungan pandan berinti kelapa manis.", "A pandan roll with sweet coconut filling."],
 	"kuih_lapis": ["Kuih berlapis merah jambu dan putih krim.", "A pink and cream layered kuih."],
 	"keria": ["Kuih berbentuk cincin dengan salutan gula.", "A ring-shaped kuih with a sugar coating."],
+	"karipap": ["Pastri keemasan berinti dengan tepi berkelim.", "Golden pastry with a crimped edge."],
+	"tart": ["Cawan pastri keemasan berisi kastard.", "A golden pastry cup filled with custard."],
+	"kuih_bom": ["Kuih goreng keemasan bersalut bijan.", "A golden fried kuih coated in sesame."],
+	"agar_agar_ros": ["Agar-agar perisa ros dalam acuan bunga.", "Rose-flavoured jelly in a flower mould."],
 }
 
 ## Separate acknowledgement IDs preserve old recipe unlocks without skipping a card.

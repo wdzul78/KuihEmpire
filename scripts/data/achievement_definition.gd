@@ -29,6 +29,8 @@ static func all() -> Array[AchievementDefinition]:
 		AchievementDefinition.new("stars_30", "Star Collector I", "Earn 30 permanent stars.", "STARS", "stars", 30, 50, "BRONZE"),
 		AchievementDefinition.new("stars_60", "Star Collector II", "Earn 60 permanent stars.", "STARS", "stars", 60, 75, "SILVER"),
 		AchievementDefinition.new("stars_90", "Star Collector III", "Earn 90 permanent stars.", "STARS", "stars", 90, 100, "GOLD"),
+		AchievementDefinition.new("stars_120", "Star Collector IV", "Earn 120 permanent stars.", "STARS", "stars", 120, 125, "GOLD"),
+		AchievementDefinition.new("stars_180", "Star Collector V", "Earn 180 permanent stars.", "STARS", "stars", 180, 150, "MASTER"),
 		AchievementDefinition.new("perfect_server", "Perfect Server", "Earn three stars on 10 different stages.", "PUZZLE", "perfect", 10, 75),
 		AchievementDefinition.new("recipes_10", "Kuih Explorer", "Discover 10 recipes.", "RECIPES", "recipes", 10, 75, "BRONZE"),
 		# The data-driven 200-recipe milestone owns the completion payout.
@@ -40,6 +42,7 @@ static func all() -> Array[AchievementDefinition]:
 		AchievementDefinition.new("streak_5", "Sweet Streak", "Win five stages consecutively.", "STREAK", "best_win_streak", 5, 50),
 		AchievementDefinition.new("story_1", "Gerai Keluarga Complete", "Complete all 30 stages of the family stall.", "JOURNEY", "stories", 1, 100),
 		AchievementDefinition.new("next_story", "Journey Continues", "Unlock the school canteen story.", "JOURNEY", "next_story", 1, 50),
+		AchievementDefinition.new("story_2", "School Canteen Complete", "Complete all 30 stages of the school canteen.", "JOURNEY", "stories", 2, 100),
 		AchievementDefinition.new("score_3000", "Sweet Score", "Reach a best stage score of 3,000.", "SCORE", "best_score", 3000, 50),
 		AchievementDefinition.new("gerai_2", "Growing Gerai", "Upgrade your stall to level two.", "GERAI", "gerai", 2, 50),
 	]

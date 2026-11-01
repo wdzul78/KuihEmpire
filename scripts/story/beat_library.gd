@@ -28,6 +28,8 @@ static func all_ids() -> Array:
 		&"beat_01_open", &"beat_04_tapau", &"beat_07_leaf", &"beat_10_rush",
 		&"beat_15_book", &"beat_20_weekend", &"beat_20_done", &"beat_28_rival",
 		&"beat_30_finale", &"beat_30_done", &"beat_21_steamer", &"beat_12_special_order",
+		&"beat_31_canteen", &"beat_38_tart", &"beat_40_done", &"beat_45_recipe",
+		&"beat_50_sports", &"beat_50_done", &"beat_55_pibg", &"beat_60_awards", &"beat_60_done",
 	]
 
 
@@ -118,5 +120,65 @@ static func _build(id: StringName) -> StoryBeat:
 				"You did it. The stall is full and the queue is still here.",
 				"Our next destination is the school canteen. A new story awaits!",
 			], "From Tradition to Empire")
+
+		&"beat_31_canteen":
+			return _lines(id, StoryBeat.Speaker.AINA, [
+				"So this is the school canteen. It has been quiet for a long time.",
+				"Let's bring the smell of fresh kuih back.",
+			])
+
+		&"beat_38_tart":
+			var beat := _lines(id, StoryBeat.Speaker.CUSTOMER, [
+				"Aina, the teachers keep asking for tart. Could you make some for us?",
+				"Of course, Cikgu! One tray of tart coming up.",
+			])
+			beat.line_speakers = [StoryBeat.Speaker.CUSTOMER, StoryBeat.Speaker.AINA]
+			return beat
+
+		&"beat_40_done":
+			return _lines(id, StoryBeat.Speaker.AINA, [
+				"The sale day went so well. The students came back!",
+				"Now this canteen feels alive again.",
+			])
+
+		&"beat_45_recipe":
+			var beat := _lines(id, StoryBeat.Speaker.CUSTOMER, [
+				"Kak Aina, where does kuih come from?",
+				"Every kuih carries a story from someone's family. Grandma's book holds many of them.",
+			])
+			beat.line_speakers = [StoryBeat.Speaker.CUSTOMER, StoryBeat.Speaker.AINA]
+			return beat
+
+		&"beat_50_sports":
+			return _lines(id, StoryBeat.Speaker.AINA, [
+				"Sports Day! The whole school will be hungry by noon.",
+				"Let's pack plenty before the first race.",
+			])
+
+		&"beat_50_done":
+			return _lines(id, StoryBeat.Speaker.IBU, [
+				"The field was packed and every tray came back empty.",
+				"The teachers are already asking about next year.",
+			])
+
+		&"beat_55_pibg":
+			var beat := _lines(id, StoryBeat.Speaker.CUSTOMER, [
+				"Aina, the PTA needs kuih for the whole meeting. Packed neatly, please.",
+				"Neat boxes it is. We won't let the school down.",
+			])
+			beat.line_speakers = [StoryBeat.Speaker.CUSTOMER, StoryBeat.Speaker.AINA]
+			return beat
+
+		&"beat_60_awards":
+			return _lines(id, StoryBeat.Speaker.AINA, [
+				"Awards Day is our biggest order yet. Everyone we know is coming.",
+				"Let's make the canteen shine one more time.",
+			])
+
+		&"beat_60_done":
+			return _lines(id, StoryBeat.Speaker.IBU, [
+				"The school is proud of you, and so am I.",
+				"The Morning Market has heard about your kuih. Shall we go?",
+			])
 
 	return null

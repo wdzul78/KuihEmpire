@@ -1,0 +1,79 @@
+[
+  {
+    "path": "assets/ui/journey_world_v3/school_gate.png",
+    "width": 724,
+    "height": 2172,
+    "corner_alpha": 255,
+    "sha256": "A38EC863C5D503CC1D2974CCA6A18568A2BDB4E8AADE37C9FC682283967C19B6"
+  },
+  {
+    "path": "assets/ui/journey_world_v3/school_canteen.png",
+    "width": 724,
+    "height": 2172,
+    "corner_alpha": 255,
+    "sha256": "4368C1F27C23E05249D4F74C26153C80250AE84C96D093257061901B81F05189"
+  },
+  {
+    "path": "assets/ui/journey_world_v3/school_field.png",
+    "width": 724,
+    "height": 2172,
+    "corner_alpha": 255,
+    "sha256": "48F78FA0F4AC0B74CD415A6C64046B6B1F78E04F1A213463E2618BE5B06D4980"
+  },
+  {
+    "path": "assets/ui/journey_transitions_v2/waterfront_to_gate.png",
+    "width": 1536,
+    "height": 512,
+    "corner_alpha": 255,
+    "sha256": "1F8FF9F5E27B8C688D9530A808BD3316241B2840CDA21213E351BDC210DCEBFC"
+  },
+  {
+    "path": "assets/ui/journey_transitions_v2/gate_to_canteen.png",
+    "width": 1536,
+    "height": 512,
+    "corner_alpha": 255,
+    "sha256": "4F1B1C1C4CB049832470DCCBCCADDB59AE16D6ED65079595DBE7AA1CDC4B00AC"
+  },
+  {
+    "path": "assets/ui/journey_transitions_v2/canteen_to_field.png",
+    "width": 1536,
+    "height": 512,
+    "corner_alpha": 255,
+    "sha256": "EF2154B708FBEC08229943145CE63D7C26B9D9A4E69B2D48DB1C184644E33DAE"
+  },
+  {
+    "path": "assets/characters/fullbody_v2/cikgu_salmah.png",
+    "width": 1024,
+    "height": 1536,
+    "corner_alpha": 0,
+    "sha256": "38DA20AA1C87EB2F9037C0219227E2E2698F029B50F05FF6E8747FD07B660C60"
+  },
+  {
+    "path": "assets/characters/fullbody_v2/adik_danish.png",
+    "width": 1024,
+    "height": 1536,
+    "corner_alpha": 0,
+    "sha256": "9CC87E689A91913D09C49A3071A43E9E37DBECEAF402B323898C60F78B260322"
+  },
+  {
+    "path": "assets/characters/fullbody_v2/adik_priya.png",
+    "width": 1024,
+    "height": 1536,
+    "corner_alpha": 0,
+    "sha256": "9E8AADC19C204BADDE81E0DA6FF1EABFB1655E5A6DF769D8156A8EE064926859"
+  },
+  {
+    "path": "assets/characters/fullbody_v2/pak_mat.png",
+    "width": 1024,
+    "height": 1536,
+    "corner_alpha": 0,
+    "sha256": "5569EA355308D2198C1B2ED4D41DEA21A31BFD6FDC0A53595D60D777758DF5A0"
+  },
+  {
+    "path": "assets/ui/milestone_v1/school_canteen.png",
+    "width": 1400,
+    "height": 700,
+    "corner_alpha": 255,
+    "sha256": "C3DEB66747A7FC3061B6E697000B97A662A84A1B810ED67CADCDBF40E63A269F"
+  }
+]

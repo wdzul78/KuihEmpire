@@ -1,8 +1,7 @@
 extends Node
 
 ## The map must stay correct and light as locations are added. Stages 31-60 are
-## pretend data here; School Canteen sections borrow Family Stall worlds until
-## their art arrives. Rendered runs save the seams to `.analysis/`.
+## pretend data here. Rendered runs save the seams to `.analysis/`.
 
 var failures: Array[String] = []
 
@@ -27,13 +26,13 @@ func run() -> void:
 	get_tree().quit(0 if failures.is_empty() else 1)
 
 func _check_sections() -> void:
-	var centers: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(JourneyMap.WORLD_ROOT + "centers.json"))
+	var centers := JourneyLibrary.world_centers()
 	var next := 1
 	for section in JourneyLibrary.SECTIONS:
 		check(section["id"] == next, "sections are contiguous at %d" % next)
 		next = section["last"] + 1
 		check(centers.has(section["world"]) and centers[section["world"]].size() == 10, "section %d has ten road points" % section["id"])
-		check(ResourceLoader.exists(JourneyMap.WORLD_ROOT + String(section["world"]) + ".png"), "section %d has a world" % section["id"])
+		check(ResourceLoader.exists(JourneyLibrary.world_path(section)), "section %d has a world" % section["id"])
 		var location := LocationDefinition.find(section["location"])
 		check(section["id"] >= location.stage_start and section["last"] <= location.stage_end, "section %d is inside its location" % section["id"])
 	check(JourneyLibrary.section_for(11)["place_en"] == "Village Market", "stages 11-20 are no longer called Morning Market")
