@@ -20,6 +20,9 @@ var scene_root: Node
 func _wait_idle(screen: LevelController, context: String, timeout_ms: int = TIMEOUT_MS) -> bool:
 	var deadline := Time.get_ticks_msec() + timeout_ms
 	while screen.board != null and (screen.board.busy or screen._serving):
+		# The game pauses when its window loses focus, which is not a stuck board.
+		if get_tree().paused:
+			get_tree().paused = false
 		if Time.get_ticks_msec() > deadline:
 			problems.append("%s: board stuck busy for %d ms" % [context, timeout_ms])
 			return false

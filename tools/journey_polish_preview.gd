@@ -16,7 +16,7 @@ func _ready() -> void:
 	var map := JourneyMap.new()
 	add_child(map)
 	await get_tree().create_timer(.5).timeout
-	assert(map._world_layers.size() == 3)
+	assert(map._sections.size() == 3)
 	assert(map.get_node("AinaCharacter").size.x > map.size.x*.4)
 	assert(map.get_node("AinaSpeechBubble").size.x > map.size.x*.18)
 	await shot("journey-polished-stage18")
