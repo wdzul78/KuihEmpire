@@ -24,15 +24,16 @@ func run() -> void:
 		screen._pause_overlay.quit_pressed.emit()
 		assert(get_tree().paused and not screen.finished)
 		assert(HeartManager.current() == 5 and HeartManager.is_free_play_active())
-		screen._pause_overlay._leave_dialog.canceled.emit()
+		screen._pause_overlay._cancel_leave()
 		assert(int(HeartManager.state()["free_play_end_timestamp"]) == deadline)
 		screen._pause_overlay.quit_pressed.emit()
-		screen._pause_overlay._leave_dialog.confirmed.emit()
+		screen._pause_overlay._leave_dialog.get_node("LeaveButton").pressed.emit()
 		assert(HeartManager.current() == 4 and not HeartManager.is_free_play_active())
 		screen._confirm_leave_stage()
 		assert(HeartManager.current() == 4)
 		var frames := 0
-		while SceneManager._busy and frames < 15000:
+		# The heart-loss animation plays first, so the scene change starts later.
+		while (get_tree().current_scene == screen or SceneManager._busy) and frames < 15000:
 			await get_tree().process_frame
 			frames += 1
 			OS.delay_msec(1) # Give the threaded loader real time under fixed-fps headless tests.

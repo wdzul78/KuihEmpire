@@ -27,14 +27,18 @@ Tarikh: 1 November 2026. Asas: semakan kod semasa pada `master` dan simulasi kes
 | Stage | Larian | Bot teliti menang | Bot kasual menang | Nota |
 | --- | --- | --- | --- | --- |
 | 1–9 | 20 | 100% | 100% | Sangat mudah |
-| 10 | 20 | 100% | 95% | |
-| 11 | 20 | 100% | 95% | |
-| 12–27 | — | belum diukur | belum diukur | Simulasi tamat masa pada had 280 saat |
+| 10, 11, 12, 14, 17, 24 | 20 | 100% | 95% | |
+| 13, 15, 16, 19, 21, 25 | 20 | 100% | 100% | |
+| 18 | 20 | 95% | 90% | |
+| 20 | 20 | 95% | 70% | Paling sukar dalam 1–25 |
+| 22, 23 | 20 | 95% | 95% | |
+| 26 | 20 | 90% | 80% | |
+| 27 | 20 | 85% | 60% | Baki langkah purata 5.4 / 4.3 |
 | 28 | 6 | 100% | 100% | Sampel kecil |
 | 29 | 6 | 100% | 100% | Sampel kecil |
 | 30 | 6 | 83% | 50% | Sampel kecil |
 
-Bot tidak menggunakan booster dan bukan pengganti pemain sebenar. Fasa 0 melengkapkan jadual ini.
+Diukur 1 November 2026. Bot tidak menggunakan booster dan bukan pengganti pemain sebenar. Larian 40 kali bagi 28–30 masih wajar dibuat semasa penalaan Fasa 5.
 
 ## 3. Keputusan reka bentuk
 
@@ -54,10 +58,11 @@ Anggaran ialah sesi kerja, bukan janji masa. Kerja seni bergantung pada ChatGPT 
 
 ### Fasa 0 — Asas (1 sesi)
 
-- [ ] Commit kerja UI semasa supaya plan ini bermula daripada titik bersih.
-- [ ] Lengkapkan baseline stage 12–27 dengan `--stages=` berperingkat.
-- [ ] Baiki `exit_flow_test`, `menu_test`, `tutorial_flow_test` dan `onboarding_visual_test` yang sudah gagal, supaya kegagalan baharu mudah dikesan.
-- [ ] Sediakan fixture save "tamat stage 30" untuk ujian migrasi.
+- [x] Commit kerja UI semasa supaya plan ini bermula daripada titik bersih.
+- [x] Lengkapkan baseline stage 12–27 dengan `--stages=` berperingkat.
+- [x] Baiki `exit_flow_test`, `menu_test`, `tutorial_flow_test` dan `onboarding_visual_test` yang sudah gagal, supaya kegagalan baharu mudah dikesan.
+- [x] Sediakan fixture save "tamat stage 30" untuk ujian migrasi (`tools/fixtures/save_after_stage_30.json`, `tools/save_after_stage_30_test.gd`).
+- [x] Baiki ralat pada skrin Gerai apabila bertukar dari kantin ke Gerai Keluarga, yang ditemui semasa pengesahan.
 
 **Selesai apabila:** baseline lengkap dan semua harness utama lulus.
 

@@ -305,6 +305,9 @@ func _refresh() -> void:
 		else:
 			remaining += 1
 	_progress.text = RenovationText.text("progress") % [done, _tasks().size()]
+	# Markers read the preview's location, so it must match the selected stall first.
+	if _panel_mode != "choices":
+		_preview.apply_environment(_location)
 	_sync_navigation()
 	_design_button.disabled = not LocationManager.stall_unlocked(_location)
 	for index in LocationDefinition.all().size():
@@ -313,7 +316,6 @@ func _refresh() -> void:
 	if _panel_mode == "choices":
 		_update_choice_state()
 		return
-	_preview.apply_environment(_location)
 	if _panel_mode in ["tasks", "design"]:
 		_rebuild_tasks(_panel_mode == "design")
 

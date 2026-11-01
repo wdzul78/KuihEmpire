@@ -38,11 +38,8 @@ func run() -> void:
 		if child is KuihIntroduction:
 			intro = child
 	assert(intro != null)
-	for i in 3:
-		for child in intro.get_children():
-			if child is Button:
-				child.pressed.emit()
-				break
+	while not intro.is_queued_for_deletion():
+		intro.find_child("AcknowledgeKuihButton",true,false).pressed.emit()
 	assert(lesson.board.enabled and not lesson.coach.steps.is_empty())
 	lesson.free()
 	GameManager.pending_tutorial_index = 0
