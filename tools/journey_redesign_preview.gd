@@ -6,7 +6,7 @@ func run() -> void:
  var map := JourneyMap.new()
  add_child(map)
  await get_tree().create_timer(.7).timeout
- assert(map._nodes.size() == 31)
+ assert(map._destination.visible and map._nodes.has(1))
  assert(map._targets.get_child_count() > 0)
  if DisplayServer.get_name() != "headless":
   await RenderingServer.frame_post_draw

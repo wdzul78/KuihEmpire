@@ -9,6 +9,8 @@ const COMMON_TITLES_MS := {
 	"Free Play": "Main Bebas",
 }
 static var _cache: Dictionary = {}
+## Tests set this to exercise screens with stages that are not authored yet.
+static var _test_last_stage := 0
 
 
 ## Registered in stage order. Each chapter starts right after the previous one.
@@ -27,7 +29,7 @@ static func display_title(level: LevelDefinition) -> String:
 
 
 static func count() -> int:
-	return chapters().back().LAST_STAGE
+	return _test_last_stage if _test_last_stage > 0 else chapters().back().LAST_STAGE
 
 
 static func get_level(level_id: int) -> LevelDefinition:

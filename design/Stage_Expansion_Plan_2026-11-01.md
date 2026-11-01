@@ -109,6 +109,8 @@ scripts/levels/chapters/school_canteen.gd  stage 31–60, kosong sehingga Fasa 4
 
 **Selesai apabila:** peta tatal lancar pada peranti Android dari 1 ke 60, dan tiada lompatan ketika melintasi lokasi.
 
+Status 1 November 2026: kod siap, dan `tools/journey_scale_test.gd` menguji peta dengan 60 stage olok-olok. Bahagian 31–60 masih meminjam dunia dan bingkai penyambung Gerai Keluarga sehingga seni tiba, dan belum dipaparkan kepada pemain kerana stage belum wujud. Ujian tatal pada Android belum dibuat.
+
 ### Fasa 3 — Kantin Sekolah sebagai lokasi hidup (1–2 sesi)
 
 - [ ] Sahkan latar gameplay Kantin dalam susun atur 8×8 pada 540×960 dan 360×800.
@@ -228,7 +230,7 @@ Binaan APK atau AAB hanya apabila diminta.
 
 ## 6. Permintaan seni dan audio
 
-Semua imej dihantar melalui ChatGPT. Selepas Fasa 0 saya sediakan `design/ChatGPT_Asset_Requests_2026-11_School_Canteen.md`, mengikut gaya `assets/ui/journey_world_v2/`.
+Semua imej dihantar melalui ChatGPT. Prompt ada dalam `design/ChatGPT_Asset_Requests_2026-11_School_Canteen.md`, mengikut gaya `assets/ui/journey_world_v2/`.
 
 | Aset | Bil. | Keutamaan | Nota |
 | --- | --- | --- | --- |

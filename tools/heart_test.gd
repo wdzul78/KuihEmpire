@@ -118,7 +118,7 @@ func run() -> void:
 	add_child(map)
 	await get_tree().process_frame
 	map._select_stage(1)
-	check(map._nodes.size() == 31 and map.selected_stage == 1 and not ProgressionManager.is_level_unlocked(31), "30 stage map with future destination teaser")
+	check(map._destination.visible and not map._nodes.has(31) and map.selected_stage == 1 and not ProgressionManager.is_level_unlocked(31), "30 stage map with future destination teaser")
 	GameManager.start_selected_stage()
 	check(has_node("HeartRefillDialog") and not SceneManager._busy, "zero-heart admission did not open refill")
 	check(get_node("HeartRefillDialog")._ad.disabled, "unconnected ad option must not be actionable")

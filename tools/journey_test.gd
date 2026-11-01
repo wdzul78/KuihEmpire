@@ -34,7 +34,7 @@ func run() -> void:
 	add_child(map)
 	await get_tree().process_frame
 	await get_tree().process_frame
-	assert(map._nodes.size() == 31)
+	assert(map._nodes.has(30) and map._destination.visible and not map._nodes.has(31))
 	assert(map._point(29).y < map._point(0).y)
 	map._start.pressed.emit()
 	assert(map.has_node("StagePreview"))
