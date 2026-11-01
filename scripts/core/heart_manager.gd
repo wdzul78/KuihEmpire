@@ -138,7 +138,7 @@ func reward_win(stage: int, tutorial: bool = false) -> int:
 	if int(h["win_streak"]) >= 3:
 		bonus = 900
 		h["win_streak"] = 0
-	if stage in [10, 20, 30] and not h["milestones"].has(str(stage)):
+	if JourneyLibrary.MILESTONES.has(stage) and not h["milestones"].has(str(stage)):
 		h["milestones"].append(str(stage))
 		bonus = 1800
 	if bonus > 0:

@@ -71,9 +71,10 @@ Anggaran ialah sesi kerja, bukan janji masa. Kerja seni bergantung pada ChatGPT 
 Pecahkan `level_library.gd` supaya menambah kandungan tidak menyentuh enjin:
 
 ```text
-scripts/levels/level_library.gd            helper dan API awam
+scripts/levels/level_library.gd            API awam dan senarai bab
+scripts/levels/chapters/stage_chapter.gd   helper penulisan peringkat
 scripts/levels/chapters/family_stall.gd    stage 1–30, dipindah tanpa perubahan
-scripts/levels/chapters/school_canteen.gd  stage 31–60
+scripts/levels/chapters/school_canteen.gd  stage 31–60, kosong sehingga Fasa 4
 ```
 
 | Perubahan | Lokasi |
@@ -85,10 +86,11 @@ scripts/levels/chapters/school_canteen.gd  stage 31–60
 | Ganjaran syiling `55 + id*4` dihadkan untuk id > 30 supaya ekonomi tidak melambung | `level_library.gd:137` |
 | `JourneyLibrary.MILESTONES` ditambah 40/50/60, `name_for` tidak lagi `mini(30, ...)` | `journey_library.gd:6`, `:16` |
 | Teks milestone 30 tidak lagi berkata "akan datang" | `journey_library.gd:9` |
-| `school_canteen` ditanda `playable` | `location_definition.gd:52` |
-| Latar gameplay mengikut `LocationDefinition.for_stage` untuk kempen | `level_controller.gd:90` |
+| `playable` dikira daripada kewujudan stage, jadi `school_canteen` dibuka sendiri dalam Fasa 4 | `location_definition.gd:31` |
+| Latar gameplay mengikut `LocationDefinition.for_stage` untuk kempen. Tutorial dan Free Play kekal mengikut gerai aktif | `level_controller.gd:90` |
+| Ganjaran Free Play milestone membaca `JourneyLibrary.MILESTONES` | `heart_manager.gd:141` |
 
-**Selesai apabila:** stage 1–30 menghasilkan data yang sama seperti sebelum dipecah. Tambah satu ujian yang membandingkan snapshot sebelum dan selepas.
+**Selesai apabila:** stage 1–30 menghasilkan data yang sama seperti sebelum dipecah. Ujian: `tools/level_snapshot_test.gd`, berbanding `tools/fixtures/levels_1_30_snapshot.json` yang diambil daripada kod sebelum dipecah.
 
 ### Fasa 2 — Peta Perjalanan berskala (2–3 sesi)
 

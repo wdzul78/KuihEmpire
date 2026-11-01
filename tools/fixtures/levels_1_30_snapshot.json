@@ -1,0 +1,2577 @@
+{
+	"1": {
+		"allow_fail": true,
+		"always_three_stars": false,
+		"background_id": "stall_dawn",
+		"base_coin_reward": 59,
+		"blockers": [],
+		"chapter_id": "family_stall",
+		"coins": 59,
+		"customer_orders": [
+			{
+				"customer": "pakyai",
+				"items": [
+					{
+						"count": 3,
+						"kuih": "onde_onde"
+					}
+				]
+			}
+		],
+		"difficulty": 1,
+		"first_clear_bonus": 20,
+		"fixed_layout": [],
+		"height": 3,
+		"id": 1,
+		"kuih": [
+			"onde_onde",
+			"kuih_koci",
+			"ang_ku_kueh"
+		],
+		"kuih_unlock": "",
+		"moves": 24,
+		"recipe_unlock": "",
+		"recipe_unlock_id": "",
+		"require_blockers_cleared": false,
+		"score_per_coin": 200,
+		"score_three_star": 200,
+		"score_two_star": 100,
+		"scoring": {
+			"cascade_max": 3.0,
+			"cascade_step": 0.25,
+			"match_five": 150,
+			"match_four": 80,
+			"match_three": 30,
+			"order_item": 5,
+			"points_per_kuih": 10,
+			"remaining_move": 100,
+			"special_activation": 100,
+			"special_combo": 250
+		},
+		"star2_moves": 0.25,
+		"star3_moves": 0.5,
+		"star_coin_bonus": [
+			0,
+			0,
+			10,
+			18
+		],
+		"story_after": "",
+		"story_before": "beat_01_open",
+		"subtitle": "",
+		"tag": "Teach swap",
+		"title": "First Order",
+		"tutorial": [
+			"swap"
+		],
+		"tutorial_index": 0,
+		"tutorial_steps": [],
+		"width": 3
+	},
+	"10": {
+		"allow_fail": true,
+		"always_three_stars": false,
+		"background_id": "stall_dawn",
+		"base_coin_reward": 95,
+		"blockers": [
+			{
+				"cells": [
+					"(1, 3)",
+					"(6, 3)",
+					"(3, 6)"
+				],
+				"hp": 1,
+				"kind": 0,
+				"kuih_id": "",
+				"need": 4
+			}
+		],
+		"chapter_id": "family_stall",
+		"coins": 95,
+		"customer_orders": [
+			{
+				"customer": "makcik",
+				"items": [
+					{
+						"count": 8,
+						"kuih": "onde_onde"
+					}
+				]
+			},
+			{
+				"customer": "runner",
+				"items": [
+					{
+						"count": 8,
+						"kuih": "kuih_koci"
+					}
+				]
+			},
+			{
+				"customer": "tourist",
+				"items": [
+					{
+						"count": 8,
+						"kuih": "ang_ku_kueh"
+					}
+				]
+			}
+		],
+		"difficulty": 4,
+		"first_clear_bonus": 20,
+		"fixed_layout": [],
+		"height": 7,
+		"id": 10,
+		"kuih": [
+			"onde_onde",
+			"kuih_koci",
+			"ang_ku_kueh",
+			"kuih_ketayap",
+			"kuih_lapis"
+		],
+		"kuih_unlock": "",
+		"moves": 24,
+		"recipe_unlock": "kuih_ketayap",
+		"recipe_unlock_id": "onde_onde",
+		"require_blockers_cleared": false,
+		"score_per_coin": 200,
+		"score_three_star": 2000,
+		"score_two_star": 1000,
+		"scoring": {
+			"cascade_max": 3.0,
+			"cascade_step": 0.25,
+			"match_five": 150,
+			"match_four": 80,
+			"match_three": 30,
+			"order_item": 5,
+			"points_per_kuih": 10,
+			"remaining_move": 100,
+			"special_activation": 100,
+			"special_combo": 250
+		},
+		"star2_moves": 0.25,
+		"star3_moves": 0.5,
+		"star_coin_bonus": [
+			0,
+			0,
+			10,
+			18
+		],
+		"story_after": "beat_10_rush",
+		"story_before": "",
+		"subtitle": "",
+		"tag": "Chapter mini boss",
+		"title": "Morning Rush",
+		"tutorial": [],
+		"tutorial_index": 0,
+		"tutorial_steps": [],
+		"width": 7
+	},
+	"11": {
+		"allow_fail": true,
+		"always_three_stars": false,
+		"background_id": "kuching_market",
+		"base_coin_reward": 99,
+		"blockers": [
+			{
+				"cells": [
+					"(2, 4)",
+					"(5, 4)"
+				],
+				"hp": 1,
+				"kind": 0,
+				"kuih_id": "",
+				"need": 4
+			}
+		],
+		"chapter_id": "family_stall",
+		"coins": 99,
+		"customer_orders": [
+			{
+				"customer": "makcik",
+				"items": [
+					{
+						"count": 12,
+						"kuih": "keria"
+					},
+					{
+						"count": 8,
+						"kuih": "onde_onde"
+					}
+				]
+			}
+		],
+		"difficulty": 2,
+		"first_clear_bonus": 20,
+		"fixed_layout": [],
+		"height": 8,
+		"id": 11,
+		"kuih": [
+			"onde_onde",
+			"kuih_koci",
+			"ang_ku_kueh",
+			"kuih_ketayap",
+			"kuih_lapis",
+			"keria"
+		],
+		"kuih_unlock": "",
+		"moves": 20,
+		"recipe_unlock": "",
+		"recipe_unlock_id": "",
+		"require_blockers_cleared": false,
+		"score_per_coin": 200,
+		"score_three_star": 2300,
+		"score_two_star": 1500,
+		"scoring": {
+			"cascade_max": 3.0,
+			"cascade_step": 0.25,
+			"match_five": 150,
+			"match_four": 80,
+			"match_three": 30,
+			"order_item": 5,
+			"points_per_kuih": 10,
+			"remaining_move": 100,
+			"special_activation": 100,
+			"special_combo": 250
+		},
+		"star2_moves": 0.25,
+		"star3_moves": 0.5,
+		"star_coin_bonus": [
+			0,
+			0,
+			10,
+			18
+		],
+		"story_after": "",
+		"story_before": "",
+		"subtitle": "",
+		"tag": "More variety",
+		"title": "New Regular",
+		"tutorial": [],
+		"tutorial_index": 0,
+		"tutorial_steps": [],
+		"width": 8
+	},
+	"12": {
+		"allow_fail": true,
+		"always_three_stars": false,
+		"background_id": "kuching_market",
+		"base_coin_reward": 103,
+		"blockers": [],
+		"chapter_id": "family_stall",
+		"coins": 103,
+		"customer_orders": [
+			{
+				"customer": "makcik",
+				"items": [
+					{
+						"count": 12,
+						"kuih": "keria"
+					}
+				]
+			},
+			{
+				"customer": "nenek",
+				"items": [
+					{
+						"count": 10,
+						"kuih": "kuih_koci"
+					},
+					{
+						"count": 8,
+						"kuih": "ang_ku_kueh"
+					}
+				]
+			}
+		],
+		"difficulty": 3,
+		"first_clear_bonus": 20,
+		"fixed_layout": [],
+		"height": 8,
+		"id": 12,
+		"kuih": [
+			"onde_onde",
+			"kuih_koci",
+			"ang_ku_kueh",
+			"kuih_ketayap",
+			"kuih_lapis",
+			"keria"
+		],
+		"kuih_unlock": "",
+		"moves": 26,
+		"recipe_unlock": "",
+		"recipe_unlock_id": "",
+		"require_blockers_cleared": false,
+		"score_per_coin": 200,
+		"score_three_star": 3100,
+		"score_two_star": 2000,
+		"scoring": {
+			"cascade_max": 3.0,
+			"cascade_step": 0.25,
+			"match_five": 150,
+			"match_four": 80,
+			"match_three": 30,
+			"order_item": 5,
+			"points_per_kuih": 10,
+			"remaining_move": 100,
+			"special_activation": 100,
+			"special_combo": 250
+		},
+		"star2_moves": 0.25,
+		"star3_moves": 0.5,
+		"star_coin_bonus": [
+			0,
+			0,
+			10,
+			18
+		],
+		"story_after": "",
+		"story_before": "beat_12_special_order",
+		"subtitle": "",
+		"tag": "Two customers",
+		"title": "Two Regulars",
+		"tutorial": [],
+		"tutorial_index": 0,
+		"tutorial_steps": [],
+		"width": 8
+	},
+	"13": {
+		"allow_fail": true,
+		"always_three_stars": false,
+		"background_id": "kuching_market",
+		"base_coin_reward": 107,
+		"blockers": [
+			{
+				"cells": [
+					"(1, 1)",
+					"(6, 1)",
+					"(1, 6)",
+					"(6, 6)"
+				],
+				"hp": 2,
+				"kind": 1,
+				"kuih_id": "",
+				"need": 4
+			}
+		],
+		"chapter_id": "family_stall",
+		"coins": 107,
+		"customer_orders": [
+			{
+				"customer": "abang",
+				"items": [
+					{
+						"count": 14,
+						"kuih": "kuih_ketayap"
+					},
+					{
+						"count": 10,
+						"kuih": "kuih_lapis"
+					}
+				]
+			}
+		],
+		"difficulty": 3,
+		"first_clear_bonus": 20,
+		"fixed_layout": [],
+		"height": 8,
+		"id": 13,
+		"kuih": [
+			"onde_onde",
+			"kuih_koci",
+			"ang_ku_kueh",
+			"kuih_ketayap",
+			"kuih_lapis",
+			"keria"
+		],
+		"kuih_unlock": "",
+		"moves": 22,
+		"recipe_unlock": "",
+		"recipe_unlock_id": "",
+		"require_blockers_cleared": false,
+		"score_per_coin": 200,
+		"score_three_star": 2800,
+		"score_two_star": 2000,
+		"scoring": {
+			"cascade_max": 3.0,
+			"cascade_step": 0.25,
+			"match_five": 150,
+			"match_four": 80,
+			"match_three": 30,
+			"order_item": 5,
+			"points_per_kuih": 10,
+			"remaining_move": 100,
+			"special_activation": 100,
+			"special_combo": 250
+		},
+		"star2_moves": 0.25,
+		"star3_moves": 0.5,
+		"star_coin_bonus": [
+			0,
+			0,
+			10,
+			18
+		],
+		"story_after": "",
+		"story_before": "",
+		"subtitle": "",
+		"tag": "Blockers",
+		"title": "Crisp Corner",
+		"tutorial": [],
+		"tutorial_index": 0,
+		"tutorial_steps": [],
+		"width": 8
+	},
+	"14": {
+		"allow_fail": true,
+		"always_three_stars": false,
+		"background_id": "kuching_market",
+		"base_coin_reward": 111,
+		"blockers": [],
+		"chapter_id": "family_stall",
+		"coins": 111,
+		"customer_orders": [
+			{
+				"customer": "kakak",
+				"items": [
+					{
+						"count": 14,
+						"kuih": "keria"
+					},
+					{
+						"count": 12,
+						"kuih": "kuih_koci"
+					},
+					{
+						"count": 10,
+						"kuih": "onde_onde"
+					}
+				]
+			}
+		],
+		"difficulty": 3,
+		"first_clear_bonus": 20,
+		"fixed_layout": [],
+		"height": 8,
+		"id": 14,
+		"kuih": [
+			"onde_onde",
+			"kuih_koci",
+			"ang_ku_kueh",
+			"kuih_ketayap",
+			"kuih_lapis",
+			"keria"
+		],
+		"kuih_unlock": "",
+		"moves": 23,
+		"recipe_unlock": "",
+		"recipe_unlock_id": "",
+		"require_blockers_cleared": false,
+		"score_per_coin": 200,
+		"score_three_star": 3200,
+		"score_two_star": 2100,
+		"scoring": {
+			"cascade_max": 3.0,
+			"cascade_step": 0.25,
+			"match_five": 150,
+			"match_four": 80,
+			"match_three": 30,
+			"order_item": 5,
+			"points_per_kuih": 10,
+			"remaining_move": 100,
+			"special_activation": 100,
+			"special_combo": 250
+		},
+		"star2_moves": 0.25,
+		"star3_moves": 0.5,
+		"star_coin_bonus": [
+			0,
+			0,
+			10,
+			18
+		],
+		"story_after": "",
+		"story_before": "",
+		"subtitle": "",
+		"tag": "Flow",
+		"title": "Kitchen Rhythm",
+		"tutorial": [],
+		"tutorial_index": 0,
+		"tutorial_steps": [],
+		"width": 8
+	},
+	"15": {
+		"allow_fail": true,
+		"always_three_stars": false,
+		"background_id": "kuching_market",
+		"base_coin_reward": 115,
+		"blockers": [],
+		"chapter_id": "family_stall",
+		"coins": 115,
+		"customer_orders": [
+			{
+				"customer": "makcik",
+				"items": [
+					{
+						"count": 14,
+						"kuih": "onde_onde"
+					},
+					{
+						"count": 12,
+						"kuih": "ang_ku_kueh"
+					}
+				]
+			}
+		],
+		"difficulty": 2,
+		"first_clear_bonus": 20,
+		"fixed_layout": [],
+		"height": 8,
+		"id": 15,
+		"kuih": [
+			"onde_onde",
+			"kuih_koci",
+			"ang_ku_kueh",
+			"kuih_ketayap",
+			"kuih_lapis",
+			"keria"
+		],
+		"kuih_unlock": "",
+		"moves": 25,
+		"recipe_unlock": "",
+		"recipe_unlock_id": "",
+		"require_blockers_cleared": false,
+		"score_per_coin": 200,
+		"score_three_star": 3100,
+		"score_two_star": 2200,
+		"scoring": {
+			"cascade_max": 3.0,
+			"cascade_step": 0.25,
+			"match_five": 150,
+			"match_four": 80,
+			"match_three": 30,
+			"order_item": 5,
+			"points_per_kuih": 10,
+			"remaining_move": 100,
+			"special_activation": 100,
+			"special_combo": 250
+		},
+		"star2_moves": 0.25,
+		"star3_moves": 0.5,
+		"star_coin_bonus": [
+			0,
+			0,
+			10,
+			18
+		],
+		"story_after": "",
+		"story_before": "beat_15_book",
+		"subtitle": "",
+		"tag": "Relax + reward",
+		"title": "Recipe Book",
+		"tutorial": [],
+		"tutorial_index": 0,
+		"tutorial_steps": [],
+		"width": 8
+	},
+	"16": {
+		"allow_fail": true,
+		"always_three_stars": false,
+		"background_id": "kuching_market",
+		"base_coin_reward": 119,
+		"blockers": [
+			{
+				"cells": [
+					"(3, 3)",
+					"(4, 4)",
+					"(3, 4)"
+				],
+				"hp": 1,
+				"kind": 3,
+				"kuih_id": "",
+				"need": 4
+			}
+		],
+		"chapter_id": "family_stall",
+		"coins": 119,
+		"customer_orders": [
+			{
+				"customer": "runner",
+				"items": [
+					{
+						"count": 14,
+						"kuih": "kuih_koci"
+					},
+					{
+						"count": 12,
+						"kuih": "keria"
+					}
+				]
+			}
+		],
+		"difficulty": 3,
+		"first_clear_bonus": 20,
+		"fixed_layout": [],
+		"height": 8,
+		"id": 16,
+		"kuih": [
+			"onde_onde",
+			"kuih_koci",
+			"ang_ku_kueh",
+			"kuih_ketayap",
+			"kuih_lapis",
+			"keria"
+		],
+		"kuih_unlock": "",
+		"moves": 20,
+		"recipe_unlock": "",
+		"recipe_unlock_id": "",
+		"require_blockers_cleared": false,
+		"score_per_coin": 200,
+		"score_three_star": 2550,
+		"score_two_star": 1700,
+		"scoring": {
+			"cascade_max": 3.0,
+			"cascade_step": 0.25,
+			"match_five": 150,
+			"match_four": 80,
+			"match_three": 30,
+			"order_item": 5,
+			"points_per_kuih": 10,
+			"remaining_move": 100,
+			"special_activation": 100,
+			"special_combo": 250
+		},
+		"star2_moves": 0.25,
+		"star3_moves": 0.5,
+		"star_coin_bonus": [
+			0,
+			0,
+			10,
+			18
+		],
+		"story_after": "",
+		"story_before": "",
+		"subtitle": "",
+		"tag": "Teach syrup",
+		"title": "Sticky Situation",
+		"tutorial": [],
+		"tutorial_index": 0,
+		"tutorial_steps": [],
+		"width": 8
+	},
+	"17": {
+		"allow_fail": true,
+		"always_three_stars": false,
+		"background_id": "kuching_market",
+		"base_coin_reward": 123,
+		"blockers": [
+			{
+				"cells": [
+					"(0, 4)",
+					"(7, 4)"
+				],
+				"hp": 1,
+				"kind": 0,
+				"kuih_id": "",
+				"need": 4
+			}
+		],
+		"chapter_id": "family_stall",
+		"coins": 123,
+		"customer_orders": [
+			{
+				"customer": "encik",
+				"items": [
+					{
+						"count": 12,
+						"kuih": "onde_onde"
+					},
+					{
+						"count": 12,
+						"kuih": "kuih_koci"
+					}
+				]
+			}
+		],
+		"difficulty": 4,
+		"first_clear_bonus": 20,
+		"fixed_layout": [],
+		"height": 8,
+		"id": 17,
+		"kuih": [
+			"onde_onde",
+			"kuih_koci",
+			"ang_ku_kueh",
+			"kuih_ketayap",
+			"kuih_lapis",
+			"keria"
+		],
+		"kuih_unlock": "",
+		"moves": 24,
+		"recipe_unlock": "",
+		"recipe_unlock_id": "",
+		"require_blockers_cleared": false,
+		"score_per_coin": 200,
+		"score_three_star": 3000,
+		"score_two_star": 1700,
+		"scoring": {
+			"cascade_max": 3.0,
+			"cascade_step": 0.25,
+			"match_five": 150,
+			"match_four": 80,
+			"match_three": 30,
+			"order_item": 5,
+			"points_per_kuih": 10,
+			"remaining_move": 100,
+			"special_activation": 100,
+			"special_combo": 250
+		},
+		"star2_moves": 0.25,
+		"star3_moves": 0.5,
+		"star_coin_bonus": [
+			0,
+			0,
+			10,
+			18
+		],
+		"story_after": "",
+		"story_before": "",
+		"subtitle": "",
+		"tag": "Combos",
+		"title": "Combo Night",
+		"tutorial": [],
+		"tutorial_index": 0,
+		"tutorial_steps": [],
+		"width": 8
+	},
+	"18": {
+		"allow_fail": true,
+		"always_three_stars": false,
+		"background_id": "kuching_market",
+		"base_coin_reward": 127,
+		"blockers": [],
+		"chapter_id": "family_stall",
+		"coins": 127,
+		"customer_orders": [
+			{
+				"customer": "encik",
+				"items": [
+					{
+						"count": 9,
+						"kuih": "kuih_lapis"
+					}
+				]
+			},
+			{
+				"customer": "meiling",
+				"items": [
+					{
+						"count": 8,
+						"kuih": "onde_onde"
+					},
+					{
+						"count": 8,
+						"kuih": "ang_ku_kueh"
+					}
+				]
+			},
+			{
+				"customer": "meena",
+				"items": [
+					{
+						"count": 9,
+						"kuih": "kuih_ketayap"
+					}
+				]
+			}
+		],
+		"difficulty": 3,
+		"first_clear_bonus": 20,
+		"fixed_layout": [],
+		"height": 8,
+		"id": 18,
+		"kuih": [
+			"onde_onde",
+			"kuih_koci",
+			"ang_ku_kueh",
+			"kuih_ketayap",
+			"kuih_lapis",
+			"keria"
+		],
+		"kuih_unlock": "",
+		"moves": 30,
+		"recipe_unlock": "",
+		"recipe_unlock_id": "",
+		"require_blockers_cleared": true,
+		"score_per_coin": 200,
+		"score_three_star": 3000,
+		"score_two_star": 1900,
+		"scoring": {
+			"cascade_max": 3.0,
+			"cascade_step": 0.25,
+			"match_five": 150,
+			"match_four": 80,
+			"match_three": 30,
+			"order_item": 5,
+			"points_per_kuih": 10,
+			"remaining_move": 100,
+			"special_activation": 100,
+			"special_combo": 250
+		},
+		"star2_moves": 0.25,
+		"star3_moves": 0.5,
+		"star_coin_bonus": [
+			0,
+			0,
+			10,
+			18
+		],
+		"story_after": "",
+		"story_before": "",
+		"subtitle": "",
+		"tag": "Denser board",
+		"title": "Long Order",
+		"tutorial": [],
+		"tutorial_index": 0,
+		"tutorial_steps": [],
+		"width": 8
+	},
+	"19": {
+		"allow_fail": true,
+		"always_three_stars": false,
+		"background_id": "kuching_market",
+		"base_coin_reward": 131,
+		"blockers": [],
+		"chapter_id": "family_stall",
+		"coins": 131,
+		"customer_orders": [
+			{
+				"customer": "nenek",
+				"items": [
+					{
+						"count": 12,
+						"kuih": "ang_ku_kueh"
+					},
+					{
+						"count": 12,
+						"kuih": "kuih_koci"
+					}
+				]
+			}
+		],
+		"difficulty": 2,
+		"first_clear_bonus": 20,
+		"fixed_layout": [],
+		"height": 8,
+		"id": 19,
+		"kuih": [
+			"onde_onde",
+			"kuih_koci",
+			"ang_ku_kueh",
+			"kuih_ketayap",
+			"kuih_lapis",
+			"keria"
+		],
+		"kuih_unlock": "",
+		"moves": 26,
+		"recipe_unlock": "",
+		"recipe_unlock_id": "",
+		"require_blockers_cleared": false,
+		"score_per_coin": 200,
+		"score_three_star": 3200,
+		"score_two_star": 2300,
+		"scoring": {
+			"cascade_max": 3.0,
+			"cascade_step": 0.25,
+			"match_five": 150,
+			"match_four": 80,
+			"match_three": 30,
+			"order_item": 5,
+			"points_per_kuih": 10,
+			"remaining_move": 100,
+			"special_activation": 100,
+			"special_combo": 250
+		},
+		"star2_moves": 0.25,
+		"star3_moves": 0.5,
+		"star_coin_bonus": [
+			0,
+			0,
+			10,
+			18
+		],
+		"story_after": "",
+		"story_before": "",
+		"subtitle": "",
+		"tag": "Relax",
+		"title": "Sweet Corner",
+		"tutorial": [],
+		"tutorial_index": 0,
+		"tutorial_steps": [],
+		"width": 8
+	},
+	"2": {
+		"allow_fail": true,
+		"always_three_stars": false,
+		"background_id": "stall_dawn",
+		"base_coin_reward": 63,
+		"blockers": [],
+		"chapter_id": "family_stall",
+		"coins": 63,
+		"customer_orders": [
+			{
+				"customer": "pakyai",
+				"items": [
+					{
+						"count": 5,
+						"kuih": "onde_onde"
+					},
+					{
+						"count": 5,
+						"kuih": "kuih_koci"
+					}
+				]
+			}
+		],
+		"difficulty": 1,
+		"first_clear_bonus": 20,
+		"fixed_layout": [],
+		"height": 3,
+		"id": 2,
+		"kuih": [
+			"onde_onde",
+			"kuih_koci",
+			"ang_ku_kueh"
+		],
+		"kuih_unlock": "",
+		"moves": 22,
+		"recipe_unlock": "",
+		"recipe_unlock_id": "",
+		"require_blockers_cleared": false,
+		"score_per_coin": 200,
+		"score_three_star": 200,
+		"score_two_star": 100,
+		"scoring": {
+			"cascade_max": 3.0,
+			"cascade_step": 0.25,
+			"match_five": 150,
+			"match_four": 80,
+			"match_three": 30,
+			"order_item": 5,
+			"points_per_kuih": 10,
+			"remaining_move": 100,
+			"special_activation": 100,
+			"special_combo": 250
+		},
+		"star2_moves": 0.25,
+		"star3_moves": 0.5,
+		"star_coin_bonus": [
+			0,
+			0,
+			10,
+			18
+		],
+		"story_after": "",
+		"story_before": "",
+		"subtitle": "",
+		"tag": "Practice collect",
+		"title": "Sweet Start",
+		"tutorial": [],
+		"tutorial_index": 0,
+		"tutorial_steps": [],
+		"width": 3
+	},
+	"20": {
+		"allow_fail": true,
+		"always_three_stars": false,
+		"background_id": "weekend_market",
+		"base_coin_reward": 135,
+		"blockers": [
+			{
+				"cells": [
+					"(2, 2)",
+					"(5, 5)"
+				],
+				"hp": 2,
+				"kind": 1,
+				"kuih_id": "",
+				"need": 4
+			}
+		],
+		"chapter_id": "family_stall",
+		"coins": 135,
+		"customer_orders": [
+			{
+				"customer": "kakak",
+				"items": [
+					{
+						"count": 12,
+						"kuih": "onde_onde"
+					}
+				]
+			},
+			{
+				"customer": "encik",
+				"items": [
+					{
+						"count": 12,
+						"kuih": "keria"
+					},
+					{
+						"count": 10,
+						"kuih": "kuih_lapis"
+					}
+				]
+			}
+		],
+		"difficulty": 4,
+		"first_clear_bonus": 20,
+		"fixed_layout": [],
+		"height": 8,
+		"id": 20,
+		"kuih": [
+			"onde_onde",
+			"kuih_koci",
+			"ang_ku_kueh",
+			"kuih_ketayap",
+			"kuih_lapis",
+			"keria"
+		],
+		"kuih_unlock": "",
+		"moves": 28,
+		"recipe_unlock": "",
+		"recipe_unlock_id": "kuih_cincin",
+		"require_blockers_cleared": false,
+		"score_per_coin": 200,
+		"score_three_star": 2900,
+		"score_two_star": 2200,
+		"scoring": {
+			"cascade_max": 3.0,
+			"cascade_step": 0.25,
+			"match_five": 150,
+			"match_four": 80,
+			"match_three": 30,
+			"order_item": 5,
+			"points_per_kuih": 10,
+			"remaining_move": 100,
+			"special_activation": 100,
+			"special_combo": 250
+		},
+		"star2_moves": 0.25,
+		"star3_moves": 0.5,
+		"star_coin_bonus": [
+			0,
+			0,
+			10,
+			18
+		],
+		"story_after": "beat_20_done",
+		"story_before": "beat_20_weekend",
+		"subtitle": "",
+		"tag": "Chapter challenge",
+		"title": "Weekend Market",
+		"tutorial": [],
+		"tutorial_index": 0,
+		"tutorial_steps": [],
+		"width": 8
+	},
+	"21": {
+		"allow_fail": true,
+		"always_three_stars": false,
+		"background_id": "weekend_market",
+		"base_coin_reward": 139,
+		"blockers": [
+			{
+				"cells": [
+					"(1, 5)",
+					"(3, 6)",
+					"(5, 5)",
+					"(6, 2)"
+				],
+				"hp": 1,
+				"kind": 2,
+				"kuih_id": "",
+				"need": 4
+			}
+		],
+		"chapter_id": "family_stall",
+		"coins": 139,
+		"customer_orders": [
+			{
+				"customer": "pakyai",
+				"items": [
+					{
+						"count": 16,
+						"kuih": "onde_onde"
+					},
+					{
+						"count": 12,
+						"kuih": "ang_ku_kueh"
+					}
+				]
+			}
+		],
+		"difficulty": 3,
+		"first_clear_bonus": 20,
+		"fixed_layout": [],
+		"height": 8,
+		"id": 21,
+		"kuih": [
+			"onde_onde",
+			"kuih_koci",
+			"ang_ku_kueh",
+			"kuih_ketayap",
+			"kuih_lapis",
+			"keria"
+		],
+		"kuih_unlock": "",
+		"moves": 22,
+		"recipe_unlock": "",
+		"recipe_unlock_id": "",
+		"require_blockers_cleared": false,
+		"score_per_coin": 200,
+		"score_three_star": 2300,
+		"score_two_star": 1600,
+		"scoring": {
+			"cascade_max": 3.0,
+			"cascade_step": 0.25,
+			"match_five": 150,
+			"match_four": 80,
+			"match_three": 30,
+			"order_item": 5,
+			"points_per_kuih": 10,
+			"remaining_move": 100,
+			"special_activation": 100,
+			"special_combo": 250
+		},
+		"star2_moves": 0.25,
+		"star3_moves": 0.5,
+		"star_coin_bonus": [
+			0,
+			0,
+			10,
+			18
+		],
+		"story_after": "",
+		"story_before": "beat_21_steamer",
+		"subtitle": "",
+		"tag": "Teach steamer",
+		"title": "Steamed Fresh",
+		"tutorial": [
+			"blocker_steamer"
+		],
+		"tutorial_index": 0,
+		"tutorial_steps": [],
+		"width": 8
+	},
+	"22": {
+		"allow_fail": true,
+		"always_three_stars": false,
+		"background_id": "weekend_market",
+		"base_coin_reward": 143,
+		"blockers": [],
+		"chapter_id": "family_stall",
+		"coins": 143,
+		"customer_orders": [
+			{
+				"customer": "tourist",
+				"items": [
+					{
+						"count": 11,
+						"kuih": "kuih_koci"
+					}
+				]
+			},
+			{
+				"customer": "abang",
+				"items": [
+					{
+						"count": 11,
+						"kuih": "ang_ku_kueh"
+					}
+				]
+			},
+			{
+				"customer": "nenek",
+				"items": [
+					{
+						"count": 11,
+						"kuih": "keria"
+					}
+				]
+			}
+		],
+		"difficulty": 3,
+		"first_clear_bonus": 20,
+		"fixed_layout": [],
+		"height": 8,
+		"id": 22,
+		"kuih": [
+			"onde_onde",
+			"kuih_koci",
+			"ang_ku_kueh",
+			"kuih_ketayap",
+			"kuih_lapis",
+			"keria"
+		],
+		"kuih_unlock": "",
+		"moves": 30,
+		"recipe_unlock": "",
+		"recipe_unlock_id": "",
+		"require_blockers_cleared": false,
+		"score_per_coin": 200,
+		"score_three_star": 3600,
+		"score_two_star": 2600,
+		"scoring": {
+			"cascade_max": 3.0,
+			"cascade_step": 0.25,
+			"match_five": 150,
+			"match_four": 80,
+			"match_three": 30,
+			"order_item": 5,
+			"points_per_kuih": 10,
+			"remaining_move": 100,
+			"special_activation": 100,
+			"special_combo": 250
+		},
+		"star2_moves": 0.25,
+		"star3_moves": 0.5,
+		"star_coin_bonus": [
+			0,
+			0,
+			10,
+			18
+		],
+		"story_after": "",
+		"story_before": "",
+		"subtitle": "",
+		"tag": "Queue",
+		"title": "Order Sequence",
+		"tutorial": [],
+		"tutorial_index": 0,
+		"tutorial_steps": [],
+		"width": 8
+	},
+	"23": {
+		"allow_fail": true,
+		"always_three_stars": false,
+		"background_id": "weekend_market",
+		"base_coin_reward": 147,
+		"blockers": [
+			{
+				"cells": [
+					"(3, 7)"
+				],
+				"hp": 1,
+				"kind": 4,
+				"kuih_id": "kuih_koci",
+				"need": 8
+			}
+		],
+		"chapter_id": "family_stall",
+		"coins": 147,
+		"customer_orders": [
+			{
+				"customer": "encik",
+				"items": [
+					{
+						"count": 14,
+						"kuih": "kuih_koci"
+					},
+					{
+						"count": 14,
+						"kuih": "onde_onde"
+					}
+				]
+			}
+		],
+		"difficulty": 4,
+		"first_clear_bonus": 20,
+		"fixed_layout": [],
+		"height": 8,
+		"id": 23,
+		"kuih": [
+			"onde_onde",
+			"kuih_koci",
+			"ang_ku_kueh",
+			"kuih_ketayap",
+			"kuih_lapis",
+			"keria"
+		],
+		"kuih_unlock": "",
+		"moves": 24,
+		"recipe_unlock": "",
+		"recipe_unlock_id": "",
+		"require_blockers_cleared": true,
+		"score_per_coin": 200,
+		"score_three_star": 3000,
+		"score_two_star": 2000,
+		"scoring": {
+			"cascade_max": 3.0,
+			"cascade_step": 0.25,
+			"match_five": 150,
+			"match_four": 80,
+			"match_three": 30,
+			"order_item": 5,
+			"points_per_kuih": 10,
+			"remaining_move": 100,
+			"special_activation": 100,
+			"special_combo": 250
+		},
+		"star2_moves": 0.25,
+		"star3_moves": 0.5,
+		"star_coin_bonus": [
+			0,
+			0,
+			10,
+			18
+		],
+		"story_after": "",
+		"story_before": "",
+		"subtitle": "",
+		"tag": "Packaging",
+		"title": "Office Order",
+		"tutorial": [],
+		"tutorial_index": 0,
+		"tutorial_steps": [],
+		"width": 8
+	},
+	"24": {
+		"allow_fail": true,
+		"always_three_stars": false,
+		"background_id": "weekend_market",
+		"base_coin_reward": 151,
+		"blockers": [],
+		"chapter_id": "family_stall",
+		"coins": 151,
+		"customer_orders": [
+			{
+				"customer": "kakak",
+				"items": [
+					{
+						"count": 12,
+						"kuih": "kuih_lapis"
+					},
+					{
+						"count": 12,
+						"kuih": "keria"
+					},
+					{
+						"count": 10,
+						"kuih": "ang_ku_kueh"
+					}
+				]
+			}
+		],
+		"difficulty": 4,
+		"first_clear_bonus": 20,
+		"fixed_layout": [],
+		"height": 8,
+		"id": 24,
+		"kuih": [
+			"onde_onde",
+			"kuih_koci",
+			"ang_ku_kueh",
+			"kuih_ketayap",
+			"kuih_lapis",
+			"keria"
+		],
+		"kuih_unlock": "",
+		"moves": 25,
+		"recipe_unlock": "",
+		"recipe_unlock_id": "",
+		"require_blockers_cleared": false,
+		"score_per_coin": 200,
+		"score_three_star": 3350,
+		"score_two_star": 2300,
+		"scoring": {
+			"cascade_max": 3.0,
+			"cascade_step": 0.25,
+			"match_five": 150,
+			"match_four": 80,
+			"match_three": 30,
+			"order_item": 5,
+			"points_per_kuih": 10,
+			"remaining_move": 100,
+			"special_activation": 100,
+			"special_combo": 250
+		},
+		"star2_moves": 0.25,
+		"star3_moves": 0.5,
+		"star_coin_bonus": [
+			0,
+			0,
+			10,
+			18
+		],
+		"story_after": "",
+		"story_before": "",
+		"subtitle": "",
+		"tag": "Bigger orders",
+		"title": "Big Basket",
+		"tutorial": [],
+		"tutorial_index": 0,
+		"tutorial_steps": [],
+		"width": 8
+	},
+	"25": {
+		"allow_fail": true,
+		"always_three_stars": false,
+		"background_id": "weekend_market",
+		"base_coin_reward": 155,
+		"blockers": [],
+		"chapter_id": "family_stall",
+		"coins": 155,
+		"customer_orders": [
+			{
+				"customer": "nenek",
+				"items": [
+					{
+						"count": 14,
+						"kuih": "kuih_ketayap"
+					},
+					{
+						"count": 12,
+						"kuih": "onde_onde"
+					}
+				]
+			}
+		],
+		"difficulty": 2,
+		"first_clear_bonus": 20,
+		"fixed_layout": [],
+		"height": 8,
+		"id": 25,
+		"kuih": [
+			"onde_onde",
+			"kuih_koci",
+			"ang_ku_kueh",
+			"kuih_ketayap",
+			"kuih_lapis",
+			"keria"
+		],
+		"kuih_unlock": "",
+		"moves": 27,
+		"recipe_unlock": "",
+		"recipe_unlock_id": "",
+		"require_blockers_cleared": false,
+		"score_per_coin": 200,
+		"score_three_star": 3200,
+		"score_two_star": 2200,
+		"scoring": {
+			"cascade_max": 3.0,
+			"cascade_step": 0.25,
+			"match_five": 150,
+			"match_four": 80,
+			"match_three": 30,
+			"order_item": 5,
+			"points_per_kuih": 10,
+			"remaining_move": 100,
+			"special_activation": 100,
+			"special_combo": 250
+		},
+		"star2_moves": 0.25,
+		"star3_moves": 0.5,
+		"star_coin_bonus": [
+			0,
+			0,
+			10,
+			18
+		],
+		"story_after": "",
+		"story_before": "",
+		"subtitle": "",
+		"tag": "Relax",
+		"title": "Calm Corner",
+		"tutorial": [],
+		"tutorial_index": 0,
+		"tutorial_steps": [],
+		"width": 8
+	},
+	"26": {
+		"allow_fail": true,
+		"always_three_stars": false,
+		"background_id": "weekend_market",
+		"base_coin_reward": 159,
+		"blockers": [
+			{
+				"cells": [
+					"(2, 7)",
+					"(5, 7)"
+				],
+				"hp": 1,
+				"kind": 5,
+				"kuih_id": "keria",
+				"need": 6
+			},
+			{
+				"cells": [
+					"(4, 0)"
+				],
+				"hp": 1,
+				"kind": 4,
+				"kuih_id": "kuih_koci",
+				"need": 8
+			}
+		],
+		"chapter_id": "family_stall",
+		"coins": 159,
+		"customer_orders": [
+			{
+				"customer": "encik",
+				"items": [
+					{
+						"count": 12,
+						"kuih": "keria"
+					}
+				]
+			},
+			{
+				"customer": "pakyai",
+				"items": [
+					{
+						"count": 12,
+						"kuih": "kuih_koci"
+					}
+				]
+			}
+		],
+		"difficulty": 4,
+		"first_clear_bonus": 20,
+		"fixed_layout": [],
+		"height": 8,
+		"id": 26,
+		"kuih": [
+			"onde_onde",
+			"kuih_koci",
+			"ang_ku_kueh",
+			"kuih_ketayap",
+			"kuih_lapis",
+			"keria"
+		],
+		"kuih_unlock": "",
+		"moves": 26,
+		"recipe_unlock": "",
+		"recipe_unlock_id": "",
+		"require_blockers_cleared": true,
+		"score_per_coin": 200,
+		"score_three_star": 3300,
+		"score_two_star": 1900,
+		"scoring": {
+			"cascade_max": 3.0,
+			"cascade_step": 0.25,
+			"match_five": 150,
+			"match_four": 80,
+			"match_three": 30,
+			"order_item": 5,
+			"points_per_kuih": 10,
+			"remaining_move": 100,
+			"special_activation": 100,
+			"special_combo": 250
+		},
+		"star2_moves": 0.25,
+		"star3_moves": 0.5,
+		"star_coin_bonus": [
+			0,
+			0,
+			10,
+			18
+		],
+		"story_after": "",
+		"story_before": "",
+		"subtitle": "",
+		"tag": "Packaging + queue",
+		"title": "Tray Packing",
+		"tutorial": [],
+		"tutorial_index": 0,
+		"tutorial_steps": [],
+		"width": 8
+	},
+	"27": {
+		"allow_fail": true,
+		"always_three_stars": false,
+		"background_id": "weekend_market",
+		"base_coin_reward": 163,
+		"blockers": [
+			{
+				"cells": [
+					"(1, 2)",
+					"(6, 2)",
+					"(3, 4)"
+				],
+				"hp": 2,
+				"kind": 1,
+				"kuih_id": "",
+				"need": 4
+			}
+		],
+		"chapter_id": "family_stall",
+		"coins": 163,
+		"customer_orders": [
+			{
+				"customer": "runner",
+				"items": [
+					{
+						"count": 10,
+						"kuih": "onde_onde"
+					},
+					{
+						"count": 9,
+						"kuih": "kuih_koci"
+					}
+				]
+			},
+			{
+				"customer": "kakak",
+				"items": [
+					{
+						"count": 9,
+						"kuih": "kuih_lapis"
+					},
+					{
+						"count": 8,
+						"kuih": "ang_ku_kueh"
+					}
+				]
+			},
+			{
+				"customer": "encik",
+				"items": [
+					{
+						"count": 10,
+						"kuih": "keria"
+					}
+				]
+			}
+		],
+		"difficulty": 5,
+		"first_clear_bonus": 20,
+		"fixed_layout": [],
+		"height": 8,
+		"id": 27,
+		"kuih": [
+			"onde_onde",
+			"kuih_koci",
+			"ang_ku_kueh",
+			"kuih_ketayap",
+			"kuih_lapis",
+			"keria"
+		],
+		"kuih_unlock": "",
+		"moves": 28,
+		"recipe_unlock": "",
+		"recipe_unlock_id": "",
+		"require_blockers_cleared": false,
+		"score_per_coin": 200,
+		"score_three_star": 3500,
+		"score_two_star": 2300,
+		"scoring": {
+			"cascade_max": 3.0,
+			"cascade_step": 0.25,
+			"match_five": 150,
+			"match_four": 80,
+			"match_three": 30,
+			"order_item": 5,
+			"points_per_kuih": 10,
+			"remaining_move": 100,
+			"special_activation": 100,
+			"special_combo": 250
+		},
+		"star2_moves": 0.25,
+		"star3_moves": 0.5,
+		"star_coin_bonus": [
+			0,
+			0,
+			10,
+			18
+		],
+		"story_after": "",
+		"story_before": "",
+		"subtitle": "",
+		"tag": "Challenge",
+		"title": "Market Crush",
+		"tutorial": [],
+		"tutorial_index": 0,
+		"tutorial_steps": [],
+		"width": 8
+	},
+	"28": {
+		"allow_fail": true,
+		"always_three_stars": false,
+		"background_id": "weekend_market",
+		"base_coin_reward": 167,
+		"blockers": [],
+		"chapter_id": "family_stall",
+		"coins": 167,
+		"customer_orders": [
+			{
+				"customer": "makcik",
+				"items": [
+					{
+						"count": 12,
+						"kuih": "onde_onde"
+					},
+					{
+						"count": 12,
+						"kuih": "kuih_koci"
+					},
+					{
+						"count": 10,
+						"kuih": "ang_ku_kueh"
+					}
+				]
+			},
+			{
+				"customer": "nenek",
+				"items": [
+					{
+						"count": 12,
+						"kuih": "kuih_lapis"
+					}
+				]
+			}
+		],
+		"difficulty": 3,
+		"first_clear_bonus": 20,
+		"fixed_layout": [],
+		"height": 8,
+		"id": 28,
+		"kuih": [
+			"onde_onde",
+			"kuih_koci",
+			"ang_ku_kueh",
+			"kuih_ketayap",
+			"kuih_lapis",
+			"keria"
+		],
+		"kuih_unlock": "",
+		"moves": 28,
+		"recipe_unlock": "",
+		"recipe_unlock_id": "",
+		"require_blockers_cleared": false,
+		"score_per_coin": 200,
+		"score_three_star": 3550,
+		"score_two_star": 2600,
+		"scoring": {
+			"cascade_max": 3.0,
+			"cascade_step": 0.25,
+			"match_five": 150,
+			"match_four": 80,
+			"match_three": 30,
+			"order_item": 5,
+			"points_per_kuih": 10,
+			"remaining_move": 100,
+			"special_activation": 100,
+			"special_combo": 250
+		},
+		"star2_moves": 0.25,
+		"star3_moves": 0.5,
+		"star_coin_bonus": [
+			0,
+			0,
+			10,
+			18
+		],
+		"story_after": "",
+		"story_before": "beat_28_rival",
+		"subtitle": "",
+		"tag": "Warm finale build",
+		"title": "Old Friends",
+		"tutorial": [],
+		"tutorial_index": 0,
+		"tutorial_steps": [],
+		"width": 8
+	},
+	"29": {
+		"allow_fail": true,
+		"always_three_stars": false,
+		"background_id": "weekend_market",
+		"base_coin_reward": 171,
+		"blockers": [
+			{
+				"cells": [
+					"(0, 0)",
+					"(7, 0)",
+					"(0, 7)",
+					"(7, 7)"
+				],
+				"hp": 2,
+				"kind": 2,
+				"kuih_id": "",
+				"need": 4
+			},
+			{
+				"cells": [
+					"(3, 1)",
+					"(4, 6)"
+				],
+				"hp": 1,
+				"kind": 0,
+				"kuih_id": "",
+				"need": 4
+			}
+		],
+		"chapter_id": "family_stall",
+		"coins": 171,
+		"customer_orders": [
+			{
+				"customer": "encik",
+				"items": [
+					{
+						"count": 14,
+						"kuih": "keria"
+					},
+					{
+						"count": 12,
+						"kuih": "kuih_koci"
+					},
+					{
+						"count": 10,
+						"kuih": "onde_onde"
+					}
+				]
+			}
+		],
+		"difficulty": 4,
+		"first_clear_bonus": 20,
+		"fixed_layout": [],
+		"height": 8,
+		"id": 29,
+		"kuih": [
+			"onde_onde",
+			"kuih_koci",
+			"ang_ku_kueh",
+			"kuih_ketayap",
+			"kuih_lapis",
+			"keria"
+		],
+		"kuih_unlock": "",
+		"moves": 26,
+		"recipe_unlock": "",
+		"recipe_unlock_id": "",
+		"require_blockers_cleared": false,
+		"score_per_coin": 200,
+		"score_three_star": 3200,
+		"score_two_star": 2000,
+		"scoring": {
+			"cascade_max": 3.0,
+			"cascade_step": 0.25,
+			"match_five": 150,
+			"match_four": 80,
+			"match_three": 30,
+			"order_item": 5,
+			"points_per_kuih": 10,
+			"remaining_move": 100,
+			"special_activation": 100,
+			"special_combo": 250
+		},
+		"star2_moves": 0.25,
+		"star3_moves": 0.5,
+		"star_coin_bonus": [
+			0,
+			0,
+			10,
+			18
+		],
+		"story_after": "",
+		"story_before": "",
+		"subtitle": "",
+		"tag": "Challenge",
+		"title": "Last Prep",
+		"tutorial": [],
+		"tutorial_index": 0,
+		"tutorial_steps": [],
+		"width": 8
+	},
+	"3": {
+		"allow_fail": true,
+		"always_three_stars": false,
+		"background_id": "stall_dawn",
+		"base_coin_reward": 67,
+		"blockers": [],
+		"chapter_id": "family_stall",
+		"coins": 67,
+		"customer_orders": [
+			{
+				"customer": "abang",
+				"items": [
+					{
+						"count": 5,
+						"kuih": "onde_onde"
+					}
+				]
+			},
+			{
+				"customer": "tourist",
+				"items": [
+					{
+						"count": 5,
+						"kuih": "kuih_koci"
+					}
+				]
+			}
+		],
+		"difficulty": 2,
+		"first_clear_bonus": 20,
+		"fixed_layout": [],
+		"height": 4,
+		"id": 3,
+		"kuih": [
+			"onde_onde",
+			"kuih_koci",
+			"ang_ku_kueh",
+			"kuih_ketayap"
+		],
+		"kuih_unlock": "",
+		"moves": 24,
+		"recipe_unlock": "",
+		"recipe_unlock_id": "",
+		"require_blockers_cleared": false,
+		"score_per_coin": 200,
+		"score_three_star": 600,
+		"score_two_star": 300,
+		"scoring": {
+			"cascade_max": 3.0,
+			"cascade_step": 0.25,
+			"match_five": 150,
+			"match_four": 80,
+			"match_three": 30,
+			"order_item": 5,
+			"points_per_kuih": 10,
+			"remaining_move": 100,
+			"special_activation": 100,
+			"special_combo": 250
+		},
+		"star2_moves": 0.25,
+		"star3_moves": 0.5,
+		"star_coin_bonus": [
+			0,
+			0,
+			10,
+			18
+		],
+		"story_after": "",
+		"story_before": "",
+		"subtitle": "",
+		"tag": "Teach queue",
+		"title": "Two at Once",
+		"tutorial": [],
+		"tutorial_index": 0,
+		"tutorial_steps": [],
+		"width": 4
+	},
+	"30": {
+		"allow_fail": true,
+		"always_three_stars": false,
+		"background_id": "chapter_boss",
+		"base_coin_reward": 300,
+		"blockers": [
+			{
+				"cells": [
+					"(1, 1)",
+					"(6, 1)",
+					"(1, 6)",
+					"(6, 6)"
+				],
+				"hp": 2,
+				"kind": 1,
+				"kuih_id": "",
+				"need": 4
+			},
+			{
+				"cells": [
+					"(3, 3)",
+					"(4, 4)"
+				],
+				"hp": 1,
+				"kind": 0,
+				"kuih_id": "",
+				"need": 4
+			},
+			{
+				"cells": [
+					"(2, 7)"
+				],
+				"hp": 1,
+				"kind": 4,
+				"kuih_id": "kuih_koci",
+				"need": 10
+			}
+		],
+		"chapter_id": "family_stall",
+		"coins": 300,
+		"customer_orders": [
+			{
+				"customer": "kakak",
+				"items": [
+					{
+						"count": 10,
+						"kuih": "onde_onde"
+					},
+					{
+						"count": 9,
+						"kuih": "ang_ku_kueh"
+					}
+				]
+			},
+			{
+				"customer": "encik",
+				"items": [
+					{
+						"count": 10,
+						"kuih": "kuih_lapis"
+					},
+					{
+						"count": 12,
+						"kuih": "keria"
+					}
+				]
+			},
+			{
+				"customer": "runner",
+				"items": [
+					{
+						"count": 11,
+						"kuih": "kuih_koci"
+					},
+					{
+						"count": 9,
+						"kuih": "kuih_ketayap"
+					}
+				]
+			}
+		],
+		"difficulty": 5,
+		"first_clear_bonus": 20,
+		"fixed_layout": [],
+		"height": 8,
+		"id": 30,
+		"kuih": [
+			"onde_onde",
+			"kuih_koci",
+			"ang_ku_kueh",
+			"kuih_ketayap",
+			"kuih_lapis",
+			"keria"
+		],
+		"kuih_unlock": "",
+		"moves": 32,
+		"recipe_unlock": "",
+		"recipe_unlock_id": "bahulu",
+		"require_blockers_cleared": true,
+		"score_per_coin": 200,
+		"score_three_star": 4300,
+		"score_two_star": 3000,
+		"scoring": {
+			"cascade_max": 3.0,
+			"cascade_step": 0.25,
+			"match_five": 150,
+			"match_four": 80,
+			"match_three": 30,
+			"order_item": 5,
+			"points_per_kuih": 10,
+			"remaining_move": 100,
+			"special_activation": 100,
+			"special_combo": 250
+		},
+		"star2_moves": 0.25,
+		"star3_moves": 0.5,
+		"star_coin_bonus": [
+			0,
+			0,
+			10,
+			18
+		],
+		"story_after": "beat_30_done",
+		"story_before": "beat_30_finale",
+		"subtitle": "",
+		"tag": "Family Stall finale",
+		"title": "Big Community Order",
+		"tutorial": [],
+		"tutorial_index": 0,
+		"tutorial_steps": [],
+		"width": 8
+	},
+	"4": {
+		"allow_fail": true,
+		"always_three_stars": false,
+		"background_id": "stall_dawn",
+		"base_coin_reward": 71,
+		"blockers": [],
+		"chapter_id": "family_stall",
+		"coins": 71,
+		"customer_orders": [
+			{
+				"customer": "abang",
+				"items": [
+					{
+						"count": 5,
+						"kuih": "kuih_koci"
+					},
+					{
+						"count": 5,
+						"kuih": "ang_ku_kueh"
+					}
+				]
+			}
+		],
+		"difficulty": 2,
+		"first_clear_bonus": 20,
+		"fixed_layout": [],
+		"height": 4,
+		"id": 4,
+		"kuih": [
+			"onde_onde",
+			"kuih_koci",
+			"ang_ku_kueh",
+			"kuih_ketayap"
+		],
+		"kuih_unlock": "",
+		"moves": 22,
+		"recipe_unlock": "",
+		"recipe_unlock_id": "",
+		"require_blockers_cleared": false,
+		"score_per_coin": 200,
+		"score_three_star": 600,
+		"score_two_star": 300,
+		"scoring": {
+			"cascade_max": 3.0,
+			"cascade_step": 0.25,
+			"match_five": 150,
+			"match_four": 80,
+			"match_three": 30,
+			"order_item": 5,
+			"points_per_kuih": 10,
+			"remaining_move": 100,
+			"special_activation": 100,
+			"special_combo": 250
+		},
+		"star2_moves": 0.25,
+		"star3_moves": 0.5,
+		"star_coin_bonus": [
+			0,
+			0,
+			10,
+			18
+		],
+		"story_after": "",
+		"story_before": "beat_04_tapau",
+		"subtitle": "",
+		"tag": "Teach Tapau",
+		"title": "Four in a Row",
+		"tutorial": [
+			"match4"
+		],
+		"tutorial_index": 0,
+		"tutorial_steps": [],
+		"width": 4
+	},
+	"5": {
+		"allow_fail": true,
+		"always_three_stars": false,
+		"background_id": "stall_dawn",
+		"base_coin_reward": 75,
+		"blockers": [],
+		"chapter_id": "family_stall",
+		"coins": 75,
+		"customer_orders": [
+			{
+				"customer": "kakak",
+				"items": [
+					{
+						"count": 8,
+						"kuih": "onde_onde"
+					},
+					{
+						"count": 8,
+						"kuih": "kuih_koci"
+					},
+					{
+						"count": 8,
+						"kuih": "ang_ku_kueh"
+					}
+				]
+			}
+		],
+		"difficulty": 2,
+		"first_clear_bonus": 20,
+		"fixed_layout": [],
+		"height": 5,
+		"id": 5,
+		"kuih": [
+			"onde_onde",
+			"kuih_koci",
+			"ang_ku_kueh",
+			"kuih_ketayap"
+		],
+		"kuih_unlock": "kuih_lapis",
+		"moves": 24,
+		"recipe_unlock": "",
+		"recipe_unlock_id": "",
+		"require_blockers_cleared": false,
+		"score_per_coin": 200,
+		"score_three_star": 1200,
+		"score_two_star": 600,
+		"scoring": {
+			"cascade_max": 3.0,
+			"cascade_step": 0.25,
+			"match_five": 150,
+			"match_four": 80,
+			"match_three": 30,
+			"order_item": 5,
+			"points_per_kuih": 10,
+			"remaining_move": 100,
+			"special_activation": 100,
+			"special_combo": 250
+		},
+		"star2_moves": 0.25,
+		"star3_moves": 0.5,
+		"star_coin_bonus": [
+			0,
+			0,
+			10,
+			18
+		],
+		"story_after": "",
+		"story_before": "",
+		"subtitle": "",
+		"tag": "Practice",
+		"title": "Full Order",
+		"tutorial": [
+			"serve"
+		],
+		"tutorial_index": 0,
+		"tutorial_steps": [],
+		"width": 5
+	},
+	"6": {
+		"allow_fail": true,
+		"always_three_stars": false,
+		"background_id": "stall_dawn",
+		"base_coin_reward": 79,
+		"blockers": [],
+		"chapter_id": "family_stall",
+		"coins": 79,
+		"customer_orders": [
+			{
+				"customer": "makcik",
+				"items": [
+					{
+						"count": 8,
+						"kuih": "kuih_lapis"
+					},
+					{
+						"count": 8,
+						"kuih": "onde_onde"
+					}
+				]
+			}
+		],
+		"difficulty": 3,
+		"first_clear_bonus": 20,
+		"fixed_layout": [],
+		"height": 5,
+		"id": 6,
+		"kuih": [
+			"onde_onde",
+			"kuih_koci",
+			"ang_ku_kueh",
+			"kuih_ketayap",
+			"kuih_lapis"
+		],
+		"kuih_unlock": "",
+		"moves": 18,
+		"recipe_unlock": "kuih_lapis",
+		"recipe_unlock_id": "",
+		"require_blockers_cleared": false,
+		"score_per_coin": 200,
+		"score_three_star": 1200,
+		"score_two_star": 600,
+		"scoring": {
+			"cascade_max": 3.0,
+			"cascade_step": 0.25,
+			"match_five": 150,
+			"match_four": 80,
+			"match_three": 30,
+			"order_item": 5,
+			"points_per_kuih": 10,
+			"remaining_move": 100,
+			"special_activation": 100,
+			"special_combo": 250
+		},
+		"star2_moves": 0.25,
+		"star3_moves": 0.5,
+		"star_coin_bonus": [
+			0,
+			0,
+			10,
+			18
+		],
+		"story_after": "",
+		"story_before": "",
+		"subtitle": "",
+		"tag": "Combine",
+		"title": "New Flavour",
+		"tutorial": [],
+		"tutorial_index": 0,
+		"tutorial_steps": [],
+		"width": 5
+	},
+	"7": {
+		"allow_fail": true,
+		"always_three_stars": false,
+		"background_id": "stall_dawn",
+		"base_coin_reward": 83,
+		"blockers": [
+			{
+				"cells": [
+					"(2, 2)",
+					"(5, 2)",
+					"(2, 5)",
+					"(5, 5)"
+				],
+				"hp": 1,
+				"kind": 0,
+				"kuih_id": "",
+				"need": 4
+			}
+		],
+		"chapter_id": "family_stall",
+		"coins": 83,
+		"customer_orders": [
+			{
+				"customer": "runner",
+				"items": [
+					{
+						"count": 8,
+						"kuih": "onde_onde"
+					},
+					{
+						"count": 8,
+						"kuih": "kuih_ketayap"
+					}
+				]
+			}
+		],
+		"difficulty": 3,
+		"first_clear_bonus": 20,
+		"fixed_layout": [],
+		"height": 6,
+		"id": 7,
+		"kuih": [
+			"onde_onde",
+			"kuih_koci",
+			"ang_ku_kueh",
+			"kuih_ketayap",
+			"kuih_lapis"
+		],
+		"kuih_unlock": "",
+		"moves": 20,
+		"recipe_unlock": "",
+		"recipe_unlock_id": "",
+		"require_blockers_cleared": false,
+		"score_per_coin": 200,
+		"score_three_star": 2000,
+		"score_two_star": 1000,
+		"scoring": {
+			"cascade_max": 3.0,
+			"cascade_step": 0.25,
+			"match_five": 150,
+			"match_four": 80,
+			"match_three": 30,
+			"order_item": 5,
+			"points_per_kuih": 10,
+			"remaining_move": 100,
+			"special_activation": 100,
+			"special_combo": 250
+		},
+		"star2_moves": 0.25,
+		"star3_moves": 0.5,
+		"star_coin_bonus": [
+			0,
+			0,
+			10,
+			18
+		],
+		"story_after": "",
+		"story_before": "beat_07_leaf",
+		"subtitle": "",
+		"tag": "Teach banana leaf",
+		"title": "Under the Leaf",
+		"tutorial": [
+			"blocker_leaf"
+		],
+		"tutorial_index": 0,
+		"tutorial_steps": [],
+		"width": 6
+	},
+	"8": {
+		"allow_fail": true,
+		"always_three_stars": false,
+		"background_id": "stall_dawn",
+		"base_coin_reward": 87,
+		"blockers": [
+			{
+				"cells": [
+					"(3, 3)",
+					"(4, 4)"
+				],
+				"hp": 1,
+				"kind": 0,
+				"kuih_id": "",
+				"need": 4
+			}
+		],
+		"chapter_id": "family_stall",
+		"coins": 87,
+		"customer_orders": [
+			{
+				"customer": "abang",
+				"items": [
+					{
+						"count": 8,
+						"kuih": "ang_ku_kueh"
+					},
+					{
+						"count": 8,
+						"kuih": "kuih_koci"
+					}
+				]
+			}
+		],
+		"difficulty": 3,
+		"first_clear_bonus": 20,
+		"fixed_layout": [],
+		"height": 6,
+		"id": 8,
+		"kuih": [
+			"onde_onde",
+			"kuih_koci",
+			"ang_ku_kueh",
+			"kuih_ketayap",
+			"kuih_lapis"
+		],
+		"kuih_unlock": "",
+		"moves": 18,
+		"recipe_unlock": "",
+		"recipe_unlock_id": "",
+		"require_blockers_cleared": false,
+		"score_per_coin": 200,
+		"score_three_star": 2000,
+		"score_two_star": 1000,
+		"scoring": {
+			"cascade_max": 3.0,
+			"cascade_step": 0.25,
+			"match_five": 150,
+			"match_four": 80,
+			"match_three": 30,
+			"order_item": 5,
+			"points_per_kuih": 10,
+			"remaining_move": 100,
+			"special_activation": 100,
+			"special_combo": 250
+		},
+		"star2_moves": 0.25,
+		"star3_moves": 0.5,
+		"star_coin_bonus": [
+			0,
+			0,
+			10,
+			18
+		],
+		"story_after": "",
+		"story_before": "",
+		"subtitle": "",
+		"tag": "Teach Dulang",
+		"title": "Round Dulang",
+		"tutorial": [
+			"special_dulang"
+		],
+		"tutorial_index": 0,
+		"tutorial_steps": [],
+		"width": 6
+	},
+	"9": {
+		"allow_fail": true,
+		"always_three_stars": false,
+		"background_id": "stall_dawn",
+		"base_coin_reward": 91,
+		"blockers": [],
+		"chapter_id": "family_stall",
+		"coins": 91,
+		"customer_orders": [
+			{
+				"customer": "nenek",
+				"items": [
+					{
+						"count": 8,
+						"kuih": "onde_onde"
+					}
+				]
+			},
+			{
+				"customer": "kakak",
+				"items": [
+					{
+						"count": 8,
+						"kuih": "ang_ku_kueh"
+					},
+					{
+						"count": 8,
+						"kuih": "kuih_ketayap"
+					}
+				]
+			}
+		],
+		"difficulty": 3,
+		"first_clear_bonus": 20,
+		"fixed_layout": [],
+		"height": 7,
+		"id": 9,
+		"kuih": [
+			"onde_onde",
+			"kuih_koci",
+			"ang_ku_kueh",
+			"kuih_ketayap",
+			"kuih_lapis"
+		],
+		"kuih_unlock": "",
+		"moves": 22,
+		"recipe_unlock": "",
+		"recipe_unlock_id": "",
+		"require_blockers_cleared": true,
+		"score_per_coin": 200,
+		"score_three_star": 2000,
+		"score_two_star": 1000,
+		"scoring": {
+			"cascade_max": 3.0,
+			"cascade_step": 0.25,
+			"match_five": 150,
+			"match_four": 80,
+			"match_three": 30,
+			"order_item": 5,
+			"points_per_kuih": 10,
+			"remaining_move": 100,
+			"special_activation": 100,
+			"special_combo": 250
+		},
+		"star2_moves": 0.25,
+		"star3_moves": 0.5,
+		"star_coin_bonus": [
+			0,
+			0,
+			10,
+			18
+		],
+		"story_after": "",
+		"story_before": "",
+		"subtitle": "",
+		"tag": "Multi objective",
+		"title": "Morning Prep",
+		"tutorial": [],
+		"tutorial_index": 0,
+		"tutorial_steps": [],
+		"width": 7
+	}
+}
