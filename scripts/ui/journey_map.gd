@@ -14,7 +14,7 @@ var _world_layers: Dictionary = {}
 var _connectors: Dictionary = {}
 var _window: Array[int] = []
 var _layout_pending := false
-var _centers: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(WORLD_ROOT+"centers.json"))
+var _centers: Dictionary = JourneyLibrary.world_centers()
 var _chapter_height := 3240.0
 var _view_section := -1
 var selected_stage := 1
@@ -418,7 +418,7 @@ func _position_world_backgrounds() -> void:
   _connectors[section].size = Vector2(size.x,height)
 
 func _world_path(section: int) -> String:
- return WORLD_ROOT + String(_sections[section]["world"]) + ".png"
+ return JourneyLibrary.world_path(_sections[section])
 
 func _world_texture(section: int) -> Texture2D:
  var path := _world_path(section)

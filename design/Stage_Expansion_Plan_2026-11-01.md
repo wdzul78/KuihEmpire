@@ -109,18 +109,20 @@ scripts/levels/chapters/school_canteen.gd  stage 31–60, kosong sehingga Fasa 4
 
 **Selesai apabila:** peta tatal lancar pada peranti Android dari 1 ke 60, dan tiada lompatan ketika melintasi lokasi.
 
-Status 1 November 2026: kod siap, dan `tools/journey_scale_test.gd` menguji peta dengan 60 stage olok-olok. Bahagian 31–60 masih meminjam dunia dan bingkai penyambung Gerai Keluarga sehingga seni tiba, dan belum dipaparkan kepada pemain kerana stage belum wujud. Ujian tatal pada Android belum dibuat.
+Status 1 November 2026: kod siap, dan `tools/journey_scale_test.gd` menguji peta dengan 60 stage olok-olok. Tiga dunia Kantin (`assets/ui/journey_world_v3/`) sudah dipasang dengan titik jalan yang diukur daripada imej. Bingkai penyambung masih dipinjam daripada Gerai Keluarga sehingga seni tiba. Bahagian 31–60 belum dipaparkan kepada pemain kerana stage belum wujud. Ujian tatal pada Android belum dibuat.
 
 ### Fasa 3 — Kantin Sekolah sebagai lokasi hidup (1–2 sesi)
 
-- [ ] Sahkan latar gameplay Kantin dalam susun atur 8×8 pada 540×960 dan 360×800.
-- [ ] Selepas stage 30: popup milestone mengajak pemain ke Kantin dan pilihan untuk menjadikannya gerai aktif.
-- [ ] Sahkan upgrade pada 40/50/60 dengan `renovation_tasks_test` dan `institutional_canteen_visual_test`.
-- [ ] Tambah 4 pelanggan dalam `CustomerLibrary` dan semak `CustomerData.line` dalam dua bahasa.
-- [ ] Tambah 8 beat cerita dalam `scripts/story/beat_library.gd` (senarai dalam bahagian 5).
-- [ ] Tambah pencapaian `story_2` dan had bintang baharu, dengan teks Melayu di `achievements_screen.gd:302`.
-- [ ] Sahkan pengenalan kuih baharu untuk tile baharu melalui `kuih_intro_once_test`.
-- [ ] Sahkan ganjaran Free Play milestone 40/50/60 dalam `HeartManager`.
+- [x] Sahkan latar gameplay Kantin dalam susun atur 8×8 pada 540×960 dan 360×800.
+- [x] Selepas stage 30: popup milestone mengajak pemain ke Kantin dan pilihan untuk menjadikannya gerai aktif. Hanya muncul apabila stage 31 wujud.
+- [x] Sahkan upgrade pada 40/50/60 dengan `renovation_tasks_test` dan `institutional_canteen_visual_test`.
+- [x] Tambah 4 pelanggan dalam `CustomerLibrary` dan semak `CustomerData.line` dalam dua bahasa. Dialog pelanggan sebelum ini tidak diterjemah langsung; kini dibaiki. Lukisan pelanggan masih menunggu ChatGPT.
+- [x] Tambah 9 beat cerita dalam `scripts/story/beat_library.gd` (senarai dalam bahagian 5), diikat pada stage dalam Fasa 4.
+- [x] Tambah pencapaian `story_2`, `stars_120`, `stars_180`, dengan teks Melayu.
+- [x] Sahkan pengenalan kuih baharu untuk tile baharu, termasuk nota Melayu yang sebelum ini tiada.
+- [x] Sahkan ganjaran Free Play milestone 40/50/60 dalam `HeartManager`.
+
+Ujian: `tools/school_canteen_test.gd`. Nota: beat `story_after` pada stage milestone tidak dimainkan semasa permainan. Popup milestone mengambil tempatnya, dan beat itu hanya menjadi penanda Kenangan.
 
 ### Fasa 4 — Kandungan 31–60 (2–3 sesi)
 

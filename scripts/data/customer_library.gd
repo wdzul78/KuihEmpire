@@ -112,6 +112,30 @@ static func _build() -> Resource:
 			"Small pieces, Nenek only has small teeth, heh.",
 			0.8, 1.25
 		),
+		&"cikgu_salmah": _make(
+			&"cikgu_salmah", "Cikgu Salmah", CustomerData.Kind.REGULAR,
+			Color("3e8e7e"), Color("e3f2ec"), Color("d9a274"), 0,
+			"Something sweet for the teachers' room, please.",
+			1.05, 1.2
+		),
+		&"adik_danish": _make(
+			&"adik_danish", "Adik Danish", CustomerData.Kind.NORMAL,
+			Color("f4f6fa"), Color("2c3e6b"), Color("c68a5c"), 3,
+			"Kak Aina, I saved my pocket money for this!",
+			0.9, 1.1
+		),
+		&"adik_priya": _make(
+			&"adik_priya", "Adik Priya", CustomerData.Kind.NORMAL,
+			Color("2c3e6b"), Color("f4f6fa"), Color("b87a4e"), 3,
+			"One for me and one for my best friend!",
+			0.9, 1.1
+		),
+		&"pak_mat": _make(
+			&"pak_mat", "Pak Mat", CustomerData.Kind.REGULAR,
+			Color("7a6a55"), Color("e8e0d0"), Color("c68a5c"), 1,
+			"Sweeping is hungry work. The usual, Aina.",
+			0.95, 1.15
+		),
 	})
 
 	_cache = root

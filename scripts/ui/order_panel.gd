@@ -135,7 +135,7 @@ func bind(order: CustomerOrder) -> void:
 		_portrait.customer = null
 		if not _coaching:
 			_name_label.text = ""
-			_line_label.text = "Let's make these kuih together!"
+			_line_label.text = TutorialText.text("Let's make these kuih together!")
 		_clear_chips()
 		return
 	_portrait.cast = CharacterIcon.Cast.CUSTOMER
@@ -143,7 +143,7 @@ func bind(order: CustomerOrder) -> void:
 	_portrait.queue_redraw()
 	if not _coaching:
 		_name_label.text = order.customer.display_name
-		_line_label.text = order.customer.line
+		_line_label.text = TutorialText.text(order.customer.line)
 	_clear_chips()
 	for id in order.item_ids():
 		_add_chip(id)

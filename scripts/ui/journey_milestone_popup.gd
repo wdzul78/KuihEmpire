@@ -10,19 +10,22 @@ func show_milestone(stage: int) -> void:
 	dim.color = Color(0, 0, 0, .68)
 	dim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(dim)
-	var dialog := GeraiSkin.dialog(JourneyArt.localized("Gerai Keluarga", "Family Stall"))
+	var location := LocationDefinition.for_stage(stage)
+	var next := LocationDefinition.for_stage(stage + 1)
+	var opens_next := LevelLibrary.is_chapter_finale(stage) and next.id != location.id and LocationManager.accessible(next.id)
+	var dialog := GeraiSkin.dialog(JourneyLibrary.location_name(location.id))
 	var card: PanelContainer = dialog.panel
 	JourneyArt.place(self, card, Rect2(.025, .10, .95, .80))
 	var stack: VBoxContainer = dialog.stack
 	stack.add_theme_constant_override("separation", 18)
 	stack.add_child(UIKit.title(JourneyLibrary.name_for(stage), 50))
 	var preview := GeraiBackdrop.new()
-	preview.follow_active_stall = true
+	preview.location_id = location.id
 	preview.background_context = "journey"
-	preview.custom_minimum_size = Vector2(0, 420)
+	preview.custom_minimum_size = Vector2(0, 280 if opens_next else 420)
 	preview.clip_contents = true
 	stack.add_child(preview)
-	var snapshot := LocationManager.stall_snapshot()
+	var snapshot := LocationManager.stall_snapshot(location.id)
 	stack.add_child(UIKit.label(StallDefinition.find(snapshot.id).state(snapshot.state_index).display_name, 38))
 	var spacer := Control.new()
 	spacer.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -31,16 +34,30 @@ func show_milestone(stage: int) -> void:
 	stack.add_child(renovate)
 	renovate.pressed.connect(func() -> void:
 		ProgressionManager.mark_story_seen(StringName("milestone_scene_%d" % stage))
+		GeraiScreen.requested_location = location.id
 		SceneManager.goto(SceneManager.GERAI)
 		queue_free()
 	)
 	stack.add_child(UIKit.wrap_label(JourneyLibrary.completion_text(stage), 38))
 	stack.add_child(UIKit.wrap_label(JourneyArt.localized("Ganjaran milestone: resipi dan 30 minit Free Play. Upgrade gerai kini boleh dibeli dalam My Stalls.", "Milestone rewards: a recipe and 30 minutes of Free Play. A stall upgrade is now available in My Stalls."), 34))
 	stack.add_child(spacer)
-	var next := GameButton.create(JourneyArt.localized("TERUSKAN JOURNEY", "CONTINUE JOURNEY"), "secondary", 40)
-	next.custom_minimum_size.y = 110
-	stack.add_child(next)
-	next.pressed.connect(func() -> void:
+	if opens_next:
+		var activate := GameButton.create(JourneyArt.localized("JADIKAN GERAI AKTIF", "MAKE IT MY STALL"), "back", 36)
+		activate.name = "ActivateNextStallButton"
+		activate.custom_minimum_size.y = 100
+		activate.disabled = LocationManager.active_stall_id() == next.id
+		activate.pressed.connect(func() -> void:
+			LocationManager.set_active_stall(next.id)
+			activate.disabled = true
+		)
+		stack.add_child(activate)
+	var caption := JourneyArt.localized("TERUSKAN JOURNEY", "CONTINUE JOURNEY")
+	if opens_next:
+		caption = JourneyArt.localized("JOM KE ", "ON TO THE ").to_upper() + JourneyLibrary.location_name(next.id).to_upper()
+	var proceed := GameButton.create(caption, "secondary", 40)
+	proceed.custom_minimum_size.y = 110
+	stack.add_child(proceed)
+	proceed.pressed.connect(func() -> void:
 		ProgressionManager.mark_story_seen(StringName("milestone_scene_%d" % stage))
 		var beat := LevelLibrary.get_level(stage).story_after
 		if beat != &"":

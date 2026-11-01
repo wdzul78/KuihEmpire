@@ -302,6 +302,8 @@ const MS_TEXT := {
 	"stars_30": ["Pengumpul Bintang I", "Kumpul 30 bintang kekal."],
 	"stars_60": ["Pengumpul Bintang II", "Kumpul 60 bintang kekal."],
 	"stars_90": ["Pengumpul Bintang III", "Kumpul 90 bintang kekal."],
+	"stars_120": ["Pengumpul Bintang IV", "Kumpul 120 bintang kekal."],
+	"stars_180": ["Pengumpul Bintang V", "Kumpul 180 bintang kekal."],
 	"perfect_server": ["Hidangan Sempurna", "Dapatkan tiga bintang di 10 stage berbeza."],
 	"recipes_10": ["Peneroka Kuih", "Temui 10 resipi."],
 	"malaysian_kuih_master": ["Pakar Kuih Malaysia", "Temui kesemua 200 resipi warisan."],
@@ -312,6 +314,7 @@ const MS_TEXT := {
 	"streak_5": ["Rentetan Manis", "Menang lima stage berturut-turut."],
 	"story_1": ["Gerai Keluarga Selesai", "Selesaikan kesemua 30 stage gerai keluarga."],
 	"next_story": ["Perjalanan Diteruskan", "Buka cerita kantin sekolah."],
+	"story_2": ["Kantin Sekolah Selesai", "Selesaikan kesemua 30 stage kantin sekolah."],
 	"score_3000": ["Skor Manis", "Capai skor terbaik 3,000 dalam satu stage."],
 	"gerai_2": ["Gerai Berkembang", "Naik taraf gerai ke tahap dua."],
 }

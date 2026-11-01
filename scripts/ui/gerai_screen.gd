@@ -25,10 +25,14 @@ var _next_hint: Button
 var _progress_before := 0
 const RenovationTransition := preload("res://scripts/ui/renovation_transition.gd")
 
+## Opens on this location once, for callers that send the player to a specific stall.
+static var requested_location: StringName = &""
+
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	UIKit.apply_root_theme(self)
-	_location = LocationManager.active_stall_id()
+	_location = requested_location if LocationManager.stall_unlocked(requested_location) else LocationManager.active_stall_id()
+	requested_location = &""
 	_build()
 	MobileLayout.bind(self, ["StallScene", "BackgroundLayer"])
 	LocationManager.location_state_changed.connect(func(_id: StringName) -> void: _refresh())
