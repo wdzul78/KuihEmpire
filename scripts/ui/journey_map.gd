@@ -342,7 +342,7 @@ func _position_world_backgrounds() -> void:
 
 
 func cleared_chapter_one() -> bool:
- return ProgressionManager.highest_cleared() >= LevelLibrary.MORNING_RUSH
+ return ProgressionManager.highest_cleared() >= FamilyStallChapter.MORNING_RUSH
 
 func _node_state(entry: Dictionary) -> String:
  var id := int(entry["id"])

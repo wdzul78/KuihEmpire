@@ -21,14 +21,14 @@ var layers: Array[Dictionary] = [
 ]
 var decor_slots: Array[String] = ["PLANT_1", "LIGHTING_1", "COUNTER_DECOR"]
 
-func _init(key: StringName, label: String, start: int, mood: StringName, released: bool = false) -> void:
+func _init(key: StringName, label: String, start: int, mood: StringName) -> void:
 	id = key
 	story_id = key
 	display_name = label
 	stage_start = start
 	stage_end = start + 29
 	preset = mood
-	playable = released
+	playable = LevelLibrary.has_level(start) # A location opens once its stages are authored.
 	for state in range(1,4):
 		upgrade_requirements.append({"stage": stage_start + state*10 - 1, "stars": StallDefinition.find(id).state(state).star_cost, "coins": 0})
 
@@ -40,7 +40,7 @@ func state_name(level: int) -> String:
 	return state_names[clampi(level, 0, 3)]
 
 static func all() -> Array[LocationDefinition]:
-	var family := LocationDefinition.new(&"family_stall", "Family Stall", 1, &"stall_dawn", true)
+	var family := LocationDefinition.new(&"family_stall", "Family Stall", 1, &"stall_dawn")
 	family.decor_slots.append("COUNTER_FOOD")
 	family.decor_slots.append_array(["SIGN_BOARD", "COUNTER_FRONT"])
 	family.state_names = ["Old Family Stall", "Revived Stall", "Polished Stall", "New Family Stall"]

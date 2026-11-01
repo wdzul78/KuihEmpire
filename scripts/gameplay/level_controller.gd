@@ -86,8 +86,9 @@ func _build() -> void:
 	backdrop = GeraiBackdrop.new()
 	backdrop.gameplay_mode = true
 	backdrop.name = "StallBackground"
-	backdrop.follow_active_stall = true
-	backdrop.location_id = LocationManager.active_stall_id()
+	# Campaign stages happen at their own location; practice uses the player's stall.
+	backdrop.follow_active_stall = is_tutorial or endless_mode
+	backdrop.location_id = LocationManager.active_stall_id() if backdrop.follow_active_stall else LocationDefinition.for_stage(level.id).id
 	backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_root.add_child(backdrop)
 	LocationManager.stall_upgraded.connect(func(id: StringName, state: int) -> void:
@@ -578,7 +579,7 @@ func _win() -> void:
 			unlocks.append(level.kuih_unlock)
 		if level.recipe_unlock != &"" and ProgressionManager.unlock_recipe(level.recipe_unlock):
 			unlocks.append(level.recipe_unlock)
-		if level.id == LevelLibrary.CHAPTER_FINALE:
+		if LevelLibrary.is_chapter_finale(level.id):
 			ProgressionManager.unlock_chapter(&"map")
 		if not endless_mode and level.recipe_unlock_id != &"":
 			var discovery := RecipeBookManager.discover_recipe(level.recipe_unlock_id, "stage", level.id)

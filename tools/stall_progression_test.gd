@@ -98,10 +98,27 @@ func _ready() -> void:
 	gameplay.level_id = 1
 	GameManager.pending_tutorial_index = 0
 	add_child(gameplay)
-	assert(gameplay.backdrop.follow_active_stall and gameplay.backdrop.structural_state == 3)
+	assert(gameplay.backdrop.location_id == &"family_stall" and gameplay.backdrop.structural_state == 3)
 	assert(gameplay.backdrop.gameplay_mode)
+	# A campaign stage stays at its own location whichever stall the player chose.
+	assert(not gameplay.backdrop.follow_active_stall)
+	assert(LocationManager.set_active_stall(&"school_canteen"))
+	assert(gameplay.backdrop.location_id == &"family_stall")
 	await get_tree().process_frame
 	gameplay.free()
+	var away := LevelController.new()
+	away.level_id = 1
+	add_child(away)
+	assert(away.backdrop.location_id == &"family_stall")
+	await get_tree().process_frame
+	away.free()
+	var practice := LevelController.new()
+	practice.endless_mode = true
+	add_child(practice)
+	assert(practice.backdrop.follow_active_stall and practice.backdrop.location_id == &"school_canteen")
+	await get_tree().process_frame
+	practice.free()
+	assert(LocationManager.set_active_stall(&"family_stall"))
 	# The gameplay fixture can pause on focus loss; later UI tweens need a live tree.
 	get_tree().paused = false
 	var home := HomeScreen.new()
