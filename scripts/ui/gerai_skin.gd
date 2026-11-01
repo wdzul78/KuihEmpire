@@ -7,7 +7,7 @@ extends RefCounted
 const ROOT := "res://assets/ui/gerai_v1/"
 ## Slice points (left, top, right, bottom) in source pixels, from the asset manifest.
 const SLICES := {
-	"header_bar": [200, 90, 200, 100], "footer_bar": [250, 90, 250, 80],
+	"header_bar": [200, 90, 200, 100], "footer_bar": [250, 90, 250, 80], "name_plate": [240, 60, 240, 60],
 	"next_hint": [330, 75, 140, 75], "task_row": [300, 60, 110, 60],
 	"tab_active": [80, 32, 80, 32], "tab_idle": [80, 32, 80, 32],
 	"price_button": [150, 44, 70, 44], "nav_button": [200, 60, 90, 60],

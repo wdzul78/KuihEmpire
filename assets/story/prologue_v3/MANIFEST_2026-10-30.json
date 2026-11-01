@@ -1,0 +1,300 @@
+{
+  "date": "2026-10-30",
+  "tool": "built-in imagegen",
+  "request": "design/ChatGPT_Asset_Requests_2026-10-30_Opening_Story.md",
+  "asset_count": 14,
+  "dimensions": "1280x1056",
+  "format": "opaque RGB PNG",
+  "sizing": "uniform cover fit, centered crop; source proportions preserved",
+  "validation": "14 exact-size opaque PNGs; Godot import; story_test for two languages; all 14 authored paths and 28 localized mobile layouts; six mobile captures",
+  "assets": [
+    {
+      "final_size": [
+        1280,
+        1056
+      ],
+      "fit": "uniform cover, centered crop; opaque RGB",
+      "height": 1056.0,
+      "id": "panel_01",
+      "path": "assets/story/prologue_v3/panel_01.png",
+      "prompt": "Polished 2D storybook comic illustration for a cozy Malaysian mobile game, soft painterly cartoon style with clean dark-brown outlines, warm emotional lighting. Reference sheets establish CHARACTER DESIGN AND PAINTING STYLE ONLY: create ONE SCENE, never reproduce their multi-panel layout or white dividers. Aina exactly matches reference: young girl with round expressive face, big dark eyes, pink hijab with large cream five-petal flower pattern, dark rose underscarf, pink long-sleeve baju, cream apron with brown buttons. Her mother exactly matches reference: teal hijab with dark grey underscarf, muted blue baju with blue-and-cream floral sleeves and cream apron, warm round face. Pak Ya only when requested: kindly elderly Malay man, white hair and white moustache, black songkok, beige plaid short-sleeve shirt, brown shoulder bag, no beard. Modest clothing, gentle expressions, big expressive eyes. Malaysian kampung wooden houses, coconut palms, tropical plants. For stall scenes keep a small wooden stall and red-and-cream striped awning consistent. For house scenes keep the same warm simple timber house and kitchen. EXACT 1280x1056 canvas, landscape 1.212:1, nearly square with generous VERTICAL scene depth compared to the reference strips. Full-bleed opaque scene to all four edges; no border, no frame, no rounded corners, no letterbox or transparent margins. Characters large and close; faces upper-middle, main action centered with hands and props visible. NO text, letters, numbers, writing on signs, speech balloons, captions, branding or watermarks. Book pages and money may contain illustrations/abstract ornament ONLY, never writing.\nSCENE 01: A warm happy memory on a bright golden morning. A small wooden kuih stall at the edge of a kampung road, with a red-and-cream striped awning and trays full of colourful kuih. A cheerful queue of villagers waits to buy. Aina's mother, smiling and healthy, serves a customer while a younger Aina happily helps beside her. Lively mood with a soft nostalgic glow.\nPreserve character proportions and clothing continuity. This is one complete illustration, not a screenshot or sprite sheet. Keep all essential faces/actions within the central 80% width to allow small aspect-ratio fitting.",
+      "scene": "A warm happy memory on a bright golden morning. A small wooden kuih stall at the edge of a kampung road, with a red-and-cream striped awning and trays full of colourful kuih. A cheerful queue of villagers waits to buy. Aina's mother, smiling and healthy, serves a customer while a younger Aina happily helps beside her. Lively mood with a soft nostalgic glow.",
+      "sha256": "b933ca6cc07c8d062f2ca0339227fb116835e0afcd71d09d987c0041d4f6de25",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-c5fe8e07-3a63-4269-b057-64c89991f8ee.png",
+      "source_size": [
+        1382,
+        1138
+      ],
+      "title": "Gerai di Hujung Kampung",
+      "width": 1280.0
+    },
+    {
+      "final_size": [
+        1280,
+        1056
+      ],
+      "fit": "uniform cover, centered crop; opaque RGB",
+      "height": 1056.0,
+      "id": "panel_02",
+      "path": "assets/story/prologue_v3/panel_02.png",
+      "prompt": "Polished 2D storybook comic illustration for a cozy Malaysian mobile game, soft painterly cartoon style with clean dark-brown outlines, warm emotional lighting. Reference sheets establish CHARACTER DESIGN AND PAINTING STYLE ONLY: create ONE SCENE, never reproduce their multi-panel layout or white dividers. Aina exactly matches reference: young girl with round expressive face, big dark eyes, pink hijab with large cream five-petal flower pattern, dark rose underscarf, pink long-sleeve baju, cream apron with brown buttons. Her mother exactly matches reference: teal hijab with dark grey underscarf, muted blue baju with blue-and-cream floral sleeves and cream apron, warm round face. Pak Ya only when requested: kindly elderly Malay man, white hair and white moustache, black songkok, beige plaid short-sleeve shirt, brown shoulder bag, no beard. Modest clothing, gentle expressions, big expressive eyes. Malaysian kampung wooden houses, coconut palms, tropical plants. For stall scenes keep a small wooden stall and red-and-cream striped awning consistent. For house scenes keep the same warm simple timber house and kitchen. EXACT 1280x1056 canvas, landscape 1.212:1, nearly square with generous VERTICAL scene depth compared to the reference strips. Full-bleed opaque scene to all four edges; no border, no frame, no rounded corners, no letterbox or transparent margins. Characters large and close; faces upper-middle, main action centered with hands and props visible. NO text, letters, numbers, writing on signs, speech balloons, captions, branding or watermarks. Book pages and money may contain illustrations/abstract ornament ONLY, never writing.\nSCENE 02: The same stall on a hot, still afternoon, now slightly worn. The kampung road is almost empty, with one distant passer-by walking away and fallen leaves on the ground. Aina stands behind the counter, chin on her hand, looking out and waiting, with trays of kuih still neatly full. Muted colours, quiet and lonely but not gloomy.\nPreserve character proportions and clothing continuity. This is one complete illustration, not a screenshot or sprite sheet. Keep all essential faces/actions within the central 80% width to allow small aspect-ratio fitting.",
+      "scene": "The same stall on a hot, still afternoon, now slightly worn. The kampung road is almost empty, with one distant passer-by walking away and fallen leaves on the ground. Aina stands behind the counter, chin on her hand, looking out and waiting, with trays of kuih still neatly full. Muted colours, quiet and lonely but not gloomy.",
+      "sha256": "c9188c46126b97f6e9978b7ffff4777da3b235011b6ebbee562b2dbcd987e534",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-d63c94cd-c51a-4a03-9190-1e69e43fc714.png",
+      "source_size": [
+        1381,
+        1139
+      ],
+      "title": "Semakin Sunyi",
+      "width": 1280.0
+    },
+    {
+      "final_size": [
+        1280,
+        1056
+      ],
+      "fit": "uniform cover, centered crop; opaque RGB",
+      "height": 1056.0,
+      "id": "panel_03",
+      "path": "assets/story/prologue_v3/panel_03.png",
+      "prompt": "Polished 2D storybook comic illustration for a cozy Malaysian mobile game, soft painterly cartoon style with clean dark-brown outlines, warm emotional lighting. Reference sheets establish CHARACTER DESIGN AND PAINTING STYLE ONLY: create ONE SCENE, never reproduce their multi-panel layout or white dividers. Aina exactly matches reference: young girl with round expressive face, big dark eyes, pink hijab with large cream five-petal flower pattern, dark rose underscarf, pink long-sleeve baju, cream apron with brown buttons. Her mother exactly matches reference: teal hijab with dark grey underscarf, muted blue baju with blue-and-cream floral sleeves and cream apron, warm round face. Pak Ya only when requested: kindly elderly Malay man, white hair and white moustache, black songkok, beige plaid short-sleeve shirt, brown shoulder bag, no beard. Modest clothing, gentle expressions, big expressive eyes. Malaysian kampung wooden houses, coconut palms, tropical plants. For stall scenes keep a small wooden stall and red-and-cream striped awning consistent. For house scenes keep the same warm simple timber house and kitchen. EXACT 1280x1056 canvas, landscape 1.212:1, nearly square with generous VERTICAL scene depth compared to the reference strips. Full-bleed opaque scene to all four edges; no border, no frame, no rounded corners, no letterbox or transparent margins. Characters large and close; faces upper-middle, main action centered with hands and props visible. NO text, letters, numbers, writing on signs, speech balloons, captions, branding or watermarks. Book pages and money may contain illustrations/abstract ornament ONLY, never writing.\nSCENE 03: Dusk at the same stall, with an orange and purple sky and a warm lantern just lit. Aina and her mother sit side by side on a simple wooden bench in front of the stall, shoulders close, not speaking. Trays of unsold kuih sit beside them and the awning is half rolled up as they prepare to close. Mother looks tired with her hands in her lap; Aina glances at her with concern. Tender and heavy-hearted.\nPreserve character proportions and clothing continuity. This is one complete illustration, not a screenshot or sprite sheet. Keep all essential faces/actions within the central 80% width to allow small aspect-ratio fitting.",
+      "scene": "Dusk at the same stall, with an orange and purple sky and a warm lantern just lit. Aina and her mother sit side by side on a simple wooden bench in front of the stall, shoulders close, not speaking. Trays of unsold kuih sit beside them and the awning is half rolled up as they prepare to close. Mother looks tired with her hands in her lap; Aina glances at her with concern. Tender and heavy-hearted.",
+      "sha256": "d85a359a9a1cf34d1e99d3c616c2ae926d5d0a54f3b02e66d93c76780e66ec14",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-9085ce0a-4284-41c3-9625-ff2c860c2bb8.png",
+      "source_size": [
+        1381,
+        1139
+      ],
+      "title": "Petang yang Sunyi",
+      "width": 1280.0
+    },
+    {
+      "final_size": [
+        1280,
+        1056
+      ],
+      "fit": "uniform cover, centered crop; opaque RGB",
+      "height": 1056.0,
+      "id": "panel_04",
+      "path": "assets/story/prologue_v3/panel_04.png",
+      "prompt": "Polished 2D storybook comic illustration for a cozy Malaysian mobile game, soft painterly cartoon style with clean dark-brown outlines, warm emotional lighting. Reference sheets establish CHARACTER DESIGN AND PAINTING STYLE ONLY: create ONE SCENE, never reproduce their multi-panel layout or white dividers. Aina exactly matches reference: young girl with round expressive face, big dark eyes, pink hijab with large cream five-petal flower pattern, dark rose underscarf, pink long-sleeve baju, cream apron with brown buttons. Her mother exactly matches reference: teal hijab with dark grey underscarf, muted blue baju with blue-and-cream floral sleeves and cream apron, warm round face. Pak Ya only when requested: kindly elderly Malay man, white hair and white moustache, black songkok, beige plaid short-sleeve shirt, brown shoulder bag, no beard. Modest clothing, gentle expressions, big expressive eyes. Malaysian kampung wooden houses, coconut palms, tropical plants. For stall scenes keep a small wooden stall and red-and-cream striped awning consistent. For house scenes keep the same warm simple timber house and kitchen. EXACT 1280x1056 canvas, landscape 1.212:1, nearly square with generous VERTICAL scene depth compared to the reference strips. Full-bleed opaque scene to all four edges; no border, no frame, no rounded corners, no letterbox or transparent margins. Characters large and close; faces upper-middle, main action centered with hands and props visible. NO text, letters, numbers, writing on signs, speech balloons, captions, branding or watermarks. Book pages and money may contain illustrations/abstract ornament ONLY, never writing.\nSCENE 04: Close view of Aina's mother at the stall counter in fading evening light, sighing as she counts a few coins and small notes in her palm. Aina watches from beside her, worried. Unsold kuih in the foreground.\nPreserve character proportions and clothing continuity. This is one complete illustration, not a screenshot or sprite sheet. Keep all essential faces/actions within the central 80% width to allow small aspect-ratio fitting.",
+      "scene": "Close view of Aina's mother at the stall counter in fading evening light, sighing as she counts a few coins and small notes in her palm. Aina watches from beside her, worried. Unsold kuih in the foreground.",
+      "sha256": "c37f66359daf88756b6565647fc8929d486d0cccd83836ae36a2f51590da0f6c",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-7404a4b9-5bde-4997-b9b3-1ae7613786c4.png",
+      "source_size": [
+        1381,
+        1139
+      ],
+      "title": "Jualan Kurang",
+      "width": 1280.0
+    },
+    {
+      "final_size": [
+        1280,
+        1056
+      ],
+      "fit": "uniform cover, centered crop; opaque RGB",
+      "height": 1056.0,
+      "id": "panel_05",
+      "path": "assets/story/prologue_v3/panel_05.png",
+      "prompt": "Polished 2D storybook comic illustration for a cozy Malaysian mobile game, soft painterly cartoon style with clean dark-brown outlines, warm emotional lighting. Reference sheets establish CHARACTER DESIGN AND PAINTING STYLE ONLY: create ONE SCENE, never reproduce their multi-panel layout or white dividers. Aina exactly matches reference: young girl with round expressive face, big dark eyes, pink hijab with large cream five-petal flower pattern, dark rose underscarf, pink long-sleeve baju, cream apron with brown buttons. Her mother exactly matches reference: teal hijab with dark grey underscarf, muted blue baju with blue-and-cream floral sleeves and cream apron, warm round face. Pak Ya only when requested: kindly elderly Malay man, white hair and white moustache, black songkok, beige plaid short-sleeve shirt, brown shoulder bag, no beard. Modest clothing, gentle expressions, big expressive eyes. Malaysian kampung wooden houses, coconut palms, tropical plants. For stall scenes keep a small wooden stall and red-and-cream striped awning consistent. For house scenes keep the same warm simple timber house and kitchen. EXACT 1280x1056 canvas, landscape 1.212:1, nearly square with generous VERTICAL scene depth compared to the reference strips. Full-bleed opaque scene to all four edges; no border, no frame, no rounded corners, no letterbox or transparent margins. Characters large and close; faces upper-middle, main action centered with hands and props visible. NO text, letters, numbers, writing on signs, speech balloons, captions, branding or watermarks. Book pages and money may contain illustrations/abstract ornament ONLY, never writing.\nSCENE 05: Evening on the kampung path beside the closed stall. Aina's mother coughs into her hand, weak and pale, while Aina gently supports her by the arm, walking her home. Lantern light, caring mood.\nPreserve character proportions and clothing continuity. This is one complete illustration, not a screenshot or sprite sheet. Keep all essential faces/actions within the central 80% width to allow small aspect-ratio fitting.",
+      "scene": "Evening on the kampung path beside the closed stall. Aina's mother coughs into her hand, weak and pale, while Aina gently supports her by the arm, walking her home. Lantern light, caring mood.",
+      "sha256": "3b34fd2f275a36b28de2b602103dda061b64c984790a4894d9596ac0a3c9d306",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-d44574a0-ab88-4929-90dc-382043b53631.png",
+      "source_size": [
+        1382,
+        1138
+      ],
+      "title": "Ibu Perlu Berehat",
+      "width": 1280.0
+    },
+    {
+      "final_size": [
+        1280,
+        1056
+      ],
+      "fit": "uniform cover, centered crop; opaque RGB",
+      "height": 1056.0,
+      "id": "panel_06",
+      "path": "assets/story/prologue_v3/panel_06.png",
+      "prompt": "Polished 2D storybook comic illustration for a cozy Malaysian mobile game, soft painterly cartoon style with clean dark-brown outlines, warm emotional lighting. Reference sheets establish CHARACTER DESIGN AND PAINTING STYLE ONLY: create ONE SCENE, never reproduce their multi-panel layout or white dividers. Aina exactly matches reference: young girl with round expressive face, big dark eyes, pink hijab with large cream five-petal flower pattern, dark rose underscarf, pink long-sleeve baju, cream apron with brown buttons. Her mother exactly matches reference: teal hijab with dark grey underscarf, muted blue baju with blue-and-cream floral sleeves and cream apron, warm round face. Pak Ya only when requested: kindly elderly Malay man, white hair and white moustache, black songkok, beige plaid short-sleeve shirt, brown shoulder bag, no beard. Modest clothing, gentle expressions, big expressive eyes. Malaysian kampung wooden houses, coconut palms, tropical plants. For stall scenes keep a small wooden stall and red-and-cream striped awning consistent. For house scenes keep the same warm simple timber house and kitchen. EXACT 1280x1056 canvas, landscape 1.212:1, nearly square with generous VERTICAL scene depth compared to the reference strips. Full-bleed opaque scene to all four edges; no border, no frame, no rounded corners, no letterbox or transparent margins. Characters large and close; faces upper-middle, main action centered with hands and props visible. NO text, letters, numbers, writing on signs, speech balloons, captions, branding or watermarks. Book pages and money may contain illustrations/abstract ornament ONLY, never writing.\nSCENE 06: Inside a simple kampung wooden house at night. Mother sleeps under a batik blanket on a mattress, unwell and exhausted. Aina kneels beside her, holding her hand and looking at her with love and worry. Soft lamp glow, moonlight through the window.\nPreserve character proportions and clothing continuity. This is one complete illustration, not a screenshot or sprite sheet. Keep all essential faces/actions within the central 80% width to allow small aspect-ratio fitting.",
+      "scene": "Inside a simple kampung wooden house at night. Mother sleeps under a batik blanket on a mattress, unwell and exhausted. Aina kneels beside her, holding her hand and looking at her with love and worry. Soft lamp glow, moonlight through the window.",
+      "sha256": "48c85d344a75043b56a129f75ef2503a4fe12f3c72cf7bec763ddcbdb8ac8eec",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-ddc4d58b-e4a7-4093-b57a-5091fbf8d5f3.png",
+      "source_size": [
+        1381,
+        1139
+      ],
+      "title": "Malam Itu",
+      "width": 1280.0
+    },
+    {
+      "final_size": [
+        1280,
+        1056
+      ],
+      "fit": "uniform cover, centered crop; opaque RGB",
+      "height": 1056.0,
+      "id": "panel_07",
+      "path": "assets/story/prologue_v3/panel_07.png",
+      "prompt": "Polished 2D storybook comic illustration for a cozy Malaysian mobile game, soft painterly cartoon style with clean dark-brown outlines, warm emotional lighting. Reference sheets establish CHARACTER DESIGN AND PAINTING STYLE ONLY: create ONE SCENE, never reproduce their multi-panel layout or white dividers. Aina exactly matches reference: young girl with round expressive face, big dark eyes, pink hijab with large cream five-petal flower pattern, dark rose underscarf, pink long-sleeve baju, cream apron with brown buttons. Her mother exactly matches reference: teal hijab with dark grey underscarf, muted blue baju with blue-and-cream floral sleeves and cream apron, warm round face. Pak Ya only when requested: kindly elderly Malay man, white hair and white moustache, black songkok, beige plaid short-sleeve shirt, brown shoulder bag, no beard. Modest clothing, gentle expressions, big expressive eyes. Malaysian kampung wooden houses, coconut palms, tropical plants. For stall scenes keep a small wooden stall and red-and-cream striped awning consistent. For house scenes keep the same warm simple timber house and kitchen. EXACT 1280x1056 canvas, landscape 1.212:1, nearly square with generous VERTICAL scene depth compared to the reference strips. Full-bleed opaque scene to all four edges; no border, no frame, no rounded corners, no letterbox or transparent margins. Characters large and close; faces upper-middle, main action centered with hands and props visible. NO text, letters, numbers, writing on signs, speech balloons, captions, branding or watermarks. Book pages and money may contain illustrations/abstract ornament ONLY, never writing.\nSCENE 07: The same house at night. Aina reaches up to a wooden shelf for a medicine bottle, and an old worn book tumbles off the shelf towards her. Aina looks surprised. A small sense of magic: dust and warm light around the falling book.\nPreserve character proportions and clothing continuity. This is one complete illustration, not a screenshot or sprite sheet. Keep all essential faces/actions within the central 80% width to allow small aspect-ratio fitting.",
+      "scene": "The same house at night. Aina reaches up to a wooden shelf for a medicine bottle, and an old worn book tumbles off the shelf towards her. Aina looks surprised. A small sense of magic: dust and warm light around the falling book.",
+      "sha256": "d6fceaf6250ec9167571644326c8ed01151974f0fb68d71e3215cfdb035ce166",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-57c24f21-099c-4823-aad6-b2a50aa10dd9.png",
+      "source_size": [
+        1381,
+        1139
+      ],
+      "title": "Penemuan Tidak Disangka",
+      "width": 1280.0
+    },
+    {
+      "earlier_draft_source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-40f941c1-c8d9-428a-8c57-d768be4c0eb9.png",
+      "final_size": [
+        1280,
+        1056
+      ],
+      "fit": "uniform cover, centered crop; opaque RGB",
+      "height": 1056.0,
+      "id": "panel_08",
+      "original_prompt": "Polished 2D storybook comic illustration for a cozy Malaysian mobile game, soft painterly cartoon style with clean dark-brown outlines, warm emotional lighting. Reference sheets establish CHARACTER DESIGN AND PAINTING STYLE ONLY: create ONE SCENE, never reproduce their multi-panel layout or white dividers. Aina exactly matches reference: young girl with round expressive face, big dark eyes, pink hijab with large cream five-petal flower pattern, dark rose underscarf, pink long-sleeve baju, cream apron with brown buttons. Her mother exactly matches reference: teal hijab with dark grey underscarf, muted blue baju with blue-and-cream floral sleeves and cream apron, warm round face. Pak Ya only when requested: kindly elderly Malay man, white hair and white moustache, black songkok, beige plaid short-sleeve shirt, brown shoulder bag, no beard. Modest clothing, gentle expressions, big expressive eyes. Malaysian kampung wooden houses, coconut palms, tropical plants. For stall scenes keep a small wooden stall and red-and-cream striped awning consistent. For house scenes keep the same warm simple timber house and kitchen. EXACT 1280x1056 canvas, landscape 1.212:1, nearly square with generous VERTICAL scene depth compared to the reference strips. Full-bleed opaque scene to all four edges; no border, no frame, no rounded corners, no letterbox or transparent margins. Characters large and close; faces upper-middle, main action centered with hands and props visible. NO text, letters, numbers, writing on signs, speech balloons, captions, branding or watermarks. Book pages and money may contain illustrations/abstract ornament ONLY, never writing.\nSCENE 08: Aina sits on the floor with the old recipe book open on her lap, eyes wide with wonder. The pages show hand-drawn kuih illustrations with no readable writing. Warm golden glow rises from the book, with small floating kuih illustrations around her. Hopeful mood.\nPreserve character proportions and clothing continuity. This is one complete illustration, not a screenshot or sprite sheet. Keep all essential faces/actions within the central 80% width to allow small aspect-ratio fitting.",
+      "path": "assets/story/prologue_v3/panel_08.png",
+      "prompt": "Edit this single storybook comic panel, preserving rendering style and character identity. Correct narrative: Aina is ALONE discovering her grandmother's recipe book while mother sleeps elsewhere. REMOVE the woman in teal hijab completely. Aina is seated cross-legged ON THE FLOOR inside a simple wooden kampung HOUSE at NIGHT, with book open on her lap, not standing at a food stall or sitting behind a counter. Replace the foreground trays of real finished kuih with visible wooden floor, a small floor mat and a soft pool of warm lamplight. Replace outdoor sunset with dark blue moonlit night through a small house window; no riverfront market opening. Keep golden glow from book and a few floating kuih illustrations as magical imagery. Book pages must show ONLY colourful kuih drawings and floral decoration on blank cream paper: remove ALL red/brown writing-like lines or scripts, letters and numbers. Keep Aina's exact face and pink floral hijab/pink baju/cream apron, wide wondrous eyes and sweet smile. No mother, no other person, no real trays of finished kuih. Full-bleed opaque landscape 1280x1056, no borders, text, letters, captions or speech balloons. One scene only.",
+      "scene": "Aina sits on the floor with the old recipe book open on her lap, eyes wide with wonder. The pages show hand-drawn kuih illustrations with no readable writing. Warm golden glow rises from the book, with small floating kuih illustrations around her. Hopeful mood.",
+      "sha256": "abe046d3002c1146ece2e9518a435f676aa3070fdb641f452ccd13a378b9e113",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-dcb47002-4ea8-4353-801d-f98c92a799e3.png",
+      "source_size": [
+        1381,
+        1139
+      ],
+      "title": "Resipi Nenek",
+      "width": 1280.0
+    },
+    {
+      "final_size": [
+        1280,
+        1056
+      ],
+      "fit": "uniform cover, centered crop; opaque RGB",
+      "height": 1056.0,
+      "id": "panel_09",
+      "path": "assets/story/prologue_v3/panel_09.png",
+      "prompt": "Polished 2D storybook comic illustration for a cozy Malaysian mobile game, soft painterly cartoon style with clean dark-brown outlines, warm emotional lighting. Reference sheets establish CHARACTER DESIGN AND PAINTING STYLE ONLY: create ONE SCENE, never reproduce their multi-panel layout or white dividers. Aina exactly matches reference: young girl with round expressive face, big dark eyes, pink hijab with large cream five-petal flower pattern, dark rose underscarf, pink long-sleeve baju, cream apron with brown buttons. Her mother exactly matches reference: teal hijab with dark grey underscarf, muted blue baju with blue-and-cream floral sleeves and cream apron, warm round face. Pak Ya only when requested: kindly elderly Malay man, white hair and white moustache, black songkok, beige plaid short-sleeve shirt, brown shoulder bag, no beard. Modest clothing, gentle expressions, big expressive eyes. Malaysian kampung wooden houses, coconut palms, tropical plants. For stall scenes keep a small wooden stall and red-and-cream striped awning consistent. For house scenes keep the same warm simple timber house and kitchen. EXACT 1280x1056 canvas, landscape 1.212:1, nearly square with generous VERTICAL scene depth compared to the reference strips. Full-bleed opaque scene to all four edges; no border, no frame, no rounded corners, no letterbox or transparent margins. Characters large and close; faces upper-middle, main action centered with hands and props visible. NO text, letters, numbers, writing on signs, speech balloons, captions, branding or watermarks. Book pages and money may contain illustrations/abstract ornament ONLY, never writing.\nSCENE 09: Aina stands in the small kitchen with the recipe book under one arm, clenching her fist, determined and smiling bravely. Behind her through a doorway, her mother sleeps in soft light. Inspiring mood.\nPreserve character proportions and clothing continuity. This is one complete illustration, not a screenshot or sprite sheet. Keep all essential faces/actions within the central 80% width to allow small aspect-ratio fitting.",
+      "scene": "Aina stands in the small kitchen with the recipe book under one arm, clenching her fist, determined and smiling bravely. Behind her through a doorway, her mother sleeps in soft light. Inspiring mood.",
+      "sha256": "229dc7b3890f32dab65931ddfb03676433a0ba09e84bd0efea79cc24475aeba3",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-db804dc8-e1f6-4305-a54d-fc98af816061.png",
+      "source_size": [
+        1381,
+        1139
+      ],
+      "title": "Demi Ibu",
+      "width": 1280.0
+    },
+    {
+      "earlier_draft_source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-1a332493-4a28-4170-9412-8e8f83e132c0.png",
+      "final_size": [
+        1280,
+        1056
+      ],
+      "fit": "uniform cover, centered crop; opaque RGB",
+      "height": 1056.0,
+      "id": "panel_10",
+      "original_prompt": "Polished 2D storybook comic illustration for a cozy Malaysian mobile game, soft painterly cartoon style with clean dark-brown outlines, warm emotional lighting. Reference sheets establish CHARACTER DESIGN AND PAINTING STYLE ONLY: create ONE SCENE, never reproduce their multi-panel layout or white dividers. Aina exactly matches reference: young girl with round expressive face, big dark eyes, pink hijab with large cream five-petal flower pattern, dark rose underscarf, pink long-sleeve baju, cream apron with brown buttons. Her mother exactly matches reference: teal hijab with dark grey underscarf, muted blue baju with blue-and-cream floral sleeves and cream apron, warm round face. Pak Ya only when requested: kindly elderly Malay man, white hair and white moustache, black songkok, beige plaid short-sleeve shirt, brown shoulder bag, no beard. Modest clothing, gentle expressions, big expressive eyes. Malaysian kampung wooden houses, coconut palms, tropical plants. For stall scenes keep a small wooden stall and red-and-cream striped awning consistent. For house scenes keep the same warm simple timber house and kitchen. EXACT 1280x1056 canvas, landscape 1.212:1, nearly square with generous VERTICAL scene depth compared to the reference strips. Full-bleed opaque scene to all four edges; no border, no frame, no rounded corners, no letterbox or transparent margins. Characters large and close; faces upper-middle, main action centered with hands and props visible. NO text, letters, numbers, writing on signs, speech balloons, captions, branding or watermarks. Book pages and money may contain illustrations/abstract ornament ONLY, never writing.\nSCENE 10: Late night in the small kampung kitchen. Aina, with flour on her cheek, studies the open recipe book beside a tray of failed, lumpy kuih and scattered flour. She keeps trying, focused and tired, by lamplight. Warm, slightly comedic and earnest.\nPreserve character proportions and clothing continuity. This is one complete illustration, not a screenshot or sprite sheet. Keep all essential faces/actions within the central 80% width to allow small aspect-ratio fitting.",
+      "path": "assets/story/prologue_v3/panel_10.png",
+      "prompt": "Edit this exact story illustration for narrative continuity. REMOVE the standing woman in the teal hijab completely; Aina must be ALONE working late in the kitchen because her mother is ill and resting in another room. Replace the removed mother's area naturally with the existing wooden kitchen wall, shelves, pots and a dark window. Keep Aina's exact face, expression, pink floral hijab, pink baju, cream apron, flour on cheek, body pose, book, failed kuih trays and warm lantern. Remove ALL red/brown writing-like lines, letters and numbers from the recipe book pages; pages should contain ONLY colourful hand-drawn kuih pictures and small floral ornaments with blank cream spaces. NO text anywhere. Preserve full-bleed landscape 1280x1056 composition, painterly cartoon style, lighting and all other details. One scene only, opaque background, no border.",
+      "scene": "Late night in the small kampung kitchen. Aina, with flour on her cheek, studies the open recipe book beside a tray of failed, lumpy kuih and scattered flour. She keeps trying, focused and tired, by lamplight. Warm, slightly comedic and earnest.",
+      "sha256": "5eab7d0facd6f21fc8cb9d2ee00274f8c5013bf3326ddae66f883a94bde0955f",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-69c1e9d0-8507-4d98-86e9-a34a9659a51f.png",
+      "source_size": [
+        1381,
+        1139
+      ],
+      "title": "Cuba Lagi",
+      "width": 1280.0
+    },
+    {
+      "earlier_draft_source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-2ae245d2-66ce-4c84-ae66-03ec27ab67f0.png",
+      "final_size": [
+        1280,
+        1056
+      ],
+      "fit": "uniform cover, centered crop; opaque RGB",
+      "height": 1056.0,
+      "id": "panel_11",
+      "original_prompt": "Polished 2D storybook comic illustration for a cozy Malaysian mobile game, soft painterly cartoon style with clean dark-brown outlines, warm emotional lighting. Reference sheets establish CHARACTER DESIGN AND PAINTING STYLE ONLY: create ONE SCENE, never reproduce their multi-panel layout or white dividers. Aina exactly matches reference: young girl with round expressive face, big dark eyes, pink hijab with large cream five-petal flower pattern, dark rose underscarf, pink long-sleeve baju, cream apron with brown buttons. Her mother exactly matches reference: teal hijab with dark grey underscarf, muted blue baju with blue-and-cream floral sleeves and cream apron, warm round face. Pak Ya only when requested: kindly elderly Malay man, white hair and white moustache, black songkok, beige plaid short-sleeve shirt, brown shoulder bag, no beard. Modest clothing, gentle expressions, big expressive eyes. Malaysian kampung wooden houses, coconut palms, tropical plants. For stall scenes keep a small wooden stall and red-and-cream striped awning consistent. For house scenes keep the same warm simple timber house and kitchen. EXACT 1280x1056 canvas, landscape 1.212:1, nearly square with generous VERTICAL scene depth compared to the reference strips. Full-bleed opaque scene to all four edges; no border, no frame, no rounded corners, no letterbox or transparent margins. Characters large and close; faces upper-middle, main action centered with hands and props visible. NO text, letters, numbers, writing on signs, speech balloons, captions, branding or watermarks. Book pages and money may contain illustrations/abstract ornament ONLY, never writing.\nSCENE 11: Dawn light through the kitchen window. Trays of beautiful colourful kuih fill the counter: onde-onde, kuih lapis, kuih koci and ang ku kueh. Aina, tired but beaming, admires her work with flour on her apron. Triumphant and warm.\nPreserve character proportions and clothing continuity. This is one complete illustration, not a screenshot or sprite sheet. Keep all essential faces/actions within the central 80% width to allow small aspect-ratio fitting.",
+      "path": "assets/story/prologue_v3/panel_11.png",
+      "prompt": "Edit this single storybook comic panel, preserving rendering style and character identity. Correct narrative continuity: REMOVE the woman in teal hijab completely because mother is still ill and resting in another room. Aina is ALONE admiring her first successful kuih at dawn. Naturally fill the removed woman's space with the existing timber kitchen wall, utensils and shelves. Preserve Aina's exact joyful face, pink floral hijab, pink baju, cream apron with flour, clasped hands, the trays of beautiful colourful kuih, dawn kitchen light and composition. No additional people. Full-bleed opaque landscape 1280x1056, no borders, text, letters, captions or speech balloons. One scene only.",
+      "scene": "Dawn light through the kitchen window. Trays of beautiful colourful kuih fill the counter: onde-onde, kuih lapis, kuih koci and ang ku kueh. Aina, tired but beaming, admires her work with flour on her apron. Triumphant and warm.",
+      "sha256": "02766f16e73b6195314b3c56abee27260c6ac4e805a928fa29e02238619299e9",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-23c491c2-d94f-4717-86ca-054822e3dfa7.png",
+      "source_size": [
+        1381,
+        1139
+      ],
+      "title": "Akhirnya Menjadi!",
+      "width": 1280.0
+    },
+    {
+      "final_size": [
+        1280,
+        1056
+      ],
+      "fit": "uniform cover, centered crop; opaque RGB",
+      "height": 1056.0,
+      "id": "panel_12",
+      "path": "assets/story/prologue_v3/panel_12.png",
+      "prompt": "Polished 2D storybook comic illustration for a cozy Malaysian mobile game, soft painterly cartoon style with clean dark-brown outlines, warm emotional lighting. Reference sheets establish CHARACTER DESIGN AND PAINTING STYLE ONLY: create ONE SCENE, never reproduce their multi-panel layout or white dividers. Aina exactly matches reference: young girl with round expressive face, big dark eyes, pink hijab with large cream five-petal flower pattern, dark rose underscarf, pink long-sleeve baju, cream apron with brown buttons. Her mother exactly matches reference: teal hijab with dark grey underscarf, muted blue baju with blue-and-cream floral sleeves and cream apron, warm round face. Pak Ya only when requested: kindly elderly Malay man, white hair and white moustache, black songkok, beige plaid short-sleeve shirt, brown shoulder bag, no beard. Modest clothing, gentle expressions, big expressive eyes. Malaysian kampung wooden houses, coconut palms, tropical plants. For stall scenes keep a small wooden stall and red-and-cream striped awning consistent. For house scenes keep the same warm simple timber house and kitchen. EXACT 1280x1056 canvas, landscape 1.212:1, nearly square with generous VERTICAL scene depth compared to the reference strips. Full-bleed opaque scene to all four edges; no border, no frame, no rounded corners, no letterbox or transparent margins. Characters large and close; faces upper-middle, main action centered with hands and props visible. NO text, letters, numbers, writing on signs, speech balloons, captions, branding or watermarks. Book pages and money may contain illustrations/abstract ornament ONLY, never writing.\nSCENE 12: Bright fresh morning at the kampung stall. Aina eagerly lifts the striped awning and sets out trays of fresh kuih. Pak Ya stops by on his old bicycle, smiling and waving. Hopeful and lively.\nPreserve character proportions and clothing continuity. This is one complete illustration, not a screenshot or sprite sheet. Keep all essential faces/actions within the central 80% width to allow small aspect-ratio fitting.",
+      "scene": "Bright fresh morning at the kampung stall. Aina eagerly lifts the striped awning and sets out trays of fresh kuih. Pak Ya stops by on his old bicycle, smiling and waving. Hopeful and lively.",
+      "sha256": "da1e20644f6d1943d39177ed5e1c087bd4c52d4c21b068734fc05c5f027c787a",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-74ca4265-cdca-4201-98d0-cf8b431ea526.png",
+      "source_size": [
+        1381,
+        1139
+      ],
+      "title": "Pagi Baharu",
+      "width": 1280.0
+    },
+    {
+      "earlier_draft_source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-d7ded630-3f02-4e2a-9de0-25467234f02d.png",
+      "final_size": [
+        1280,
+        1056
+      ],
+      "fit": "uniform cover, centered crop; opaque RGB",
+      "height": 1056.0,
+      "id": "panel_13",
+      "original_prompt": "Polished 2D storybook comic illustration for a cozy Malaysian mobile game, soft painterly cartoon style with clean dark-brown outlines, warm emotional lighting. Reference sheets establish CHARACTER DESIGN AND PAINTING STYLE ONLY: create ONE SCENE, never reproduce their multi-panel layout or white dividers. Aina exactly matches reference: young girl with round expressive face, big dark eyes, pink hijab with large cream five-petal flower pattern, dark rose underscarf, pink long-sleeve baju, cream apron with brown buttons. Her mother exactly matches reference: teal hijab with dark grey underscarf, muted blue baju with blue-and-cream floral sleeves and cream apron, warm round face. Pak Ya only when requested: kindly elderly Malay man, white hair and white moustache, black songkok, beige plaid short-sleeve shirt, brown shoulder bag, no beard. Modest clothing, gentle expressions, big expressive eyes. Malaysian kampung wooden houses, coconut palms, tropical plants. For stall scenes keep a small wooden stall and red-and-cream striped awning consistent. For house scenes keep the same warm simple timber house and kitchen. EXACT 1280x1056 canvas, landscape 1.212:1, nearly square with generous VERTICAL scene depth compared to the reference strips. Full-bleed opaque scene to all four edges; no border, no frame, no rounded corners, no letterbox or transparent margins. Characters large and close; faces upper-middle, main action centered with hands and props visible. NO text, letters, numbers, writing on signs, speech balloons, captions, branding or watermarks. Book pages and money may contain illustrations/abstract ornament ONLY, never writing.\nSCENE 13: At the stall counter, Aina happily hands Pak Ya a small banana-leaf package of three green onde-onde. Pak Ya smiles warmly, holding out a coin. Friendly morning mood, with fresh kuih in the foreground.\nPreserve character proportions and clothing continuity. This is one complete illustration, not a screenshot or sprite sheet. Keep all essential faces/actions within the central 80% width to allow small aspect-ratio fitting.",
+      "path": "assets/story/prologue_v3/panel_13.png",
+      "prompt": "Edit this single storybook comic panel, preserving rendering style and character identity. Correct narrative continuity: REMOVE the woman in teal hijab completely because mother is ill and resting at home. ONLY Aina and Pak Ya are in this scene. Fill the removed woman's area naturally with existing wooden stall shelves, pots and wall. Preserve Aina's exact face/clothing, Pak Ya's exact black songkok, white moustache, beige plaid shirt and brown shoulder bag, the exchange of a banana-leaf package containing exactly THREE green coconut-coated onde-onde and ONE coin, all trays and warm morning composition. No additional people. No numbers or lettering on coin. Full-bleed opaque landscape 1280x1056, no borders, text, letters, captions or speech balloons. One scene only.",
+      "scene": "At the stall counter, Aina happily hands Pak Ya a small banana-leaf package of three green onde-onde. Pak Ya smiles warmly, holding out a coin. Friendly morning mood, with fresh kuih in the foreground.",
+      "sha256": "c8f3d4d1a6ed3259ace78a46c88eaec1ac1928a5ea0cf5279b847618f78f760b",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-251371e6-bb90-4ba9-8a4f-452248f3d181.png",
+      "source_size": [
+        1381,
+        1139
+      ],
+      "title": "Pesanan Pak Ya",
+      "width": 1280.0
+    },
+    {
+      "final_size": [
+        1280,
+        1056
+      ],
+      "fit": "uniform cover, centered crop; opaque RGB",
+      "height": 1056.0,
+      "id": "panel_14",
+      "path": "assets/story/prologue_v3/panel_14.png",
+      "prompt": "Polished 2D storybook comic illustration for a cozy Malaysian mobile game, soft painterly cartoon style with clean dark-brown outlines, warm emotional lighting. Reference sheets establish CHARACTER DESIGN AND PAINTING STYLE ONLY: create ONE SCENE, never reproduce their multi-panel layout or white dividers. Aina exactly matches reference: young girl with round expressive face, big dark eyes, pink hijab with large cream five-petal flower pattern, dark rose underscarf, pink long-sleeve baju, cream apron with brown buttons. Her mother exactly matches reference: teal hijab with dark grey underscarf, muted blue baju with blue-and-cream floral sleeves and cream apron, warm round face. Pak Ya only when requested: kindly elderly Malay man, white hair and white moustache, black songkok, beige plaid short-sleeve shirt, brown shoulder bag, no beard. Modest clothing, gentle expressions, big expressive eyes. Malaysian kampung wooden houses, coconut palms, tropical plants. For stall scenes keep a small wooden stall and red-and-cream striped awning consistent. For house scenes keep the same warm simple timber house and kitchen. EXACT 1280x1056 canvas, landscape 1.212:1, nearly square with generous VERTICAL scene depth compared to the reference strips. Full-bleed opaque scene to all four edges; no border, no frame, no rounded corners, no letterbox or transparent margins. Characters large and close; faces upper-middle, main action centered with hands and props visible. NO text, letters, numbers, writing on signs, speech balloons, captions, branding or watermarks. Book pages and money may contain illustrations/abstract ornament ONLY, never writing.\nSCENE 14: Close view of Pak Ya taking a bite of an onde-onde, delighted and pleasantly surprised. Aina stands at the counter beaming with joy, hands clasped. Golden morning light. A joyful ending to the opening, the start of her journey.\nPreserve character proportions and clothing continuity. This is one complete illustration, not a screenshot or sprite sheet. Keep all essential faces/actions within the central 80% width to allow small aspect-ratio fitting.",
+      "scene": "Close view of Pak Ya taking a bite of an onde-onde, delighted and pleasantly surprised. Aina stands at the counter beaming with joy, hands clasped. Golden morning light. A joyful ending to the opening, the start of her journey.",
+      "sha256": "b6fbc2531eea17cbcc3ea0400e40bdff962826914597108086df3c6f813674e2",
+      "source": "C:\\Users\\WDzul78\\.codex\\generated_images\\01a11654-ec16-7c62-a6ea-9d5181232357\\exec-af1536ad-cce9-4d43-8dc8-4bef49c04aa2.png",
+      "source_size": [
+        1381,
+        1139
+      ],
+      "title": "Senyuman Pertama",
+      "width": 1280.0
+    }
+  ]
+}

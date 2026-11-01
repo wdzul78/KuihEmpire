@@ -282,6 +282,8 @@ func _fit_stage_text() -> void:
 			break
 		font_size -= 1
 	_title_label.add_theme_font_size_override("font_size",font_size)
+	# The counter font's line box is tall, so pull the player name up to the stage.
+	_title_label.add_theme_constant_override("line_spacing",-roundi(font_size*.35))
 
 
 func set_coins(amount: int) -> void:
@@ -338,12 +340,14 @@ func _fit_moves_text() -> void:
 		label.offset_right = 0
 		label.offset_bottom = 0
 		var available: Vector2 = label.get_parent().size * Vector2(label.anchor_right-label.anchor_left,label.anchor_bottom-label.anchor_top)
-		var px := 68 if label == _moves_label else 36
+		var is_value: bool = label == _moves_label
+		# Digits need only their own height, not a full line box, so the count can fill the plank.
+		var px := 104 if is_value else 36
 		var font: Font = label.get_theme_font("font")
-		while px > 16 and (font.get_height(px) > available.y-4 or font.get_string_size(label.text,HORIZONTAL_ALIGNMENT_LEFT,-1,px).x > available.x-8):
+		while px > 16 and ((px*.74 if is_value else font.get_height(px)) > available.y-4 or font.get_string_size(label.text,HORIZONTAL_ALIGNMENT_LEFT,-1,px).x > available.x-8):
 			px -= 1
 		label.add_theme_font_size_override("font_size",px)
-		label.clip_text = true
+		label.clip_text = not is_value
 
 func set_queue(customers: Array) -> void:
 	for child in _queue_row.get_children():

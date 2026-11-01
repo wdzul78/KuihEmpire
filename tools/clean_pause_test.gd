@@ -45,7 +45,7 @@ func run() -> void:
 	overlay.confirm_leave("Leaving costs 1 heart. Return to the stall?",func() -> void: confirmed[0] += 1)
 	var leave_button: Button
 	for child in overlay._leave_dialog.get_children():
-		if child is Button and child.anchor_top > .85:
+		if child is Button and child.name == "LeaveButton":
 			leave_button = child
 	assert(leave_button != null and leave_button.anchor_right >= .70,"Leave icon shares the confirmation hit area")
 	leave_button.pressed.emit()

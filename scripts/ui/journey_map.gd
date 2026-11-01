@@ -403,22 +403,28 @@ func _show_stop(entry: Dictionary) -> void:
  dim.color = Color(0, 0, 0, .65)
  dim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
  overlay.add_child(dim)
+ var memories := memories_for(entry)
+ # The window hugs its memories; the scroll list takes over once they outgrow it.
+ var height := clampf(.46 + .07 * memories.size(), .55, .76)
+ var top := .5 - height * .5
  var card := PanelContainer.new()
- card.add_theme_stylebox_override("panel", UIKit.cream_box())
- card.anchor_left = .08
- card.anchor_right = .92
- card.anchor_top = .12
- card.anchor_bottom = .88
- overlay.add_child(card)
- var margin := UIKit.margin(28)
+ card.add_theme_stylebox_override("panel", GeraiSkin.box("list_panel", .72, [74, 205, 74, 72]))
+ JourneyArt.place(overlay, card, Rect2(.04, top, .92, height))
+ var margin := UIKit.margin(10)
  card.add_child(margin)
  var stack := UIKit.vbox(22)
  margin.add_child(stack)
  var titles := [JourneyArt.localized("Gerai Keluarga · Mula Bangkit","Family Stall · A New Beginning"),JourneyArt.localized("Gerai Keluarga · Kemas & Cantikkan","Family Stall · A Fresh Look"),JourneyArt.localized("Gerai Keluarga · Kembangkan Bisnes","Family Stall · Growing Together")]
  var chapter := clampi((int(entry["id"])-1)/10,0,2)
- stack.add_child(UIKit.wrap_label(titles[chapter],40,Palette.WOOD_DARK))
+ var banner := Panel.new()
+ banner.name = "StopBanner"
+ banner.add_theme_stylebox_override("panel", GeraiSkin.box("name_plate", .72))
+ JourneyArt.place(overlay, banner, Rect2(.07, top + .015, .86, .085))
+ var heading := JourneyArt.label(banner, titles[chapter], Rect2(.13, .12, .74, .74), 36, Palette.PAPER)
+ heading.add_theme_color_override("font_outline_color", Palette.WOOD_DARK)
+ heading.add_theme_constant_override("outline_size", 8)
  var progress := stop_progress(entry)
- stack.add_child(UIKit.label(MenuText.text("stop_progress") % [progress["cleared"], progress["total"], progress["stars"], progress["total"] * 3], 26, Palette.WOOD_DARK))
+ stack.add_child(UIKit.label(MenuText.text("stop_progress") % [progress["cleared"], progress["total"], progress["stars"], progress["total"] * 3], 34, Palette.WOOD_DARK))
  var next := clampi(ProgressionManager.current_level(), progress["first"], progress["last"])
  var caption := MenuText.text("play") if ProgressionManager.needs_tutorial() else "%s · %s %d" % [MenuText.text("play"), MenuText.text("stage"), next]
  var play := GameButton.create(caption,"primary",40)
@@ -429,7 +435,7 @@ func _show_stop(entry: Dictionary) -> void:
    GameManager.play_level(next)
  )
  stack.add_child(play)
- stack.add_child(UIKit.label(MenuText.text("memories"), 30, Palette.WOOD_DARK))
+ stack.add_child(UIKit.label(MenuText.text("memories"), 36, Palette.WOOD_DARK))
  var scroll := ScrollContainer.new()
  scroll.name = "MemoriesScroll"
  scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
@@ -439,13 +445,13 @@ func _show_stop(entry: Dictionary) -> void:
  var list := UIKit.vbox(16)
  list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
  scroll.add_child(list)
- var memories := memories_for(entry)
  if memories.is_empty():
-  list.add_child(UIKit.wrap_label(MenuText.text("no_memories"), 26))
+  list.add_child(UIKit.wrap_label(MenuText.text("no_memories"), 32))
  for memory in memories:
-  var button := UIKit.button(String(memory["label"]), 32, Palette.CREAM_DEEP)
+  var button := UIKit.button(String(memory["label"]), 36, Palette.CREAM_DEEP)
+  GeraiSkin.skin_button(button, "tab_idle", .85, [56, 0, 56, 0])
   button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-  button.custom_minimum_size.y = 100
+  button.custom_minimum_size.y = 110
   button.add_theme_color_override("font_color", Palette.WOOD_DARK)
   button.add_theme_color_override("font_hover_color", Palette.WOOD_DARK)
   button.pressed.connect(func() -> void: _replay_memory(memory))

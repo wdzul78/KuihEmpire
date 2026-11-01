@@ -3,6 +3,9 @@ extends Control
 
 signal finished()
 
+## Share of the card kept for body text; the label itself grows past this when it overflows.
+const BODY_HEIGHT := .185
+
 class QuotePanel extends Panel:
 	var tail_left := false
 	func _draw() -> void:
@@ -59,15 +62,21 @@ func _build() -> void:
 	cream.set_corner_radius_all(48)
 	_card.add_theme_stylebox_override("panel", cream)
 	JourneyArt.place(self, _card, Rect2(.045, .085, .91, .855))
-	_heading = JourneyArt.label(_card, "", Rect2(.045, .025, .91, .11), 58)
-	_heading.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	# Chapter title sits on the carved name plate shared with the stall screen.
+	var banner := Panel.new()
+	banner.name = "StoryTitleBanner"
+	banner.add_theme_stylebox_override("panel", GeraiSkin.box("name_plate", .72))
+	JourneyArt.place(_card, banner, Rect2(.03, .012, .94, .10))
+	_heading = JourneyArt.label(banner, "", Rect2(.15, .12, .70, .74), 46, Palette.PAPER)
+	_heading.add_theme_color_override("font_outline_color", Palette.WOOD_DARK)
+	_heading.add_theme_constant_override("outline_size", 10)
 	_art = TextureRect.new()
 	_art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	_art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	_rounded_art = ShaderMaterial.new()
 	_rounded_art.shader = load("res://scripts/art/shaders/story_rounded.gdshader")
 	_art.material = _rounded_art
-	JourneyArt.place(_card, _art, Rect2(.045, .145, .91, .42))
+	JourneyArt.place(_card, _art, Rect2(.03, .122, .94, .465))
 	_art.resized.connect(_layout_quote)
 	_welcome = Control.new()
 	_art.add_child(_welcome)
@@ -83,7 +92,7 @@ func _build() -> void:
 	JourneyArt.place(_welcome, hello, Rect2(.055, .18, .32, .18))
 	JourneyArt.label(hello, "Hi!", Rect2(.05, .02, .9, .9), 48, Palette.PINK_DARK)
 	_speaker = CharacterIcon.new()
-	JourneyArt.place(_card, _speaker, Rect2(.28, .145, .44, .42))
+	JourneyArt.place(_card, _speaker, Rect2(.28, .122, .44, .465))
 	_quote = QuotePanel.new()
 	var quote_style := UIKit.cream_box()
 	quote_style.set_corner_radius_all(46)
@@ -91,29 +100,31 @@ func _build() -> void:
 	_art.add_child(_quote)
 	_quote_text = JourneyArt.label(_quote, "", Rect2(.065, .05, .87, .9), 32)
 	_quote_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_body = JourneyArt.label(_card, "", Rect2(.055, .595, .89, .185), 44)
+	_body = JourneyArt.label(_card, "", Rect2(.055, .60, .89, BODY_HEIGHT), 44)
 	_body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_card.resized.connect(_fit_body)
 	_dots = HBoxContainer.new()
 	_dots.alignment = BoxContainer.ALIGNMENT_CENTER
 	_dots.add_theme_constant_override("separation", 18)
 	JourneyArt.place(_card, _dots, Rect2(.2, .795, .6, .022))
 	_counter = JourneyArt.label(_card, "", Rect2(.3, .819, .4, .033), 32, Palette.INK_SOFT)
-	var source: Texture2D = load("res://assets/ui/results_v1/button_pink.png")
-	var button_art := AtlasTexture.new()
-	button_art.atlas = source
-	button_art.region = Rect2(34, 183, 2105, 340)
-	_next_button = JourneyArt.painted_button(button_art, "", 48)
+	# Same carved frame family as the title banner: leaf green moves on, cream goes aside.
+	_next_button = UIKit.button("", 48, Palette.LEAF)
+	_next_button.custom_minimum_size = Vector2.ZERO
+	_skin_control(_next_button, "tab_active", 1.15, Palette.PAPER)
+	_next_button.add_theme_color_override("font_outline_color", Palette.WOOD_DARK)
+	_next_button.add_theme_constant_override("outline_size", 8)
 	JourneyArt.place(_card, _next_button, Rect2(.085, .857, .83, .085))
 	_next_button.pressed.connect(_on_next_pressed)
 	_prev_hint = JourneyArt.label(_card, "", Rect2(.04, .952, .92, .034), 30, Palette.INK_SOFT)
 	_previous_button = UIKit.button("", 36, Palette.CREAM_DEEP)
 	_previous_button.custom_minimum_size = Vector2.ZERO
-	_previous_button.add_theme_color_override("font_color", Palette.WOOD_DARK)
+	_skin_control(_previous_button, "tab_idle", .9, Palette.WOOD_DARK)
 	JourneyArt.place(self, _previous_button, Rect2(.045, .0125, .30, .06875))
 	_previous_button.pressed.connect(func(): show_page(index - 1))
 	_skip_button = UIKit.button("", 36, Palette.CREAM_DEEP)
 	_skip_button.custom_minimum_size = Vector2.ZERO
-	_skip_button.add_theme_color_override("font_color", Palette.WOOD_DARK)
+	_skin_control(_skip_button, "tab_idle", .9, Palette.WOOD_DARK)
 	JourneyArt.place(self, _skip_button, Rect2(.655, .0125, .30, .06875))
 	_skip_button.pressed.connect(finish)
 	_tap_indicator = TapIndicator.new()
@@ -122,6 +133,14 @@ func _build() -> void:
 	_tap_indicator.anchor_offset = Vector2.ZERO
 	add_child(_tap_indicator)
 	_ignore_decorations(self)
+
+func _skin_control(button: Button, key: String, scale: float, text_color: Color) -> void:
+	GeraiSkin.skin_button(button, key, scale)
+	var pressed := GeraiSkin.box(key, scale)
+	pressed.modulate_color = Color(.85, .85, .85)
+	button.add_theme_stylebox_override("pressed", pressed)
+	for state in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
+		button.add_theme_color_override(state, text_color)
 
 func _ignore_decorations(node: Node) -> void:
 	for child in node.get_children():
@@ -149,6 +168,7 @@ func show_page(to_index: int, animate: bool = true) -> void:
 	_backdrop.background_id = StallDefinition.find(LocationManager.active_stall_id()).preset
 	_heading.text = page.localized_heading()
 	_body.text = page.localized_body()
+	_fit_body()
 	_speaker.visible = page.illustration == null
 	_speaker.cast = _cast_for(page.speaker)
 	_art.visible = page.illustration != null
@@ -182,6 +202,25 @@ func show_page(to_index: int, animate: bool = true) -> void:
 	_prev_hint.text = JourneyArt.localized("Sentuh di mana-mana untuk teruskan", "Tap anywhere to continue")
 	if animate:
 		AudioManager.play(AudioManager.Sfx.TAP, 1.05, -10.0)
+
+## Long pages step the body font down instead of running into the progress dots.
+func _fit_body() -> void:
+	for font_size in range(44, 34, -2):
+		_body.add_theme_font_size_override("font_size", font_size)
+		if body_text_height() <= body_limit():
+			return
+
+func body_limit() -> float:
+	return _card.size.y * BODY_HEIGHT
+
+## Measured from the font because the label only re-wraps on its next theme update.
+func body_text_height() -> float:
+	var font := _body.get_theme_font("font")
+	var font_size := _body.get_theme_font_size("font_size")
+	var wrapped := font.get_multiline_string_size(_body.text, HORIZONTAL_ALIGNMENT_CENTER, _body.size.x, font_size)
+	var one_line := font.get_multiline_string_size("A", HORIZONTAL_ALIGNMENT_CENTER, _body.size.x, font_size)
+	var lines := roundf(wrapped.y / one_line.y)
+	return lines * (font.get_height(font_size) + _body.get_theme_constant("line_spacing"))
 
 func _layout_quote() -> void:
 	if pages.is_empty() or not _art.texture or pages[index].illustration == null:
