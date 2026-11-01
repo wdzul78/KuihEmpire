@@ -12,6 +12,7 @@ const STUDIO_BACKGROUND := Color("100b18")
 var _studio: Control
 var _studio_logo: TextureRect
 var _loading: ProgressBar
+var _play: Button
 var auto_navigation := true
 
 func _ready() -> void:
@@ -48,7 +49,18 @@ func _build() -> void:
 	center.add_child(stack)
 
 	stack.add_child(UIKit.brand_logo(Vector2(900, 675)))
-	stack.add_child(UIKit.label("Match. Serve. Grow.", 34, Palette.WOOD))
+	var tagline := UIKit.label("Match. Serve. Grow.", 40, Palette.PAPER)
+	tagline.add_theme_color_override("font_outline_color", Palette.WOOD_DARK)
+	tagline.add_theme_constant_override("outline_size", 8)
+	stack.add_child(tagline)
+	# New players start the game themselves, so the story opens on their tap.
+	_play = GameButton.create(JourneyArt.localized("MAIN", "PLAY"), "primary", 60)
+	_play.name = "TitlePlayButton"
+	_play.custom_minimum_size = Vector2(560, 160)
+	_play.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	_play.visible = false
+	_play.pressed.connect(_start_new_game)
+	stack.add_child(_play)
 
 
 func _build_studio_splash() -> void:
@@ -112,14 +124,19 @@ func _run() -> void:
 	# Only drive navigation when this really is the running scene.
 	if not auto_navigation or not SceneManager.is_current(self):
 		return
+	# New players wait on the title until they press Play. Returning players who
+	# already read the prologue go straight to the stall.
+	if not ProgressionManager.story_read(StoryLibrary.PROLOGUE):
+		_play.show()
+		return
 	await get_tree().create_timer(HOLD_TIME).timeout
 	if not SceneManager.is_current(self):
 		return
-	# New players read the prologue, then start the tutorial. Returning players
-	# who already read it go straight to the stall.
-	if not ProgressionManager.story_read(StoryLibrary.PROLOGUE):
-		await SceneManager.goto_story_then_tutorial(
-			StoryLibrary.PROLOGUE, maxi(1, ProgressionManager.tutorial_index()), false
-		)
-		return
 	GameManager.play_next()
+
+
+func _start_new_game() -> void:
+	_play.disabled = true
+	await SceneManager.goto_story_then_tutorial(
+		StoryLibrary.PROLOGUE, maxi(1, ProgressionManager.tutorial_index()), false
+	)

@@ -11,6 +11,12 @@ var _scroll: ScrollContainer
 var _options: OptionButton
 var _notice: Label
 var _sample_toggle: CheckButton
+var _tabs: Array[Button] = []
+
+## Hand-drawn dropdown arrow; the default theme arrow is lost on the painted frame.
+class Chevron extends Control:
+	func _draw() -> void:
+		draw_colored_polygon(PackedVector2Array([Vector2.ZERO, Vector2(size.x, 0), Vector2(size.x * .5, size.y)]), Palette.WOOD_DARK)
 
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -20,41 +26,54 @@ func _ready() -> void:
 	backdrop.show_counter = false
 	backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(backdrop)
-	var back := GameButton.create(JourneyArt.localized("Kembali", "Back"), "back", 38)
+	var panel := Panel.new()
+	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	panel.add_theme_stylebox_override("panel", GeraiSkin.box("list_panel", .72))
+	JourneyArt.place(self, panel, Rect2(.02, .03, .96, .955))
+	var back := GameButton.create(JourneyArt.localized("Kembali", "Back"), "back", 36)
 	back.custom_minimum_size = Vector2.ZERO
-	JourneyArt.place(self, back, Rect2(.035, .015, .23, .055))
+	JourneyArt.place(self, back, Rect2(.03, .016, .22, .055))
 	back.pressed.connect(func() -> void: SceneManager.goto(SceneManager.HOME))
-	var heading := JourneyArt.label(self, JourneyArt.localized("Pencapaian", "Achievements"), Rect2(.28, .015, .68, .055), 52, Palette.PAPER)
+	var plate := Panel.new()
+	plate.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	plate.add_theme_stylebox_override("panel", GeraiSkin.box("name_plate", .6))
+	JourneyArt.place(self, plate, Rect2(.26, .008, .71, .072))
+	var heading := JourneyArt.label(plate, JourneyArt.localized("Pencapaian", "Achievements"), Rect2(0, 0, 1, 1), 48, Palette.PAPER)
 	heading.add_theme_color_override("font_outline_color", Palette.WOOD_DARK)
 	heading.add_theme_constant_override("outline_size", 8)
-	var panel := Panel.new()
-	panel.add_theme_stylebox_override("panel", UIKit.cream_box())
-	JourneyArt.place(self, panel, Rect2(.025, .085, .95, .89))
-	var personal := GameButton.create(JourneyArt.localized("Peribadi", "Personal"), "primary", 38)
-	var ranking := GameButton.create("Ranking", "secondary", 38)
-	personal.name = "PersonalTab"
-	ranking.name = "RankingTab"
-	for button in [personal, ranking]:
-		button.custom_minimum_size = Vector2.ZERO
-	JourneyArt.place(self, personal, Rect2(.065, .108, .42, .060))
-	JourneyArt.place(self, ranking, Rect2(.515, .108, .42, .060))
+	var personal := _tab(JourneyArt.localized("Peribadi", "Personal"), "PersonalTab", Rect2(.07, .09, .43, .066))
+	var ranking := _tab("Ranking", "RankingTab", Rect2(.50, .09, .43, .066))
 	personal.pressed.connect(func() -> void: _ranking = false; _refresh_options())
 	ranking.pressed.connect(func() -> void: _ranking = true; _refresh_options())
-	_status = JourneyArt.label(self, "", Rect2(.07, .18, .86, .08), 32, Palette.WOOD_DARK)
+	_status = JourneyArt.label(self, "", Rect2(.08, .156, .84, .075), 34, Palette.WOOD_DARK)
 	_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_options = OptionButton.new()
-	_options.add_theme_font_size_override("font_size", 36)
-	JourneyArt.place(self, _options, Rect2(.07, .275, .86, .057))
+	_options.add_theme_font_size_override("font_size", 38)
+	_options.alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_options.fit_to_longest_item = false
+	_options.clip_text = true
+	_options.add_theme_icon_override("arrow", ImageTexture.new())
+	GeraiSkin.skin_button(_options, "tab_idle", .9)
+	for state in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
+		_options.add_theme_color_override(state, Palette.WOOD_DARK)
+	_style_popup(_options.get_popup())
+	JourneyArt.place(self, _options, Rect2(.16, .232, .68, .066))
+	var chevron := Chevron.new()
+	chevron.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	JourneyArt.place(_options, chevron, Rect2(.84, .40, .04, .20))
 	_options.item_selected.connect(_option_selected)
 	_scroll = ScrollContainer.new()
 	_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	JourneyArt.place(self, _scroll, Rect2(.065, .35, .87, .465))
-	_content = UIKit.vbox(24)
+	_scroll.get_v_scroll_bar().add_theme_stylebox_override("scroll", _bar_style(Palette.CREAM_DEEP))
+	for state in ["grabber", "grabber_highlight", "grabber_pressed"]:
+		_scroll.get_v_scroll_bar().add_theme_stylebox_override(state, _bar_style(Palette.WOOD_LIGHT))
+	JourneyArt.place(self, _scroll, Rect2(.075, .305, .85, .525))
+	_content = UIKit.vbox(16)
 	_content.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_scroll.add_child(_content)
-	_sticky = JourneyArt.label(self, "", Rect2(.07, .832, .86, .095), 32, Palette.WOOD_DARK)
+	_sticky = JourneyArt.label(self, "", Rect2(.13, .832, .74, .08), 32, Palette.WOOD_DARK)
 	_sticky.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_notice = JourneyArt.label(self, "", Rect2(.07, .918, .86, .025), 26, Palette.WOOD_DARK)
+	_notice = JourneyArt.label(self, "", Rect2(.16, .912, .68, .024), 26, Palette.WOOD_DARK)
 	if OS.has_feature("debug"):
 		var sample := CheckButton.new()
 		_sample_toggle = sample
@@ -64,7 +83,7 @@ func _ready() -> void:
 		sample.add_theme_font_size_override("font_size", 30)
 		for color in ["font_color", "font_hover_color", "font_pressed_color"]:
 			sample.add_theme_color_override(color, Palette.WOOD_DARK)
-		JourneyArt.place(self, sample, Rect2(.07, .947, .86, .024))
+		JourneyArt.place(self, sample, Rect2(.18, .934, .64, .024))
 		sample.toggled.connect(func(enabled: bool) -> void:
 			RankingManager.refresh()
 			if RankingManager.service is LocalLeaderboardService:
@@ -80,7 +99,58 @@ func _rankings_ready() -> void:
 	if _ranking:
 		_draw_rankings()
 
+func _tab(caption: String, node_name: String, rect: Rect2) -> Button:
+	var tab := Button.new()
+	tab.name = node_name
+	tab.text = caption
+	tab.add_theme_font_size_override("font_size", 40)
+	tab.add_theme_color_override("font_outline_color", Palette.LEAF_DEEP)
+	UIKit.add_press_feedback(tab)
+	JourneyArt.place(self, tab, rect)
+	_tabs.append(tab)
+	return tab
+
+## The selected tab is the painted leaf green; the other stays cream.
+func _update_tabs() -> void:
+	for tab in _tabs:
+		var selected: bool = (tab.name == "RankingTab") == _ranking
+		for state in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
+			tab.add_theme_color_override(state, Palette.PAPER if selected else Palette.WOOD_DARK)
+		tab.add_theme_constant_override("outline_size", 8 if selected else 0)
+		GeraiSkin.skin_button(tab, "tab_active" if selected else "tab_idle", .9)
+
+func _bar_style(color: Color) -> StyleBoxFlat:
+	var style := UIKit.flat_box(color, Color.TRANSPARENT, 0, 0, 6)
+	style.content_margin_left = 6
+	style.content_margin_right = 6
+	return style
+
+func _style_popup(popup: PopupMenu) -> void:
+	for icon in ["radio_checked", "radio_unchecked"]:
+		popup.add_theme_icon_override(icon, ImageTexture.new())
+	popup.add_theme_stylebox_override("panel", UIKit.flat_box(Palette.PAPER, Palette.GOLD, 16, 4, 20))
+	popup.add_theme_stylebox_override("hover", UIKit.flat_box(Color("f5dfaf"), Color("f5dfaf"), 6, 0, 12))
+	popup.add_theme_font_size_override("font_size", 38)
+	popup.add_theme_color_override("font_color", Palette.WOOD_DARK)
+	popup.add_theme_color_override("font_hover_color", Palette.WOOD_DARK)
+	popup.add_theme_color_override("font_disabled_color", Palette.WOOD_LIGHT)
+	popup.add_theme_constant_override("v_separation", 18)
+
+## Category heading on a small carved plate.
+func _section(caption: String) -> Control:
+	var heading := PanelContainer.new()
+	heading.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	heading.custom_minimum_size = Vector2(560, 104)
+	heading.add_theme_stylebox_override("panel", GeraiSkin.box("name_plate", .45))
+	var label := UIKit.label(caption, 36, Palette.PAPER)
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.add_theme_color_override("font_outline_color", Palette.WOOD_DARK)
+	label.add_theme_constant_override("outline_size", 6)
+	heading.add_child(label)
+	return heading
+
 func _refresh_options() -> void:
+	_update_tabs()
 	if _sample_toggle != null:
 		_sample_toggle.visible = _ranking
 	_options.clear()
@@ -144,13 +214,13 @@ func refresh() -> void:
 		for definition in groups[category]:
 			if AchievementManager.state(definition.id).get("unlocked", false):
 				complete += 1
-		_content.add_child(UIKit.label("%s  ·  %d / %d" % [_category_name(category), complete, groups[category].size()], 38, Palette.WOOD_DARK))
+		_content.add_child(_section("%s  ·  %d / %d" % [_category_name(category), complete, groups[category].size()]))
 		for definition in groups[category]:
 			var state := AchievementManager.state(definition.id)
 			var unlocked: bool = state.get("unlocked", false)
 			var box := _card(unlocked)
 			var line := HBoxContainer.new()
-			line.add_theme_constant_override("separation", 22)
+			line.add_theme_constant_override("separation", 56)
 			box.add_child(line)
 			line.add_child(_badge(definition.category, unlocked))
 			var column := UIKit.vbox(12)
@@ -162,7 +232,7 @@ func refresh() -> void:
 			progress.max_value = definition.target
 			progress.value = state.get("progress", 0)
 			progress.show_percentage = false
-			progress.custom_minimum_size.y = 18
+			GeraiSkin.style_progress(progress, 30)
 			column.add_child(progress)
 			column.add_child(_text("%d / %d  ·  +%d %s%s" % [state.get("progress", 0), definition.target, definition.reward_coins, JourneyArt.localized("syiling", "coins"), JourneyArt.localized("  ·  Ganjaran diterima", "  ·  Reward received") if unlocked else ""], 30))
 			if not definition.tier.is_empty():
@@ -191,7 +261,7 @@ func _draw_rankings() -> void:
 		var is_own := entry.player_id == own.player_id
 		var box := _card(is_own)
 		var line := HBoxContainer.new()
-		line.add_theme_constant_override("separation", 22)
+		line.add_theme_constant_override("separation", 62)
 		box.add_child(line)
 		var avatar := AvatarLibrary.icon(entry.avatar_id)
 		avatar.custom_minimum_size = Vector2(100, 100)
@@ -215,11 +285,15 @@ func _draw_rankings() -> void:
 func _card(highlight: bool) -> PanelContainer:
 	var box := PanelContainer.new()
 	box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	box.add_theme_stylebox_override("panel", UIKit.flat_box(Color("f5dfaf") if highlight else Color("fff7e7"), Palette.WOOD_LIGHT, 22, 3, 20))
+	# The row's round socket sits at the left; icons are centred inside it.
+	var style := GeraiSkin.box("task_row", .95, [94, 28, 46, 28])
+	if highlight:
+		style.modulate_color = Color(1, .93, .76)
+	box.add_theme_stylebox_override("panel", style)
 	_content.add_child(box)
 	return box
 
-const MS_CATEGORIES := {"ALL": "SEMUA", "GERAI": "Gerai", "JOURNEY": "Perjalanan", "STARS": "Bintang", "PUZZLE": "Teka-teki", "RECIPES": "Resipi", "ORDERS": "Pesanan", "SPECIALS": "Istimewa", "STREAK": "Rentetan", "SCORE": "Skor"}
+const MS_CATEGORIES := {"ALL": "Semua", "GERAI": "Gerai", "JOURNEY": "Perjalanan", "STARS": "Bintang", "PUZZLE": "Teka-teki", "RECIPES": "Resipi", "ORDERS": "Pesanan", "SPECIALS": "Istimewa", "STREAK": "Rentetan", "SCORE": "Skor"}
 const MS_TIERS := {"BRONZE": "Gangsa", "SILVER": "Perak", "GOLD": "Emas", "MASTER": "Pakar"}
 ## id -> [Malay title, Malay description]
 const MS_TEXT := {
@@ -249,7 +323,7 @@ static func _t(ms: String, en: String) -> String:
 	return ms if _is_ms() else en
 
 static func _category_name(category: String) -> String:
-	return MS_CATEGORIES.get(category, category.capitalize()) if _is_ms() else ("ALL" if category == "ALL" else category.capitalize())
+	return MS_CATEGORIES.get(category, category.capitalize()) if _is_ms() else category.capitalize()
 
 static func _tier_name(tier: String) -> String:
 	return MS_TIERS.get(tier, tier.capitalize()) if _is_ms() else tier.capitalize()
@@ -260,20 +334,19 @@ static func _title(definition: AchievementDefinition) -> String:
 static func _description(definition: AchievementDefinition) -> String:
 	return MS_TEXT[definition.id][1] if _is_ms() and MS_TEXT.has(definition.id) else definition.description
 
-## Painted category art on a cream disc; locked goals stay muted until earned.
+## Painted category art in the row's socket; locked goals stay muted until earned.
 func _badge(category: String, unlocked: bool) -> Control:
-	var disc := Panel.new()
-	disc.custom_minimum_size = Vector2(120, 120)
+	var disc := Control.new()
+	disc.custom_minimum_size = Vector2(112, 112)
 	disc.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	disc.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	disc.add_theme_stylebox_override("panel", UIKit.flat_box(Color("fff3d6") if unlocked else Color("ece3d2"), Palette.GOLD if unlocked else Palette.WOOD_LIGHT, 0, 4, 60))
 	var art := TextureRect.new()
 	art.texture = _category_icon(category)
 	art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	art.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	art.modulate = Color.WHITE if unlocked else Color(.62, .6, .58, .8)
-	JourneyArt.place(disc, art, Rect2(.14, .14, .72, .72))
+	JourneyArt.place(disc, art, Rect2(.04, .04, .92, .92))
 	if unlocked:
 		var tick := JourneyStageDisc.CompletedBadge.new()
 		JourneyArt.place(disc, tick, Rect2(.64, .64, .42, .42))
@@ -315,4 +388,5 @@ func _text(value: String, font_size: int) -> Label:
 	var label := UIKit.label(value, font_size, Palette.WOOD_DARK)
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	return label

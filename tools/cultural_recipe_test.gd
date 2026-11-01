@@ -95,15 +95,18 @@ func run() -> void:
 	var book := RecipeBookScreen.new()
 	add_child(book)
 	await get_tree().process_frame
-	check(book._grid.get_child_count() == 4, "cultural cards")
-	book._filter_button.pressed.emit()
-	check(book._filter == &"sarawak_heritage" and book._grid.get_child_count() == 3, "collection filter interaction")
-	book._filter_button.pressed.emit()
-	check(book._filter == &"" and book._grid.get_child_count() == 4, "all recipe filter interaction")
+	check(book._mode == "guide" and book._grid.get_child_count() == 6, "default gameplay guide spread")
+	book._select_mode("recipes")
+	check(book._mode == "guide" and book._grid.get_child_count() == 6, "unfinished cultural tab stays hidden for MVP")
+	check(not book._filter_button.visible, "cultural filter stays hidden with unfinished tab")
+	book._filter = &"sarawak_heritage"
+	check(book._filtered_recipes().size() == 3, "cultural collection data filter")
+	book._filter = &""
+	check(book._filtered_recipes().size() == 10, "all cultural recipe data")
 	book._select_mode("collections")
 	check(book._collection_scroll.get_child_count() == 1, "collection/milestone list")
 	book._select_mode("guide")
-	check(book._grid.get_child_count() == 4, "legacy guide cards")
+	check(book._grid.get_child_count() == 6, "gameplay guide cards")
 	book._page = 99
 	book.refresh()
 	check(book._grid.get_child_count() > 0, "legacy guide page clamp")

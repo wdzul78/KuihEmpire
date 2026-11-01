@@ -23,6 +23,7 @@ class ExitIcon extends Control:
 		draw_polyline(PackedVector2Array([at+Vector2(.69,.31)*edge,at+Vector2(.89,.50)*edge,at+Vector2(.69,.69)*edge]),color,width,true)
 
 const HEART = preload("res://assets/ui/hearts_v2/heart_full.png")
+const LEAVE_LINE_SPACING := -10
 var stage_title := ""
 var tutorial := false
 var restart_available := true
@@ -56,9 +57,10 @@ func _ready() -> void:
 	var heading := TitleArt.create("paused","Paused")
 	JourneyArt.place(_pause_panel,heading,Rect2(.24,.14,.52,.092))
 	JourneyArt.label(_pause_panel,stage_title.replace(String.chr(194)+String.chr(183),String.chr(183)),Rect2(.17,.236,.66,.044),30,Palette.WOOD_DARK)
-	var resume := _art_action(_pause_panel,JourneyArt.localized("Sambung","Resume"),Rect2(.40,.30,.40,.13),52,Color.WHITE)
+	var resume := _art_action(_pause_panel,JourneyArt.localized("Sambung","Resume"),Rect2(.405,.30,.40,.13),68,Color.WHITE)
+	resume.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	resume.pressed.connect(func() -> void: resume_pressed.emit())
-	var resume_hit := _art_action(_pause_panel,"",Rect2(.10,.30,.29,.13))
+	var resume_hit := _art_action(_pause_panel,"",Rect2(.10,.30,.305,.13))
 	resume_hit.pressed.connect(func() -> void: resume_pressed.emit())
 	var restart := _art_action(_pause_panel,JourneyArt.localized("Mula semula","Restart"),Rect2(.245,.464,.225,.12),44)
 	restart.disabled = not restart_available
@@ -73,7 +75,7 @@ func _ready() -> void:
 	var close := _art_action(_pause_panel,"",Rect2(.82,.07,.12,.09))
 	close.pressed.connect(func() -> void: resume_pressed.emit())
 	JourneyArt.label(_pause_panel,JourneyArt.localized("+5 langkah","+5 moves"),Rect2(.245,.669,.34,.055),46,Palette.WOOD_DARK)
-	JourneyArt.label(_pause_panel,"%d coins" % EconomyManager.EXTRA_MOVES_COST if extra_coin_purchase else JourneyArt.localized("Stok: %d","Stock: %d") % extra_count,Rect2(.245,.727,.34,.045),34,Color("858578"))
+	JourneyArt.label(_pause_panel,"%d coins" % EconomyManager.EXTRA_MOVES_COST if extra_coin_purchase else JourneyArt.localized("Stok: %d","Stock: %d") % extra_count,Rect2(.245,.716,.34,.045),34,Color("858578"))
 	var use := _art_action(_pause_panel,JourneyArt.localized("Guna","Use"),Rect2(.645,.652,.24,.089),46,Color("23682b"))
 	use.name = "UseExtraMovesButton"
 	use.add_theme_color_override("font_disabled_color",Color("56634d"))
@@ -141,34 +143,60 @@ func confirm_leave(message: String, confirmed: Callable) -> void:
 	art.stretch_mode = TextureRect.STRETCH_SCALE
 	art.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	JourneyArt.place(_leave_dialog,art,Rect2(0,0,1,1))
-	JourneyArt.label(_leave_dialog,JourneyArt.localized("Kembali ke gerai?","Return to stall?"),Rect2(.12,.29,.76,.06),40,Palette.WOOD_DARK)
+	JourneyArt.label(_leave_dialog,JourneyArt.localized("Kembali ke gerai?","Return to stall?"),Rect2(.10,.285,.80,.07),52,Palette.WOOD_DARK)
+	var leave_message := message if leave_costs_heart else JourneyArt.localized("Tiada nyawa ditolak. Kembali ke gerai?","No heart will be lost. Return to the stall?")
+	var explanation := JourneyArt.label(_leave_dialog,leave_message,Rect2(.08,.562,.84,.115),42,Palette.WOOD_DARK)
+	explanation.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	explanation.add_theme_constant_override("line_spacing",LEAVE_LINE_SPACING)
+	# Longer warnings need more than two lines, so the heart gives up its room to them.
+	var text_width := size.x*.70*.84
+	var compact := _message_height(explanation,text_width,42) > size.y*.55*.115
+	if compact:
+		explanation.anchor_top = .475
+		explanation.anchor_bottom = .68
+		var fitted := 38
+		while fitted > 28 and _message_height(explanation,text_width,fitted) > size.y*.55*.205:
+			fitted -= 2
+		explanation.add_theme_font_size_override("font_size",fitted)
 	_heart = TextureRect.new()
 	_heart.texture = HEART
 	_heart.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	_heart.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	JourneyArt.place(_leave_dialog,_heart,Rect2(.34,.37,.32,.20))
-	var heart_count := JourneyArt.label(_heart,str(HeartManager.current()),Rect2(.15,.18,.70,.58),64,Color.WHITE)
+	JourneyArt.place(_leave_dialog,_heart,Rect2(.39,.35,.22,.125) if compact else Rect2(.34,.37,.32,.20))
+	var heart_count := JourneyArt.label(_heart,str(HeartManager.current()),Rect2(.15,.18,.70,.58),46 if compact else 64,Color.WHITE)
 	heart_count.name = "CurrentHeartCount"
 	heart_count.add_theme_color_override("font_outline_color",Color("a31a36"))
 	heart_count.add_theme_constant_override("outline_size",3)
 	if leave_costs_heart:
 		var badge := Panel.new()
 		badge.add_theme_stylebox_override("panel",UIKit.flat_box(Color("fff3d4"),Color("b27a2c"),0,3,50))
-		JourneyArt.place(_leave_dialog,badge,Rect2(.57,.48,.12,.08))
-		JourneyArt.label(badge,"−1",Rect2(0,0,1,1),36,Palette.WOOD_DARK)
+		JourneyArt.place(_leave_dialog,badge,Rect2(.56,.405,.105,.07) if compact else Rect2(.56,.47,.14,.095))
+		JourneyArt.label(badge,"−1",Rect2(0,0,1,1),38 if compact else 52,Palette.WOOD_DARK)
 
-	var leave_message := message if leave_costs_heart else JourneyArt.localized("Tiada nyawa ditolak. Kembali ke gerai?","No heart will be lost. Return to the stall?")
-	var explanation := JourneyArt.label(_leave_dialog,leave_message,Rect2(.11,.575,.78,.095),34,Palette.WOOD_DARK)
-	explanation.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	var keep := GameButton.create(JourneyArt.localized("Terus bermain","Keep playing"),"primary",46)
 	keep.custom_minimum_size = Vector2.ZERO
 	JourneyArt.place(_leave_dialog,keep,Rect2(.17,.685,.66,.106))
 	keep.pressed.connect(_cancel_leave)
-	var leave := _art_action(_leave_dialog,"",Rect2(.23,.815,.54,.075))
-	JourneyArt.label(leave,JourneyArt.localized("Ya, keluar","Yes, leave"),Rect2(.02,0,.76,1),38,Palette.WOOD_DARK)
+	var leave := _art_action(_leave_dialog,"",Rect2(.20,.808,.60,.09))
+	leave.name = "LeaveButton"
+	GeraiSkin.skin_button(leave,"tab_idle",.9)
+	var leave_down := GeraiSkin.box("tab_idle",.9)
+	leave_down.modulate_color = Color(.86,.86,.86)
+	leave.add_theme_stylebox_override("pressed",leave_down)
+	var leave_row := HBoxContainer.new()
+	leave_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	leave_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	leave_row.add_theme_constant_override("separation",14)
+	JourneyArt.place(leave,leave_row,Rect2(0,0,1,1))
+	var leave_label := UIKit.label(JourneyArt.localized("Ya, keluar","Yes, leave"),40,Palette.WOOD_DARK)
+	leave_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	leave_row.add_child(leave_label)
 	var exit_icon := ExitIcon.new()
 	exit_icon.name = "ExitIcon"
-	JourneyArt.place(leave,exit_icon,Rect2(.79,.05,.21,.90))
+	exit_icon.custom_minimum_size = Vector2(52,52)
+	exit_icon.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	exit_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	leave_row.add_child(exit_icon)
 	leave.pressed.connect(func() -> void:
 		if _confirming:
 			return
@@ -177,6 +205,14 @@ func confirm_leave(message: String, confirmed: Callable) -> void:
 		leave.disabled = true
 		confirmed.call()
 	)
+
+## Measures wrapped lines at the real line box; the multiline size alone runs short.
+func _message_height(label: Label, width: float, font_size: int) -> float:
+	var font := label.get_theme_font("font")
+	var wrapped := font.get_multiline_string_size(label.text,HORIZONTAL_ALIGNMENT_LEFT,width,font_size).y
+	var single := font.get_multiline_string_size("A",HORIZONTAL_ALIGNMENT_LEFT,width,font_size).y
+	return roundf(wrapped/single)*(font.get_height(font_size)+LEAVE_LINE_SPACING)
+
 func _cancel_leave() -> void:
 	if _confirming:
 		return
