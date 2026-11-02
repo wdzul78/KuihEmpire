@@ -3,6 +3,11 @@ extends Control
 
 signal dismissed
 
+## Painted "before" picture, shown until the location's first upgrade is bought.
+const BEFORE_ART := {
+	&"school_canteen": "res://assets/ui/milestone_v1/school_canteen.png",
+}
+
 func show_milestone(stage: int) -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	z_index = 100
@@ -19,13 +24,23 @@ func show_milestone(stage: int) -> void:
 	var stack: VBoxContainer = dialog.stack
 	stack.add_theme_constant_override("separation", 18)
 	stack.add_child(UIKit.title(JourneyLibrary.name_for(stage), 50))
-	var preview := GeraiBackdrop.new()
-	preview.location_id = location.id
-	preview.background_context = "journey"
+	var snapshot := LocationManager.stall_snapshot(location.id)
+	var preview: Control
+	if snapshot.state_index == 0 and BEFORE_ART.has(location.id):
+		var art := TextureRect.new()
+		art.name = "MilestoneBeforeArt"
+		art.texture = load(BEFORE_ART[location.id])
+		art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+		preview = art
+	else:
+		var backdrop := GeraiBackdrop.new()
+		backdrop.location_id = location.id
+		backdrop.background_context = "journey"
+		preview = backdrop
 	preview.custom_minimum_size = Vector2(0, 280 if opens_next else 420)
 	preview.clip_contents = true
 	stack.add_child(preview)
-	var snapshot := LocationManager.stall_snapshot(location.id)
 	stack.add_child(UIKit.label(StallDefinition.find(snapshot.id).state(snapshot.state_index).display_name, 38))
 	var spacer := Control.new()
 	spacer.size_flags_vertical = Control.SIZE_EXPAND_FILL

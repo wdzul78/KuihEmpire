@@ -109,14 +109,14 @@ scripts/levels/chapters/school_canteen.gd  stage 31–60, kosong sehingga Fasa 4
 
 **Selesai apabila:** peta tatal lancar pada peranti Android dari 1 ke 60, dan tiada lompatan ketika melintasi lokasi.
 
-Status 1 November 2026: kod siap, dan `tools/journey_scale_test.gd` menguji peta dengan 60 stage olok-olok. Tiga dunia Kantin (`assets/ui/journey_world_v3/`) sudah dipasang dengan titik jalan yang diukur daripada imej. Bingkai penyambung masih dipinjam daripada Gerai Keluarga sehingga seni tiba. Bahagian 31–60 belum dipaparkan kepada pemain kerana stage belum wujud. Ujian tatal pada Android belum dibuat.
+Status 1 November 2026: kod siap, dan `tools/journey_scale_test.gd` menguji peta dengan 60 stage olok-olok. Tiga dunia Kantin (`assets/ui/journey_world_v3/`) sudah dipasang dengan titik jalan yang diukur daripada imej. Tiga penyambung baharu (`assets/ui/journey_transitions_v2/`) sudah dipasang. Ujian tatal pada Android belum dibuat.
 
 ### Fasa 3 — Kantin Sekolah sebagai lokasi hidup (1–2 sesi)
 
 - [x] Sahkan latar gameplay Kantin dalam susun atur 8×8 pada 540×960 dan 360×800.
 - [x] Selepas stage 30: popup milestone mengajak pemain ke Kantin dan pilihan untuk menjadikannya gerai aktif. Hanya muncul apabila stage 31 wujud.
 - [x] Sahkan upgrade pada 40/50/60 dengan `renovation_tasks_test` dan `institutional_canteen_visual_test`.
-- [x] Tambah 4 pelanggan dalam `CustomerLibrary` dan semak `CustomerData.line` dalam dua bahasa. Dialog pelanggan sebelum ini tidak diterjemah langsung; kini dibaiki. Lukisan pelanggan masih menunggu ChatGPT.
+- [x] Tambah 4 pelanggan dalam `CustomerLibrary` dan semak `CustomerData.line` dalam dua bahasa. Dialog pelanggan sebelum ini tidak diterjemah langsung; kini dibaiki. Lukisan pelanggan sudah dipasang.
 - [x] Tambah 9 beat cerita dalam `scripts/story/beat_library.gd` (senarai dalam bahagian 5), diikat pada stage dalam Fasa 4.
 - [x] Tambah pencapaian `story_2`, `stars_120`, `stars_180`, dengan teks Melayu.
 - [x] Sahkan pengenalan kuih baharu untuk tile baharu, termasuk nota Melayu yang sebelum ini tiada.
@@ -127,6 +127,8 @@ Ujian: `tools/school_canteen_test.gd`. Nota: beat `story_after` pada stage miles
 ### Fasa 4 — Kandungan 31–60 (2–3 sesi)
 
 Bina peringkat mengikut bahagian 5, dalam kumpulan 10, dengan simulasi selepas setiap kumpulan.
+
+Status 2 November 2026: semua 30 stage ditulis dalam `scripts/levels/chapters/school_canteen.gd`, disimulasikan 30 larian setiap satu, dan `LevelLibrary.count()` kini 60. Stage dengan giliran pelanggan jauh lebih sukar daripada anggaran asal kerana kuih untuk pesanan lain terbazir, jadi 11 stage dilonggarkan. Lajur "Kuih/L" di bawah ialah nilai semasa, sebelum `order_scale` pelanggan mengubah jumlah sebenar. Sasaran bintang datang daripada p40/p60 bot teliti dan belum diuji oleh manusia. Penalaan penuh 40 larian kekal dalam Fasa 5.
 
 ### Fasa 5 — Keseimbangan (2 sesi)
 
@@ -194,27 +196,27 @@ Binaan APK atau AAB hanya apabila diminta.
 | 37 | Tudung Berlapis / Double Covers | Cabaran | Tudung penjuru | T×4 | 30/23 |
 | 38 | Tart Cikgu / Teacher's Tart | Ajar | Tart | — | 22/22 |
 | 39 | Kotak Bekal / Lunch Boxes | Gabung | Kotak, wajib bersih | B×1 | 30/23 |
-| **40** | **Hari Jualan / Sale Day** | **Milestone** | 3 pelanggan, upgrade 1 | D×2, T×2 | 40/25 |
+| **40** | **Hari Jualan / Sale Day** | **Milestone** | 3 pelanggan, upgrade 1 | D×2, T×2 | 34/26 |
 | 41 | Selepas Jualan / After the Sale | Rehat | — | — | 22/26 |
 | 42 | Sirap Tumpah / Syrup Spill | Latih | Sirap | S×4 | 28/22 |
-| 43 | Dua Giliran / Two Shifts | Gabung | Giliran + dulang | D2×2 | 32/24 |
-| 44 | Kawan Sekelas / Classmates | Latih | 3 murid | D×2 | 34/25 |
+| 43 | Dua Giliran / Two Shifts | Gabung | Giliran + dulang | D2×2 | 28/25 |
+| 44 | Kawan Sekelas / Classmates | Latih | 3 murid | D×2 | 28/26 |
 | 45 | Waktu Senang / Easy Hour | Rehat | — | — | 24/27 |
 | 46 | Bom Manis / Sweet Bom | Ajar | Kuih Bom | — | 24/23 |
 | 47 | Stim Pagi / Morning Steam | Cabaran | Pengukus 2 lapis | K×4 | 32/24 |
 | 48 | Tempahan Kelab / Club Order | Gabung | Kotak + dulang, wajib bersih | B×1, D2×2 | 36/26 |
 | 49 | Sirap & Daun / Syrup and Leaves | Cabaran | Gabungan | S×3, D×3 | 36/25 |
-| **50** | **Hari Sukan / Sports Day** | **Milestone** | Pesanan besar, upgrade 2 | T×3, K×2 | 48/28 |
+| **50** | **Hari Sukan / Sports Day** | **Milestone** | Pesanan besar, upgrade 2 | T×3, K×2 | 40/30 |
 | 51 | Rehat Padang / Field Break | Rehat | — | — | 26/28 |
-| 52 | Kantin Sesak / Packed Canteen | Latih | Giliran 3 | D×2 | 38/26 |
+| 52 | Kantin Sesak / Packed Canteen | Latih | Giliran 3 | D×2 | 31/27 |
 | 53 | Agar-agar Ros / Rose Jelly | Ajar | Agar-agar | — | 26/24 |
-| 54 | Dulang Bersusun / Stacked Trays | Gabung | Dulang, wajib bersih | D2×3 | 38/26 |
-| 55 | Mesyuarat PIBG / PTA Meeting | Cabaran | Encik Lim + Cikgu, kotak | B×1, T×2 | 42/28 |
+| 54 | Dulang Bersusun / Stacked Trays | Gabung | Dulang, wajib bersih | D2×3 | 38/27 |
+| 55 | Mesyuarat PIBG / PTA Meeting | Cabaran | Encik Lim + Cikgu, kotak | B×1, T×2 | 29/30 |
 | 56 | Hujan Petang / Rainy Afternoon | Rehat | — | — | 28/30 |
-| 57 | Semua Sekali / Everything at Once | Cabaran | 3 jenis halangan | D×2, T×2, K×2 | 42/27 |
-| 58 | Latihan Akhir / Final Rehearsal | Cabaran | Sirap + kotak | S×3, B×1 | 44/27 |
-| 59 | Malam Persediaan / Prep Night | Cabaran | Pesanan panjang | T×2, K×2 | 46/27 |
-| **60** | **Hari Anugerah / Awards Day** | **Akhir** | Semua pelanggan, gerai lengkap | T×4, D×2, K×2, B×1 | 58/31 |
+| 57 | Semua Sekali / Everything at Once | Cabaran | 3 jenis halangan | D×2, T×2, K×2 | 33/28 |
+| 58 | Latihan Akhir / Final Rehearsal | Cabaran | Sirap + kotak | S×3, B×1 | 34/28 |
+| 59 | Malam Persediaan / Prep Night | Cabaran | Pesanan panjang | T×2, K×2 | 37/28 |
+| **60** | **Hari Anugerah / Awards Day** | **Akhir** | Semua pelanggan, gerai lengkap | T×4, D×2, K×2, B×1 | 52/33 |
 
 **Ganjaran resipi** mengikut katalog: 40 tebaloi, 50 putu piring, 60 ang ku kueh.
 

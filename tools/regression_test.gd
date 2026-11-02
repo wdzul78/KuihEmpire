@@ -425,8 +425,8 @@ func run() -> void:
 	check(screen.moves_left == prior + LevelController.EXTRA_MOVES and not screen.finished and screen.board.enabled and not screen.result.visible, "result booster did not resume play with five moves")
 	screen.queue_free()
 	await get_tree().process_frame
-	SaveManager.data["levels"] = {"30": {"stars": 3}}
-	check(ProgressionManager.current_level() == 30, "campaign completion offered nonexistent stage 31")
+	SaveManager.data["levels"] = {"60": {"stars": 3}}
+	check(ProgressionManager.current_level() == 60, "campaign completion offered nonexistent stage 61")
 	SaveManager.reset()
 	# Keep this runner alive while real screen navigation frees Home / Journey.
 	get_tree().current_scene = null

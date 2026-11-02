@@ -1,12 +1,17 @@
 class_name LocationDefinition
 extends RefCounted
 
+static var _all: Array[LocationDefinition] = []
+
 var id: StringName
 var display_name: String
 var story_id: StringName
 var stage_start: int
 var stage_end: int
-var playable := false
+## A location opens once its stages are authored.
+var playable: bool:
+	get:
+		return LevelLibrary.has_level(stage_start)
 var preset: StringName
 var upgrade_requirements: Array[Dictionary] = []
 var state_names: Array[String] = ["Starting Stall", "Revived Stall", "Polished Stall", "Completed Stall"]
@@ -28,7 +33,6 @@ func _init(key: StringName, label: String, start: int, mood: StringName) -> void
 	stage_start = start
 	stage_end = start + 29
 	preset = mood
-	playable = LevelLibrary.has_level(start) # A location opens once its stages are authored.
 	for state in range(1,4):
 		upgrade_requirements.append({"stage": stage_start + state*10 - 1, "stars": StallDefinition.find(id).state(state).star_cost, "coins": 0})
 
@@ -39,7 +43,13 @@ func requirement(level: int) -> Dictionary:
 func state_name(level: int) -> String:
 	return state_names[clampi(level, 0, 3)]
 
+## Built once: each location reads its stall files, and a win asks for these many times.
 static func all() -> Array[LocationDefinition]:
+	if _all.is_empty():
+		_all = _build_all()
+	return _all
+
+static func _build_all() -> Array[LocationDefinition]:
 	var family := LocationDefinition.new(&"family_stall", "Family Stall", 1, &"stall_dawn")
 	family.decor_slots.append("COUNTER_FOOD")
 	family.decor_slots.append_array(["SIGN_BOARD", "COUNTER_FRONT"])

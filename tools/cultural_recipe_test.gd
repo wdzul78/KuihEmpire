@@ -16,12 +16,12 @@ func run() -> void:
 	var original_board_ids: Array[StringName] = []
 	for kuih in KuihLibrary.all():
 		original_board_ids.append(kuih.id)
-	check(RecipeCatalog.all().size() == 10 and LevelLibrary.count() == 30, "sample/campaign count")
+	check(RecipeCatalog.all().size() == 10 and LevelLibrary.count() == 60, "sample/campaign count")
 	var validation := RecipeCatalog.validate()
 	check(validation.errors.is_empty(), "catalog validation: %s" % str(validation.errors))
 	check(validation.warnings.size() >= 10, "missing artwork must be reported")
 	check(GameplayObjectCatalog.all().size() == KuihLibrary.count() + PowerupRecipes.ENTRIES.size() + BlockerSpec.Kind.size(), "gameplay adapters")
-	for stage in [10, 20, 30]:
+	for stage in [10, 20, 30, 40, 50, 60]:
 		check(LevelLibrary.get_level(stage).recipe_unlock_id == RecipeCatalog.for_stage(stage), "stage discovery assignment")
 	check(LevelLibrary.get_level(11).recipe_unlock_id == &"", "non-milestone assignment")
 	var balance := EconomyManager.coins()

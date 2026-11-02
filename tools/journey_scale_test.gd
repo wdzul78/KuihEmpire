@@ -1,7 +1,7 @@
 extends Node
 
-## The map must stay correct and light as locations are added. Stages 31-60 are
-## pretend data here. Rendered runs save the seams to `.analysis/`.
+## The map must stay correct and light as locations are added. Stage counts other than the
+## real one are pretend data here. Rendered runs save the seams to `.analysis/`.
 
 var failures: Array[String] = []
 
@@ -19,9 +19,10 @@ func run() -> void:
 	ProgressionManager.complete_tutorial()
 	SaveManager.set_setting("language", "ms")
 	_check_sections()
-	await _check_released_map()
+	await _check_one_location_map()
 	await _check_sixty_stage_map()
 	LevelLibrary._test_last_stage = 0
+	check(LevelLibrary.count() == 60 and JourneyLibrary.next_destination() == "Pasar Pagi", "the School Canteen is released and the sign names the Morning Market")
 	print("Journey scale tests: %s (%d problems)" % ["PASS" if failures.is_empty() else "FAIL", failures.size()])
 	get_tree().quit(0 if failures.is_empty() else 1)
 
@@ -33,6 +34,7 @@ func _check_sections() -> void:
 		next = section["last"] + 1
 		check(centers.has(section["world"]) and centers[section["world"]].size() == 10, "section %d has ten road points" % section["id"])
 		check(ResourceLoader.exists(JourneyLibrary.world_path(section)), "section %d has a world" % section["id"])
+		check(section.has("connector") or ResourceLoader.exists(section["connector_strip"]), "section %d has connector art" % section["id"])
 		var location := LocationDefinition.find(section["location"])
 		check(section["id"] >= location.stage_start and section["last"] <= location.stage_end, "section %d is inside its location" % section["id"])
 	check(JourneyLibrary.section_for(11)["place_en"] == "Village Market", "stages 11-20 are no longer called Morning Market")
@@ -46,9 +48,9 @@ func _open_map() -> JourneyMap:
 	await get_tree().process_frame
 	return map
 
-## Today's game: nothing about the Family Stall map may look different.
-func _check_released_map() -> void:
-	check(LevelLibrary.count() == 30, "only 30 stages are released")
+## A game with one location: no location picker, and a sign for the next one.
+func _check_one_location_map() -> void:
+	LevelLibrary._test_last_stage = 30
 	GameManager.pending_level_id = 5
 	var map := await _open_map()
 	check(map._sections.size() == 3, "only released sections are shown")

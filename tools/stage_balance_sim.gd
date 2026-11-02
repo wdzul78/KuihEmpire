@@ -1,6 +1,6 @@
 extends Node
 
-## Headless difficulty probe for campaign stages 1-30.
+## Headless difficulty probe for campaign stages. Split long runs with --stages=31-40.
 ##
 ## Plays every stage with two simple bots on the real BoardState rules and prints
 ## win rate and average moves left. "careful" ranks every legal swap by order
@@ -13,7 +13,7 @@ const CASUAL_RANDOM := .4
 var runs := 40
 var _scores: Array[int] = []
 var first := 1
-var last := 30
+var last := LevelLibrary.count()
 
 func _ready() -> void:
 	for arg in OS.get_cmdline_user_args():

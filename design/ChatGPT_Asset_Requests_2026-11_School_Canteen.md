@@ -1,6 +1,6 @@
 # Permintaan aset imej untuk ChatGPT — Kantin Sekolah, stage 31–60 (November 2026)
 
-Peta Perjalanan kini boleh memaparkan 60 stage, tetapi bahagian Kantin Sekolah masih meminjam dunia Gerai Keluarga. Fail ini meminta seni sebenar yang wajib ada sebelum keluaran 0.2.0.
+Semua 11 imej dalam fail ini sudah diterima pada 1 November 2026 dan dipasang pada 2 November 2026. Prompt disimpan sebagai rujukan.
 
 Untuk setiap item:
 
@@ -67,6 +67,7 @@ Lampirkan: `assets/ui/milestone_v1/family_stall_old.png` jika sudah siap, supaya
 ### Nota untuk Claude semasa menyambung
 
 - Dunia: sudah diterima dan dipasang pada 1 November 2026, dengan 10 titik jalan dalam `assets/ui/journey_world_v3/centers.json`.
-- Penyambung: format baharu ialah satu jalur setiap fail, jadi `shaders/journey_connector.gdshader` perlu menerima jalur tunggal. Sandarkan dahulu.
-- Pelanggan: `CustomerLibrary` memuatkan `fullbody_v2/<id>.png` mengikut id, jadi gunakan id `cikgu_salmah`, `adik_danish`, `adik_priya`, `pak_mat`.
+- Penyambung: sudah dipasang melalui `connector_strip` dalam `JourneyLibrary.SECTIONS`.
+- Pelanggan: sudah dimuatkan oleh `CustomerLibrary` mengikut id.
+- Lukisan milestone: dipaparkan oleh `JourneyMilestonePopup` sehingga upgrade pertama Kantin dibeli.
 - Permintaan lukisan resipi dan `family_stall_old` masih berada dalam `design/ChatGPT_Asset_Requests_2026-10-30_Recipes_Milestone.md`.

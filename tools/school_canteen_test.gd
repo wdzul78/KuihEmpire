@@ -1,8 +1,8 @@
 extends Node
 
-## School Canteen as a living location, before its stages are authored: customers,
+## School Canteen as a living location: its stages, customers,
 ## story, translations, renovation gates, rewards and the move from the Family
-## Stall. Stages 31-60 are pretend data. Rendered runs save screens to `.analysis/`.
+## Stall. Rendered runs save screens to `.analysis/`.
 
 const NEW_BEATS := [&"beat_31_canteen", &"beat_38_tart", &"beat_40_done", &"beat_45_recipe", &"beat_50_sports", &"beat_50_done", &"beat_55_pibg", &"beat_60_awards", &"beat_60_done"]
 const NEW_CUSTOMERS := [&"cikgu_salmah", &"adik_danish", &"adik_priya", &"pak_mat"]
@@ -28,14 +28,15 @@ func run() -> void:
 		SaveManager.data.kuih_seen.append("special_intro_%d" % int(entry[0]))
 	SaveManager.set_setting("language", "ms")
 	_check_text()
+	_check_stages()
 	await _check_customer_line_is_malay()
+	LevelLibrary._test_last_stage = 30
 	await _check_popup_before_release()
-	LevelLibrary._test_last_stage = 60
+	LevelLibrary._test_last_stage = 0
 	_check_rewards_and_gates()
 	await _check_popup_invitation()
 	await _check_new_tile_cards()
 	await _check_gameplay_backdrop()
-	LevelLibrary._test_last_stage = 0
 	print("School canteen tests: %s (%d problems)" % ["PASS" if failures.is_empty() else "FAIL", failures.size()])
 	get_tree().quit(0 if failures.is_empty() else 1)
 
@@ -60,6 +61,45 @@ func _check_text() -> void:
 	var screen_text: Dictionary = load("res://scripts/ui/achievements_screen.gd").MS_TEXT
 	for definition in AchievementManager.definitions:
 		check(screen_text.has(definition.id), "achievement %s has Malay text" % definition.id)
+
+func _check_stages() -> void:
+	check(LevelLibrary.count() == 60, "stages 31-60 are released")
+	var tiles_seen := {}
+	for id in range(SchoolCanteenChapter.FIRST_STAGE, SchoolCanteenChapter.LAST_STAGE + 1):
+		var level := LevelLibrary.get_level(id)
+		var stage_name := "stage %d" % id
+		check(level.id == id and level.chapter_id == &"school_canteen", "%s belongs to the canteen" % stage_name)
+		check(SchoolCanteenChapter.TITLES_MS.has(level.title), "%s has a Malay title" % stage_name)
+		check(level.kuih.size() == 6, "%s has six tiles" % stage_name)
+		var board := level.kuih.map(func(item: KuihData) -> StringName: return item.id)
+		for tile in board:
+			tiles_seen[tile] = true
+		check(not level.customer_orders.is_empty(), "%s has orders" % stage_name)
+		for order in level.customer_orders:
+			for item in order.items:
+				check(board.has(item.kuih.id), "%s orders a tile on its board" % stage_name)
+		var used := {}
+		for spec in level.blockers:
+			if spec.kind in [BlockerSpec.Kind.PACKAGING_BOX, BlockerSpec.Kind.EMPTY_TRAY]:
+				check(board.has(spec.kuih_id), "%s has a target on its board" % stage_name)
+				check(level.require_blockers_cleared, "%s asks to fill its targets" % stage_name)
+			for cell in spec.cells:
+				check(cell.x >= 0 and cell.y >= 0 and cell.x < level.width and cell.y < level.height, "%s blocker is on the board" % stage_name)
+				check(not used.has(cell), "%s blockers do not overlap" % stage_name)
+				used[cell] = true
+		for beat in [level.story_before, level.story_after]:
+			check(beat == &"" or BeatLibrary.get_beat(beat) != null, "%s story exists" % stage_name)
+	for tile in NEW_TILES:
+		check(tiles_seen.has(tile), "tile %s is used" % tile)
+	for stage in [31, 38, 40, 45, 50, 55, 60]:
+		var level := LevelLibrary.get_level(stage)
+		check(level.story_before != &"" or level.story_after != &"", "stage %d has its story" % stage)
+	for pair in [[38, &"cikgu_salmah"], [45, &"adik_priya"], [55, &"encik"]]:
+		check(LevelLibrary.get_level(pair[0]).customer_orders[0].customer.id == pair[1], "stage %d opens with the customer who speaks" % pair[0])
+	for pair in [[40, &"tebaloi"], [50, &"putu_piring"], [60, &"ang_ku_kueh"]]:
+		check(LevelLibrary.get_level(pair[0]).recipe_unlock_id == pair[1], "stage %d discovers %s" % pair)
+	for id in NEW_CUSTOMERS:
+		check(CustomerLibrary.get_customer(id).texture != null, "customer %s has painted art" % id)
 
 func _check_customer_line_is_malay() -> void:
 	GameManager.pending_tutorial_index = 0
@@ -130,6 +170,7 @@ func _check_popup_invitation() -> void:
 	popup.show_milestone(40)
 	await get_tree().process_frame
 	await _capture("school-popup-40")
+	check(popup.find_child("MilestoneBeforeArt", true, false) != null, "an unrenovated canteen shows its painted before picture")
 	check(popup.find_child("ActivateNextStallButton", true, false) == null, "mid-location milestones do not invite")
 	var names := popup.find_children("*", "Label", true, false).map(func(label: Label) -> String: return label.text)
 	check(names.has("Kantin Sekolah"), "the popup names the School Canteen")
@@ -169,11 +210,11 @@ func _check_new_tile_cards() -> void:
 func _check_gameplay_backdrop() -> void:
 	GameManager.pending_tutorial_index = 0
 	var screen := LevelController.new()
-	screen.level_id = 35
+	screen.level_id = 57
 	add_child(screen)
 	for _i in 4:
 		await get_tree().process_frame
-	check(screen.backdrop.location_id == &"school_canteen", "stage 35 plays at the School Canteen")
+	check(screen.backdrop.location_id == &"school_canteen", "stage 57 plays at the School Canteen")
 	check(screen.backdrop._authored_background, "the School Canteen has a gameplay background")
 	if screen.story.visible:
 		screen.story.close()
@@ -181,7 +222,6 @@ func _check_gameplay_backdrop() -> void:
 	get_tree().paused = false
 	await _capture("school-gameplay-%d" % DisplayServer.window_get_size().x)
 	screen.free()
-	# New customers have no painted art yet and must still draw.
 	var icon := CharacterIcon.new()
 	icon.cast = CharacterIcon.Cast.CUSTOMER
 	icon.customer = CustomerLibrary.get_customer(&"cikgu_salmah")

@@ -13,7 +13,7 @@ func _ready() -> void:
   var map := JourneyMap.new()
   add_child(map)
   await get_tree().create_timer(.6).timeout
-  assert(map._destination.visible and not map._nodes.has(31))
+  assert(map._destination.visible)
   assert(map._nodes[18].size.x > map._nodes[19].size.x)
   assert(map._scroll.get_global_rect().position.y > map._chapters[0].get_global_rect().end.y)
   for stage in [1,18,30]:
