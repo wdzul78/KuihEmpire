@@ -146,6 +146,18 @@ Sasaran, diukur dengan sekurang-kurangnya 40 larian bagi setiap stage:
 - `stage_balance_sim.gd` perlu dipecah kepada beberapa proses kerana larian penuh terlalu lambat, dan juga dikemas kini had `last := 30` kepada `LevelLibrary.count()`.
 - Ujian main oleh manusia wajib untuk 40, 50, 57–60. Bot tidak mengukur rasa kecewa.
 
+Status 2 November 2026: penalaan bot siap, ujian main manusia belum. Semua 30 stage dijalankan 40 larian pada papan baharu (`--seed-offset=`), bukan papan yang digunakan semasa penalaan Fasa 4. Stage 32, 47, 50, 55 dan 58 diubah, kemudian dijalankan semula 40 larian pada papan lain. Sasaran bintang semua stage dikira daripada p40/p60 kecuali 33 dan 39, yang sudah hampir.
+
+| Stage | Perubahan | Teliti / kasual sebelum | Selepas |
+| --- | --- | --- | --- |
+| 32 | 21 langkah, karipap 9 | 88 / 82 | 100 / 100 |
+| 47 | 20 langkah | 100 / 100 | 100 / 93 |
+| 50 | 28 langkah | 95 / 90 | 93 / 65 |
+| 55 | Tart 14, lapis 13 | 75 / 68 | 93 / 68 |
+| 58 | 30 langkah, tart 16, ang ku 15 | 70 / 55 | 82 / 88 |
+
+Semua stage memenuhi sasaran kecuali 58, 82% berbanding 85% bagi bot teliti. Bot kasual menang 88% pada papan yang sama, jadi jurang itu masih dalam lingkungan variasi 40 larian. Semua kekalahan yang diperiksa pada 32, 47, 50, 55 dan 58 berlaku kerana pesanan tidak habis, bukan halangan. Stage giliran pelanggan kekal di bawah jalur Kuih/langkah kerana kuih untuk pesanan lain terbazir, dan kadar menang dijadikan ukuran utama.
+
 ### Fasa 6 — Pengesahan dan keluaran (1–2 sesi)
 
 Kemas kini ujian yang menganggap 30 peringkat:
@@ -188,7 +200,7 @@ Binaan APK atau AAB hanya apabila diminta.
 | # | Tajuk (BM / EN) | Jenis | Fokus | Halangan | Kuih/L |
 | --- | --- | --- | --- | --- | --- |
 | 31 | Hari Pertama / First Day | Ajar | Karipap, tiba di Kantin | — | 18/22 |
-| 32 | Loceng Rehat / Recess Bell | Latih | 2 pelanggan | D×2 | 20/20 |
+| 32 | Loceng Rehat / Recess Bell | Latih | 2 pelanggan | D×2 | 19/21 |
 | 33 | Beratur Ya! / Line Up! | Latih | Giliran 3 | — | 24/22 |
 | 34 | Bekal Cikgu / Teacher's Tray | Gabung | Tudung | T×2 | 24/20 |
 | 35 | Rehat Tenang / Quiet Break | Rehat | — | — | 20/24 |
@@ -203,18 +215,18 @@ Binaan APK atau AAB hanya apabila diminta.
 | 44 | Kawan Sekelas / Classmates | Latih | 3 murid | D×2 | 28/26 |
 | 45 | Waktu Senang / Easy Hour | Rehat | — | — | 24/27 |
 | 46 | Bom Manis / Sweet Bom | Ajar | Kuih Bom | — | 24/23 |
-| 47 | Stim Pagi / Morning Steam | Cabaran | Pengukus 2 lapis | K×4 | 32/24 |
+| 47 | Stim Pagi / Morning Steam | Cabaran | Pengukus 2 lapis | K×4 | 32/20 |
 | 48 | Tempahan Kelab / Club Order | Gabung | Kotak + dulang, wajib bersih | B×1, D2×2 | 36/26 |
 | 49 | Sirap & Daun / Syrup and Leaves | Cabaran | Gabungan | S×3, D×3 | 36/25 |
-| **50** | **Hari Sukan / Sports Day** | **Milestone** | Pesanan besar, upgrade 2 | T×3, K×2 | 40/30 |
+| **50** | **Hari Sukan / Sports Day** | **Milestone** | Pesanan besar, upgrade 2 | T×3, K×2 | 40/28 |
 | 51 | Rehat Padang / Field Break | Rehat | — | — | 26/28 |
 | 52 | Kantin Sesak / Packed Canteen | Latih | Giliran 3 | D×2 | 31/27 |
 | 53 | Agar-agar Ros / Rose Jelly | Ajar | Agar-agar | — | 26/24 |
 | 54 | Dulang Bersusun / Stacked Trays | Gabung | Dulang, wajib bersih | D2×3 | 38/27 |
-| 55 | Mesyuarat PIBG / PTA Meeting | Cabaran | Encik Lim + Cikgu, kotak | B×1, T×2 | 29/30 |
+| 55 | Mesyuarat PIBG / PTA Meeting | Cabaran | Encik Lim + Cikgu, kotak | B×1, T×2 | 27/30 |
 | 56 | Hujan Petang / Rainy Afternoon | Rehat | — | — | 28/30 |
 | 57 | Semua Sekali / Everything at Once | Cabaran | 3 jenis halangan | D×2, T×2, K×2 | 33/28 |
-| 58 | Latihan Akhir / Final Rehearsal | Cabaran | Sirap + kotak | S×3, B×1 | 34/28 |
+| 58 | Latihan Akhir / Final Rehearsal | Cabaran | Sirap + kotak | S×3, B×1 | 31/30 |
 | 59 | Malam Persediaan / Prep Night | Cabaran | Pesanan panjang | T×2, K×2 | 37/28 |
 | **60** | **Hari Anugerah / Awards Day** | **Akhir** | Semua pelanggan, gerai lengkap | T×4, D×2, K×2, B×1 | 52/33 |
 
