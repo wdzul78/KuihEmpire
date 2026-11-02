@@ -7,7 +7,7 @@ func run() -> void:
 	SaveManager.save_path = "user://kuih_journey_test.json"
 	SaveManager.reset()
 	ProgressionManager.complete_tutorial()
-	assert(LevelLibrary.count() == 30 and not LevelLibrary.has_level(31))
+	assert(LevelLibrary.count() == 60 and not LevelLibrary.has_level(61))
 	assert(not ProgressionManager.is_level_unlocked(2))
 	for stage in range(1, 31):
 		assert(ProgressionManager.is_level_unlocked(stage))
@@ -19,7 +19,7 @@ func run() -> void:
 	for i in 3:
 		assert(LocationManager.upgrade(&"family_stall"))
 	assert(ProgressionManager.world_state() == 3)
-	assert(not ProgressionManager.is_level_unlocked(31))
+	assert(ProgressionManager.is_level_unlocked(31) and not ProgressionManager.is_level_unlocked(32))
 	assert(ProgressionManager.gerai_level() >= 2)
 	assert(SaveManager.data["chapters"].has("school_canteen"))
 	var cosmetics: Array = SaveManager.data["gerai"]["cosmetics"].duplicate()
@@ -34,7 +34,7 @@ func run() -> void:
 	add_child(map)
 	await get_tree().process_frame
 	await get_tree().process_frame
-	assert(map._nodes.has(30) and map._destination.visible and not map._nodes.has(31))
+	assert(map._nodes.has(30) and map._nodes.has(31) and map._destination.visible)
 	assert(map._point(29).y < map._point(0).y)
 	map._start.pressed.emit()
 	assert(map.has_node("StagePreview"))
@@ -119,5 +119,5 @@ func run() -> void:
 	assert(ProgressionManager.world_state() == 2)
 	assert(SaveManager.data["gerai"]["cosmetics"].size() == 2)
 	await get_tree().create_timer(.6).timeout
-	print("PASS Journey MVP: 30 stages, milestones, replay, persistence, preview and starting specials")
+	print("PASS Journey MVP: 60 stages, milestones, replay, persistence, preview and starting specials")
 	get_tree().quit()

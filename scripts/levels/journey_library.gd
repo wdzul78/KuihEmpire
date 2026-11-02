@@ -14,15 +14,15 @@ const MILESTONES := {
 }
 
 ## One map section per ten stages, bottom of the map first. `chapter` names the
-## opening story group and `connector` the art frame on the seam below the section.
-## The School Canteen seams borrow Family Stall connector art until theirs arrives.
+## opening story group. The seam below a section draws `connector_strip`, a one-frame
+## image, or else frame `connector` of the Family Stall connector sheet.
 const SECTIONS := [
 	{"id": 1, "last": 10, "location": &"family_stall", "world_set": "journey_world_v2", "world": "village", "connector": 0, "chapter": &"prologue", "place_ms": "Gerai Keluarga", "place_en": "Family Stall", "title_ms": "Gerai Keluarga · Mula Bangkit", "title_en": "Family Stall · A New Beginning"},
 	{"id": 11, "last": 20, "location": &"family_stall", "world_set": "journey_world_v2", "world": "market", "connector": 1, "chapter": &"kuching", "place_ms": "Pasar Kampung", "place_en": "Village Market", "title_ms": "Gerai Keluarga · Kemas & Cantikkan", "title_en": "Family Stall · A Fresh Look"},
 	{"id": 21, "last": 30, "location": &"family_stall", "world_set": "journey_world_v2", "world": "waterfront", "connector": 0, "chapter": &"sarawak", "place_ms": "Waterfront Kuching", "place_en": "Kuching Waterfront", "title_ms": "Gerai Keluarga · Kembangkan Bisnes", "title_en": "Family Stall · Growing Together"},
-	{"id": 31, "last": 40, "location": &"school_canteen", "world_set": "journey_world_v3", "world": "school_gate", "connector": 0, "chapter": &"school_canteen", "place_ms": "Pintu Sekolah", "place_en": "School Gate", "title_ms": "Kantin Sekolah · Hari Pertama", "title_en": "School Canteen · First Days"},
-	{"id": 41, "last": 50, "location": &"school_canteen", "world_set": "journey_world_v3", "world": "school_canteen", "connector": 1, "chapter": &"school_canteen_2", "place_ms": "Kantin Sekolah", "place_en": "School Canteen", "title_ms": "Kantin Sekolah · Hari Sukan", "title_en": "School Canteen · Sports Day"},
-	{"id": 51, "last": 60, "location": &"school_canteen", "world_set": "journey_world_v3", "world": "school_field", "connector": 0, "chapter": &"school_canteen_3", "place_ms": "Padang Sekolah", "place_en": "School Field", "title_ms": "Kantin Sekolah · Hari Anugerah", "title_en": "School Canteen · Awards Day"},
+	{"id": 31, "last": 40, "location": &"school_canteen", "world_set": "journey_world_v3", "world": "school_gate", "connector_strip": "res://assets/ui/journey_transitions_v2/waterfront_to_gate.png", "chapter": &"school_canteen", "place_ms": "Pintu Sekolah", "place_en": "School Gate", "title_ms": "Kantin Sekolah · Hari Pertama", "title_en": "School Canteen · First Days"},
+	{"id": 41, "last": 50, "location": &"school_canteen", "world_set": "journey_world_v3", "world": "school_canteen", "connector_strip": "res://assets/ui/journey_transitions_v2/gate_to_canteen.png", "chapter": &"school_canteen_2", "place_ms": "Kantin Sekolah", "place_en": "School Canteen", "title_ms": "Kantin Sekolah · Hari Sukan", "title_en": "School Canteen · Sports Day"},
+	{"id": 51, "last": 60, "location": &"school_canteen", "world_set": "journey_world_v3", "world": "school_field", "connector_strip": "res://assets/ui/journey_transitions_v2/canteen_to_field.png", "chapter": &"school_canteen_3", "place_ms": "Padang Sekolah", "place_en": "School Field", "title_ms": "Kantin Sekolah · Hari Anugerah", "title_en": "School Canteen · Awards Day"},
 ]
 const LOCATION_NAMES_MS := {
 	&"family_stall": "Gerai Keluarga", &"school_canteen": "Kantin Sekolah", &"morning_market": "Pasar Pagi",

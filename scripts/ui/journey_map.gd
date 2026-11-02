@@ -487,12 +487,14 @@ func _sync_connectors() -> void:
   if _connectors.has(seam):
    continue
   var connector := TextureRect.new()
-  connector.texture = preload("res://assets/ui/journey_transitions_v1/connectors.png")
+  var strip: String = _sections[seam].get("connector_strip","")
+  connector.texture = preload("res://assets/ui/journey_transitions_v1/connectors.png") if strip.is_empty() else load(strip)
   connector.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
   connector.mouse_filter = Control.MOUSE_FILTER_IGNORE
   var blend := ShaderMaterial.new()
   blend.shader = preload("res://shaders/journey_connector.gdshader")
-  blend.set_shader_parameter("frame",float(_sections[seam]["connector"]))
+  blend.set_shader_parameter("frame",0.0 if not strip.is_empty() else float(_sections[seam]["connector"]))
+  blend.set_shader_parameter("frames",1.0 if not strip.is_empty() else 2.0)
   connector.material = blend
   _connector_base.add_child(connector)
   _connectors[seam] = connector
