@@ -52,5 +52,30 @@ func run() -> void:
 	check(SaveManager.save_game(), "save writes")
 	SaveManager.load_game()
 	check(JSON.stringify(SaveManager.data, "", true) == JSON.stringify(before, "", true), "save round trip")
+	_check_save_at_stage_12(frozen)
 	print("Stage 30 save tests: %s (%d problems)" % ["PASS" if failures.is_empty() else "FAIL", failures.size()])
 	get_tree().quit(0 if failures.is_empty() else 1)
+
+## A player part-way through the Family Stall must not be pushed ahead by the update.
+func _check_save_at_stage_12(frozen: Dictionary) -> void:
+	var save: Dictionary = frozen.duplicate(true)
+	for stage in range(13, 31):
+		save["levels"].erase(str(stage))
+	save["chapters"] = ["prologue"]
+	save["story_seen"] = ["milestone_claim_10"]
+	save["structural_upgrades"] = {"family_stall": 1}
+	var file := FileAccess.open(SaveManager.save_path, FileAccess.WRITE)
+	file.store_string(JSON.stringify(save))
+	file.close()
+	SaveManager.load_game()
+	check(EconomyManager.coins() == int(save["coins"]), "stage 12: coins kept")
+	for stage in range(1, 13):
+		check(ProgressionManager.stars_for(stage) == int(save["levels"][str(stage)]["stars"]), "stage 12: stage %d stars kept" % stage)
+	check(ProgressionManager.highest_cleared() == 12, "stage 12: highest cleared stage kept")
+	check(ProgressionManager.current_level() == 13, "stage 12: stage 13 is next")
+	check(ProgressionManager.is_level_unlocked(13), "stage 12: stage 13 is open")
+	check(not ProgressionManager.is_level_unlocked(14), "stage 12: stage 14 stays closed")
+	check(not ProgressionManager.is_level_unlocked(31), "stage 12: stage 31 stays closed")
+	check(not LocationManager.stall_unlocked(&"school_canteen"), "stage 12: School Canteen stays closed")
+	check(LocationManager.active_stall_id() == &"family_stall", "stage 12: Family Stall stays active")
+	check(LocationManager.structural_level(&"family_stall") == 1, "stage 12: stall upgrades kept")

@@ -145,7 +145,8 @@ func _show_unlock(definition: AchievementDefinition) -> void:
 		_toast_coins = 0
 	_toast_count += 1
 	_toast_coins += definition.reward_coins
-	_toast_label.text = "★ %s\n+%d coins · Achievement unlocked" % [definition.title if _toast_count == 1 else "%d achievements" % _toast_count, _toast_coins]
+	var heading := AchievementsScreen._title(definition) if _toast_count == 1 else JourneyArt.localized("%d pencapaian", "%d achievements") % _toast_count
+	_toast_label.text = JourneyArt.localized("★ %s\n+%d syiling · Pencapaian dibuka", "★ %s\n+%d coins · Achievement unlocked") % [heading, _toast_coins]
 	_toast.show()
 	_toast.modulate.a = 1.0
 	_toast_tween = create_tween()

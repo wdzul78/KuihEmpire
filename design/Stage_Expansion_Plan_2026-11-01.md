@@ -173,10 +173,11 @@ Kemas kini ujian yang menganggap 30 peringkat:
 
 Ujian baharu:
 
-- [ ] Save tamat stage 30 membuka stage 31 tanpa kehilangan bintang, syiling atau hiasan.
-- [ ] Save sederhana (stage 12) tidak terjejas.
-- [ ] Setiap stage boleh dibina: tile sah, pelanggan wujud, sel halangan dalam papan, tiada sel bertindih, ada tajuk Melayu.
-- [ ] Smoke test untuk 31, 40, 50, 60.
+- [x] Save tamat stage 30 membuka stage 31 tanpa kehilangan bintang, syiling atau hiasan.
+- [x] Save sederhana (stage 12) tidak terjejas.
+- [x] Setiap stage boleh dibina: tile sah, pelanggan wujud, sel halangan dalam papan, tiada sel bertindih, ada tajuk Melayu.
+- [x] Smoke test untuk 31, 40, 50, 60.
+- [x] Menang sebenar pada 31, 40, 50, 60 melalui skrin permainan, kad resipi dan popup milestone (`tools/stage_win_flow_test.gd`). Ujian ini menambah langkah dan tidak menekan butang Teruskan selepas popup.
 - [ ] Ujian Android sebenar: peta, memori, audio, masa muat.
 - [ ] Semak saiz AAB. Had modul asas Google Play perlu disahkan semula sebelum muat naik.
 

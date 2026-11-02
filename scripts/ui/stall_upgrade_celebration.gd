@@ -18,7 +18,7 @@ static func show_upgrade(parent: Control, id: StringName, state: int) -> void:
 	JourneyArt.place(overlay, panel, Rect2(.065,.21,.87,.58))
 	JourneyArt.label(panel,JourneyArt.localized("GERAI DINAIK TARAF!","STALL UPGRADED!"),Rect2(.05,.025,.9,.09),48)
 	var location := LocationDefinition.find(id)
-	JourneyArt.label(panel,location.state_name(state),Rect2(.05,.115,.9,.07),34)
+	JourneyArt.label(panel,JourneyLibrary.state_name(location.state_name(state)),Rect2(.05,.115,.9,.07),34)
 	for i in 2:
 		var image := GeraiBackdrop.new()
 		JourneyArt.place(panel,image,Rect2(.07+i*.48,.25,.38,.57))

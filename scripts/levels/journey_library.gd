@@ -29,6 +29,14 @@ const LOCATION_NAMES_MS := {
 	&"town": "Pekan", &"city": "Bandar", &"festival": "Festival Kuih",
 	&"bazaar_ramadan": "Bazar Ramadan", &"government_canteen": "Kantin Pejabat Kerajaan",
 }
+const STATE_NAMES_MS := {
+	"Starting Stall": "Gerai Permulaan", "Revived Stall": "Gerai Kembali Hidup", "Polished Stall": "Gerai Berseri", "Completed Stall": "Gerai Lengkap",
+	"Old Family Stall": "Gerai Keluarga Lama", "Revived Family Stall": "Gerai Keluarga Kembali Hidup", "Polished Family Stall": "Gerai Keluarga Berseri",
+	"Completed Family Stall": "Gerai Keluarga Lengkap", "New Family Stall": "Gerai Keluarga Baharu",
+	"Old School Canteen": "Kantin Sekolah Lama", "Revived School Canteen": "Kantin Sekolah Kembali Hidup",
+	"Polished School Canteen": "Kantin Sekolah Berseri", "Completed School Canteen": "Kantin Sekolah Lengkap",
+	"Bazaar Setup": "Persediaan Bazar", "Preparing for Iftar": "Bersiap untuk Berbuka", "A Lively Bazaar": "Bazar Meriah", "Sweetness Together": "Kemanisan Bersama",
+}
 
 ## Only sections that already have stages appear on the map.
 static func released_sections() -> Array:
@@ -46,6 +54,9 @@ static func world_centers() -> Dictionary:
 
 static func location_name(id: StringName) -> String:
 	return JourneyArt.localized(LOCATION_NAMES_MS[id], LocationDefinition.find(id).display_name)
+
+static func state_name(english: String) -> String:
+	return JourneyArt.localized(STATE_NAMES_MS.get(english, english), english)
 
 static func section_index(stage: int) -> int:
 	for index in SECTIONS.size():
