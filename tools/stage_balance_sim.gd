@@ -14,6 +14,10 @@ var runs := 40
 var _scores: Array[int] = []
 var first := 1
 var last := LevelLibrary.count()
+## Use a new offset to check tuning on boards it was not tuned against.
+var seed_offset := 0
+var _lost_on_orders := 0
+var _lost_on_blockers := 0
 
 func _ready() -> void:
 	for arg in OS.get_cmdline_user_args():
@@ -23,15 +27,19 @@ func _ready() -> void:
 			var span := arg.trim_prefix("--stages=").split("-")
 			first = int(span[0])
 			last = int(span[-1])
-	print("stage | moves | careful win% left 3star% | casual win% left 3star% | 2star/3star target | careful p40/p60 score")
+		elif arg.begins_with("--seed-offset="):
+			seed_offset = int(arg.trim_prefix("--seed-offset="))
+	print("stage | moves | careful win% left 3star% | casual win% left 3star% | 2star/3star target | careful p40/p60 score | losses on orders/only blockers")
 	for id in range(first, last + 1):
 		var level := LevelLibrary.get_level(id)
 		_scores.clear()
+		_lost_on_orders = 0
+		_lost_on_blockers = 0
 		var careful := _play_many(level, false)
 		var careful_scores := _scores.duplicate()
 		var casual := _play_many(level, true)
 		_scores = careful_scores
-		print("%5d | %5d | %8.0f%% %5.1f %5.0f%% | %7.0f%% %5.1f %5.0f%% | %d/%d | %d/%d" % [id, level.move_budget(), careful.x * 100.0, careful.y, careful.z * 100.0, casual.x * 100.0, casual.y, casual.z * 100.0, level.score_two_star, level.score_three_star, _percentile(.4), _percentile(.6)])
+		print("%5d | %5d | %8.0f%% %5.1f %5.0f%% | %7.0f%% %5.1f %5.0f%% | %d/%d | %d/%d | %d/%d" % [id, level.move_budget(), careful.x * 100.0, careful.y, careful.z * 100.0, casual.x * 100.0, casual.y, casual.z * 100.0, level.score_two_star, level.score_three_star, _percentile(.4), _percentile(.6), _lost_on_orders, _lost_on_blockers])
 	get_tree().quit()
 
 ## Win rate, average moves left on wins, and three-star rate over all runs.
@@ -40,7 +48,7 @@ func _play_many(level: LevelDefinition, casual: bool) -> Vector3:
 	var left_total := 0
 	var three := 0
 	for i in runs:
-		var outcome := _play(level, casual, 7919 * (i + 1) + level.id)
+		var outcome := _play(level, casual, 7919 * (i + 1) + level.id + seed_offset)
 		if outcome.x >= 0:
 			wins += 1
 			left_total += outcome.x
@@ -107,6 +115,10 @@ func _play(level: LevelDefinition, casual: bool, seed_value: int) -> Vector2i:
 			logic.refill()
 		if active >= orders.size() and (not level.require_blockers_cleared or logic.remaining_blockers() == 0):
 			return Vector2i(moves, score.total + moves * level.scoring.remaining_move)
+	if active < orders.size():
+		_lost_on_orders += 1
+	else:
+		_lost_on_blockers += 1
 	return Vector2i(-1, 0)
 
 func _percentile(at: float) -> int:
