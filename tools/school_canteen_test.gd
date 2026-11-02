@@ -174,6 +174,14 @@ func _check_popup_invitation() -> void:
 	check(popup.find_child("ActivateNextStallButton", true, false) == null, "mid-location milestones do not invite")
 	var names := popup.find_children("*", "Label", true, false).map(func(label: Label) -> String: return label.text)
 	check(names.has("Kantin Sekolah"), "the popup names the School Canteen")
+	check(names.has("Kantin Sekolah Lama"), "the popup names the canteen's state in Malay")
+	for location in LocationDefinition.all():
+		check(JourneyLibrary.LOCATION_NAMES_MS.has(location.id), "%s has a Malay name" % location.id)
+		for level in 4:
+			check(JourneyLibrary.STATE_NAMES_MS.has(location.state_name(level)), "%s has a Malay state name" % location.state_name(level))
+	for level in 4:
+		check(JourneyLibrary.STATE_NAMES_MS.has(StallDefinition.find(&"school_canteen").state(level).display_name), "canteen state %d has a Malay name" % level)
+		check(JourneyLibrary.STATE_NAMES_MS.has(StallDefinition.find(&"family_stall").state(level).display_name), "stall state %d has a Malay name" % level)
 	popup.free()
 	# Renovate opens the milestone's location, not the active stall.
 	GeraiScreen.requested_location = &"school_canteen"

@@ -41,7 +41,7 @@ func show_milestone(stage: int) -> void:
 	preview.custom_minimum_size = Vector2(0, 280 if opens_next else 420)
 	preview.clip_contents = true
 	stack.add_child(preview)
-	stack.add_child(UIKit.label(StallDefinition.find(snapshot.id).state(snapshot.state_index).display_name, 38))
+	stack.add_child(UIKit.label(JourneyLibrary.state_name(StallDefinition.find(snapshot.id).state(snapshot.state_index).display_name), 38))
 	var spacer := Control.new()
 	spacer.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	var renovate := GameButton.create(JourneyArt.localized("RENOVASI GERAI", "RENOVATE STALL"), "primary", 40)
@@ -54,7 +54,7 @@ func show_milestone(stage: int) -> void:
 		queue_free()
 	)
 	stack.add_child(UIKit.wrap_label(JourneyLibrary.completion_text(stage), 38))
-	stack.add_child(UIKit.wrap_label(JourneyArt.localized("Ganjaran milestone: resipi dan 30 minit Free Play. Upgrade gerai kini boleh dibeli dalam My Stalls.", "Milestone rewards: a recipe and 30 minutes of Free Play. A stall upgrade is now available in My Stalls."), 34))
+	stack.add_child(UIKit.wrap_label(JourneyArt.localized("Ganjaran milestone: resipi dan 30 minit Free Play. Upgrade gerai kini boleh dibeli di skrin Gerai.", "Milestone rewards: a recipe and 30 minutes of Free Play. A stall upgrade is now available in My Stalls."), 34))
 	stack.add_child(spacer)
 	if opens_next:
 		var activate := GameButton.create(JourneyArt.localized("JADIKAN GERAI AKTIF", "MAKE IT MY STALL"), "back", 36)

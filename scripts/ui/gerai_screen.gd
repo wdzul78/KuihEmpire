@@ -89,8 +89,7 @@ func _build() -> void:
 	_selector.fit_to_longest_item = false
 	_selector.clip_text = true
 	for location in LocationDefinition.all():
-		var title := JourneyArt.localized("Gerai Keluarga",location.display_name) if location.id == &"family_stall" else location.display_name
-		_selector.add_item(title + ("" if LocationManager.stall_unlocked(location.id) else " · " + RenovationText.text("locked")))
+		_selector.add_item(JourneyLibrary.location_name(location.id) + ("" if LocationManager.stall_unlocked(location.id) else " · " + RenovationText.text("locked")))
 	JourneyArt.place(self, _selector, Rect2(.27,.026,.40,.05))
 	_selector.item_selected.connect(func(index: int) -> void:
 		if _busy:

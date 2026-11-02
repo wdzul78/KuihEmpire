@@ -74,6 +74,10 @@ func run() -> void:
 	await _play_level(1)
 	await _play_level(7)
 	await _play_level(30)
+	await _play_level(31)
+	await _play_level(40)
+	await _play_level(50)
+	await _play_level(60)
 
 	print("")
 	print("Smoke test")
