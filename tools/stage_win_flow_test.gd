@@ -108,6 +108,9 @@ func _check_win(screen: LevelController, id: int, coins: int) -> void:
 	if JourneyLibrary.milestone(id).is_empty():
 		return
 	await _close_recipe_cards(screen)
+	check(screen.result._subtitle.text.contains("Main Bebas"), "stage %d: the Free Play bonus shows inside the card" % id)
+	check(screen.result.get_node_or_null("FreePlayReward") == null, "stage %d: no bonus text over Aina" % id)
+	await _capture("win-flow-%d-card" % id)
 	# Continuing past a stage without a milestone would leave this scene.
 	screen._on_result_continue()
 	await get_tree().process_frame
