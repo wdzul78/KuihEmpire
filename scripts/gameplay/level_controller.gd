@@ -20,6 +20,9 @@ const EXTRA_MOVES := 5
 @export var endless_mode := false
 @export var level_id: int = 0
 @export var tutorial_index: int = 0
+## Stages opened from the game get the customer conversation and order card.
+## Harnesses set `level_id` directly and skip it unless they ask for it here.
+@export var force_order_intro := false
 
 var level: LevelDefinition = null
 var orders: Array[CustomerOrder] = []
@@ -43,6 +46,8 @@ var hud: HUD
 var board: MatchBoard
 var result: ResultOverlay
 var story: StoryPopup
+var order_intro: OrderIntro
+var _order_intro_done := false
 var coach: TutorialCoach
 var _target_banner: PanelContainer
 var _victory_bonus: VictoryBonus
@@ -163,6 +168,12 @@ func _build() -> void:
 	story.finished.connect(_on_story_finished)
 	_root.add_child(story)
 
+	order_intro = OrderIntro.new()
+	order_intro.name = "OrderIntro"
+	order_intro.order_target = hud.order_panel
+	order_intro.finished.connect(_begin_presentation)
+	_root.add_child(order_intro)
+
 	result = ResultOverlay.new()
 	result.name = "StageResult"
 	result.visible = false
@@ -205,6 +216,9 @@ func _start_level() -> void:
 	_blocker_intros.clear()
 	_active_blocker_intro = -1
 	_blocker_intro_prepared = false
+	_order_intro_done = false
+	if order_intro != null:
+		order_intro.dismiss()
 	AudioManager.start_puzzle_music()
 	_victory_serial += 1
 	if is_instance_valid(_victory_bonus):
@@ -268,6 +282,8 @@ func _begin_presentation() -> void:
 	board.enabled = true
 	if coach != null:
 		coach.set_process_input(true)
+	if _play_order_intro():
+		return
 	if is_tutorial:
 		_start_coach()
 	elif level.story_before != &"" and not ProgressionManager.story_seen(level.story_before):
@@ -276,6 +292,25 @@ func _begin_presentation() -> void:
 		story.play(BeatLibrary.get_beat(level.story_before))
 	elif not endless_mode:
 		_play_blocker_intro()
+
+## Once per attempt: the order card, after a customer conversation on the first
+## visit. A stage with its own unseen story beat lets that beat do the talking.
+func _play_order_intro() -> bool:
+	if _order_intro_done or is_tutorial or endless_mode:
+		return false
+	_order_intro_done = true
+	var order := active_order()
+	if order == null or not (force_order_intro or level_id == 0):
+		return false
+	var seen := StringName("order_intro_%d" % level.id)
+	var story_pending := level.story_before != &"" and not ProgressionManager.story_seen(level.story_before)
+	var lines: Array = []
+	if not story_pending and not ProgressionManager.story_seen(seen):
+		lines = OrderIntro.conversation(level.id, order.customer, order.remaining)
+		ProgressionManager.mark_story_seen(seen)
+	board.enabled = false
+	order_intro.play(order.customer, order.remaining, moves_left, lines)
+	return true
 
 func _play_blocker_intro() -> bool:
 	if not _blocker_intro_prepared:
@@ -622,9 +657,7 @@ func _win() -> void:
 		_victory_bonus = null
 	result.show_win(_display_title(), stars, coins, unlocks, is_new_best, stage_result)
 	if free_bonus > 0:
-		var celebration := UIKit.label("Free Play · %d min!" % [free_bonus / 60], 30, Palette.PINK_DARK)
-		celebration.name = "FreePlayReward"
-		JourneyArt.place(result, celebration, Rect2(.20, .20, .60, .04))
+		result.show_free_play_reward(free_bonus / 60)
 
 	if not is_tutorial and not endless_mode and JourneyLibrary.milestone(level.id).is_empty() and level.story_after != &"":
 		if not ProgressionManager.story_seen(level.story_after):

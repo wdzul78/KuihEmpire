@@ -91,7 +91,18 @@ func _draw_showcase() -> void:
 		draw_rect(target.grow(4),Color(1,.85,.24,.28),false,8,true)
 		draw_rect(target,Color("ffe680"),false,3,true)
 	var sign := Rect2(art_point(Vector2(.35,.357)),art_point(Vector2(.68,.395))-art_point(Vector2(.35,.357)))
-	draw_string(UIKit.bold_font(),sign.position + Vector2(0,sign.size.y*.72),JourneyArt.localized("Gerai Keluarga","Family Stall"),HORIZONTAL_ALIGNMENT_CENTER,sign.size.x,int(sign.size.y*.60),Palette.WOOD_DARK)
+	_draw_sign_name(sign)
+
+## Light lettering with a dark rim, as on the stall name plate; dark text sinks into the wood.
+func _draw_sign_name(sign: Rect2) -> void:
+	var font := UIKit.bold_font()
+	var text := JourneyLibrary.location_name(location_id)
+	var font_size := int(sign.size.y*.60)
+	while font_size > 12 and font.get_string_size(text,HORIZONTAL_ALIGNMENT_LEFT,-1,font_size).x > sign.size.x*.86:
+		font_size -= 1
+	var baseline := sign.position + Vector2(0,sign.size.y*.5 + font_size*.36)
+	draw_string_outline(font,baseline,text,HORIZONTAL_ALIGNMENT_CENTER,sign.size.x,font_size,maxi(4,font_size/5),Palette.WOOD_DARK)
+	draw_string(font,baseline,text,HORIZONTAL_ALIGNMENT_CENTER,sign.size.x,font_size,Palette.PAPER)
 const FABRIC_ACCENT := preload("res://shaders/stall_fabric_accent.gdshader")
 
 ## Painted market backdrop for the stall and gameplay screens.
@@ -485,6 +496,9 @@ func _draw_decor_texture(item: DecorDefinition, tint: Color, style: String = "or
 	var target := Rect2(art_point(uv.position), art_point(uv.end) - art_point(uv.position))
 	if item.kind in ["sign","counter"] or (item.id == "pink_batik" and (showcase_active() or (background_context == "menu" and not gameplay_mode))):
 		draw_texture_rect(texture,target,false,tint)
+		# The showcase names its own painted board; elsewhere the bought sign carries the name.
+		if item.kind == "sign" and not showcase_active():
+			_draw_sign_name(target)
 		return
 	var extent := texture.get_size() * minf(target.size.x / texture.get_width(), target.size.y / texture.get_height())
 	draw_texture_rect(texture, Rect2(target.get_center() - extent * .5, extent), false, tint)

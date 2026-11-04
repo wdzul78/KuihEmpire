@@ -338,6 +338,7 @@ func show_win(_title_text: String, stars: int, coins: int, unlocks: Array, is_ne
 	_title.text = JourneyArt.localized("Pesanan siap!","Order served!")
 	_title.add_theme_font_size_override("font_size",62)
 	_subtitle.text = MenuText.text("served_perfectly")
+	_subtitle.add_theme_color_override("font_color", Palette.WOOD_DARK)
 	_stars.filled = clampi(stars, 0, 3)
 	_stars.queue_redraw()
 	_coins_label.text = "+%d" % coins
@@ -358,6 +359,11 @@ func show_win(_title_text: String, stars: int, coins: int, unlocks: Array, is_ne
 		_celebration.z_index = 20
 		add_child(_celebration)
 	_celebration.celebrate(Rect2(Vector2.ZERO, size))
+
+## Free Play earned by this win takes the subtitle line, inside the card and clear of Aina.
+func show_free_play_reward(minutes: int) -> void:
+	_subtitle.text = JourneyArt.localized("Bonus: %d minit Main Bebas!", "Bonus: %d min Free Play!") % minutes
+	_subtitle.add_theme_color_override("font_color", Palette.PINK_DARK)
 
 func show_fail(missing: String, can_afford_offer: bool, details: StageResult = null) -> void:
 	if _celebration != null:
