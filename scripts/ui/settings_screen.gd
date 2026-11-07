@@ -128,6 +128,13 @@ func _build() -> void:
 	)
 	stack.add_child(privacy)
 
+	var terms := GameButton.create(JourneyArt.localized("Terma perkhidmatan", "Terms of service"), "secondary")
+	terms.name = "TermsOfServiceButton"
+	terms.pressed.connect(func() -> void:
+		OS.shell_open(JourneyArt.localized("https://www.keribang.com/karya/kuih-empire/terma/", "https://www.keribang.com/work/kuih-empire/terms/"))
+	)
+	stack.add_child(terms)
+
 	var reset := GameButton.create(MenuText.text("reset"), "danger")
 	reset.pressed.connect(_on_reset)
 	stack.add_child(reset)
