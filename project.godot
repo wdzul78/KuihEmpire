@@ -38,6 +38,8 @@ GameManager="*res://scripts/core/game_manager.gd"
 GameplayEvents="*res://scripts/core/gameplay_events.gd"
 AchievementManager="*res://scripts/core/achievement_manager.gd"
 RankingManager="*res://scripts/core/ranking_manager.gd"
+GodotPlayGameServices="*uid://s5s5hgmxpnxi"
+PlayGames="*res://scripts/core/play_games.gd"
 
 [display]
 
@@ -51,7 +53,7 @@ window/handheld/orientation=1
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/AdmobPlugin/plugin.cfg")
+enabled=PackedStringArray("res://addons/AdmobPlugin/plugin.cfg", "res://addons/GodotPlayGameServices/plugin.cfg")
 
 [file_customization]
 

@@ -12,6 +12,7 @@ var _options: OptionButton
 var _notice: Label
 var _sample_toggle: CheckButton
 var _tabs: Array[Button] = []
+var _play_games: Button
 
 ## Hand-drawn dropdown arrow; the default theme arrow is lost on the painted frame.
 class Chevron extends Control:
@@ -74,7 +75,14 @@ func _ready() -> void:
 	_sticky = JourneyArt.label(self, "", Rect2(.13, .832, .74, .08), 32, Palette.WOOD_DARK)
 	_sticky.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_notice = JourneyArt.label(self, "", Rect2(.16, .912, .68, .024), 26, Palette.WOOD_DARK)
-	if OS.has_feature("debug"):
+	if PlayGames.available:
+		_play_games = GameButton.create("Google Play", "secondary", 32)
+		_play_games.name = "PlayGamesButton"
+		_play_games.custom_minimum_size = Vector2.ZERO
+		JourneyArt.place(self, _play_games, Rect2(.27, .938, .46, .042))
+		_play_games.pressed.connect(_open_play_games)
+		PlayGames.changed.connect(refresh)
+	elif OS.has_feature("debug"):
 		var sample := CheckButton.new()
 		_sample_toggle = sample
 		for style in ["normal", "hover", "pressed", "disabled", "focus"]:
@@ -94,6 +102,21 @@ func _ready() -> void:
 	RankingManager.updated.connect(_rankings_ready)
 	AchievementManager.refresh()
 	_refresh_options()
+
+## Google's own achievements or leaderboard screens; signs the player in first.
+func _open_play_games() -> void:
+	if not PlayGames.signed_in:
+		PlayGames.sign_in()
+	elif _ranking:
+		PlayGames.show_leaderboards()
+	else:
+		PlayGames.show_achievements()
+
+func _paint_play_games() -> void:
+	if _play_games == null:
+		return
+	_play_games.visible = not _ranking or PlayGamesIds.has_leaderboards() or not PlayGames.signed_in
+	_play_games.text = JourneyArt.localized("Log masuk Google Play", "Sign in to Google Play") if not PlayGames.signed_in else (JourneyArt.localized("Ranking Google Play", "Google Play ranking") if _ranking else JourneyArt.localized("Award Google Play", "Google Play awards"))
 
 func _rankings_ready() -> void:
 	if _ranking:
@@ -191,6 +214,7 @@ func _clear() -> void:
 func refresh() -> void:
 	if _content == null:
 		return
+	_paint_play_games()
 	if _ranking:
 		RankingManager.refresh()
 		_draw_rankings()
@@ -199,7 +223,7 @@ func refresh() -> void:
 	var metrics := AchievementManager.metrics()
 	_status.text = JourneyArt.localized("%d / %d pencapaian selesai\n★ %d  ·  Resipi %d  ·  Pesanan %d  ·  Cerita %d", "%d / %d achievements completed\n★ %d  ·  Recipes %d  ·  Orders %d  ·  Stories %d") % [AchievementManager.completed_count(), AchievementManager.definitions.size(), metrics["stars"], metrics["recipes"], metrics.get("orders_served", 0), metrics["stories"]]
 	_sticky.text = JourneyArt.localized("Raikan setiap langkah kecil.\nGanjaran ditambah automatik sebaik dibuka.", "Celebrate every small step.\nRewards are added automatically once unlocked.")
-	_notice.text = JourneyArt.localized("Pencapaian peribadi · disimpan dalam peranti ini", "Personal accomplishments · saved on this device")
+	_notice.text = JourneyArt.localized("Pencapaian peribadi · disimpan ke akaun Google Play", "Personal accomplishments · saved to your Google Play account") if PlayGames.signed_in else JourneyArt.localized("Pencapaian peribadi · disimpan dalam peranti ini", "Personal accomplishments · saved on this device")
 	var groups: Dictionary = {}
 	for definition in AchievementManager.definitions:
 		if _category != "ALL" and definition.category != _category:
@@ -248,7 +272,7 @@ func _draw_rankings() -> void:
 	for entry in rows:
 		samples = samples or entry.is_sample
 	_status.text = _t("Ranking Perjalanan\nPerjalanan → Cerita → Stage → Bintang → Skor", "Journey Ranking\nJourney → Story → Stage → Stars → Score")
-	_notice.text = "SAMPLE DATA · development only" if samples else _t("Rekod setempat · ranking dalam talian belum disambung", "Local snapshot · online ranking is not connected")
+	_notice.text = "SAMPLE DATA · development only" if samples else (_t("Rekod setempat · ranking dalam talian di Google Play", "Local snapshot · online ranking is on Google Play") if PlayGames.signed_in and PlayGamesIds.has_leaderboards() else _t("Rekod setempat · ranking dalam talian belum disambung", "Local snapshot · online ranking is not connected"))
 	if own == null:
 		_sticky.text = _t("Rekod perjalanan anda sedang dimuat…", "Your Journey snapshot is loading…")
 		return

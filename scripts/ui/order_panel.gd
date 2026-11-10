@@ -51,6 +51,25 @@ var tutorial_layout: PackedScene = GameUILayout.TUTORIAL
 var campaign_layout: PackedScene = GameUILayout.CAMPAIGN
 var _order: CustomerOrder = null
 var _chips: Dictionary = {}   # kuih id -> {icon, count, label, root}
+## Syrup puddles still to clean, or -1 when the stage has no syrup goal.
+var _syrup_left := -1
+const SYRUP_GOAL := &"__syrup"
+
+
+## A small gula melaka puddle used as the syrup goal's icon.
+class SyrupGoalIcon extends Control:
+	func _ready() -> void:
+		mouse_filter = Control.MOUSE_FILTER_IGNORE
+		resized.connect(queue_redraw)
+
+	func _quarter(pos: Vector2i) -> Rect2:
+		var edge := minf(size.x, size.y) * .92
+		var quarter := Vector2.ONE * edge * .5
+		return Rect2((size - Vector2.ONE * edge) * .5 + Vector2(pos) * quarter, quarter)
+
+	func _draw() -> void:
+		var spill := {Vector2i(0, 0): .9, Vector2i(1, 0): .75, Vector2i(0, 1): .8, Vector2i(1, 1): 1.0}
+		GulaMelakaSyrup.draw_puddle(self, spill, _quarter)
 
 
 func _ready() -> void:
@@ -147,7 +166,24 @@ func bind(order: CustomerOrder) -> void:
 	_clear_chips()
 	for id in order.item_ids():
 		_add_chip(id)
+	if _syrup_left >= 0:
+		_add_chip(SYRUP_GOAL)
 	_refresh_chips()
+
+
+## Shows how many syrup puddles are left as a goal beside the order
+## (-1 hides it). The goal turns into a tick once every puddle is cleaned.
+func set_syrup_goal(left: int, animate: bool = false) -> void:
+	_syrup_left = left
+	if left < 0:
+		if _chips.has(SYRUP_GOAL):
+			_chips[SYRUP_GOAL]["root"].queue_free()
+			_chips.erase(SYRUP_GOAL)
+			_layout_chips()
+		return
+	if not _chips.has(SYRUP_GOAL):
+		_add_chip(SYRUP_GOAL)
+	_update_chip(SYRUP_GOAL, animate)
 
 func set_coaching(value: bool, preserve_tutorial_layout: bool = false) -> void:
 	# Coaching changes dialogue, while both modes retain the same portrait strip.
@@ -261,17 +297,23 @@ func _clear_chips() -> void:
 
 
 func _add_chip(id: StringName) -> void:
-	var data := KuihLibrary.get_kuih(id)
-	if data == null:
-		return
+	var icon: Control
+	if id == SYRUP_GOAL:
+		icon = SyrupGoalIcon.new()
+		icon.name = "SyrupGoalIcon"
+	else:
+		var data := KuihLibrary.get_kuih(id)
+		if data == null:
+			return
+		var kuih_icon := KuihIcon.new()
+		kuih_icon.name = "KuihIcon"
+		kuih_icon.kuih = data
+		icon = kuih_icon
 	var root := Control.new()
-	root.name = "Kuih_" + String(id)
+	root.name = "SyrupGoal" if id == SYRUP_GOAL else "Kuih_" + String(id)
 	root.clip_contents = true
 	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_chips_row.add_child(root)
-	var icon := KuihIcon.new()
-	icon.name = "KuihIcon"
-	icon.kuih = data
 	icon.custom_minimum_size = Vector2(1, 1)
 	root.add_child(icon)
 	var badge := Control.new()
@@ -333,15 +375,22 @@ func _layout_chips() -> void:
 
 func _update_chip(id: StringName, animate: bool = false) -> void:
 	var entry: Dictionary = _chips[id]
-	var remaining := maxi(0, int(_order.remaining.get(id, 0)))
-	var done := _order.wanted_for(id) > 0 and remaining == 0
+	var remaining := 0
+	var done := false
+	if id == SYRUP_GOAL:
+		remaining = maxi(0, _syrup_left)
+		done = remaining == 0
+	elif _order != null:
+		remaining = maxi(0, int(_order.remaining.get(id, 0)))
+		done = _order.wanted_for(id) > 0 and remaining == 0
 	var was_done: bool = entry["done"]
 	var changed: bool = entry["remaining"] != remaining
 	entry["label"].text = str(remaining)
 	entry["badge"].visible = not done
 	entry["tick"].visible = done
 	entry["tick"].accessibility_name = "Order complete" if SaveManager.get_setting("language", "en") == "en" else "Pesanan lengkap"
-	entry["root"].tooltip_text = "%s: %s" % [KuihLibrary.get_display_name(id), entry["tick"].accessibility_name if done else str(remaining)]
+	var title := JourneyArt.localized("Sirap gula melaka", "Gula melaka syrup") if id == SYRUP_GOAL else KuihLibrary.get_display_name(id)
+	entry["root"].tooltip_text = "%s: %s" % [title, entry["tick"].accessibility_name if done else str(remaining)]
 	entry["done"] = done
 	entry["remaining"] = remaining
 	if animate and changed:
@@ -386,12 +435,14 @@ func _pop(node: Control, amount: float = 1.14) -> void:
 func _rebuild_chips() -> void:
 	if _order == null or _chips_row == null:
 		return
-	if _chips.size() == _order.item_ids().size():
+	if _chips.size() == _order.item_ids().size() + (1 if _syrup_left >= 0 else 0):
 		_refresh_chips()
 		return
 	_clear_chips()
 	for id in _order.item_ids():
 		_add_chip(id)
+	if _syrup_left >= 0:
+		_add_chip(SYRUP_GOAL)
 
 func _redraw_characters() -> void:
 	if is_instance_valid(_portrait):

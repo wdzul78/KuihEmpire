@@ -43,7 +43,7 @@ func is_target() -> bool:
 
 func _draw() -> void:
 	var r := Rect2(Vector2.ZERO, size)
-	BoardArt.draw_blocker(self, r, kind, hp, max_hp)
+	BoardArt.draw_blocker(self, r, kind, hp, max_hp, Time.get_ticks_msec() / 1000.0)
 	if not is_target():
 		if max_hp > 1:
 			_draw_count(str(hp))

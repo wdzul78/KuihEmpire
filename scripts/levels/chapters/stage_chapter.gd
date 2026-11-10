@@ -78,6 +78,12 @@ static func _leaf(cells: Array[Vector2i]) -> BlockerSpec:
 	return BlockerSpec.make(BlockerSpec.Kind.BANANA_LEAF, cells, 1)
 
 
+## Gula melaka syrup. Spills start small and grow: 3 cells at stage 16,
+## then 5 at stage 42, 6 at stage 49 and 8 at stage 58.
+static func _syrup(cells: Array[Vector2i]) -> BlockerSpec:
+	return BlockerSpec.make(BlockerSpec.Kind.STICKY_SYRUP, cells, 1)
+
+
 static func _cover(cells: Array[Vector2i], hp: int = 2) -> BlockerSpec:
 	return BlockerSpec.make(BlockerSpec.Kind.FOOD_COVER, cells, hp)
 

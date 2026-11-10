@@ -1,0 +1,11 @@
+file '../../release/store-launch-2026-10-24/media/screenshots/01-home.png'
+duration 4
+file '../../release/store-launch-2026-10-24/media/screenshots/03-gameplay.png'
+duration 4
+file '../../release/store-launch-2026-10-24/media/screenshots/02-journey.png'
+duration 4
+file '../../release/store-launch-2026-10-24/media/screenshots/05-kuih-collection.png'
+duration 4
+file '../../release/store-launch-2026-10-24/media/screenshots/06-stall-upgrades.png'
+duration 4
+file '../../release/store-launch-2026-10-24/media/screenshots/06-stall-upgrades.png'

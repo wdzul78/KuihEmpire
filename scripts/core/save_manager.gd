@@ -36,6 +36,9 @@ const DEFAULT_SETTINGS := {
 	"language": "en",
 }
 
+## Emitted after every successful write to disk.
+signal saved()
+
 var data: Dictionary = {}
 var _dirty: bool = false
 var _timer: SceneTreeTimer = null
@@ -116,7 +119,20 @@ func save_game() -> bool:
 	if not _write_atomic(data, save_path):
 		return false
 	_dirty = false
+	saved.emit()
 	return true
+
+
+## Replaces progress with a copy from the player's cloud save. This device's
+## settings are kept, and the replaced progress stays in a side file.
+func restore(cloud: Dictionary) -> bool:
+	_write_atomic(data, save_path + ".before_cloud")
+	var settings: Dictionary = data.get("settings", {}).duplicate(true)
+	data = _normalize(cloud)
+	data["settings"] = settings
+	if is_instance_valid(get_node_or_null("/root/LocationManager")):
+		get_node("/root/LocationManager").reconcile()
+	return save_game()
 
 
 func _read_save(path: String) -> Variant:

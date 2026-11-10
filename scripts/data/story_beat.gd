@@ -13,6 +13,8 @@ enum Speaker { AINA, IBU, FRIEND, RIVAL, CUSTOMER, NARRATOR }
 @export_multiline var lines: PackedStringArray = PackedStringArray()
 ## Optional chalkboard style quote used on the shop sign.
 @export var sign_text: String = ""
+## When set, a large picture of this [enum BlockerSpec.Kind] is shown with the lines.
+@export var blocker_kind: int = -1
 
 
 static func make(

@@ -121,6 +121,9 @@ func _build() -> void:
 	stack.add_child(_toggle_row(MenuText.text("haptics"), "haptics"))
 	stack.add_child(_toggle_row(MenuText.text("hints"), "show_hints"))
 
+	if PlayGames.available:
+		stack.add_child(_play_games_row())
+
 	var privacy := GameButton.create(JourneyArt.localized("Dasar privasi", "Privacy policy"), "secondary")
 	privacy.name = "PrivacyPolicyButton"
 	privacy.pressed.connect(func() -> void:
@@ -154,6 +157,31 @@ func _build() -> void:
 
 	_toast = UIKit.label("", 26, Palette.PINK_DARK)
 	column.add_child(_toast)
+
+
+## Google Play Games sign-in; once signed in, progress is saved to the account.
+func _play_games_row() -> Control:
+	var column := UIKit.vbox(8)
+	column.name = "PlayGamesRow"
+	var status := UIKit.wrap_label("", 32, Palette.WOOD_DARK)
+	column.add_child(status)
+	var button := GameButton.create(JourneyArt.localized("Log masuk Google Play Games", "Sign in to Google Play Games"), "secondary")
+	button.name = "PlayGamesSignIn"
+	button.pressed.connect(PlayGames.sign_in)
+	column.add_child(button)
+	var paint := func() -> void:
+		status.text = JourneyArt.localized(
+			"Google Play Games disambung. Progres disimpan ke akaun anda.",
+			"Google Play Games connected. Progress is saved to your account."
+		) if PlayGames.signed_in else JourneyArt.localized(
+			"Log masuk untuk simpan progres ke akaun Google dan sambung di telefon lain.",
+			"Sign in to save progress to your Google account and continue on another phone."
+		)
+		button.visible = not PlayGames.signed_in
+	paint.call()
+	PlayGames.changed.connect(paint)
+	column.tree_exiting.connect(func() -> void: PlayGames.changed.disconnect(paint))
+	return column
 
 
 func _volume_row(caption: String, key: String) -> Control:

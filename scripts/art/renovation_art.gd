@@ -10,7 +10,14 @@ const FOOD_SHEET := "res://assets/stalls/kuching_v2/food_displays.png"
 const FOOD_IDS := ["kuih_display", "kuih_feast"]
 const FINISH_IDS := ["shop_sign", "counter_finish"]
 const FINISH_SHEET := "res://assets/stalls/shop_complete_v1/finishes.png"
-const RUNNER_SHEET := "res://assets/stalls/counter_runner_v1/runners.png"
+## Flat runners that lie on the counter top only (rows: original, then the
+## other DecorDefinition.STYLES), so the stall front stays visible.
+const RUNNER_SHEET := "res://assets/stalls/counter_runner_v2/runners.png"
+const RUNNER_REGIONS := [Rect2(32,80,1474,256), Rect2(30,382,1478,262), Rect2(26,698,1486,276)]
+## The v1 runner draped to the ground; placements are still sized for it, and
+## its counter top was this top fraction of that placement.
+const RUNNER_FULL_ASPECT := 696.0 / 520.0
+const RUNNER_TOP_FRACTION := .30
 const HIBISCUS_COUNTER := "res://assets/stalls/accessories_v3/hibiscus_counter.png"
 
 static func component_texture(stage: int, variant: String) -> Texture2D:
@@ -46,10 +53,10 @@ static func design_texture(key: String, style: String = "original") -> Texture2D
 		if _textures.has(cache_key):
 			return _textures[cache_key]
 		var source := load(RUNNER_SHEET) as Texture2D
-		var column := maxi(0,DecorDefinition.STYLES.find(style))
+		var row := clampi(DecorDefinition.STYLES.find(style),0,RUNNER_REGIONS.size() - 1)
 		var atlas := AtlasTexture.new()
 		atlas.atlas = source
-		atlas.region = Rect2(column * 724 + 16,90,696,520)
+		atlas.region = RUNNER_REGIONS[row]
 		atlas.filter_clip = true
 		_textures[cache_key] = atlas
 		return atlas

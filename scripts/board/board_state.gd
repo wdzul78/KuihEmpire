@@ -991,7 +991,7 @@ func select_delivery_target(origin: Vector2i, excluded: Dictionary = {}, preferr
 			var cell := get_cell(pos)
 			if priority == &"order" and cell.is_playable() and int(order_remaining.get(cell.kuish_id(),0)) > 0:
 				return pos
-			if priority == &"blocker" and cell.has_overlay():
+			if priority == &"blocker" and (cell.has_overlay() or cell.is_puddle()):
 				return pos
 			if priority == &"objective" and cell.is_playable() and objectives.has(cell.kuish_id()):
 				return pos
@@ -1014,11 +1014,24 @@ func _damage_delivery_blocker(pos: Vector2i, result: ClearResult) -> void:
 		cell.remove_obstacle()
 	result.blockers.append(hit)
 
-## A leaf, cover, steamer or syrup is opened by matching right next to it.
+## A leaf, cover or steamer is opened by matching right next to it. Syrup is a
+## puddle under the kuih and is cleaned only when the kuih ON it is cleared.
 func _register_blocker_progress(result: ClearResult) -> void:
 	var touched: Dictionary = result.direct_blocker_hits.duplicate()
 	for key in result.cleared:
 		var origin: Vector2i = key
+		var under := get_cell(origin)
+		if under != null and under.is_puddle() and not touched.has(origin):
+			touched[origin] = true
+			var wash := BlockerHit.new()
+			wash.pos = origin
+			wash.kind = under.blocker_kind
+			under.blocker_hp -= 1
+			wash.hp_left = maxi(0, under.blocker_hp)
+			wash.removed = under.blocker_hp <= 0
+			if wash.removed:
+				under.blocker_kind = BoardCell.NO_BLOCKER
+			result.blockers.append(wash)
 		for dy in range(-1, 2):
 			for dx in range(-1, 2):
 				if absi(dx) + absi(dy) != 1:
@@ -1236,7 +1249,7 @@ func remaining_blockers() -> int:
 	for y in height:
 		for x in width:
 			var cell := get_cell(Vector2i(x, y))
-			if cell != null and cell.has_obstacle():
+			if cell != null and (cell.has_obstacle() or cell.is_puddle()):
 				count += 1
 	return count
 
@@ -1246,7 +1259,7 @@ func remaining_blockers_of_kind(kind: int) -> int:
 	for y in height:
 		for x in width:
 			var cell := get_cell(Vector2i(x, y))
-			if cell != null and cell.has_obstacle() and cell.blocker_kind == kind:
+			if cell != null and (cell.has_obstacle() or cell.is_puddle()) and cell.blocker_kind == kind:
 				count += 1
 	return count
 

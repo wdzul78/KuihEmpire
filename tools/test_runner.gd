@@ -731,7 +731,7 @@ func _play(level: LevelDefinition, seed_value: int) -> int:
 		_apply(board, [a, b], orders, index, scoring, outcome)
 		index = _first_unfinished(orders)
 
-		if _cleared(orders) and (not level.require_blockers_cleared or board.remaining_blockers() == 0):
+		if _cleared(orders) and level.board_goals_met(board):
 			var result := StageResultCalculator.calculate(true, scoring.total, moves_left, level)
 			_last_score = result.final_score
 			return result.earned_stars

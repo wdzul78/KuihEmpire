@@ -113,7 +113,7 @@ func _play(level: LevelDefinition, casual: bool, seed_value: int) -> Vector2i:
 			score.add_collection(_served(orders) - served_before)
 			logic.apply_gravity()
 			logic.refill()
-		if active >= orders.size() and (not level.require_blockers_cleared or logic.remaining_blockers() == 0):
+		if active >= orders.size() and level.board_goals_met(logic):
 			return Vector2i(moves, score.total + moves * level.scoring.remaining_move)
 	if active < orders.size():
 		_lost_on_orders += 1

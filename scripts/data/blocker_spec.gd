@@ -7,7 +7,7 @@ enum Kind {
 	BANANA_LEAF,   ## Covered by a leaf - open it by matching next to it.
 	FOOD_COVER,    ## Two layer cover - each neighbouring match removes a layer.
 	STEAMER,       ## Kuih is inside a steamer - a neighbouring match lifts the lid.
-	STICKY_SYRUP,  ## Cell is locked and cannot be swapped until cleaned.
+	STICKY_SYRUP,  ## Puddle under the kuih; cleaned when the kuih on it is matched.
 	PACKAGING_BOX, ## Empty cell that needs N kuih of one type to be packed.
 	EMPTY_TRAY,    ## Empty cell that catches N kuih of one type.
 }

@@ -168,7 +168,7 @@ static func _build(level_id: int) -> LevelDefinition:
 			return _make(16, "Sticky Situation", "Teach syrup", 3, [1700, 2550],
 				[&"onde_onde", &"kuih_koci", &"ang_ku_kueh", &"kuih_ketayap", &"kuih_lapis", &"keria"],
 				[[&"runner", [[&"kuih_koci", 14], [&"keria", 12]]]], 20,
-				[BlockerSpec.make(BlockerSpec.Kind.STICKY_SYRUP, [Vector2i(3, 3), Vector2i(4, 4), Vector2i(3, 4)], 1)])
+				[_syrup([Vector2i(3, 3), Vector2i(4, 4), Vector2i(3, 4)])])
 
 		17:
 			return _make(17, "Combo Night", "Combos", 4, [1700, 3000],

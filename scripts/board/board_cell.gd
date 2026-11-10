@@ -35,9 +35,15 @@ func has_kuish() -> bool:
 	return kuih != null
 
 
-## Leaf / cover / steamer / syrup sitting on top of the kuih.
+## Leaf / cover / steamer sitting on top of the kuih.
 func has_overlay() -> bool:
-	return blocker_kind != NO_BLOCKER and target_need == 0
+	return blocker_kind != NO_BLOCKER and target_need == 0 and not is_puddle()
+
+
+## Gula melaka syrup lies UNDER the kuih like a puddle. The kuih on it still
+## swaps and falls; matching the kuih that sits on it cleans the syrup.
+func is_puddle() -> bool:
+	return blocker_kind == BlockerSpec.Kind.STICKY_SYRUP and target_need == 0 and blocker_hp > 0
 
 
 func is_target() -> bool:

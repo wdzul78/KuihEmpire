@@ -257,6 +257,7 @@ func _start_level() -> void:
 		hud._moves_cap.text = JourneyArt.localized("LANGKAH", "MOVES")
 		_seed_test_specials()
 	hud.booster_bar.refresh()
+	_refresh_syrup_goal(false)
 	_refresh_order_ui()
 	if endless_mode:
 		hud.order_panel.hide()
@@ -326,11 +327,12 @@ func _play_blocker_intro() -> bool:
 		BlockerSpec.Kind.BANANA_LEAF: ["Kuih ini ditutup daun pisang! Padankan kuih di petak sebelah untuk membuka daun.","This kuih is covered by a banana leaf! Match kuih in an adjacent tile to uncover it."],
 		BlockerSpec.Kind.FOOD_COVER: ["Ada penutup berlapis! Setiap padanan di petak sebelah membuang satu lapisan. Ulang sehingga terbuka.","This cover has layers! Each adjacent match removes one layer. Keep matching until it opens."],
 		BlockerSpec.Kind.STEAMER: ["Kuih masih dalam pengukus! Padankan kuih di petak sebelah untuk membuka penutupnya.","The kuih is in a steamer! Match kuih in an adjacent tile to open its lid."],
-		BlockerSpec.Kind.STICKY_SYRUP: ["Alamak! Sirap tertumpah ke atas kuih! Kuih ini tak boleh di-swap. Padankan kuih di petak sebelah untuk bersihkan sirap.","Oh no! Syrup spilled onto the kuih! You cannot swap this tile. Match kuih in an adjacent tile to clean the syrup."],
+		BlockerSpec.Kind.STICKY_SYRUP: ["Alamak! Sirap gula melaka tertumpah di bawah kuih! Padankan kuih yang duduk atas lopak sirap untuk bersihkan sirap itu.","Oh no! Gula melaka syrup spilled under the kuih! Match the kuih sitting on the syrup puddle to clean it up."],
 		BlockerSpec.Kind.PACKAGING_BOX: ["Kotak ini perlu diisi! Kumpulkan jenis kuih dan jumlah yang ditunjukkan pada kotak untuk menyiapkannya.","This box needs filling! Collect the kuih type and quantity shown on the box to complete it."],
 		BlockerSpec.Kind.EMPTY_TRAY: ["Dulang ini masih kosong! Kumpulkan jenis kuih dan jumlah yang ditunjukkan untuk memenuhi dulang.","This tray is empty! Collect the indicated kuih type and quantity to fill it."],
 	}
 	var beat := StoryBeat.make(StringName("blocker_intro_%d" % _active_blocker_intro),StoryBeat.Speaker.AINA,[JourneyArt.localized(lines[_active_blocker_intro][0],lines[_active_blocker_intro][1])])
+	beat.blocker_kind = _active_blocker_intro
 	board.enabled = false
 	story.play(beat)
 	return true
@@ -415,7 +417,16 @@ func _on_special_created(kind: int) -> void:
 		coach.notify_special_created(kind)
 
 
+## Syrup puddles left to clean, shown as a goal next to the order.
+func _refresh_syrup_goal(animate: bool) -> void:
+	var left := -1
+	if not endless_mode and level != null and level.syrup_cells() > 0 and board.logic != null:
+		left = board.logic.remaining_blockers_of_kind(BlockerSpec.Kind.STICKY_SYRUP)
+	hud.order_panel.set_syrup_goal(left, animate)
+
+
 func _on_blocker_progress(hits: Array) -> void:
+	_refresh_syrup_goal(true)
 	if coach == null:
 		return
 	var removed := 0
@@ -558,9 +569,7 @@ func _objectives_met() -> bool:
 	for order in orders:
 		if not order.is_complete():
 			return false
-	if level.require_blockers_cleared and board.logic != null:
-		return board.logic.remaining_blockers() == 0
-	return true
+	return level.board_goals_met(board.logic)
 
 
 func _missing_summary() -> String:
@@ -571,6 +580,10 @@ func _missing_summary() -> String:
 			var left := int(order.remaining.get(id, 0))
 			if left > 0:
 				parts.append("%d %s" % [left, KuihLibrary.get_display_name(id)])
+	if level.syrup_cells() > 0 and board.logic != null:
+		var syrup_left := board.logic.remaining_blockers_of_kind(BlockerSpec.Kind.STICKY_SYRUP)
+		if syrup_left > 0:
+			parts.append(JourneyArt.localized("%d sirap", "%d syrup") % syrup_left)
 	if parts.is_empty() and level.require_blockers_cleared and board.logic != null:
 		var leftover := board.logic.remaining_blockers()
 		if leftover > 0:

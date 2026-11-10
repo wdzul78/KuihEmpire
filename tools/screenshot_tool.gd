@@ -237,6 +237,11 @@ func run() -> void:
 		get_tree().quit(0)
 		return
 	if "--score-only" in OS.get_cmdline_user_args():
+		# Skip the "meet the kuih" cards so the board and score stay visible.
+		for kuih in KuihLibrary.all():
+			SaveManager.data.kuih_seen.append(String(kuih.id))
+		for entry in PowerupRecipes.ENTRIES:
+			SaveManager.data.kuih_seen.append("special_intro_%d" % int(entry[0]))
 		GameManager.pending_tutorial_index = 0
 		var screen := LevelController.new()
 		screen.level_id = 4

@@ -13,7 +13,14 @@ func board() -> BoardState:
 
 func _ready() -> void:
 	for special in [BoardCell.Special.TAPAU,BoardCell.Special.TAPAU_VERTICAL,BoardCell.Special.DULANG,BoardCell.Special.HANTAR,BoardCell.Special.ORDER]:
-		for guard in [BlockerSpec.Kind.BANANA_LEAF,BlockerSpec.Kind.FOOD_COVER,BlockerSpec.Kind.STEAMER,BlockerSpec.Kind.STICKY_SYRUP]:
+		var wet := board()
+		var spill := Vector2i(2,2)+(Vector2i.DOWN if special == BoardCell.Special.TAPAU_VERTICAL else Vector2i.RIGHT)
+		wet.get_cell(Vector2i(2,2)).special = special
+		wet.apply_blockers([BlockerSpec.make(BlockerSpec.Kind.STICKY_SYRUP,[spill],1)])
+		wet.get_cell(Vector2i(2,2)).order_kuish = wet.get_cell(spill).kuish_id()
+		var washed := wet.activate_specials([Vector2i(2,2)])
+		check(washed.cleared.has(spill) and not wet.get_cell(spill).is_puddle(),"a special clears the kuih on syrup and the syrup under it")
+		for guard in [BlockerSpec.Kind.BANANA_LEAF,BlockerSpec.Kind.FOOD_COVER,BlockerSpec.Kind.STEAMER]:
 			for hp in [1,2]:
 				var state := board()
 				var origin := Vector2i(2,2)

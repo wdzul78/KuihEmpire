@@ -494,6 +494,15 @@ func _draw_decor_texture(item: DecorDefinition, tint: Color, style: String = "or
 		return
 	var uv := decor_rect(item)
 	var target := Rect2(art_point(uv.position), art_point(uv.end) - art_point(uv.position))
+	if item.id == "pink_batik":
+		# Same placement as the old draped runner, but only its counter-top band,
+		# so the runner ends at the table's front edge.
+		var full := target
+		if not (showcase_active() or (background_context == "menu" and not gameplay_mode)):
+			var fit := Vector2(RenovationArt.RUNNER_FULL_ASPECT, 1.0) * minf(target.size.x / RenovationArt.RUNNER_FULL_ASPECT, target.size.y)
+			full = Rect2(target.get_center() - fit * .5, fit)
+		draw_texture_rect(texture, Rect2(full.position, Vector2(full.size.x, full.size.y * RenovationArt.RUNNER_TOP_FRACTION)), false, tint)
+		return
 	if item.kind in ["sign","counter"] or (item.id == "pink_batik" and (showcase_active() or (background_context == "menu" and not gameplay_mode))):
 		draw_texture_rect(texture,target,false,tint)
 		# The showcase names its own painted board; elsewhere the bought sign carries the name.

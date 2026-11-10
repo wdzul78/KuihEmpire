@@ -47,7 +47,10 @@ func show_stage(id: int) -> void:
   icon.special_kind = kinds[index]
   JourneyArt.place(button,icon,Rect2(.04,.02,.92,.96))
   icon.modulate = Color(.6,.6,.6) if button.disabled else Color.WHITE
-  var tick := JourneyArt.label(button,"✓",Rect2(.70,0,.3,.3),46,Color("3b8628"))
+  var tick := SelectedTick.new()
+  tick.name = "SelectedTick"
+  # Sits on the lower-right edge of the booster, over the line above its count.
+  JourneyArt.place(button,tick,Rect2(.48,.42,.66,.66))
   tick.hide()
   var count := JourneyArt.label(card,str(EconomyManager.booster_count(booster)),Rect2(x-.1,.562,.2,.06),50,Palette.WOOD_DARK)
   count.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -55,6 +58,10 @@ func show_stage(id: int) -> void:
   name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
   button.toggled.connect(func(on: bool) -> void:
    tick.visible = on
+   if on:
+    tick.pop()
+   icon.pivot_offset = icon.size*.5
+   icon.scale = Vector2.ONE*(1.08 if on else 1.0)
    if on:
     if not picks.has(booster):
      picks.append(booster)
@@ -71,6 +78,49 @@ func show_stage(id: int) -> void:
  )
  var close := _hit(card,Rect2(.83,.10,.13,.11))
  close.pressed.connect(queue_free)
+
+## A big, bouncy tick over a chosen booster. Uses the painted tick when it
+## exists and draws a chunky one otherwise.
+class SelectedTick extends Control:
+ const ART_PATH := "res://assets/ui/stage_preview_v5/selected_tick.png"
+ var _art: Texture2D
+
+ func _ready() -> void:
+  mouse_filter = Control.MOUSE_FILTER_IGNORE
+  z_index = 2
+  if ResourceLoader.exists(ART_PATH):
+   _art = load(ART_PATH)
+  resized.connect(func() -> void: pivot_offset = size*.5)
+
+ func pop() -> void:
+  pivot_offset = size*.5
+  scale = Vector2.ONE*.2
+  rotation = -.5
+  var tween := create_tween().set_parallel(true)
+  tween.tween_property(self,"scale",Vector2.ONE,.42).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+  tween.tween_property(self,"rotation",0.0,.42).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+ func _draw() -> void:
+  var edge := minf(size.x,size.y)
+  var box := Rect2((size-Vector2.ONE*edge)*.5,Vector2.ONE*edge)
+  if _art != null:
+   BoardArt.draw_item_texture(self,box,_art)
+   return
+  var points := PackedVector2Array([box.position+Vector2(.14,.52)*edge,box.position+Vector2(.40,.78)*edge,box.position+Vector2(.88,.20)*edge])
+  var shadow := PackedVector2Array()
+  for point in points:
+   shadow.append(point+Vector2(0,edge*.04))
+  draw_polyline(shadow,Color(.16,.08,.02,.45),edge*.28,true)
+  draw_polyline(points,Color("4a2c17"),edge*.28,true)
+  draw_polyline(points,Color("fff7dd"),edge*.21,true)
+  draw_polyline(points,Color("2f9a2a"),edge*.15,true)
+  var shine := PackedVector2Array()
+  for point in points:
+   shine.append(point+Vector2(0,-edge*.025))
+  draw_polyline(shine,Color("8ee86a"),edge*.05,true)
+  for at in [Vector2(.86,.62),Vector2(.12,.24)]:
+   BoardArt._draw_sparkle(self,box.position+at*edge,edge*.07)
+
 
 func _hit(parent: Control, rect: Rect2) -> Button:
  var button := Button.new()

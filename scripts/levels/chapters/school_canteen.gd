@@ -111,7 +111,7 @@ static func build(level_id: int) -> LevelDefinition:
 		42:
 			return _make(42, "Syrup Spill", "Syrup", 3, [2800, 3000], TILES_TEACHERS,
 				[[&"adik_danish", [[&"kuih_lapis", 14], [&"tart", 14]]]], 22,
-				[BlockerSpec.make(BlockerSpec.Kind.STICKY_SYRUP, [Vector2i(2, 3), Vector2i(3, 3), Vector2i(4, 4), Vector2i(5, 4)], 1)])
+				[_syrup([Vector2i(2, 3), Vector2i(3, 3), Vector2i(4, 3), Vector2i(4, 4), Vector2i(5, 4)])])
 
 		43:
 			var l := _make(43, "Two Shifts", "Queue and trays", 3, [3400, 3700], TILES_TEACHERS,
@@ -160,7 +160,7 @@ static func build(level_id: int) -> LevelDefinition:
 		49:
 			return _make(49, "Syrup and Leaves", "Combination", 4, [3500, 4000], TILES_SPORTS,
 				[[&"kakak", [[&"kuih_koci", 18], [&"tart", 18]]]], 25,
-				[BlockerSpec.make(BlockerSpec.Kind.STICKY_SYRUP, [Vector2i(3, 3), Vector2i(4, 3), Vector2i(3, 4)], 1),
+				[_syrup([Vector2i(2, 3), Vector2i(3, 3), Vector2i(4, 3), Vector2i(5, 3), Vector2i(3, 4), Vector2i(4, 4)]),
 				 _leaf([Vector2i(1, 1), Vector2i(6, 1), Vector2i(4, 6)])])
 
 		50:
@@ -235,7 +235,8 @@ static func build(level_id: int) -> LevelDefinition:
 					[&"cikgu_salmah", [[&"tart", 16]]],
 					[&"adik_priya", [[&"ang_ku_kueh", 15]]],
 				], 30,
-				[BlockerSpec.make(BlockerSpec.Kind.STICKY_SYRUP, [Vector2i(2, 4), Vector2i(3, 4), Vector2i(4, 3)], 1),
+				[_syrup([Vector2i(1, 3), Vector2i(2, 3), Vector2i(2, 4), Vector2i(3, 4),
+					Vector2i(4, 4), Vector2i(5, 4), Vector2i(5, 3), Vector2i(6, 3)]),
 				 _box([Vector2i(3, 7)], &"karipap", 8)])
 			l.require_blockers_cleared = true
 			return l

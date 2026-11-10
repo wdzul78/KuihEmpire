@@ -211,14 +211,14 @@ Binaan APK atau AAB hanya apabila diminta.
 | 39 | Kotak Bekal / Lunch Boxes | Gabung | Kotak, wajib bersih | B×1 | 30/23 |
 | **40** | **Hari Jualan / Sale Day** | **Milestone** | 3 pelanggan, upgrade 1 | D×2, T×2 | 34/26 |
 | 41 | Selepas Jualan / After the Sale | Rehat | — | — | 22/26 |
-| 42 | Sirap Tumpah / Syrup Spill | Latih | Sirap | S×4 | 28/22 |
+| 42 | Sirap Tumpah / Syrup Spill | Latih | Sirap | S×5 | 28/22 |
 | 43 | Dua Giliran / Two Shifts | Gabung | Giliran + dulang | D2×2 | 28/25 |
 | 44 | Kawan Sekelas / Classmates | Latih | 3 murid | D×2 | 28/26 |
 | 45 | Waktu Senang / Easy Hour | Rehat | — | — | 24/27 |
 | 46 | Bom Manis / Sweet Bom | Ajar | Kuih Bom | — | 24/23 |
 | 47 | Stim Pagi / Morning Steam | Cabaran | Pengukus 2 lapis | K×4 | 32/20 |
 | 48 | Tempahan Kelab / Club Order | Gabung | Kotak + dulang, wajib bersih | B×1, D2×2 | 36/26 |
-| 49 | Sirap & Daun / Syrup and Leaves | Cabaran | Gabungan | S×3, D×3 | 36/25 |
+| 49 | Sirap & Daun / Syrup and Leaves | Cabaran | Gabungan | S×6, D×3 | 36/25 |
 | **50** | **Hari Sukan / Sports Day** | **Milestone** | Pesanan besar, upgrade 2 | T×3, K×2 | 40/28 |
 | 51 | Rehat Padang / Field Break | Rehat | — | — | 26/28 |
 | 52 | Kantin Sesak / Packed Canteen | Latih | Giliran 3 | D×2 | 31/27 |
@@ -227,7 +227,7 @@ Binaan APK atau AAB hanya apabila diminta.
 | 55 | Mesyuarat PIBG / PTA Meeting | Cabaran | Encik Lim + Cikgu, kotak | B×1, T×2 | 27/30 |
 | 56 | Hujan Petang / Rainy Afternoon | Rehat | — | — | 28/30 |
 | 57 | Semua Sekali / Everything at Once | Cabaran | 3 jenis halangan | D×2, T×2, K×2 | 33/28 |
-| 58 | Latihan Akhir / Final Rehearsal | Cabaran | Sirap + kotak | S×3, B×1 | 31/30 |
+| 58 | Latihan Akhir / Final Rehearsal | Cabaran | Sirap + kotak | S×8, B×1 | 31/30 |
 | 59 | Malam Persediaan / Prep Night | Cabaran | Pesanan panjang | T×2, K×2 | 37/28 |
 | **60** | **Hari Anugerah / Awards Day** | **Akhir** | Semua pelanggan, gerai lengkap | T×4, D×2, K×2, B×1 | 52/33 |
 

@@ -52,6 +52,7 @@ var board_origin: Vector2 = Vector2.ZERO
 var frame_padding: float = 16.0
 
 var _slots: Control
+var _syrup_layer: SyrupLayer
 var _tiles: Dictionary = {}      # Vector2i -> TileView
 var _overlays: Dictionary = {}   # Vector2i -> OverlayView
 var _selected: Vector2i = Vector2i(-1, -1)
@@ -182,6 +183,13 @@ func build(level: LevelDefinition) -> void:
 		_slots.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		_slots.draw.connect(_draw_slots)
 		add_child(_slots)
+	if _syrup_layer == null:
+		# Above the slots, below every tile: the puddle shows around the kuih.
+		_syrup_layer = SyrupLayer.new()
+		_syrup_layer.board = self
+		add_child(_syrup_layer)
+		move_child(_syrup_layer, _slots.get_index() + 1)
+	_syrup_layer.reset()
 	if _guide_layer == null:
 		_guide_layer = Control.new()
 		_guide_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -263,6 +271,8 @@ func _relayout() -> void:
 		_slots.position = Vector2.ZERO
 		_slots.size = size
 		_slots.queue_redraw()
+	if _syrup_layer != null:
+		_syrup_layer.size = size
 	for key in _tiles:
 		var tile: TileView = _tiles[key]
 		tile.size = Vector2(cell_size, cell_size)
@@ -1405,6 +1415,9 @@ func _play_blockers(hits: Array) -> void:
 	for hit in hits:
 		var overlay: OverlayView = _overlays.get(hit.pos, null)
 		if overlay == null:
+			if hit.kind == BlockerSpec.Kind.STICKY_SYRUP and hit.removed:
+				# The puddle dries up in the syrup layer; add a little splash.
+				_burst(_cell_center(hit.pos), GulaMelakaSyrup.INNER, 6)
 			continue
 		if hit.removed:
 			if hit.kind in [BlockerSpec.Kind.BANANA_LEAF,BlockerSpec.Kind.FOOD_COVER,BlockerSpec.Kind.STEAMER]:
@@ -1827,3 +1840,47 @@ func _burst_shake() -> void:
 	_shake_tween = create_tween().set_speed_scale(ANIMATION_PACE.SPEED)
 	for offset in [Vector2(3,-2),Vector2(-2,1),Vector2(1,0),Vector2.ZERO]:
 		_shake_tween.tween_property(self,"position",_shake_origin+offset,.03).set_trans(Tween.TRANS_SINE)
+
+
+## The gula melaka puddle under syrup-covered kuih. Puddles swell in when the
+## board is built and dry up when the syrup is cleaned.
+class SyrupLayer extends Control:
+	var board: MatchBoard
+	var _amounts: Dictionary = {}
+
+	func _ready() -> void:
+		mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	func reset() -> void:
+		_amounts.clear()
+		queue_redraw()
+
+	func _process(delta: float) -> void:
+		if board == null or board.logic == null:
+			return
+		var logic := board.logic
+		var changed := false
+		for y in logic.height:
+			for x in logic.width:
+				var pos := Vector2i(x, y)
+				var cell := logic.get_cell(pos)
+				if cell != null and cell.blocker_kind == BlockerSpec.Kind.STICKY_SYRUP and cell.blocker_hp > 0:
+					if float(_amounts.get(pos, 0.0)) < 1.0:
+						_amounts[pos] = move_toward(float(_amounts.get(pos, 0.0)), 1.0, delta * 3.0)
+						changed = true
+				elif _amounts.has(pos):
+					_amounts[pos] = move_toward(float(_amounts[pos]), 0.0, delta * 2.5)
+					changed = true
+					if _amounts[pos] <= 0.0:
+						_amounts.erase(pos)
+		# The puddle is still; redraw only while it swells in or dries up.
+		if changed:
+			queue_redraw()
+
+	func _draw() -> void:
+		if board == null or _amounts.is_empty():
+			return
+		GulaMelakaSyrup.draw_puddle(self, _amounts, _cell_rect)
+
+	func _cell_rect(pos: Vector2i) -> Rect2:
+		return Rect2(board.cell_to_pos(pos), Vector2.ONE * board.cell_size)

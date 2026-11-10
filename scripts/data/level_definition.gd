@@ -97,6 +97,28 @@ func coin_reward() -> int:
 	return total
 
 
+## How many cells start under gula melaka syrup. Cleaning all of them is a
+## goal of its own, shown next to the order.
+func syrup_cells() -> int:
+	var total := 0
+	for spec in blockers:
+		if spec != null and spec.kind == BlockerSpec.Kind.STICKY_SYRUP:
+			total += spec.cells.size()
+	return total
+
+
+## Board goals besides the orders: every blocker when the stage asks for it,
+## and every syrup puddle whenever the stage has syrup.
+func board_goals_met(logic: BoardState) -> bool:
+	if logic == null:
+		return true
+	if require_blockers_cleared and logic.remaining_blockers() > 0:
+		return false
+	if syrup_cells() > 0 and logic.remaining_blockers_of_kind(BlockerSpec.Kind.STICKY_SYRUP) > 0:
+		return false
+	return true
+
+
 func uses_kuih(kuih_id: StringName) -> bool:
 	for k in kuih:
 		if k.id == kuih_id:

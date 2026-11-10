@@ -38,6 +38,7 @@ var _portrait: CharacterIcon
 var _name_label: Label
 var _line_label: Label
 var _tap_indicator: TapIndicator
+var _picture: BlockerPicture
 var _beat: StoryBeat = null
 var _line: int = 0
 
@@ -112,6 +113,14 @@ func _build() -> void:
 	_line_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	col.add_child(_line_label)
 
+	# A big picture of the obstacle Aina is explaining, under her words.
+	_picture = BlockerPicture.new()
+	_picture.name = "BlockerPicture"
+	_picture.custom_minimum_size = Vector2(0, 520 if inline_mode else 380)
+	_picture.visible = false
+	_picture.gui_input.connect(_on_input)
+	stack.add_child(_picture)
+
 	_tap_indicator = TapIndicator.new()
 	_tap_indicator.target = _card
 	add_child(_tap_indicator)
@@ -141,6 +150,14 @@ func play(beat: StoryBeat) -> void:
 		finished.emit()
 		return
 	visible = true
+	_picture.kind = beat.blocker_kind
+	_picture.visible = beat.blocker_kind >= 0
+	# The tapping hand waits under the picture instead of covering it.
+	_tap_indicator.target = _picture if _picture.visible else _card
+	if _picture.visible:
+		_picture.pivot_offset = Vector2(_stack.size.x * .5, _picture.custom_minimum_size.y * .5)
+		_picture.scale = Vector2.ONE * .4
+		create_tween().tween_property(_picture, "scale", Vector2.ONE, .45).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	_portrait.cast = SPEAKER_CAST.get(beat.speaker, CharacterIcon.Cast.AINA)
 	_portrait.expression = CharacterIcon.Mood.HAPPY
 	_portrait.queue_redraw()

@@ -42,3 +42,5 @@ Thumbs.db
 # Temporary attachments and local tool logs
 .codex-remote-attachments/
 .*.log
+.analysis/audio-tools/yt_dlp/__pycache__/options.cpython-312.pyc
+/.analysis

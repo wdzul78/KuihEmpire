@@ -218,7 +218,11 @@ static func draw_delivery(canvas: CanvasItem, rect: Rect2, angle: float = 0.0, f
 	canvas.draw_set_transform(Vector2.ZERO)
 
 
-static func draw_blocker(canvas: CanvasItem, rect: Rect2, kind: int, hp: int, max_hp: int) -> void:
+static func draw_blocker(canvas: CanvasItem, rect: Rect2, kind: int, hp: int, max_hp: int, seconds: float = 0.0) -> void:
+	# Syrup is only a puddle under the kuih (GulaMelakaSyrup.draw_puddle);
+	# nothing is drawn over the kuih.
+	if kind == BlockerSpec.Kind.STICKY_SYRUP:
+		return
 	if kind == BlockerSpec.Kind.BANANA_LEAF:
 		draw_item_texture(canvas,rect,BLOCKER_ART[kind])
 		return
