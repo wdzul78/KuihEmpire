@@ -46,3 +46,6 @@ Thumbs.db
 /.analysis
 /marketing
 *.mov
+
+# Local video exports (keep source files on disk)
+*.mp4
